@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -25,17 +25,25 @@ export const IconButton = ({
     <div
       className={cn(
         "flex flex-col items-center justify-center gap-1 transition-colors duration-200",
-        isActive && "text-primary",
-        !isActive && "text-white",
         className
       )}
     >
       <div
-        className={cn(isActive && "text-primary", !isActive && "text-white")}
+        className={cn(
+          "transition-colors duration-200",
+          isActive ? "text-primary" : "text-white"
+        )}
       >
         {icon}
       </div>
-      <span className="text-xs font-medium">{text}</span>
+      <span
+        className={cn(
+          "text-xs font-medium transition-colors duration-200",
+          isActive ? "text-primary" : "text-white"
+        )}
+      >
+        {text}
+      </span>
     </div>
   );
 
