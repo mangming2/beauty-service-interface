@@ -74,4 +74,155 @@ const MyIcon = ({ color = "white", ...rest }: IconProps) => {
   );
 };
 
-export { WishIcon, HomeIcon, MyIcon };
+const LocationIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="16"
+      height="20"
+      viewBox="0 0 16 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M8 0C3.6 0 0 3.6 0 8C0 13.4 8 20 8 20S16 13.4 16 8C16 3.6 12.4 0 8 0ZM8 11C6.3 11 5 9.7 5 8C5 6.3 6.3 5 8 5C9.7 5 11 6.3 11 8C11 9.7 9.7 11 8 11Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
+
+const ChevronDownIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="12"
+      height="8"
+      viewBox="0 0 12 8"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M1 1L6 6L11 1"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+const ArrowRightIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M6 12L10 8L6 4"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+const GirlCrushIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M15 4C15 5.66 13.66 7 12 7C10.34 7 9 5.66 9 4C9 2.34 10.34 1 12 1C13.66 1 15 2.34 15 4Z"
+        fill={color}
+      />
+      <path
+        d="M12 14C8.13 14 5 17.13 5 21H19C19 17.13 15.87 14 12 14Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
+
+const HeartIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
+
+const HighHeelIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M4 18H5.5V20.5C5.5 21.05 5.95 21.5 6.5 21.5H7.5C8.05 21.5 8.5 21.05 8.5 20.5V18H10L12 15L14 18H15.5V20.5C15.5 21.05 15.95 21.5 16.5 21.5H17.5C18.05 21.5 18.5 21.05 18.5 20.5V18H20L18 15L16 12L14 9L12 6L10 9L8 12L6 15L4 18Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
+
+const MoonIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3ZM12 19C8.13 19 5 15.87 5 12C5 8.13 8.13 5 12 5C15.87 5 19 8.13 19 12C19 15.87 15.87 19 12 19Z"
+        fill={color}
+      />
+      <path
+        d="M12 7C9.24 7 7 9.24 7 12C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12C17 9.24 14.76 7 12 7Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
+
+export {
+  WishIcon,
+  HomeIcon,
+  MyIcon,
+  LocationIcon,
+  ChevronDownIcon,
+  ArrowRightIcon,
+  GirlCrushIcon,
+  HeartIcon,
+  HighHeelIcon,
+  MoonIcon,
+};
