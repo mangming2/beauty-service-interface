@@ -6,14 +6,8 @@ import {
   LocationIcon,
   ChevronDownIcon,
   ArrowRightIcon,
-  GirlCrushIcon,
-  HeartIcon,
-  HighHeelIcon,
-  MoonIcon,
-  HomeIcon,
-  WishIcon,
-  MyIcon,
 } from "@/components/common/Icons";
+import { dreamy, girlcrush, glow, highteen, lovely } from "@/assets/3d-images";
 
 export default function Home() {
   return (
@@ -70,26 +64,50 @@ export default function Home() {
           <h2 className="text-lg font-semibold mb-4">Choose Your Concept</h2>
           <div className="grid grid-cols-4 gap-3">
             <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <GirlCrushIcon color="#ec4899" />
+              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
+                <Image
+                  src={girlcrush}
+                  alt="Girl Crush"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
               </div>
               <span className="text-xs">Girl Crush</span>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <HeartIcon color="#ec4899" />
+              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
+                <Image
+                  src={lovely}
+                  alt="Lovely & Fresh"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
               </div>
               <span className="text-xs">Lovely & Fresh</span>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <HighHeelIcon color="#ec4899" />
+              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
+                <Image
+                  src={glow}
+                  alt="Elegant & Glam"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
               </div>
               <span className="text-xs">Elegant & Glam</span>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <MoonIcon color="#ec4899" />
+              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
+                <Image
+                  src={dreamy}
+                  alt="Dreamy"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
               </div>
               <span className="text-xs">Dreamy</span>
             </div>
@@ -110,8 +128,14 @@ export default function Home() {
             <Card className="bg-gray-800 border-gray-700">
               <CardContent className="p-4">
                 <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-gradient-to-br from-pink-200 to-purple-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl">👩‍🎓</span>
+                  <div className="w-16 h-16 bg-gradient-to-br from-pink-200 to-purple-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <Image
+                      src={lovely}
+                      alt="Romantic School Idol"
+                      width={48}
+                      height={48}
+                      className="object-cover"
+                    />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium text-sm">
@@ -132,8 +156,14 @@ export default function Home() {
             <Card className="bg-gray-800 border-gray-700">
               <CardContent className="p-4">
                 <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl">👧</span>
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <Image
+                      src={highteen}
+                      alt="Y2K & Highteen Idol"
+                      width={48}
+                      height={48}
+                      className="object-cover"
+                    />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium text-sm">
