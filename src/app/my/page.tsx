@@ -20,7 +20,7 @@ interface BookingHistory {
 
 export default function MyPage() {
   const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
-  const [userProfile, setUserProfile] = useState({
+  const [userProfile, _setUserProfile] = useState({
     name: "K-pop Fan",
     email: "fan@example.com",
     avatar: "/dummy-profile.png",
@@ -30,10 +30,10 @@ export default function MyPage() {
     // localStorage에서 예약 정보 가져오기
     const savedDate = localStorage.getItem("selectedBookingDate");
     const savedTime = localStorage.getItem("selectedBookingTime");
-    const selectedConcepts = JSON.parse(
-      localStorage.getItem("selectedConcepts") || "[]"
-    );
-    const favoriteIdol = localStorage.getItem("favoriteIdol") || "";
+    // const selectedConcepts = JSON.parse(
+    //   localStorage.getItem("selectedConcepts") || "[]"
+    // );
+    // const favoriteIdol = localStorage.getItem("favoriteIdol") || "";
 
     if (savedDate && savedTime) {
       const newBooking: BookingHistory = {
