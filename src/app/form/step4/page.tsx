@@ -40,8 +40,8 @@ export default function FormPage4() {
       // 폼 제출 완료 (여기서 API 호출 등을 할 수 있습니다)
       console.log("Form submitted:", formData);
 
-      // 홈페이지로 리다이렉트
-      router.push("/");
+      // 패키지 추천 페이지로 리다이렉트
+      router.push("/form/complete");
     }
   };
 
