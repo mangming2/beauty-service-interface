@@ -8,8 +8,10 @@ import {
   ArrowRightIcon,
 } from "@/components/common/Icons";
 import { ConceptCard } from "@/components/main/ConceptCard";
+import { TrendCard } from "@/components/main/TrendCard";
 import { dreamy, girlcrush, glow, highteen, lovely } from "@/assets/3d-images";
 import { GapY } from "@/components/ui/gap";
+import { Divider } from "@/components/ui/divider";
 
 export default function Home() {
   return (
@@ -69,122 +71,82 @@ export default function Home() {
         {/* Choose Your Concept Section */}
         <div className="flex flex-col gap-[14px]">
           <h2 className="text-lg font-semibold">Choose Your Concept</h2>
-          <div className="flex gap-[4px]">
-            <ConceptCard
-              src={girlcrush}
-              alt="Girl Crush"
-              label="Girl Crush"
-              bgColor="bg-gray"
-            />
-            <ConceptCard
-              src={lovely}
-              alt="Lovely & Fresh"
-              label="Lovely & Fresh"
-              bgColor="bg-gray"
-            />
-            <ConceptCard
-              src={glow}
-              alt="Elegant & Glam"
-              label="Elegant & Glam"
-              bgColor="bg-gray"
-            />
-            <ConceptCard
-              src={dreamy}
-              alt="Dreamy"
-              label="Dreamy"
-              bgColor="bg-gray"
-            />
+          <div className="flex gap-[4px] overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { src: girlcrush, alt: "Girl Crush", label: "Girl Crush" },
+              { src: lovely, alt: "Lovely & Fresh", label: "Lovely & Fresh" },
+              { src: glow, alt: "Elegant & Glam", label: "Elegant & Glam" },
+              { src: dreamy, alt: "Dreamy", label: "Dreamy" },
+            ].map((concept, index) => (
+              <ConceptCard
+                key={index}
+                src={concept.src}
+                alt={concept.alt}
+                label={concept.label}
+              />
+            ))}
           </div>
         </div>
+
+        <GapY size={12} />
 
         {/* Latest Trends Section */}
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">Latest Trends in Korea</h2>
-            <Link href="#" className="text-pink-500 text-sm">
-              more &gt;
-            </Link>
+            <div className="flex items-baseline gap-[4px]">
+              <Link href="#" className="text-gray_1 text-sm">
+                more
+              </Link>
+              <ArrowRightIcon
+                color="#BCBCBC"
+                width={3}
+                height={7}
+                className="size-auto"
+              />
+            </div>
           </div>
 
-          <div className="space-y-4">
-            {/* Romantic School Idol Debut */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-4">
-                <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-gradient-to-br from-pink-200 to-purple-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={lovely}
-                      alt="Romantic School Idol"
-                      width={48}
-                      height={48}
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-sm">
-                      Romantic School Idol Debut
-                    </h3>
-                    <p className="text-xs text-gray-400">
-                      ♫ Black Pink · Yongin
-                    </p>
-                    <p className="text-xs text-gray-300 mt-1">
-                      Step into soft pink lights. Romantic idol debut come true.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <GapY size={16} />
 
-            {/* Y2K & Highteen Idol Debut */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-4">
-                <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={highteen}
-                      alt="Y2K & Highteen Idol"
-                      width={48}
-                      height={48}
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-sm">
-                      Y2K & Highteen Idol Debut
-                    </h3>
-                    <p className="text-xs text-gray-400">
-                      ♫ NewJeans · Gwangju
-                    </p>
-                    <p className="text-xs text-gray-300 mt-1">
-                      Be a teen heartthrob with kitsh, retro, glittery looks.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* K-traditional Idol Debut */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-4">
-                <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-gradient-to-br from-red-200 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl">👘</span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-sm">
-                      K-traditional Idol Debut
-                    </h3>
-                    <p className="text-xs text-gray-400">
-                      ♫ SUGA of BTS · Yongin
-                    </p>
-                    <p className="text-xs text-gray-300 mt-1">
-                      Flowing silk, soft colors, capture your own timeless
-                      beauty in Hanok.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="flex flex-col">
+            {[
+              {
+                title: "Romantic School Idol Debut",
+                artist: "Black Pink",
+                location: "Yongin",
+                description:
+                  "Step into soft pink lights. Romantic idol debut come true.",
+                imageSrc: "/dummy-profile.png",
+              },
+              {
+                title: "Y2K & Highteen Idol Debut",
+                artist: "NewJeans",
+                location: "Gwangju",
+                description:
+                  "Be a teen heartthrob with kitsh, retro, glittery looks.",
+                imageSrc: "/dummy-profile.png",
+              },
+              {
+                title: "K-traditional Idol Debut",
+                artist: "SUGA of BTS",
+                location: "Yongin",
+                description:
+                  "Flowing silk, soft colors, capture your own timeless beauty in Hanok.",
+                imageSrc: "/dummy-profile.png",
+              },
+            ].map((trend, index, array) => (
+              <div key={index}>
+                <TrendCard
+                  title={trend.title}
+                  artist={trend.artist}
+                  location={trend.location}
+                  description={trend.description}
+                  imageSrc={trend.imageSrc}
+                />
+                {index < array.length - 1 && <Divider />}
+              </div>
+            ))}
           </div>
         </div>
       </div>
