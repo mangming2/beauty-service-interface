@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,7 +8,7 @@ import {
 } from "@/components/common/Icons";
 import { ConceptCard } from "@/components/main/ConceptCard";
 import { TrendCard } from "@/components/main/TrendCard";
-import { dreamy, girlcrush, glow, highteen, lovely } from "@/assets/3d-images";
+import { dreamy, girlcrush, glow, lovely } from "@/assets/3d-images";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
 
