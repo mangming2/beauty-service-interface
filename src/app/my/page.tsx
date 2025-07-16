@@ -25,15 +25,20 @@ export default function MyPage() {
     email: "fan@example.com",
     avatar: "/dummy-profile.png",
   });
+  const [selectedConcepts, setSelectedConcepts] = useState<string[]>([]);
+  const [favoriteIdol, setFavoriteIdol] = useState<string>("");
 
   useEffect(() => {
     // localStorage에서 예약 정보 가져오기
     const savedDate = localStorage.getItem("selectedBookingDate");
     const savedTime = localStorage.getItem("selectedBookingTime");
-    // const selectedConcepts = JSON.parse(
-    //   localStorage.getItem("selectedConcepts") || "[]"
-    // );
-    // const favoriteIdol = localStorage.getItem("favoriteIdol") || "";
+    const concepts = JSON.parse(
+      localStorage.getItem("selectedConcepts") || "[]"
+    );
+    const idol = localStorage.getItem("favoriteIdol") || "";
+
+    setSelectedConcepts(concepts);
+    setFavoriteIdol(idol);
 
     if (savedDate && savedTime) {
       const newBooking: BookingHistory = {
@@ -228,9 +233,7 @@ export default function MyPage() {
               <div>
                 <p className="text-sm text-gray-400 mb-1">Favorite Concepts</p>
                 <div className="flex gap-2 flex-wrap">
-                  {JSON.parse(
-                    localStorage.getItem("selectedConcepts") || "[]"
-                  ).map((concept: string, index: number) => (
+                  {selectedConcepts.map((concept: string, index: number) => (
                     <Badge
                       key={index}
                       variant="secondary"
@@ -243,9 +246,7 @@ export default function MyPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-400 mb-1">Favorite Idol</p>
-                <p className="text-white">
-                  {localStorage.getItem("favoriteIdol") || "Not set"}
-                </p>
+                <p className="text-white">{favoriteIdol || "Not set"}</p>
               </div>
             </div>
           </CardContent>
