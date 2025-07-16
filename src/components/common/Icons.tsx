@@ -77,37 +77,44 @@ const MyIcon = ({ color = "white", ...rest }: IconProps) => {
 const LocationIcon = ({ color = "white", ...rest }: IconProps) => {
   return (
     <svg
-      width="16"
-      height="20"
-      viewBox="0 0 16 20"
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
       {...rest}
     >
       <path
-        d="M8 0C3.6 0 0 3.6 0 8C0 13.4 8 20 8 20S16 13.4 16 8C16 3.6 12.4 0 8 0ZM8 11C6.3 11 5 9.7 5 8C5 6.3 6.3 5 8 5C9.7 5 11 6.3 11 8C11 9.7 9.7 11 8 11Z"
-        fill={color}
+        d="M11.9833 13.1374C11.9833 11.8132 13.0927 10.7398 14.4612 10.7398C15.8297 10.7398 16.939 11.8132 16.939 13.1374C16.939 14.4616 15.8297 15.535 14.4612 15.535C13.0927 15.535 11.9833 14.4616 11.9833 13.1374Z"
+        fill={color ?? "white"}
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8.18916 12.3092C8.45116 9.23367 11.1073 6.8667 14.2965 6.8667H14.6259C17.8151 6.8667 20.4712 9.23367 20.7332 12.3092C20.8743 13.9651 20.3457 15.6094 19.2587 16.8957L15.6044 21.2201C15.0135 21.9193 13.9088 21.9193 13.318 21.2201L9.66367 16.8957C8.57672 15.6094 8.0481 13.9651 8.18916 12.3092ZM14.4612 9.63319C12.4611 9.63319 10.8397 11.2021 10.8397 13.1374C10.8397 15.0727 12.4611 16.6416 14.4612 16.6416C16.4613 16.6416 18.0827 15.0727 18.0827 13.1374C18.0827 11.2021 16.4613 9.63319 14.4612 9.63319Z"
+        fill={color ?? "white"}
       />
     </svg>
   );
 };
 
-const ChevronDownIcon = ({ color = "white", ...rest }: IconProps) => {
+const CaretDownIcon = ({ color = "white", ...rest }: IconProps) => {
   return (
     <svg
-      width="12"
-      height="8"
-      viewBox="0 0 12 8"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      width="29"
+      height="28"
+      viewBox="0 0 29 28"
+      fill="none"
+      preserveAspectRatio="none"
       {...rest}
     >
       <path
-        d="M1 1L6 6L11 1"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M19.718 10.2653C20.0532 10.6005 20.0532 11.144 19.718 11.4792L15.1402 16.057C14.805 16.3922 14.2615 16.3922 13.9263 16.057L9.34857 11.4792C9.01337 11.144 9.01337 10.6005 9.34857 10.2653C9.68377 9.93012 10.2272 9.93012 10.5624 10.2653L14.5333 14.2362L18.5041 10.2653C18.8393 9.93012 19.3828 9.93012 19.718 10.2653Z"
+        fill={color ?? "white"}
       />
     </svg>
   );
@@ -116,19 +123,19 @@ const ChevronDownIcon = ({ color = "white", ...rest }: IconProps) => {
 const ArrowRightIcon = ({ color = "white", ...rest }: IconProps) => {
   return (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      width="9"
+      height="18"
+      viewBox="0 0 9 18"
+      fill="none"
+      preserveAspectRatio="none"
       {...rest}
     >
       <path
-        d="M6 12L10 8L6 4"
-        stroke={color}
-        strokeWidth="2"
+        d="M1.30008 17.011L7.40067 9.89363C7.8415 9.37933 7.8415 8.62042 7.40067 8.10612L1.30008 0.988765"
+        stroke={color ?? "white"}
+        strokeWidth="1.71667"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </svg>
   );
@@ -219,7 +226,7 @@ export {
   HomeIcon,
   MyIcon,
   LocationIcon,
-  ChevronDownIcon,
+  CaretDownIcon,
   ArrowRightIcon,
   GirlCrushIcon,
   HeartIcon,

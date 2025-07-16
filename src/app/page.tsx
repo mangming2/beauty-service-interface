@@ -4,67 +4,73 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   LocationIcon,
-  ChevronDownIcon,
+  CaretDownIcon,
   ArrowRightIcon,
 } from "@/components/common/Icons";
 import { dreamy, girlcrush, glow, highteen, lovely } from "@/assets/3d-images";
+import { GapY } from "@/components/ui/gap";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen text-white">
+      <GapY size={8} />
       {/* Location Selector */}
-      <div className="bg-gray-800 px-4 py-3 border-t border-gray-700 flex justify-between items-center">
-        <div className="flex items-center gap-2">
+      <div className="px-[9px] flex justify-between items-center">
+        <div className="flex items-center gap-[2px]">
           <LocationIcon color="white" />
           <span className="text-sm">Seoul, South Korea</span>
         </div>
-        <ChevronDownIcon color="white" />
+        <CaretDownIcon color="white" />
       </div>
 
+      <GapY size={8} />
+
       {/* Main Content */}
-      <div className="px-4 py-4 space-y-6">
+      <div className="px-[16px]">
         {/* Most Popular Section */}
-        <div className="relative">
+        <div className="relative rounded-[8px] border border-card-border">
           <div className="absolute top-3 left-3 z-10 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
             Most Popular
           </div>
-          <div className="relative rounded-lg overflow-hidden">
+          <div>
             {/* aespa Giselle image */}
-            <div className="relative w-full h-64">
+            <div className="relative w-full h-[380px]">
               <Image
-                src="https://picsum.photos/200/300"
+                src="/dummy-profile.png"
                 alt="aespa Giselle Metallic Concept"
+                className="object-cover w-full h-full"
                 fill
-                className="object-cover"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <p className="text-sm font-medium">aespa Giselle</p>
-                <p className="text-xs text-gray-200">Metallic Concept</p>
-              </div>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gray-800 bg-opacity-90 p-3">
-              <div className="text-xs text-gray-300 mb-1">
-                #aespa #metallic #sm
-              </div>
-              <div className="text-xs text-gray-400">Songdo, Incheon</div>
+            <div className="flex flex-col gap-[4px] p-[12px]">
+              <div className="text-xs text-primary">#aespa #metallic #sm</div>
+              <div className="">Songdo, Incheon</div>
             </div>
           </div>
         </div>
 
+        <GapY size={12} />
+
         {/* CTA Banner */}
-        <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 p-4 h-auto flex justify-between items-center">
-          <span className="font-medium">Discover your K-pop style!</span>
-          <ArrowRightIcon color="white" />
+        <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-between items-center">
+          <div className="font-medium">Discover your K-pop style!</div>
+          <ArrowRightIcon
+            color="white"
+            width={7}
+            height={16}
+            className="size-auto"
+          />
         </Button>
 
+        <GapY size={12} />
+
         {/* Choose Your Concept Section */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Choose Your Concept</h2>
-          <div className="grid grid-cols-4 gap-3">
+        <div className="flex flex-col gap-[14px]">
+          <h2 className="text-lg font-semibold">Choose Your Concept</h2>
+          <div className="flex gap-[4px]">
             <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
+              <div className="w-[100px] h-[100px] px-[20px] py-[18px] bg-gray rounded-lg flex items-center justify-center overflow-hidden">
                 <Image
                   src={girlcrush}
                   alt="Girl Crush"
