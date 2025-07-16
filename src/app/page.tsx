@@ -7,6 +7,7 @@ import {
   CaretDownIcon,
   ArrowRightIcon,
 } from "@/components/common/Icons";
+import { ConceptCard } from "@/components/main/ConceptCard";
 import { dreamy, girlcrush, glow, highteen, lovely } from "@/assets/3d-images";
 import { GapY } from "@/components/ui/gap";
 
@@ -69,54 +70,30 @@ export default function Home() {
         <div className="flex flex-col gap-[14px]">
           <h2 className="text-lg font-semibold">Choose Your Concept</h2>
           <div className="flex gap-[4px]">
-            <div className="text-center">
-              <div className="w-[100px] h-[100px] px-[20px] py-[18px] bg-gray rounded-lg flex items-center justify-center overflow-hidden">
-                <Image
-                  src={girlcrush}
-                  alt="Girl Crush"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
-              </div>
-              <span className="text-xs">Girl Crush</span>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
-                <Image
-                  src={lovely}
-                  alt="Lovely & Fresh"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
-              </div>
-              <span className="text-xs">Lovely & Fresh</span>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
-                <Image
-                  src={glow}
-                  alt="Elegant & Glam"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
-              </div>
-              <span className="text-xs">Elegant & Glam</span>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-pink-200 rounded-lg flex items-center justify-center mx-auto mb-2 overflow-hidden">
-                <Image
-                  src={dreamy}
-                  alt="Dreamy"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
-              </div>
-              <span className="text-xs">Dreamy</span>
-            </div>
+            <ConceptCard
+              src={girlcrush}
+              alt="Girl Crush"
+              label="Girl Crush"
+              bgColor="bg-gray"
+            />
+            <ConceptCard
+              src={lovely}
+              alt="Lovely & Fresh"
+              label="Lovely & Fresh"
+              bgColor="bg-gray"
+            />
+            <ConceptCard
+              src={glow}
+              alt="Elegant & Glam"
+              label="Elegant & Glam"
+              bgColor="bg-gray"
+            />
+            <ConceptCard
+              src={dreamy}
+              alt="Dreamy"
+              label="Dreamy"
+              bgColor="bg-gray"
+            />
           </div>
         </div>
 
