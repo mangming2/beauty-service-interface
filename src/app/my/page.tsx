@@ -20,7 +20,7 @@ interface BookingHistory {
 
 export default function MyPage() {
   const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
-  const [userProfile, _setUserProfile] = useState({
+  const [userProfile] = useState({
     name: "K-pop Fan",
     email: "fan@example.com",
     avatar: "/dummy-profile.png",
