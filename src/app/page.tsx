@@ -56,15 +56,17 @@ export default function Home() {
         <GapY size={12} />
 
         {/* CTA Banner */}
-        <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-between items-center">
-          <div className="font-medium">Discover your K-pop style!</div>
-          <ArrowRightIcon
-            color="white"
-            width={7}
-            height={16}
-            className="size-auto"
-          />
-        </Button>
+        <Link href="/form">
+          <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-between items-center">
+            <div className="font-medium">Discover your K-pop style!</div>
+            <ArrowRightIcon
+              color="white"
+              width={7}
+              height={16}
+              className="size-auto"
+            />
+          </Button>
+        </Link>
 
         <GapY size={12} />
 
