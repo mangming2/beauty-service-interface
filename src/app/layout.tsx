@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Beauty Service Interface",
+  title: "DOKI",
   description: "A modern beauty service interface built with Next.js",
 };
 
