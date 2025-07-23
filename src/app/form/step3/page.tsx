@@ -9,23 +9,32 @@ import { GapY } from "@/components/ui/gap";
 import { format } from "date-fns";
 
 export default function FormPage3() {
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [dateRange, setDateRange] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({
+    from: undefined,
+    to: undefined,
+  });
   const router = useRouter();
 
   const handleNext = () => {
-    if (selectedDates.length > 0) {
-      // 선택된 날짜들을 localStorage에 저장
+    if (dateRange.from && dateRange.to) {
+      // 선택된 날짜 범위를 localStorage에 저장
       localStorage.setItem(
-        "selectedDates",
-        JSON.stringify(selectedDates.map(date => date.toISOString()))
+        "selectedDateRange",
+        JSON.stringify({
+          from: dateRange.from.toISOString(),
+          to: dateRange.to.toISOString(),
+        })
       );
       router.push("/form/step4");
     }
   };
 
   return (
-    <div className="min-h-screen text-white bg-black flex flex-col">
-      <div className="flex-1">
+    <div className="text-white bg-transparent flex flex-col">
+      <div className="flex flex-col">
         <GapY size={8} />
 
         {/* Header */}
@@ -38,10 +47,15 @@ export default function FormPage3() {
         {/* Calendar */}
         <div className="px-[16px]">
           <Calendar
-            mode="multiple"
-            selected={selectedDates}
-            onSelect={dates => setSelectedDates(dates || [])}
-            className="rounded-md border border-gray-600 bg-gray-800"
+            mode="range"
+            selected={dateRange}
+            onSelect={range =>
+              setDateRange({
+                from: range?.from,
+                to: range?.to,
+              })
+            }
+            className="rounded-md bg-transparent"
             classNames={{
               months:
                 "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
@@ -72,34 +86,30 @@ export default function FormPage3() {
           />
         </div>
 
-        {/* Selected Dates Display */}
-        {selectedDates.length > 0 && (
+        {/* Selected Date Range Display */}
+        {dateRange.from && dateRange.to && (
           <div className="px-[16px] mt-4">
-            <p className="text-sm text-gray-400 mb-2">선택된 날짜:</p>
+            <p className="text-sm text-gray-400 mb-2">선택된 기간:</p>
             <div className="flex flex-wrap gap-2">
-              {selectedDates.map((date, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-pink-500 text-white text-sm rounded-full"
-                >
-                  {format(date, "MMM dd")}
-                </span>
-              ))}
+              <span className="px-3 py-1 bg-pink-500 text-white text-sm rounded-full">
+                {format(dateRange.from, "MMM dd")} -{" "}
+                {format(dateRange.to, "MMM dd")}
+              </span>
             </div>
           </div>
         )}
       </div>
 
       {/* Navigation */}
-      <div className="p-4 bg-black border-t border-gray-800">
+      <div className="p-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
-            selectedDates.length > 0
+            dateRange.from && dateRange.to
               ? "bg-pink-500 hover:bg-pink-600"
               : "bg-gray-600 cursor-not-allowed"
           }`}
           onClick={handleNext}
-          disabled={selectedDates.length === 0}
+          disabled={!dateRange.from || !dateRange.to}
         >
           <span className="font-medium">Next</span>
           <ArrowRightIcon

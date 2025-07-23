@@ -100,13 +100,15 @@ export default function FormComplete() {
       localStorage.getItem("selectedConcepts") || "[]"
     );
     const favoriteIdol = localStorage.getItem("favoriteIdol") || "";
-    const dates = JSON.parse(localStorage.getItem("selectedDates") || "[]");
+    const dateRange = JSON.parse(
+      localStorage.getItem("selectedDateRange") || "{}"
+    );
     const region = localStorage.getItem("selectedRegion") || "";
 
     setFormData({
       concepts,
       favoriteIdol,
-      dates,
+      dateRange,
       region,
     });
   }, []);

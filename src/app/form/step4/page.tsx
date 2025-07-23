@@ -46,8 +46,8 @@ export default function FormPage4() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-black flex flex-col">
-      <div className="flex-1">
+    <div className="text-white bg-transparent flex flex-col">
+      <div className="flex flex-col">
         <GapY size={8} />
 
         {/* Header */}
@@ -74,7 +74,9 @@ export default function FormPage4() {
                   <div
                     className={`w-8 h-8 rounded-full ${region.color} mx-auto mb-2`}
                   ></div>
-                  <div className="text-sm font-medium">{region.name}</div>
+                  <div className="text-sm text-white font-medium">
+                    {region.name}
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -95,7 +97,7 @@ export default function FormPage4() {
       </div>
 
       {/* Navigation */}
-      <div className="p-4 bg-black border-t border-gray-800">
+      <div className="p-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             selectedRegion
@@ -105,7 +107,7 @@ export default function FormPage4() {
           onClick={handleSubmit}
           disabled={!selectedRegion}
         >
-          <span className="font-medium">Start Your debut</span>
+          <span className="font-medium">Next</span>
           <ArrowRightIcon
             color="white"
             width={7}

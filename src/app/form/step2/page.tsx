@@ -20,8 +20,8 @@ export default function FormPage2() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-transparent flex flex-col">
-      <div className="flex-1">
+    <div className="text-white bg-transparent flex flex-col">
+      <div className="flex flex-col">
         <GapY size={20} />
 
         {/* Header */}
