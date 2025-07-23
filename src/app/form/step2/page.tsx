@@ -20,15 +20,13 @@ export default function FormPage2() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-black flex flex-col">
+    <div className="min-h-screen text-white bg-transparent flex flex-col">
       <div className="flex-1">
-        <GapY size={8} />
+        <GapY size={20} />
 
         {/* Header */}
         <div className="px-[16px]">
-          <h1 className="text-xl font-semibold mb-6">
-            가장 좋아하는 아이돌은 누구인가요?
-          </h1>
+          <h1 className="text-xl font-semibold">Who’s your favorite idol?</h1>
         </div>
 
         {/* Input Field */}
@@ -44,7 +42,7 @@ export default function FormPage2() {
       </div>
 
       {/* Navigation */}
-      <div className="p-4 bg-black border-t border-gray-800">
+      <div className="p-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             favoriteIdol.trim()
