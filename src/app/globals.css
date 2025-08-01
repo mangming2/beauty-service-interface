@@ -45,6 +45,26 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Typography styles */
+  --font-size-title-lg: 24px;
+  --font-size-title-md: 20px;
+  --font-size-title-sm: 18px;
+  --font-size-text-lg: 16px;
+  --font-size-text-md: 14px;
+  --font-size-text-sm: 12px;
+  --font-size-caption-lg: 16px;
+  --font-size-caption-md: 12px;
+  --font-size-caption-sm: 10px;
+
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+
+  --line-height-title: 130%;
+  --line-height-text: 140%;
+  --line-height-caption-lg: 120%;
+  --line-height-caption: 140%;
 }
 
 :root {
@@ -91,6 +111,21 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family:
+      "Pretendard Variable",
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      "Helvetica Neue",
+      "Segoe UI",
+      "Apple SD Gothic Neo",
+      "Noto Sans KR",
+      "Malgun Gothic",
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol",
+      sans-serif;
   }
 }
 
@@ -101,5 +136,60 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
+  }
+
+  /* Typography utility classes */
+  .title-lg {
+    font-size: var(--font-size-title-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-title);
+  }
+
+  .title-md {
+    font-size: var(--font-size-title-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-title);
+  }
+
+  .title-sm {
+    font-size: var(--font-size-title-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-title);
+  }
+
+  .text-lg {
+    font-size: var(--font-size-text-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-text);
+  }
+
+  .text-md {
+    font-size: var(--font-size-text-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-text);
+  }
+
+  .text-sm {
+    font-size: var(--font-size-text-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-text);
+  }
+
+  .caption-lg {
+    font-size: var(--font-size-caption-lg);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-caption-lg);
+  }
+
+  .caption-md {
+    font-size: var(--font-size-caption-md);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-caption);
+  }
+
+  .caption-sm {
+    font-size: var(--font-size-caption-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-caption);
   }
 }

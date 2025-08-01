@@ -20,7 +20,7 @@ export default function Home() {
       <div className="px-[9px] flex justify-between items-center">
         <div className="flex items-center gap-[2px]">
           <LocationIcon color="white" />
-          <span className="text-sm">Seoul, South Korea</span>
+          <span className="text-lg">Seoul, South Korea</span>
         </div>
         <CaretDownIcon color="white" />
       </div>
@@ -31,7 +31,7 @@ export default function Home() {
       <div className="px-[16px]">
         {/* Most Popular Section */}
         <div className="relative rounded-[8px] border border-card-border">
-          <div className="absolute top-3 left-3 z-10 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+          <div className="absolute top-3 left-3 z-10 bg-black bg-opacity-50 text-white px-2 py-1 rounded caption-sm">
             Most Popular
           </div>
           <div>
@@ -46,8 +46,10 @@ export default function Home() {
               />
             </div>
             <div className="flex flex-col gap-[4px] p-[12px]">
-              <div className="text-xs text-primary">#aespa #metallic #sm</div>
-              <div className="">Songdo, Incheon</div>
+              <div className="caption-sm text-primary">
+                #aespa #metallic #sm
+              </div>
+              <div className="text-md">Songdo, Incheon</div>
             </div>
           </div>
         </div>
@@ -57,7 +59,7 @@ export default function Home() {
         {/* CTA Banner */}
         <Link href="/form/step1">
           <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-between items-center cursor-pointer">
-            <div className="font-medium">Discover your K-pop style!</div>
+            <div className="text-md">Discover your K-pop style!</div>
             <div className="flex w-[28px] items-center justify-center py-[6px]">
               <ArrowRightIcon
                 color="white"
@@ -73,7 +75,7 @@ export default function Home() {
 
         {/* Choose Your Concept Section */}
         <div className="flex flex-col gap-[14px]">
-          <h2 className="text-lg font-semibold">Choose Your Concept</h2>
+          <h2 className="title-md">Choose Your Concept</h2>
           <div className="flex gap-[4px] overflow-x-auto pb-2 scrollbar-hide">
             {[
               { src: girlcrush, alt: "Girl Crush", label: "Girl Crush" },
@@ -96,9 +98,9 @@ export default function Home() {
         {/* Latest Trends Section */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Latest Trends in Korea</h2>
+            <h2 className="title-md">Latest Trends in Korea</h2>
             <div className="flex items-baseline gap-[4px]">
-              <Link href="#" className="text-gray_1 text-sm">
+              <Link href="#" className="text-gray_1 caption-md">
                 more
               </Link>
               <ArrowRightIcon
