@@ -71,6 +71,8 @@ export default function Home() {
           </Button>
         </Link>
 
+        <Link href="/recommend">나중에 삭제할것</Link>
+
         <GapY size={12} />
 
         {/* Choose Your Concept Section */}
