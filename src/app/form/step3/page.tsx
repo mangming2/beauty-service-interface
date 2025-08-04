@@ -17,6 +17,7 @@ export default function FormPage3() {
     from: undefined,
     to: undefined,
   });
+  console.log(dateRange);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const router = useRouter();
 
@@ -96,7 +97,8 @@ export default function FormPage3() {
                 }
                 month={currentMonth}
                 onMonthChange={setCurrentMonth}
-                className="rounded-md bg-transparent w-full h-full flex flex-col"
+                todayClassName="bg-pink-500 text-white rounded-md"
+                className={`rounded-md bg-transparent w-full h-full flex flex-col ${dateRange.from ? "date-selected" : ""}`}
                 classNames={{
                   months: "flex flex-col w-full h-full flex-1",
                   month: "space-y-4 w-full h-full flex flex-col flex-1",
@@ -112,15 +114,16 @@ export default function FormPage3() {
                   head_cell:
                     "text-gray-400 rounded-md w-8 font-normal text-[0.8rem] text-white flex-1",
                   row: "flex w-full mt-2 flex-1",
-                  cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-pink-500/10 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 flex-1",
-                  day: "h-full w-full p-0 font-normal aria-selected:opacity-100 hover:bg-pink-500/20 text-white flex items-center justify-center",
+                  cell: "text-center text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-[999px] last:[&:has([aria-selected])]:rounded-r-[999px] focus-within:relative focus-within:z-20 flex-1 bg-transparent",
+                  day: "h-full w-full p-0 font-normal aria-selected:opacity-100 hover:bg-secondary/20 text-white flex items-center justify-center bg-transparent",
                   day_selected:
-                    "bg-pink-500 text-white hover:bg-pink-600 hover:text-white focus:bg-pink-500 focus:text-white",
-                  day_today: "bg-gray-600 text-white",
+                    "bg-secondary text-white hover:bg-secondary/80 hover:text-white focus:bg-secondary focus:text-white",
+                  today: dateRange
+                    ? "bg-transparent text-white"
+                    : "bg-pink-500 text-white rounded-md",
                   day_outside: "text-gray-500 opacity-50",
                   day_disabled: "text-gray-500 opacity-50 line-through",
-                  day_range_middle:
-                    "aria-selected:bg-pink-500 aria-selected:text-white",
+                  day_range_middle: "bg-secondary text-white",
                   day_hidden: "invisible",
                 }}
               />
