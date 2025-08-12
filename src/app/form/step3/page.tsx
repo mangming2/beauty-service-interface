@@ -52,7 +52,7 @@ export default function FormPage3() {
   };
 
   return (
-    <div className="text-white flex flex-col min-h-screen">
+    <div className="text-white flex flex-col flex-1">
       <div className="flex flex-col flex-1">
         <GapY size={8} />
 
@@ -133,7 +133,7 @@ export default function FormPage3() {
       </div>
 
       {/* Navigation */}
-      <div className="p-4 border-t border-gray-800">
+      <div className="mt-auto p-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             dateRange.from && dateRange.to

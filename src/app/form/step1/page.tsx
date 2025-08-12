@@ -60,8 +60,8 @@ export default function FormPage1() {
   };
 
   return (
-    <div className="text-white bg-transparent flex flex-col">
-      <div className="flex flex-col">
+    <div className="text-white bg-transparent flex flex-col flex-1">
+      <div className="flex-1">
         <GapY size={20} />
         {/* Header */}
         <div className="px-[16px]">
@@ -73,16 +73,16 @@ export default function FormPage1() {
         <GapY size={32} />
 
         {/* Concept Selection */}
-        <div className="grid grid-cols-3 gap-x-[20px] gap-y-[36px]">
+        <div className="flex items-center justify-center flex-wrap gap-x-[20px] gap-y-[36px]">
           {concepts.map(concept => (
             <Card
               key={concept.id}
-              className="py-0 border-none cursor-pointer transition-all duration-200 bg-transparent"
+              className="w-[112px] py-0 px-0 border-none cursor-pointer transition-all duration-200 bg-transparent"
               onClick={() => handleConceptClick(concept.id)}
             >
-              <CardContent className="flex flex-col gap-[8px] items-center">
+              <CardContent className="flex p-0 flex-col gap-[8px] items-center">
                 <div
-                  className={`flex items-center justify-center w-[112px] h-[118px] py-[23px] px-[31px] rounded-[6px] ${
+                  className={`flex items-center justify-center w-[112px] h-[118px] rounded-[6px] ${
                     selectedConcepts.includes(concept.id)
                       ? "bg-secondary"
                       : "bg-gray"
@@ -91,12 +91,12 @@ export default function FormPage1() {
                   <Image
                     src={concept.icon}
                     alt={concept.name}
-                    width={50}
-                    height={50}
+                    width={60}
+                    height={60}
                     className="object-contain"
                   />
                 </div>
-                <div className="text-white text-xs font-medium w-full text-center">
+                <div className="text-white text-sm font-medium w-full text-center whitespace-nowrap">
                   {concept.name}
                 </div>
               </CardContent>
@@ -106,7 +106,7 @@ export default function FormPage1() {
       </div>
 
       {/* Navigation */}
-      <div className="p-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto p-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             selectedConcepts.length > 0

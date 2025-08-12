@@ -20,29 +20,31 @@ export default function FormPage2() {
   };
 
   return (
-    <div className="text-white bg-transparent flex flex-col">
-      <div className="flex flex-col">
+    <div className="text-white bg-transparent flex flex-col flex-1">
+      <div className="flex-1 flex flex-col">
         <GapY size={20} />
 
-        {/* Header */}
-        <div className="px-[16px]">
-          <h1 className="text-xl font-semibold">Who’s your favorite idol?</h1>
-        </div>
+        <div className="flex-1 flex flex-col gap-y-[244px]">
+          {/* Header */}
+          <div className="px-[16px]">
+            <h1 className="text-xl font-semibold">Who’s your favorite idol?</h1>
+          </div>
 
-        {/* Input Field */}
-        <div className="px-[16px]">
-          <Input
-            type="text"
-            placeholder="그룹 또는 아이돌 이름을 입력하세요"
-            value={favoriteIdol}
-            onChange={e => setFavoriteIdol(e.target.value)}
-            className="w-full h-[52px] bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-pink-500 focus:ring-pink-500"
-          />
+          {/* Input Field */}
+          <div className="px-[16px]">
+            <Input
+              type="text"
+              placeholder="그룹 또는 아이돌 이름을 입력하세요"
+              value={favoriteIdol}
+              onChange={e => setFavoriteIdol(e.target.value)}
+              className="w-full h-[52px] bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-pink-500 focus:ring-pink-500"
+            />
+          </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="p-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto p-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             favoriteIdol.trim()
