@@ -7,7 +7,6 @@ import {
   ArrowRightIcon,
 } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
-import { Divider } from "@/components/ui/divider";
 
 export default function RecommendPage() {
   return (
