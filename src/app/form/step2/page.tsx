@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
+import { ProgressBar } from "@/components/form/ProgressBar";
 
 export default function FormPage2() {
   const [favoriteIdol, setFavoriteIdol] = useState("");
@@ -22,12 +23,16 @@ export default function FormPage2() {
   return (
     <div className="text-white bg-transparent flex flex-col flex-1">
       <div className="flex-1 flex flex-col">
+        <GapY size={12} />
+        <ProgressBar />
         <GapY size={20} />
 
         <div className="flex-1 flex flex-col gap-y-[244px]">
           {/* Header */}
           <div className="px-[16px]">
-            <h1 className="text-xl font-semibold">Who’s your favorite idol?</h1>
+            <h1 className="text-xl font-semibold">
+              Which idol do you want to be?
+            </h1>
           </div>
 
           {/* Input Field */}

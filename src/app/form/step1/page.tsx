@@ -13,6 +13,7 @@ import glow from "@/assets/3d-images/glow.png";
 import dreamy from "@/assets/3d-images/dreamy.png";
 import highteen from "@/assets/3d-images/highteen.png";
 import etc from "@/assets/3d-images/etc.png";
+import { ProgressBar } from "@/components/form/ProgressBar";
 
 const concepts = [
   {
@@ -62,6 +63,10 @@ export default function FormPage1() {
   return (
     <div className="text-white bg-transparent flex flex-col flex-1">
       <div className="flex-1">
+        <GapY size={12} />
+
+        <ProgressBar />
+
         <GapY size={20} />
         {/* Header */}
         <div className="px-[16px]">
