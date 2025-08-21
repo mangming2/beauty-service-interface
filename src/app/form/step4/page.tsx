@@ -53,16 +53,16 @@ export default function FormPage4() {
   };
 
   return (
-    <div className="text-white flex flex-col flex-1">
-      <div className="flex flex-col flex-1">
-        <GapY size={8} />
+    <div className="text-white bg-transparent flex flex-col flex-1">
+      <div className="flex-1 flex flex-col">
+        <GapY size={12} />
         <ProgressBar />
         <GapY size={12} />
 
         {/* Header */}
         <div className="px-[16px]">
           <h1 className="text-xl font-semibold mb-6">
-            언제 투어에 참여하고 싶으신가요?
+            When would you like to join the tour?
           </h1>
         </div>
 
@@ -100,7 +100,7 @@ export default function FormPage4() {
                 }
                 month={currentMonth}
                 onMonthChange={setCurrentMonth}
-                todayClassName="bg-pink-500 text-white rounded-md"
+                todayClassName="text-pink-font"
                 className={`rounded-md bg-transparent w-full h-full flex flex-col ${dateRange.from ? "date-selected" : ""}`}
                 classNames={{
                   months: "flex flex-col w-full h-full flex-1",
@@ -123,7 +123,7 @@ export default function FormPage4() {
                     "bg-secondary text-white hover:bg-secondary/80 hover:text-white focus:bg-secondary focus:text-white",
                   today: dateRange
                     ? "bg-transparent text-white"
-                    : "bg-pink-500 text-white rounded-md",
+                    : "bg-secondary text-pink-font rounded-md",
                   day_outside: "text-gray-500 opacity-50",
                   day_disabled: "text-gray-500 opacity-50 line-through",
                   day_range_middle: "bg-secondary text-white",
