@@ -113,10 +113,6 @@ export default function FormComplete() {
     });
   }, []);
 
-  const handleBack = () => {
-    router.push("/");
-  };
-
   const handlePackageClick = (packageId: string) => {
     // 패키지 상세 페이지로 이동
     router.push(`/package/${packageId}`);
