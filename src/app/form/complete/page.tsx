@@ -123,45 +123,19 @@ export default function FormComplete() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-black">
+    <div className="min-h-screen text-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleBack}
-          className="p-0 h-auto"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.5 12.5L5.5 8L10.5 3.5"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Button>
-        <h1 className="text-lg font-semibold">My Idol Form</h1>
-        <div className="w-6"></div> {/* Spacer for centering */}
-      </div>
 
       <div className="px-4 py-6">
         {/* Tags Section */}
         <div className="mb-6">
-          <h2 className="text-sm font-medium mb-3">All summed up in tags</h2>
+          <h2 className="title-md font-medium mb-3">All summed up in tags</h2>
           <div className="flex gap-2 flex-wrap">
             {formData?.concepts.map((concept: string, index: number) => (
               <Badge
                 key={index}
                 variant="secondary"
-                className="bg-gray-700 text-gray-300 hover:bg-gray-600"
+                className="text-lg p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
               >
                 {concept}
               </Badge>
@@ -169,7 +143,7 @@ export default function FormComplete() {
             {formData?.favoriteIdol && (
               <Badge
                 variant="secondary"
-                className="bg-gray-700 text-gray-300 hover:bg-gray-600"
+                className="text-lg p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
               >
                 {formData.favoriteIdol}
               </Badge>
