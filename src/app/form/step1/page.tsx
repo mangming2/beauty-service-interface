@@ -7,31 +7,45 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
-import girlCrush from "@/assets/3d-images/girlcrush.png";
-import lovely from "@/assets/3d-images/lovely.png";
-import glow from "@/assets/3d-images/glow.png";
-import dreamy from "@/assets/3d-images/dreamy.png";
-import highteen from "@/assets/3d-images/highteen.png";
-import etc from "@/assets/3d-images/etc.png";
+import GirlCrush from "@/assets/3d-images/girl-crush.png";
+import LovelyFresh from "@/assets/3d-images/lovely-fresh.png";
+import ElegantGlam from "@/assets/3d-images/elegant-glam.png";
+import Dreamy from "@/assets/3d-images/dreamy.png";
+import Highteen from "@/assets/3d-images/highteen.png";
+import Etc from "@/assets/3d-images/etc.png";
 import { ProgressBar } from "@/components/form/ProgressBar";
 
 const concepts = [
   {
     id: "girlcrush",
     name: "Girl Crush",
-    icon: girlCrush,
-    color: "bg-pink-500",
+    icon: GirlCrush,
   },
-  { id: "lovely", name: "Lovely & Fresh", icon: lovely, color: "bg-pink-300" },
+  {
+    id: "lovely",
+    name: "Lovely & Fresh",
+    icon: LovelyFresh,
+  },
   {
     id: "elegant",
     name: "Elegant & Glam",
-    icon: glow,
-    color: "bg-purple-500",
+    icon: ElegantGlam,
   },
-  { id: "dreamy", name: "Dreamy", icon: dreamy, color: "bg-blue-400" },
-  { id: "highteen", name: "Highteen", icon: highteen, color: "bg-green-400" },
-  { id: "etc", name: "Etc", icon: etc, color: "bg-gray-500" },
+  {
+    id: "dreamy",
+    name: "Dreamy",
+    icon: Dreamy,
+  },
+  {
+    id: "highteen",
+    name: "Highteen",
+    icon: Highteen,
+  },
+  {
+    id: "etc",
+    name: "Etc",
+    icon: Etc,
+  },
 ];
 
 export default function FormPage1() {

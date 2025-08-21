@@ -8,7 +8,12 @@ import {
 } from "@/components/common/Icons";
 import { ConceptCard } from "@/components/main/ConceptCard";
 import { TrendCard } from "@/components/main/TrendCard";
-import { dreamy, girlcrush, glow, lovely } from "@/assets/3d-images";
+import GirlCrush from "@/assets/3d-images/girl-crush.png";
+import LovelyFresh from "@/assets/3d-images/lovely-fresh.png";
+import ElegantGlam from "@/assets/3d-images/elegant-glam.png";
+import Dreamy from "@/assets/3d-images/dreamy.png";
+import Highteen from "@/assets/3d-images/highteen.png";
+import Etc from "@/assets/3d-images/etc.png";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
 
@@ -80,10 +85,20 @@ export default function Home() {
           <h2 className="title-md">Choose Your Concept</h2>
           <div className="flex gap-[4px] overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { src: girlcrush, alt: "Girl Crush", label: "Girl Crush" },
-              { src: lovely, alt: "Lovely & Fresh", label: "Lovely & Fresh" },
-              { src: glow, alt: "Elegant & Glam", label: "Elegant & Glam" },
-              { src: dreamy, alt: "Dreamy", label: "Dreamy" },
+              { src: GirlCrush, alt: "Girl Crush", label: "Girl Crush" },
+              {
+                src: LovelyFresh,
+                alt: "Lovely & Fresh",
+                label: "Lovely & Fresh",
+              },
+              {
+                src: ElegantGlam,
+                alt: "Elegant & Glam",
+                label: "Elegant & Glam",
+              },
+              { src: Dreamy, alt: "Dreamy", label: "Dreamy" },
+              { src: Highteen, alt: "Highteen", label: "Highteen" },
+              { src: Etc, alt: "Etc", label: "Etc" },
             ].map((concept, index) => (
               <ConceptCard
                 key={index}
