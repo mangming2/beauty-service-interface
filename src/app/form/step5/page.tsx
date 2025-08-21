@@ -38,8 +38,8 @@ export default function FormPage5() {
   };
 
   return (
-    <div className="text-white bg-transparent flex flex-col">
-      <div className="flex flex-col">
+    <div className="text-white bg-transparent flex flex-col flex-1">
+      <div className="flex-1 flex flex-col">
         <GapY size={8} />
         <ProgressBar />
         <GapY size={12} />
@@ -60,11 +60,11 @@ export default function FormPage5() {
       </div>
 
       {/* Navigation */}
-      <div className="p-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto p-4 bg-transparent">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             selectedRegion
-              ? "bg-pink-500 hover:bg-pink-600"
+              ? "bg-secondary text-pink-font hover:bg-secondary/80 hover:text-pink-font"
               : "bg-gray-600 cursor-not-allowed"
           }`}
           onClick={handleSubmit}

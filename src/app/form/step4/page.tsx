@@ -136,7 +136,7 @@ export default function FormPage4() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto p-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto p-4 bg-transparent">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             dateRange.from && dateRange.to
