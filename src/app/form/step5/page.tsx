@@ -9,24 +9,32 @@ import { ProgressBar } from "@/components/form/ProgressBar";
 import SeoulMap from "@/components/common/SeoulMap";
 
 export default function FormPage5() {
-  const [selectedRegion, setSelectedRegion] = useState<string>("");
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const router = useRouter();
 
   const handleRegionClick = (regionId: string) => {
-    setSelectedRegion(regionId);
+    setSelectedRegions(prev => {
+      if (prev.includes(regionId)) {
+        // 이미 선택된 지역이면 제거
+        return prev.filter(id => id !== regionId);
+      } else {
+        // 새로운 지역이면 추가
+        return [...prev, regionId];
+      }
+    });
   };
 
   const handleSubmit = () => {
-    if (selectedRegion) {
-      // 선택된 지역을 localStorage에 저장
-      localStorage.setItem("selectedRegion", selectedRegion);
+    if (selectedRegions.length > 0) {
+      // 선택된 지역들을 localStorage에 저장
+      localStorage.setItem("selectedRegions", JSON.stringify(selectedRegions));
 
       // 모든 폼 데이터를 수집
       const formData = {
         concepts: JSON.parse(localStorage.getItem("selectedConcepts") || "[]"),
         favoriteIdol: localStorage.getItem("favoriteIdol") || "",
         dates: JSON.parse(localStorage.getItem("selectedDates") || "[]"),
-        region: selectedRegion,
+        regions: selectedRegions,
       };
 
       // 폼 제출 완료 (여기서 API 호출 등을 할 수 있습니다)
@@ -46,16 +54,26 @@ export default function FormPage5() {
 
         {/* Header */}
         <div className="px-[16px]">
-          <h1 className="text-xl font-semibold mb-6">
-            어디를 방문하고 싶으신가요?
+          <h1 className="h-[68px] text-xl font-semibold mb-6">
+            Where would you like to visit?
           </h1>
         </div>
         <div className="px-[16px]">
           <SeoulMap
-            selectedId={selectedRegion}
+            selectedIds={selectedRegions}
             onSelect={handleRegionClick}
             className="w-full max-w-[480px]"
           />
+        </div>
+
+        <GapY size={12} />
+
+        <div className="px-[16px] flex justify-center">
+          {selectedRegions.length > 0 && (
+            <div className="p-[12px] bg-gray rounded-[32px] text-lg text-center w-fit">
+              {selectedRegions.join(", ")}
+            </div>
+          )}
         </div>
       </div>
 
@@ -63,12 +81,12 @@ export default function FormPage5() {
       <div className="mt-auto p-4 bg-transparent">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
-            selectedRegion
-              ? "bg-secondary text-pink-font hover:bg-secondary/80 hover:text-pink-font"
+            selectedRegions.length > 0
+              ? "bg-pink-500 hover:bg-pink-600"
               : "bg-gray-600 cursor-not-allowed"
           }`}
           onClick={handleSubmit}
-          disabled={!selectedRegion}
+          disabled={selectedRegions.length === 0}
         >
           <span className="font-medium">Next</span>
           <ArrowRightIcon

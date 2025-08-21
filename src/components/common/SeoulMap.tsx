@@ -4,6 +4,7 @@ import { useCallback } from "react";
 
 type SeoulMapProps = {
   selectedId?: string;
+  selectedIds?: string[];
   onSelect?: (id: string) => void;
   className?: string;
 };
@@ -13,6 +14,7 @@ type SeoulMapProps = {
 // If you export per-district paths with proper ids from Figma, replace these ids accordingly.
 export default function SeoulMap({
   selectedId,
+  selectedIds,
   onSelect,
   className,
 }: SeoulMapProps) {
@@ -23,7 +25,12 @@ export default function SeoulMap({
     [onSelect]
   );
 
-  const isSelected = (id: string) => selectedId === id;
+  const isSelected = (id: string) => {
+    if (selectedIds && selectedIds.length > 0) {
+      return selectedIds.includes(id);
+    }
+    return selectedId === id;
+  };
 
   return (
     <div className={className}>
