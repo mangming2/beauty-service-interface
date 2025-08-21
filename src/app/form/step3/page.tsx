@@ -30,17 +30,19 @@ export default function FormPage3() {
         <div className="flex-1 flex flex-col gap-y-[244px]">
           {/* Header */}
           <div className="px-[16px]">
-            <h1 className="text-xl font-semibold">Who’s your favorite idol?</h1>
+            <h1 className="h-[68px] text-xl font-semibold">
+              Who’s your favorite idol?
+            </h1>
           </div>
 
           {/* Input Field */}
           <div className="px-[16px]">
             <Input
               type="text"
-              placeholder="그룹 또는 아이돌 이름을 입력하세요"
+              placeholder="Enter the name of the group or idol"
               value={favoriteIdol}
               onChange={e => setFavoriteIdol(e.target.value)}
-              className="w-full h-[52px] bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-pink-500 focus:ring-pink-500"
+              className="w-full h-[52px] py-[8px] px-[12px] text-white border-none placeholder:text-gray-400 focus:border-pink-500 focus:ring-pink-500"
             />
           </div>
         </div>
