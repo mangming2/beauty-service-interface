@@ -1,9 +1,10 @@
 import Image, { StaticImageData } from "next/image";
+import { ReactNode } from "react";
 
 interface ConceptCardProps {
   src: string | StaticImageData;
   alt: string;
-  label: string;
+  label: ReactNode;
 }
 
 export function ConceptCard({ src, alt, label }: ConceptCardProps) {

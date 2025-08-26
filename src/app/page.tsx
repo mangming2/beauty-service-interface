@@ -8,6 +8,7 @@ import {
 } from "@/components/common/Icons";
 import { ConceptCard } from "@/components/main/ConceptCard";
 import { TrendCard } from "@/components/main/TrendCard";
+import { TranslatedText } from "@/components/main/TranslatedText";
 import GirlCrush from "@/assets/3d-images/girl-crush.png";
 import LovelyFresh from "@/assets/3d-images/lovely-fresh.png";
 import ElegantGlam from "@/assets/3d-images/elegant-glam.png";
@@ -25,7 +26,7 @@ export default function Home() {
       <div className="px-[9px] flex justify-between items-center">
         <div className="flex items-center gap-[2px]">
           <LocationIcon color="white" />
-          <span className="text-lg">Seoul, South Korea</span>
+          <TranslatedText translationKey="location" className="text-lg" />
         </div>
         <CaretDownIcon color="white" />
       </div>
@@ -37,7 +38,7 @@ export default function Home() {
         {/* Most Popular Section */}
         <div className="relative rounded-[8px] border border-card-border">
           <div className="absolute top-3 left-3 z-10 bg-black bg-opacity-50 text-white px-2 py-1 rounded caption-sm">
-            Most Popular
+            <TranslatedText translationKey="mostPopular" />
           </div>
           <div>
             {/* aespa Giselle image */}
@@ -64,7 +65,9 @@ export default function Home() {
         {/* CTA Banner */}
         <Link href="/form/step1">
           <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-between items-center cursor-pointer">
-            <div className="text-md">Discover your K-pop style!</div>
+            <div className="text-md">
+              <TranslatedText translationKey="discoverStyle" />
+            </div>
             <div className="flex w-[28px] items-center justify-center py-[6px]">
               <ArrowRightIcon
                 color="white"
@@ -82,29 +85,35 @@ export default function Home() {
 
         {/* Choose Your Concept Section */}
         <div className="flex flex-col gap-[14px]">
-          <h2 className="title-md">Choose Your Concept</h2>
+          <h2 className="title-md">
+            <TranslatedText translationKey="chooseConcept" />
+          </h2>
           <div className="flex gap-[4px] overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { src: GirlCrush, alt: "Girl Crush", label: "Girl Crush" },
+              {
+                src: GirlCrush,
+                alt: "Girl Crush",
+                labelKey: "concepts.girlCrush",
+              },
               {
                 src: LovelyFresh,
                 alt: "Lovely & Fresh",
-                label: "Lovely & Fresh",
+                labelKey: "concepts.lovelyFresh",
               },
               {
                 src: ElegantGlam,
                 alt: "Elegant & Glam",
-                label: "Elegant & Glam",
+                labelKey: "concepts.elegantGlam",
               },
-              { src: Dreamy, alt: "Dreamy", label: "Dreamy" },
-              { src: Highteen, alt: "Highteen", label: "Highteen" },
-              { src: Etc, alt: "Etc", label: "Etc" },
+              { src: Dreamy, alt: "Dreamy", labelKey: "concepts.dreamy" },
+              { src: Highteen, alt: "Highteen", labelKey: "concepts.highteen" },
+              { src: Etc, alt: "Etc", labelKey: "concepts.etc" },
             ].map((concept, index) => (
               <ConceptCard
                 key={index}
                 src={concept.src}
                 alt={concept.alt}
-                label={concept.label}
+                label={<TranslatedText translationKey={concept.labelKey} />}
               />
             ))}
           </div>
@@ -115,10 +124,12 @@ export default function Home() {
         {/* Latest Trends Section */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="title-md">Latest Trends in Korea</h2>
+            <h2 className="title-md">
+              <TranslatedText translationKey="latestTrends" />
+            </h2>
             <div className="flex items-baseline gap-[4px]">
               <Link href="#" className="text-gray_1 caption-md">
-                more
+                <TranslatedText translationKey="more" />
               </Link>
               <ArrowRightIcon
                 color="#BCBCBC"
@@ -134,36 +145,37 @@ export default function Home() {
           <div className="flex flex-col">
             {[
               {
-                title: "Romantic School Idol Debut",
-                artist: "Black Pink",
-                location: "Yongin",
-                description:
-                  "Step into soft pink lights. Romantic idol debut come true.",
+                titleKey: "trends.romanticSchool.title",
+                artistKey: "trends.romanticSchool.artist",
+                locationKey: "trends.romanticSchool.location",
+                descriptionKey: "trends.romanticSchool.description",
                 imageSrc: "/dummy-profile.png",
               },
               {
-                title: "Y2K & Highteen Idol Debut",
-                artist: "NewJeans",
-                location: "Gwangju",
-                description:
-                  "Be a teen heartthrob with kitsh, retro, glittery looks.",
+                titleKey: "trends.y2kHighteen.title",
+                artistKey: "trends.y2kHighteen.artist",
+                locationKey: "trends.y2kHighteen.location",
+                descriptionKey: "trends.y2kHighteen.description",
                 imageSrc: "/dummy-profile.png",
               },
               {
-                title: "K-traditional Idol Debut",
-                artist: "SUGA of BTS",
-                location: "Yongin",
-                description:
-                  "Flowing silk, soft colors, capture your own timeless beauty in Hanok.",
+                titleKey: "trends.kTraditional.title",
+                artistKey: "trends.kTraditional.artist",
+                locationKey: "trends.kTraditional.location",
+                descriptionKey: "trends.kTraditional.description",
                 imageSrc: "/dummy-profile.png",
               },
             ].map((trend, index, array) => (
               <div key={index}>
                 <TrendCard
-                  title={trend.title}
-                  artist={trend.artist}
-                  location={trend.location}
-                  description={trend.description}
+                  title={<TranslatedText translationKey={trend.titleKey} />}
+                  artist={<TranslatedText translationKey={trend.artistKey} />}
+                  location={
+                    <TranslatedText translationKey={trend.locationKey} />
+                  }
+                  description={
+                    <TranslatedText translationKey={trend.descriptionKey} />
+                  }
                   imageSrc={trend.imageSrc}
                 />
                 {index < array.length - 1 && <Divider />}
