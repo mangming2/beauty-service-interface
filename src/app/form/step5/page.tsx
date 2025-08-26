@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
-import SeoulMap from "@/components/common/SeoulMap";
+import { SeoulMap } from "@/components/common/SeoulMap";
 
 export default function FormPage5() {
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
