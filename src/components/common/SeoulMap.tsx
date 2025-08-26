@@ -12,12 +12,12 @@ type SeoulMapProps = {
 // This component inlines the SVG at public/Seoul map.svg and makes each path clickable.
 // Note: The provided SVG paths are not labeled per district. We assign generated ids (p1..p12).
 // If you export per-district paths with proper ids from Figma, replace these ids accordingly.
-export default function SeoulMap({
+export const SeoulMap = ({
   selectedId,
   selectedIds,
   onSelect,
   className,
-}: SeoulMapProps) {
+}: SeoulMapProps) => {
   const handleSelect = useCallback(
     (id: string) => () => {
       onSelect?.(id);
@@ -166,4 +166,4 @@ export default function SeoulMap({
       </svg>
     </div>
   );
-}
+};
