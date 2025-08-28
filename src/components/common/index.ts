@@ -2,6 +2,7 @@ export { Header } from "./Header";
 export { Footer } from "./Footer";
 export { AuthGuard } from "./AuthGuard";
 export { ProtectedLayout } from "./ProtectedLayout";
+export { ConditionalLayout } from "./ConditionalLayout";
 export { IconButton } from "./IconButton";
 export { Icons } from "./Icons";
 export { LanguageSelector } from "./LanguageSelector";
