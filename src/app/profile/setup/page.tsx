@@ -21,7 +21,7 @@ export default function ProfileSetupPage() {
   const [birthDate, setBirthDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const { user, updateProfile, isAuthenticated } = useAuth();
+  const { updateProfile, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
