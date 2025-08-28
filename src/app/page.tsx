@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { Metadata } from "next";
 import {
   LocationIcon,
   CaretDownIcon,
@@ -17,6 +18,34 @@ import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
+
+export const generateMetadata = (): Metadata => {
+  return {
+    title: "DOKI - 뷰티 스타일 발견하기",
+    description: "나만의 뷰티 스타일을 발견하고 예약하세요.",
+    openGraph: {
+      title: "DOKI - 뷰티 스타일 발견하기",
+      description: "나만의 뷰티 스타일을 발견하고 예약하세요.",
+      type: "website",
+      locale: "ko_KR",
+      siteName: "DOKI",
+      images: [
+        {
+          url: "/main-logo.png",
+          width: 1200,
+          height: 630,
+          alt: "DOKI 뷰티 서비스",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "DOKI - 뷰티 스타일 발견하기",
+      description: "나만의 뷰티 스타일을 발견하고 예약하세요.",
+      images: ["/main-logo.png"],
+    },
+  };
+};
 
 export default function Home() {
   return (

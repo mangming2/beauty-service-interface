@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# 카카오톡 크롤러 허용
+User-agent: KakaoBot
+Allow: /
+
+# Open Graph 이미지 접근 허용
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.webp
+
+Sitemap: https://your-domain.com/sitemap.xml
