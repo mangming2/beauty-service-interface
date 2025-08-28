@@ -387,7 +387,7 @@ const UserPlusIcon = ({ color = "currentColor", ...rest }: IconProps) => {
   );
 };
 
-const XIcon = ({ color = "currentColor", ...rest }: IconProps) => {
+const XIcon = ({ color, ...rest }: IconProps) => {
   return (
     <svg
       width="28"
@@ -406,7 +406,7 @@ const XIcon = ({ color = "currentColor", ...rest }: IconProps) => {
   );
 };
 
-const AppleIcon = ({ color = "currentColor", ...rest }: IconProps) => {
+const AppleIcon = ({ color, ...rest }: IconProps) => {
   return (
     <svg
       width="24"
@@ -425,7 +425,7 @@ const AppleIcon = ({ color = "currentColor", ...rest }: IconProps) => {
   );
 };
 
-const GoogleIcon = ({ color = "currentColor", ...rest }: IconProps) => {
+const GoogleIcon = ({ color, ...rest }: IconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

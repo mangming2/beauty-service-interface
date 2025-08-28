@@ -83,7 +83,7 @@ export default function LoginPage() {
           <button
             onClick={handleAppleLogin}
             disabled={loading}
-            className="w-[48px] h-[40px] bg-gray-container rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200"
+            className="w-[40px] h-[40px] bg-gray-container rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200"
           >
             <AppleIcon width={23} height={28} />
           </button>
