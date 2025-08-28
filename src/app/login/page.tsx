@@ -31,9 +31,16 @@ export default function LoginPage() {
       setLoading(true);
       setMessage("");
 
-      const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL
-        ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
-        : `${window.location.origin}/auth/callback`;
+      // 환경에 따라 적절한 redirect URL 설정
+      let redirectUrl;
+      if (process.env.NODE_ENV === "production") {
+        // 프로덕션 환경
+        redirectUrl =
+          "https://beauty-service-interface.vercel.app/auth/callback";
+      } else {
+        // 개발 환경
+        redirectUrl = "http://localhost:3000/auth/callback";
+      }
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
