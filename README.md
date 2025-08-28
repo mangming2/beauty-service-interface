@@ -20,6 +20,72 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Authentication Setup
+
+This project uses Supabase for authentication with Google OAuth support.
+
+### 1. Supabase Setup
+
+1. Go to [Supabase](https://supabase.com) and create a new project
+2. Get your project URL and anon key from the project settings
+3. Create a `.env.local` file in the root directory with the following variables:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 2. Google OAuth Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the Google+ API
+4. Go to "Credentials" and create an OAuth 2.0 Client ID
+5. Add your domain to authorized origins
+6. Add your redirect URI: `https://your-project.supabase.co/auth/v1/callback`
+7. Copy the Client ID and add it to your `.env.local`:
+
+```env
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+```
+
+### 3. Supabase Database Setup
+
+Create a `profiles` table in your Supabase database:
+
+```sql
+CREATE TABLE profiles (
+  id UUID REFERENCES auth.users(id) PRIMARY KEY,
+  full_name TEXT,
+  phone TEXT,
+  birth_date DATE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Create policy to allow users to view and edit their own profile
+CREATE POLICY "Users can view own profile" ON profiles
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile" ON profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
+```
+
+### 4. Supabase Auth Settings
+
+1. In your Supabase project, go to Authentication > Settings
+2. Add your site URL to the Site URL field
+3. Add your redirect URLs to the Redirect URLs field:
+   - `http://localhost:3000/auth/callback` (for development)
+   - `https://yourdomain.com/auth/callback` (for production)
+4. In Authentication > Providers, enable Google and add your Google OAuth credentials
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

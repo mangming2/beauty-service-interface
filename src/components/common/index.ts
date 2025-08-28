@@ -1,8 +1,8 @@
 export { Header } from "./Header";
 export { Footer } from "./Footer";
+export { AuthGuard } from "./AuthGuard";
+export { ProtectedLayout } from "./ProtectedLayout";
 export { IconButton } from "./IconButton";
+export { Icons } from "./Icons";
 export { LanguageSelector } from "./LanguageSelector";
 export { SeoulMap } from "./SeoulMap";
-
-// Icons
-export * from "./Icons";

@@ -17,7 +17,7 @@ const timeSlots = [
   { time: "16:00", available: false },
 ];
 
-export default function DateSelectionPage() {
+export default function BookingDatePage() {
   const params = useParams();
   const router = useRouter();
   const packageId = params.id as string;

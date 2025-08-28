@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
+import { ProtectedLayout } from "@/components/common/ProtectedLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +41,9 @@ export default function RootLayout({
       >
         <div className="max-w-[412px] mx-auto pb-[64px] min-h-screen relative flex flex-col">
           <Header />
-          <div className="flex-1 flex flex-col">{children}</div>
+          <div className="flex-1 flex flex-col">
+            <ProtectedLayout>{children}</ProtectedLayout>
+          </div>
           <Footer />
         </div>
       </body>
