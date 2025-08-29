@@ -119,7 +119,14 @@ export const useFormStore = create<FormState>()(
             throw new Error("사용자가 로그인되지 않았습니다.");
           }
 
-          // Supabase에 폼 데이터 저장
+          // 기존 데이터 삭제 후 새 데이터 삽입
+          // 1. 기존 사용자 데이터 삭제
+          await supabase
+            .from("beauty_form_submissions")
+            .delete()
+            .eq("user_id", user.id);
+
+          // 2. 새 데이터 삽입
           const { error } = await supabase
             .from("beauty_form_submissions")
             .insert({
