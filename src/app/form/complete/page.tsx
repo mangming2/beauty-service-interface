@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
-import dummyProfile from "../../../../public/dummy-profile.png";
+import PackageCard from "@/components/main/PackageCard";
 
 export default function FormComplete() {
   const [formData, setFormData] = useState<{
@@ -89,11 +88,14 @@ export default function FormComplete() {
 
       <GapY size={12} />
 
-      <Image
-        src={dummyProfile}
-        alt="dummy profile"
-        className="h-[448px] w-[364px]"
-      />
+      <div className="w-[364px] h-[448px] relative">
+        <Image
+          src="/dummy-profile.png"
+          alt="dummy profile"
+          fill
+          className="object-cover"
+        />
+      </div>
 
       <GapY size={12} />
 
@@ -123,65 +125,25 @@ export default function FormComplete() {
 
       {/* Package Cards */}
       <div className="flex gap-2">
-        <Card
-          className="bg-transparent border-0 cursor-pointer flex-1"
-          onClick={() => handlePackageClick("triples-dreamy")}
-        >
-          <CardContent className="p-0 bg-white/10 rounded-[8px]">
-            <div className="flex flex-col">
-              <div className="relative w-full h-[200px] bg-gray rounded-t-lg overflow-hidden">
-                <Image
-                  src="/dummy-profile.png"
-                  alt="tripleS - Dreamy & Mystic Idol"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-2">
-                <p className="text-xs gap-1 flex items-center text-gray-400">
-                  <span className="text-black">♫</span>
-                  <span>tripleS</span>
-                  <span>·</span>
-                  <span>Gapyeong</span>
-                </p>
-                <GapY size={4} />
-                <h3 className="font-medium text-white text-sm leading-tight">
-                  Dreamy & Mystic Idol...
-                </h3>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <PackageCard
+          packageId="triples-dreamy"
+          imageSrc="/dummy-profile.png"
+          imageAlt="tripleS - Dreamy & Mystic Idol"
+          artist="tripleS"
+          location="Gapyeong"
+          title="Dreamy & Mystic Idol..."
+          onClick={handlePackageClick}
+        />
 
-        <Card
-          className="bg-transparent border-0 cursor-pointer flex-1"
-          onClick={() => handlePackageClick("triples-dreamy")}
-        >
-          <CardContent className="p-0 bg-white/10 rounded-[8px]">
-            <div className="flex flex-col">
-              <div className="relative w-full h-[200px] bg-gray rounded-t-lg overflow-hidden">
-                <Image
-                  src="/dummy-profile.png"
-                  alt="tripleS - Dreamy & Mystic Idol"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-2">
-                <p className="text-xs gap-1 flex items-center text-gray-400">
-                  <span className="text-black">♫</span>
-                  <span>tripleS</span>
-                  <span>·</span>
-                  <span>Gapyeong</span>
-                </p>
-                <GapY size={4} />
-                <h3 className="font-medium text-white text-sm leading-tight">
-                  Dreamy & Mystic Idol...
-                </h3>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <PackageCard
+          packageId="triples-dreamy-2"
+          imageSrc="/dummy-profile.png"
+          imageAlt="tripleS - Dreamy & Mystic Idol"
+          artist="tripleS"
+          location="Gapyeong"
+          title="Dreamy & Mystic Idol..."
+          onClick={handlePackageClick}
+        />
       </div>
     </div>
   );
