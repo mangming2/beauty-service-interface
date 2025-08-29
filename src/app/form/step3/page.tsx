@@ -1,34 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
+import { Step3Schema, Step3Data, idolOptions } from "@/types/form";
+import { useFormStore } from "@/lib/store";
 
 export default function FormPage3() {
-  const [selectedOption, setSelectedOption] = useState("");
   const router = useRouter();
+  const { formData, updateStep3, setCurrentStep } = useFormStore();
 
-  const idolOptions = [
-    "K-pop stage outfit & concept shoot",
-    "Casual daily look snapshot",
-    "Hair & makeup only",
-    "Themed shoot with friends or family",
-    "Profile portrait shoot",
-  ];
+  const form = useForm<Step3Data>({
+    resolver: zodResolver(Step3Schema),
+    defaultValues: {
+      idolOption: formData.idolOption || "",
+    },
+  });
+
+  const {
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+  const selectedOption = watch("idolOption");
+
+  // 컴포넌트 마운트 시 현재 스텝 설정
+  useEffect(() => {
+    setCurrentStep(3);
+  }, [setCurrentStep]);
 
   const handleOptionSelect = (option: string) => {
-    setSelectedOption(option);
+    setValue("idolOption", option);
   };
 
-  const handleNext = () => {
-    if (selectedOption) {
-      // 선택된 옵션을 localStorage에 저장
-      localStorage.setItem("idolOption", selectedOption);
-      router.push("/form/step4");
-    }
+  const onSubmit = (data: Step3Data) => {
+    // Zustand store에 데이터 저장
+    updateStep3(data);
+    // 다음 스텝으로 이동
+    router.push("/form/step4");
   };
 
   return (
@@ -47,22 +62,32 @@ export default function FormPage3() {
           </div>
 
           {/* Option Buttons */}
-          <div className="flex flex-col gap-y-[16px]">
-            {idolOptions.map((option, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                onClick={() => handleOptionSelect(option)}
-                className={`w-full h-[56px] justify-start text-lg px-[16px] py-[10px] border-2 transition-all duration-200 ${
-                  selectedOption === option
-                    ? "border-primary bg-primary text-white"
-                    : "border-gray-outline bg-gray-outline text-white hover:border-gray-outline hover:bg-gray-outline"
-                }`}
-              >
-                {option}
-              </Button>
-            ))}
-          </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-y-[16px]">
+              {idolOptions.map((option, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleOptionSelect(option)}
+                  className={`w-full h-[56px] justify-start text-lg px-[16px] py-[10px] border-2 transition-all duration-200 ${
+                    selectedOption === option
+                      ? "border-primary bg-primary text-white"
+                      : "border-gray-outline bg-gray-outline text-white hover:border-gray-outline hover:bg-gray-outline"
+                  }`}
+                >
+                  {option}
+                </Button>
+              ))}
+            </div>
+
+            {/* Error Display */}
+            {errors.idolOption && (
+              <div className="mt-4 text-red-400 text-sm text-center">
+                {errors.idolOption.message}
+              </div>
+            )}
+          </form>
         </div>
       </div>
 
@@ -74,7 +99,7 @@ export default function FormPage3() {
               ? "bg-pink-500 hover:bg-pink-600"
               : "bg-gray-600 cursor-not-allowed"
           }`}
-          onClick={handleNext}
+          onClick={handleSubmit(onSubmit)}
           disabled={!selectedOption}
         >
           <span className="font-medium">Next</span>

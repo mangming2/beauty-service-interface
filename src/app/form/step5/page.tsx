@@ -1,47 +1,94 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { SeoulMap } from "@/components/common/SeoulMap";
+import { Step5Schema, Step5Data } from "@/types/form";
+import { useFormStore } from "@/lib/store";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function FormPage5() {
-  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const router = useRouter();
+  const { isAuthenticated, loading } = useAuth();
+  const { formData, updateStep5, setCurrentStep, submitForm, isSubmitting } =
+    useFormStore();
+  const [submitError, setSubmitError] = useState<string>("");
+
+  const form = useForm<Step5Data>({
+    resolver: zodResolver(Step5Schema),
+    defaultValues: {
+      selectedRegions: formData.selectedRegions || [],
+    },
+  });
+
+  const {
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+  const selectedRegions = watch("selectedRegions");
+
+  // 컴포넌트 마운트 시 현재 스텝 설정 및 인증 확인
+  useEffect(() => {
+    setCurrentStep(5);
+
+    // 로그인 확인 (loading이 완료된 후에만)
+    if (!loading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [setCurrentStep, isAuthenticated, loading, router]);
+
+  // 로딩 중일 때는 로딩 화면 표시
+  if (loading) {
+    return (
+      <div className="text-white bg-transparent flex flex-col flex-1 items-center justify-center">
+        <div className="text-lg">로딩 중...</div>
+      </div>
+    );
+  }
 
   const handleRegionClick = (regionId: string) => {
-    setSelectedRegions(prev => {
-      if (prev.includes(regionId)) {
-        // 이미 선택된 지역이면 제거
-        return prev.filter(id => id !== regionId);
-      } else {
-        // 새로운 지역이면 추가
-        return [...prev, regionId];
-      }
-    });
+    const currentSelected = selectedRegions || [];
+
+    if (currentSelected.includes(regionId)) {
+      // 이미 선택된 지역이면 제거
+      setValue(
+        "selectedRegions",
+        currentSelected.filter(id => id !== regionId)
+      );
+    } else {
+      // 새로운 지역이면 추가
+      setValue("selectedRegions", [...currentSelected, regionId]);
+    }
   };
 
-  const handleSubmit = () => {
-    if (selectedRegions.length > 0) {
-      // 선택된 지역들을 localStorage에 저장
-      localStorage.setItem("selectedRegions", JSON.stringify(selectedRegions));
+  const onSubmit = async (data: Step5Data) => {
+    setSubmitError("");
 
-      // 모든 폼 데이터를 수집
-      const formData = {
-        concepts: JSON.parse(localStorage.getItem("selectedConcepts") || "[]"),
-        favoriteIdol: localStorage.getItem("favoriteIdol") || "",
-        dates: JSON.parse(localStorage.getItem("selectedDates") || "[]"),
-        regions: selectedRegions,
-      };
+    // Zustand store에 마지막 스텝 데이터 저장
+    updateStep5(data);
 
-      // 폼 제출 완료 (여기서 API 호출 등을 할 수 있습니다)
-      console.log("Form submitted:", formData);
+    try {
+      // 전체 폼 데이터 제출
+      const result = await submitForm();
 
-      // 패키지 추천 페이지로 리다이렉트
-      router.push("/form/complete");
+      if (result.success) {
+        // 성공 시 완료 페이지로 이동
+        router.push("/form/complete");
+      } else {
+        // 실패 시 에러 메시지 표시
+        setSubmitError(result.error || "폼 제출 중 오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setSubmitError("폼 제출 중 오류가 발생했습니다.");
     }
   };
 
@@ -58,37 +105,58 @@ export default function FormPage5() {
             Where would you like to visit?
           </h1>
         </div>
-        <div className="px-[16px]">
-          <SeoulMap
-            selectedIds={selectedRegions}
-            onSelect={handleRegionClick}
-            className="w-full max-w-[480px]"
-          />
-        </div>
 
-        <GapY size={12} />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="px-[16px]">
+            <SeoulMap
+              selectedIds={selectedRegions || []}
+              onSelect={handleRegionClick}
+              className="w-full max-w-[480px]"
+            />
+          </div>
 
-        <div className="px-[16px] flex justify-center">
-          {selectedRegions.length > 0 && (
-            <div className="p-[12px] bg-gray rounded-[32px] text-lg text-center w-fit">
-              {selectedRegions.join(", ")}
+          <GapY size={12} />
+
+          <div className="px-[16px] flex justify-center">
+            {selectedRegions && selectedRegions.length > 0 && (
+              <div className="p-[12px] bg-gray rounded-[32px] text-lg text-center w-fit">
+                {selectedRegions.join(", ")}
+              </div>
+            )}
+          </div>
+
+          {/* Error Display */}
+          {errors.selectedRegions && (
+            <div className="mt-4 text-red-400 text-sm text-center px-[16px]">
+              {errors.selectedRegions.message}
             </div>
           )}
-        </div>
+
+          {/* Submit Error Display */}
+          {submitError && (
+            <div className="mt-4 text-red-400 text-sm text-center px-[16px]">
+              {submitError}
+            </div>
+          )}
+        </form>
       </div>
 
       {/* Navigation */}
       <div className="mt-auto p-4 bg-transparent">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
-            selectedRegions.length > 0
+            selectedRegions && selectedRegions.length > 0 && !isSubmitting
               ? "bg-pink-500 hover:bg-pink-600"
               : "bg-gray-600 cursor-not-allowed"
           }`}
-          onClick={handleSubmit}
-          disabled={selectedRegions.length === 0}
+          onClick={handleSubmit(onSubmit)}
+          disabled={
+            !selectedRegions || selectedRegions.length === 0 || isSubmitting
+          }
         >
-          <span className="font-medium">Next</span>
+          <span className="font-medium">
+            {isSubmitting ? "제출 중..." : "제출하기"}
+          </span>
           <ArrowRightIcon
             color="white"
             width={7}

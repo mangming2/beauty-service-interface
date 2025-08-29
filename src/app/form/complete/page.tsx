@@ -2,40 +2,116 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import PackageCard from "@/components/main/PackageCard";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+
+interface FormSubmission {
+  id: number;
+  selected_concepts: string[];
+  favorite_idol: string;
+  idol_option: string;
+  date_range: {
+    from: string;
+    to: string;
+  } | null;
+  selected_regions: string[];
+  created_at: string;
+}
 
 export default function FormComplete() {
-  const [formData, setFormData] = useState<{
-    concepts: string[];
-    favoriteIdol: string;
-    dateRange: { start?: Date; end?: Date };
-    region: string;
-  } | null>(null);
   const router = useRouter();
+  const { user, isAuthenticated, loading } = useAuth();
+  const [formSubmission, setFormSubmission] = useState<FormSubmission | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    // localStorage에서 폼 데이터 가져오기
-    const concepts = JSON.parse(
-      localStorage.getItem("selectedConcepts") || "[]"
-    );
-    const favoriteIdol = localStorage.getItem("favoriteIdol") || "";
-    const dateRange = JSON.parse(
-      localStorage.getItem("selectedDateRange") || "{}"
-    );
-    const region = localStorage.getItem("selectedRegion") || "";
+    const fetchLatestSubmission = async () => {
+      if (!isAuthenticated || !user) {
+        router.push("/login");
+        return;
+      }
 
-    setFormData({
-      concepts,
-      favoriteIdol,
-      dateRange,
-      region,
-    });
-  }, []);
+      try {
+        setIsLoading(true);
+        // 사용자의 가장 최근 폼 제출 데이터 가져오기
+        const { data, error } = await supabase
+          .from("beauty_form_submissions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (error) {
+          console.error("Failed to fetch submission:", error);
+          setError("제출된 데이터를 불러올 수 없습니다.");
+          return;
+        }
+
+        setFormSubmission(data);
+      } catch (err) {
+        console.error("Error fetching submission:", err);
+        setError("데이터를 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (!loading) {
+      fetchLatestSubmission();
+    }
+  }, [isAuthenticated, user, loading, router]);
+
+  // 로딩 상태
+  if (loading || isLoading) {
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="text-lg">데이터를 불러오는 중...</div>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg text-red-400 mb-4">{error}</div>
+          <button
+            onClick={() => router.push("/form/step1")}
+            className="px-4 py-2 bg-pink-500 rounded text-white"
+          >
+            다시 시작하기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 데이터가 없는 경우
+  if (!formSubmission) {
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg mb-4">제출된 데이터가 없습니다.</div>
+          <button
+            onClick={() => router.push("/form/step1")}
+            className="px-4 py-2 bg-pink-500 rounded text-white"
+          >
+            폼 작성하기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handlePackageClick = (packageId: string) => {
     // 패키지 상세 페이지로 이동
@@ -53,22 +129,43 @@ export default function FormComplete() {
           </h2>
         </div>
         <div className="flex gap-1 flex-wrap">
-          {formData?.concepts.map((concept: string, index: number) => (
+          {formSubmission.selected_concepts?.map(
+            (concept: string, index: number) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+              >
+                {concept}
+              </Badge>
+            )
+          )}
+          {formSubmission.favorite_idol && (
             <Badge
-              key={index}
               variant="secondary"
               className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
             >
-              {concept}
+              {formSubmission.favorite_idol}
             </Badge>
-          ))}
-          {formData?.favoriteIdol && (
+          )}
+          {formSubmission.idol_option && (
             <Badge
               variant="secondary"
               className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
             >
-              {formData.favoriteIdol}
+              {formSubmission.idol_option}
             </Badge>
+          )}
+          {formSubmission.selected_regions?.map(
+            (region: string, index: number) => (
+              <Badge
+                key={`region-${index}`}
+                variant="secondary"
+                className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+              >
+                {region}
+              </Badge>
+            )
           )}
         </div>
       </div>
@@ -103,7 +200,9 @@ export default function FormComplete() {
       <div className="flex items-center justify-center w-full h-[28px] bg-white/10 rounded-[32px]">
         <span className="text-gray-300 text-sm">
           About 1.5 km from the{" "}
-          <span className="text-pink-400 font-medium">Jongno-gu</span>{" "}
+          <span className="text-pink-400 font-medium">
+            {formSubmission.selected_regions?.[0] || "Seoul"}
+          </span>{" "}
         </span>
       </div>
 

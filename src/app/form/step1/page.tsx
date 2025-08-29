@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,64 +16,62 @@ import Dreamy from "@/assets/3d-images/dreamy.png";
 import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
 import { ProgressBar } from "@/components/form/ProgressBar";
+import { Step1Schema, Step1Data, concepts } from "@/types/form";
+import { useFormStore } from "@/lib/store";
 
-const concepts = [
-  {
-    id: "girlcrush",
-    name: "Girl Crush",
-    icon: GirlCrush,
-  },
-  {
-    id: "lovely",
-    name: "Lovely & Fresh",
-    icon: LovelyFresh,
-  },
-  {
-    id: "elegant",
-    name: "Elegant & Glam",
-    icon: ElegantGlam,
-  },
-  {
-    id: "dreamy",
-    name: "Dreamy",
-    icon: Dreamy,
-  },
-  {
-    id: "highteen",
-    name: "Highteen",
-    icon: Highteen,
-  },
-  {
-    id: "etc",
-    name: "Etc",
-    icon: Etc,
-  },
-];
+const conceptImages = {
+  girlcrush: GirlCrush,
+  lovely: LovelyFresh,
+  elegant: ElegantGlam,
+  dreamy: Dreamy,
+  highteen: Highteen,
+  etc: Etc,
+} as const;
 
 export default function FormPage1() {
-  const [selectedConcepts, setSelectedConcepts] = useState<string[]>([]);
   const router = useRouter();
+  const { formData, updateStep1, setCurrentStep } = useFormStore();
+
+  const form = useForm<Step1Data>({
+    resolver: zodResolver(Step1Schema),
+    defaultValues: {
+      selectedConcepts: formData.selectedConcepts || [],
+    },
+  });
+
+  const {
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+  const selectedConcepts = watch("selectedConcepts");
+
+  // 컴포넌트 마운트 시 현재 스텝 설정
+  useEffect(() => {
+    setCurrentStep(1);
+  }, [setCurrentStep]);
 
   const handleConceptClick = (conceptId: string) => {
-    setSelectedConcepts(prev => {
-      if (prev.includes(conceptId)) {
-        return prev.filter(id => id !== conceptId);
-      } else if (prev.length < 3) {
-        return [...prev, conceptId];
-      }
-      return prev;
-    });
+    const currentSelected = selectedConcepts || [];
+
+    if (currentSelected.includes(conceptId)) {
+      // 이미 선택된 컨셉이면 제거
+      setValue(
+        "selectedConcepts",
+        currentSelected.filter(id => id !== conceptId)
+      );
+    } else if (currentSelected.length < 3) {
+      // 새로운 컨셉 추가 (최대 3개)
+      setValue("selectedConcepts", [...currentSelected, conceptId]);
+    }
   };
 
-  const handleNext = () => {
-    if (selectedConcepts.length > 0) {
-      // 선택된 컨셉을 localStorage에 저장
-      localStorage.setItem(
-        "selectedConcepts",
-        JSON.stringify(selectedConcepts)
-      );
-      router.push("/form/step2");
-    }
+  const onSubmit = (data: Step1Data) => {
+    // Zustand store에 데이터 저장
+    updateStep1(data);
+    // 다음 스텝으로 이동
+    router.push("/form/step2");
   };
 
   return (
@@ -92,48 +92,59 @@ export default function FormPage1() {
         <GapY size={32} />
 
         {/* Concept Selection */}
-        <div className="flex items-center justify-center flex-wrap gap-x-[20px] gap-y-[36px]">
-          {concepts.map(concept => (
-            <Card
-              key={concept.id}
-              className="w-[112px] py-0 px-0 border-none cursor-pointer transition-all duration-200 bg-transparent"
-              onClick={() => handleConceptClick(concept.id)}
-            >
-              <CardContent className="flex p-0 flex-col gap-[8px] items-center">
-                <div
-                  className={`flex items-center justify-center w-[112px] h-[118px] rounded-[6px] ${
-                    selectedConcepts.includes(concept.id)
-                      ? "bg-secondary"
-                      : "bg-gray"
-                  }`}
-                >
-                  <Image
-                    src={concept.icon}
-                    alt={concept.name}
-                    width={60}
-                    height={60}
-                    className="object-contain"
-                  />
-                </div>
-                <div className="text-white text-sm font-medium w-full text-center whitespace-nowrap">
-                  {concept.name}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex items-center justify-center flex-wrap gap-x-[20px] gap-y-[36px]">
+            {concepts.map(concept => (
+              <Card
+                key={concept.id}
+                className="w-[112px] py-0 px-0 border-none cursor-pointer transition-all duration-200 bg-transparent"
+                onClick={() => handleConceptClick(concept.id)}
+              >
+                <CardContent className="flex p-0 flex-col gap-[8px] items-center">
+                  <div
+                    className={`flex items-center justify-center w-[112px] h-[118px] rounded-[6px] ${
+                      selectedConcepts?.includes(concept.id)
+                        ? "bg-secondary"
+                        : "bg-gray"
+                    }`}
+                  >
+                    <Image
+                      src={
+                        conceptImages[concept.id as keyof typeof conceptImages]
+                      }
+                      alt={concept.name}
+                      width={60}
+                      height={60}
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="text-white text-sm font-medium w-full text-center whitespace-nowrap">
+                    {concept.name}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Error Display */}
+          {errors.selectedConcepts && (
+            <div className="mt-4 text-red-400 text-sm text-center">
+              {errors.selectedConcepts.message}
+            </div>
+          )}
+        </form>
       </div>
 
       {/* Navigation */}
       <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
-            selectedConcepts.length > 0
+            selectedConcepts && selectedConcepts.length > 0
               ? "bg-pink-500 hover:bg-pink-600"
               : "bg-gray-600 cursor-not-allowed"
           }`}
-          onClick={handleNext}
-          disabled={selectedConcepts.length === 0}
+          onClick={handleSubmit(onSubmit)}
+          disabled={!selectedConcepts || selectedConcepts.length === 0}
         >
           <span className="font-medium">Next</span>
           <ArrowRightIcon
