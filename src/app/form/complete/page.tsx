@@ -8,7 +8,7 @@ import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import PackageCard from "@/components/main/PackageCard";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/lib/supabase";
+import { getUserFormSubmission } from "@/lib/beautyFormService";
 
 interface FormSubmission {
   id: number;
@@ -41,22 +41,18 @@ export default function FormComplete() {
 
       try {
         setIsLoading(true);
-        // 사용자의 가장 최근 폼 제출 데이터 가져오기
-        const { data, error } = await supabase
-          .from("beauty_form_submissions")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single();
+        // 사용자의 폼 제출 데이터 가져오기
+        const result = await getUserFormSubmission();
 
-        if (error) {
-          console.error("Failed to fetch submission:", error);
+        if (result.error) {
+          console.error("Failed to fetch submission:", result.error);
           setError("제출된 데이터를 불러올 수 없습니다.");
           return;
         }
 
-        setFormSubmission(data);
+        if (result.data) {
+          setFormSubmission(result.data);
+        }
       } catch (err) {
         console.error("Error fetching submission:", err);
         setError("데이터를 불러오는 중 오류가 발생했습니다.");

@@ -12,13 +12,14 @@ import { SeoulMap } from "@/components/common/SeoulMap";
 import { Step5Schema, Step5Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
+import { submitBeautyForm } from "@/lib/beautyFormService";
 
 export default function FormPage5() {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
-  const { formData, updateStep5, setCurrentStep, submitForm, isSubmitting } =
-    useFormStore();
+  const { formData, updateStep5, setCurrentStep } = useFormStore();
   const [submitError, setSubmitError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<Step5Data>({
     resolver: zodResolver(Step5Schema),
@@ -71,13 +72,17 @@ export default function FormPage5() {
 
   const onSubmit = async (data: Step5Data) => {
     setSubmitError("");
+    setIsSubmitting(true);
 
     // Zustand store에 마지막 스텝 데이터 저장
     updateStep5(data);
 
+    // 전체 폼 데이터 가져오기 (업데이트된 데이터 포함)
+    const completeFormData = { ...formData, ...data };
+
     try {
       // 전체 폼 데이터 제출
-      const result = await submitForm();
+      const result = await submitBeautyForm(completeFormData);
 
       if (result.success) {
         // 성공 시 완료 페이지로 이동
@@ -89,6 +94,8 @@ export default function FormPage5() {
     } catch (error) {
       console.error("Form submission error:", error);
       setSubmitError("폼 제출 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
