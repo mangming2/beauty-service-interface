@@ -9,7 +9,7 @@ export const Header = () => {
 
   return (
     <header>
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div className="container mx-auto py-3 flex justify-between items-center">
         {isFormPage ? (
           <h1 className="text-white title-md">My Idol Form</h1>
         ) : (

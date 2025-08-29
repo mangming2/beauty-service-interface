@@ -2,11 +2,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import {
-  LocationIcon,
-  CaretDownIcon,
-  ArrowRightIcon,
-} from "@/components/common/Icons";
+import { ArrowRightIcon } from "@/components/common/Icons";
 import { ConceptCard } from "@/components/main/ConceptCard";
 import { TrendCard } from "@/components/main/TrendCard";
 import { TranslatedText } from "@/components/main/TranslatedText";
@@ -50,20 +46,9 @@ export const generateMetadata = (): Metadata => {
 export default function Home() {
   return (
     <div className="min-h-screen text-white">
-      <GapY size={8} />
-      {/* Location Selector */}
-      <div className="px-[9px] flex justify-between items-center">
-        <div className="flex items-center gap-[2px]">
-          <LocationIcon color="white" />
-          <TranslatedText translationKey="location" className="text-lg" />
-        </div>
-        <CaretDownIcon color="white" />
-      </div>
-
-      <GapY size={8} />
-
+      <GapY size={20} />
       {/* Main Content */}
-      <div className="px-[16px]">
+      <div>
         {/* Most Popular Section */}
         <div className="relative rounded-[8px] border border-card-border">
           <div className="absolute top-3 left-3 z-10 bg-black bg-opacity-50 text-white px-2 py-1 rounded caption-sm">
