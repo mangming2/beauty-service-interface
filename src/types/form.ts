@@ -49,9 +49,16 @@ export const Step4Schema = z.object({
       from: z.date().optional(),
       to: z.date().optional(),
     })
-    .refine(data => data.from && data.to, {
-      message: "시작 날짜와 종료 날짜를 모두 선택해주세요",
-    }),
+    .refine(
+      data => {
+        // from과 to가 모두 존재하는지 확인
+        return data.from && data.to;
+      },
+      {
+        message: "시작 날짜와 종료 날짜를 모두 선택해주세요",
+        path: ["dateRange"], // 에러 경로 명시
+      }
+    ),
 });
 
 export const Step5Schema = z.object({

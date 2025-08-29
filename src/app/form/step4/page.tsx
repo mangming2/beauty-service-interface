@@ -22,9 +22,47 @@ export default function FormPage4() {
   const form = useForm<Step4Data>({
     resolver: zodResolver(Step4Schema),
     defaultValues: {
-      dateRange: formData.dateRange || { from: undefined, to: undefined },
+      dateRange: formData.dateRange
+        ? {
+            from:
+              typeof formData.dateRange.from === "string"
+                ? new Date(formData.dateRange.from)
+                : formData.dateRange.from,
+            to:
+              typeof formData.dateRange.to === "string"
+                ? new Date(formData.dateRange.to)
+                : formData.dateRange.to,
+          }
+        : { from: undefined, to: undefined },
     },
   });
+
+  // Zustand에서 데이터가 로드될 때 form 값 업데이트
+  useEffect(() => {
+    if (formData.dateRange?.from && formData.dateRange?.to) {
+      // 문자열로 저장된 날짜를 Date 객체로 변환
+      const fromDate =
+        typeof formData.dateRange.from === "string"
+          ? new Date(formData.dateRange.from)
+          : formData.dateRange.from;
+      const toDate =
+        typeof formData.dateRange.to === "string"
+          ? new Date(formData.dateRange.to)
+          : formData.dateRange.to;
+
+      form.setValue("dateRange", {
+        from: fromDate,
+        to: toDate,
+      });
+      // validation 트리거하고 에러 클리어 - async로 처리
+      setTimeout(async () => {
+        const isValid = await form.trigger("dateRange");
+        if (isValid) {
+          form.clearErrors("dateRange");
+        }
+      }, 0);
+    }
+  }, [formData.dateRange, form]);
 
   const {
     control,
@@ -160,9 +198,11 @@ export default function FormPage4() {
                 />
 
                 {/* Error Display */}
-                {errors.dateRange && (
+                {errors.dateRange && !dateRange?.from && !dateRange?.to && (
                   <div className="mt-4 text-red-400 text-sm text-center">
-                    {errors.dateRange.message || "날짜 범위를 선택해주세요"}
+                    {errors.dateRange.message ||
+                      errors.dateRange.root?.message ||
+                      "시작 날짜와 종료 날짜를 모두 선택해주세요"}
                   </div>
                 )}
               </div>

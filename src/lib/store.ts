@@ -101,6 +101,28 @@ export const useFormStore = create<FormState>()(
     }),
     {
       name: "beauty-form-storage",
+      storage: {
+        getItem: (name: string) => {
+          const item = localStorage.getItem(name);
+          if (!item) return null;
+          return JSON.parse(item, (key, value) => {
+            if (value && typeof value === "object" && value.__type === "Date") {
+              return new Date(value.value);
+            }
+            return value;
+          });
+        },
+        setItem: (name: string, value: unknown) => {
+          const serialized = JSON.stringify(value, (key, val) => {
+            if (val instanceof Date) {
+              return { __type: "Date", value: val.toISOString() };
+            }
+            return val;
+          });
+          localStorage.setItem(name, serialized);
+        },
+        removeItem: (name: string) => localStorage.removeItem(name),
+      },
     }
   )
 );
