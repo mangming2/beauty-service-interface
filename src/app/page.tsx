@@ -93,7 +93,7 @@ export default function Home() {
           </Button>
         </Link>
 
-        <Link href="/recommend">나중에 삭제할것</Link>
+        <Link href="/form/complete">나중에 삭제할것</Link>
 
         <GapY size={12} />
 
