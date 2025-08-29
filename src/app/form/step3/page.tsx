@@ -3,19 +3,30 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 
 export default function FormPage3() {
-  const [favoriteIdol, setFavoriteIdol] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
   const router = useRouter();
 
+  const idolOptions = [
+    "K-pop stage outfit & concept shoot",
+    "Casual daily look snapshot",
+    "Hair & makeup only",
+    "Themed shoot with friends or family",
+    "Profile portrait shoot",
+  ];
+
+  const handleOptionSelect = (option: string) => {
+    setSelectedOption(option);
+  };
+
   const handleNext = () => {
-    if (favoriteIdol.trim()) {
-      // 입력된 아이돌 이름을 localStorage에 저장
-      localStorage.setItem("favoriteIdol", favoriteIdol.trim());
+    if (selectedOption) {
+      // 선택된 옵션을 localStorage에 저장
+      localStorage.setItem("idolOption", selectedOption);
       router.push("/form/step4");
     }
   };
@@ -27,37 +38,44 @@ export default function FormPage3() {
         <ProgressBar />
         <GapY size={20} />
 
-        <div className="flex-1 flex flex-col gap-y-[244px]">
+        <div className="flex-1 flex flex-col gap-y-[40px]">
           {/* Header */}
-          <div className="px-[16px]">
+          <div>
             <h1 className="h-[68px] text-xl font-semibold">
-              Who’s your favorite idol?
+              Which idol do you want to be?
             </h1>
           </div>
 
-          {/* Input Field */}
-          <div className="px-[16px]">
-            <Input
-              type="text"
-              placeholder="Enter the name of the group or idol"
-              value={favoriteIdol}
-              onChange={e => setFavoriteIdol(e.target.value)}
-              className="w-full h-[52px] py-[8px] px-[12px] text-white border-none placeholder:text-gray-400 focus:border-pink-500 focus:ring-pink-500"
-            />
+          {/* Option Buttons */}
+          <div className="flex flex-col gap-y-[16px]">
+            {idolOptions.map((option, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                onClick={() => handleOptionSelect(option)}
+                className={`w-full h-[56px] justify-start text-lg px-[16px] py-[10px] border-2 transition-all duration-200 ${
+                  selectedOption === option
+                    ? "border-primary bg-primary text-white"
+                    : "border-gray-outline bg-gray-outline text-white hover:border-gray-outline hover:bg-gray-outline"
+                }`}
+              >
+                {option}
+              </Button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto p-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
-            favoriteIdol.trim()
+            selectedOption
               ? "bg-pink-500 hover:bg-pink-600"
               : "bg-gray-600 cursor-not-allowed"
           }`}
           onClick={handleNext}
-          disabled={!favoriteIdol.trim()}
+          disabled={!selectedOption}
         >
           <span className="font-medium">Next</span>
           <ArrowRightIcon

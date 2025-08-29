@@ -27,16 +27,18 @@ export default function FormPage2() {
         <ProgressBar />
         <GapY size={20} />
 
-        <div className="flex-1 flex flex-col gap-y-[244px]">
+        <div className="flex-1 flex flex-col">
           {/* Header */}
-          <div className="px-[16px]">
+          <div>
             <h1 className="h-[68px] text-xl font-semibold">
               Which idol do you want to be?
             </h1>
           </div>
 
+          <GapY size={146} />
+
           {/* Input Field */}
-          <div className="px-[16px]">
+          <div>
             <Input
               type="text"
               placeholder="Enter the name of the group or idol"
@@ -49,7 +51,7 @@ export default function FormPage2() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto p-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             favoriteIdol.trim()

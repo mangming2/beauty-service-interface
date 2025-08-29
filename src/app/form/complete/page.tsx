@@ -2,96 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
-
-interface PackageData {
-  id: string;
-  title: string;
-  artist: string;
-  location: string;
-  description: string;
-  imageSrc: string;
-  tags: string[];
-}
-
-const packages: PackageData[] = [
-  {
-    id: "aespa-futuristic",
-    title: "Futuristic & Cyber Ch...",
-    artist: "aespa",
-    location: "Incheon",
-    description: "Futuristic & Cyber Ch...",
-    imageSrc: "/dummy-profile.png",
-    tags: ["SMent", "Aespa", "Girl crush"],
-  },
-  {
-    id: "aespa-savage",
-    title: "Girl Crush Idol debut",
-    artist: "aespa",
-    location: "Incheon",
-    description: "Girl Crush Idol debut",
-    imageSrc: "/dummy-profile.png",
-    tags: ["SMent", "Aespa", "Girl crush"],
-  },
-  {
-    id: "triples-dreamy",
-    title: "Dreamy & Mystic Idol...",
-    artist: "tripleS",
-    location: "Gapyeong",
-    description: "Dreamy & Mystic Idol...",
-    imageSrc: "/dummy-profile.png",
-    tags: ["SMent", "tripleS", "Dreamy"],
-  },
-  {
-    id: "blackpink-romantic",
-    title: "Romantic & Elegant i...",
-    artist: "Black pink",
-    location: "Yongin",
-    description: "Romantic & Elegant i...",
-    imageSrc: "/dummy-profile.png",
-    tags: ["YG", "Black pink", "Elegant"],
-  },
-  {
-    id: "aespa-retro",
-    title: "Retro & Kitsch Idol D...",
-    artist: "aespa",
-    location: "Gwangju",
-    description: "Retro & Kitsch Idol D...",
-    imageSrc: "/dummy-profile.png",
-    tags: ["SMent", "Aespa", "Retro"],
-  },
-  {
-    id: "newjeans-y2k",
-    title: "Y2K & High-Teen Ido...",
-    artist: "NewJeans",
-    location: "Yongin",
-    description: "Y2K & High-Teen Ido...",
-    imageSrc: "/dummy-profile.png",
-    tags: ["ADOR", "NewJeans", "Highteen"],
-  },
-];
-
-const sections = [
-  {
-    title: "Check out this package!",
-    packages: packages.slice(0, 2),
-  },
-  {
-    title: "How about this package?",
-    packages: packages.slice(2, 4),
-  },
-  {
-    title: "Looking for another date?",
-    packages: packages.slice(4, 6),
-  },
-];
+import { GapY } from "../../../components/ui/gap";
+import dummyProfile from "../../../../public/dummy-profile.png";
 
 export default function FormComplete() {
-  const [formData, setFormData] = useState<any>(null);
+  const [formData, setFormData] = useState<{
+    concepts: string[];
+    favoriteIdol: string;
+    dateRange: { start?: Date; end?: Date };
+    region: string;
+  } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -120,83 +45,143 @@ export default function FormComplete() {
 
   return (
     <div className="min-h-screen text-white">
-      {/* Header */}
+      <GapY size={12} />
+      {/* Tags Section */}
+      <div>
+        <div className="h-[44px] flex items-center">
+          <h2 className="h-[28px] title-md font-medium">
+            All summed up in tags
+          </h2>
+        </div>
+        <div className="flex gap-1 flex-wrap">
+          {formData?.concepts.map((concept: string, index: number) => (
+            <Badge
+              key={index}
+              variant="secondary"
+              className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+            >
+              {concept}
+            </Badge>
+          ))}
+          {formData?.favoriteIdol && (
+            <Badge
+              variant="secondary"
+              className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+            >
+              {formData.favoriteIdol}
+            </Badge>
+          )}
+        </div>
+      </div>
+      <GapY size={16} />
 
-      <div className="px-4 py-6">
-        {/* Tags Section */}
-        <div className="mb-6">
-          <h2 className="title-md font-medium mb-3">All summed up in tags</h2>
-          <div className="flex gap-2 flex-wrap">
-            {formData?.concepts.map((concept: string, index: number) => (
-              <Badge
-                key={index}
-                variant="secondary"
-                className="text-lg p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-              >
-                {concept}
-              </Badge>
-            ))}
-            {formData?.favoriteIdol && (
-              <Badge
-                variant="secondary"
-                className="text-lg p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-              >
-                {formData.favoriteIdol}
-              </Badge>
-            )}
+      <div className="flex justify-between h-[44px]">
+        <h3 className="flex items-center title-md font-medium">
+          Based on your answers
+        </h3>
+        <div className="flex flex-col h-full gap-[5px] justify-end">
+          <div className="flex items-center gap-[5px]">
+            <span className="text-gray_1 text-sm">more</span>
+            <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" />
           </div>
         </div>
+      </div>
 
-        {/* Package Sections */}
-        {sections.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">{section.title}</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white p-0 h-auto"
-              >
-                <span className="text-sm">more</span>
-                <ArrowRightIcon
-                  color="currentColor"
-                  width={12}
-                  height={12}
-                  className="ml-1"
-                />
-              </Button>
-            </div>
+      <GapY size={12} />
 
-            <div className="grid grid-cols-2 gap-3">
-              {section.packages.map(pkg => (
-                <Card
-                  key={pkg.id}
-                  className="bg-gray-900 border-gray-700 hover:border-pink-500 transition-colors cursor-pointer"
-                  onClick={() => handlePackageClick(pkg.id)}
-                >
-                  <CardContent className="p-0">
-                    <div className="relative w-full h-32">
-                      <Image
-                        src={pkg.imageSrc}
-                        alt={pkg.title}
-                        fill
-                        className="object-cover rounded-t-lg"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <p className="text-sm text-gray-400 mb-1">
-                        - {pkg.artist} · {pkg.location}
-                      </p>
-                      <p className="text-sm font-medium text-white">
-                        {pkg.title}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+      <Image
+        src={dummyProfile}
+        alt="dummy profile"
+        className="h-[448px] w-[364px]"
+      />
+
+      <GapY size={12} />
+
+      {/* Distance Info */}
+      <div className="flex items-center justify-center w-full h-[28px] bg-white/10 rounded-[32px]">
+        <span className="text-gray-300 text-sm">
+          About 1.5 km from the{" "}
+          <span className="text-pink-400 font-medium">Jongno-gu</span>{" "}
+        </span>
+      </div>
+
+      <GapY size={12} />
+
+      <div className="flex justify-between h-[44px]">
+        <h3 className="flex items-center title-md font-medium">
+          How about this package?
+        </h3>
+        <div className="flex flex-col h-full gap-[5px] justify-end">
+          <div className="flex items-center gap-[5px]">
+            <span className="text-gray_1 text-sm">more</span>
+            <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" />
           </div>
-        ))}
+        </div>
+      </div>
+
+      <GapY size={8} />
+
+      {/* Package Cards */}
+      <div className="flex gap-2">
+        <Card
+          className="bg-transparent border-0 cursor-pointer flex-1"
+          onClick={() => handlePackageClick("triples-dreamy")}
+        >
+          <CardContent className="p-0 bg-white/10 rounded-[8px]">
+            <div className="flex flex-col">
+              <div className="relative w-full h-[200px] bg-gray rounded-t-lg overflow-hidden">
+                <Image
+                  src="/dummy-profile.png"
+                  alt="tripleS - Dreamy & Mystic Idol"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-2">
+                <p className="text-xs gap-1 flex items-center text-gray-400">
+                  <span className="text-black">♫</span>
+                  <span>tripleS</span>
+                  <span>·</span>
+                  <span>Gapyeong</span>
+                </p>
+                <GapY size={4} />
+                <h3 className="font-medium text-white text-sm leading-tight">
+                  Dreamy & Mystic Idol...
+                </h3>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="bg-transparent border-0 cursor-pointer flex-1"
+          onClick={() => handlePackageClick("triples-dreamy")}
+        >
+          <CardContent className="p-0 bg-white/10 rounded-[8px]">
+            <div className="flex flex-col">
+              <div className="relative w-full h-[200px] bg-gray rounded-t-lg overflow-hidden">
+                <Image
+                  src="/dummy-profile.png"
+                  alt="tripleS - Dreamy & Mystic Idol"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-2">
+                <p className="text-xs gap-1 flex items-center text-gray-400">
+                  <span className="text-black">♫</span>
+                  <span>tripleS</span>
+                  <span>·</span>
+                  <span>Gapyeong</span>
+                </p>
+                <GapY size={4} />
+                <h3 className="font-medium text-white text-sm leading-tight">
+                  Dreamy & Mystic Idol...
+                </h3>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

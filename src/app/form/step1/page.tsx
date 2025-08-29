@@ -83,7 +83,7 @@ export default function FormPage1() {
 
         <GapY size={20} />
         {/* Header */}
-        <div className="px-[16px]">
+        <div>
           <h1 className="text-xl font-semibold">
             What kind of Vibe or concept do you love most? (max 3)
           </h1>
@@ -125,7 +125,7 @@ export default function FormPage1() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto p-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
             selectedConcepts.length > 0

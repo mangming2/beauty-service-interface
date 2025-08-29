@@ -19,7 +19,7 @@ export const ProgressBar = () => {
   const totalSteps = 5;
 
   return (
-    <div className="px-[20px]">
+    <div>
       <div className="flex items-center gap-[6px]">
         {/* Progress Bar */}
         <div className="flex-1 h-[2px] bg-[#D9D9D9] rounded-full overflow-hidden">

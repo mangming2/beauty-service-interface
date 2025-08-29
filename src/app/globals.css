@@ -44,6 +44,7 @@
   --color-gray_1: var(--gray_1);
   --color-gray-container: var(--gray-container);
   --color-disabled: var(--disabled);
+  --color-gray-outline: var(--gray-outline);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -82,6 +83,7 @@
   --primary: #f92595;
   --secondary: #d8569a;
   --pink-font: #ff60b3;
+  --gray-outline: #35373a;
   --disabled: #aba9a9;
   --gray-container: #2a2c30;
   --primary-foreground: oklch(0.985 0 0);
