@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
+import { Divider } from "../../../components/ui/divider";
 
 interface PackageDetail {
   id: string;
@@ -230,31 +231,34 @@ export default function PackageDetail() {
           {/* Package Components */}
           <div className="flex flex-col w-full">
             {packageDetail.components.map(component => (
-              <Card key={component.id} className="bg-gray-900 border-gray-700">
-                <CardContent>
-                  <div className="flex gap-1 items-center">
-                    <div className="relative w-[80px] h-[80px] overflow-hidden flex-shrink-0">
-                      <Image
-                        src={component.imageSrc}
-                        alt={component.title}
-                        fill
-                        className="object-cover"
-                      />
+              <div key={component.id}>
+                <Card className="bg-transparent border-none py-1">
+                  <CardContent>
+                    <div className="flex gap-1 items-center">
+                      <div className="relative w-[80px] h-[80px] overflow-hidden flex-shrink-0">
+                        <Image
+                          src={component.imageSrc}
+                          alt={component.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-white mb-1">
+                          {component.title}
+                        </h3>
+                        <p className="text-gray-400 text-sm mb-1">
+                          {component.location}
+                        </p>
+                        <p className="text-gray-300 text-sm">
+                          {component.description}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-white mb-1">
-                        {component.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm mb-1">
-                        {component.location}
-                      </p>
-                      <p className="text-gray-300 text-sm">
-                        {component.description}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+                <Divider />
+              </div>
             ))}
           </div>
 
