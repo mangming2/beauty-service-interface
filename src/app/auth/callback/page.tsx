@@ -1,65 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { Icons } from "@/components/common/Icons";
+import { useAuthCallback } from "@/hooks/useAuthQueries";
 
 export default function AuthCallbackPage() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { data: callbackResult, isLoading, error } = useAuthCallback();
 
-  useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error) {
-          setError(error.message);
-          setLoading(false);
-          return;
-        }
-
-        if (data.session) {
-          // 로그인 성공, 사용자 정보 가져오기
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-
-          if (user) {
-            // 사용자 프로필 정보가 있는지 확인
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("*")
-              .eq("id", user.id)
-              .single();
-
-            if (!profile) {
-              // 프로필이 없으면 프로필 생성 페이지로 이동
-              router.push("/profile/setup");
-            } else {
-              // 프로필이 있으면 메인 페이지로 이동
-              router.push("/my");
-            }
-          }
-        } else {
-          // 세션이 없으면 로그인 페이지로 이동
-          router.push("/login");
-        }
-      } catch (error) {
-        console.error("Auth callback error:", error);
-        setError("인증 처리 중 오류가 발생했습니다.");
-        setLoading(false);
-      }
-    };
-
-    handleAuthCallback();
-  }, [router]);
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-cente">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Icons.spinner className="mx-auto h-12 w-12 animate-spin text-indigo-600" />
           <p className="mt-4 text-lg text-gray-600">
@@ -85,13 +36,29 @@ export default function AuthCallbackPage() {
             </svg>
           </div>
           <h2 className="mt-4 text-lg font-medium text-gray-900">인증 오류</h2>
-          <p className="mt-2 text-sm text-gray-600">{error}</p>
+          <p className="mt-2 text-sm text-gray-600">
+            {(error as Error)?.message || "인증 처리 중 오류가 발생했습니다."}
+          </p>
           <button
             onClick={() => router.push("/login")}
             className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
           >
             로그인 페이지로 돌아가기
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 성공적으로 처리되었으면 결과 표시 (실제로는 리다이렉트되므로 보이지 않을 것임)
+  if (callbackResult?.success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Icons.spinner className="mx-auto h-12 w-12 animate-spin text-green-600" />
+          <p className="mt-4 text-lg text-gray-600">
+            로그인 성공! 페이지를 이동하고 있습니다...
+          </p>
         </div>
       </div>
     );
