@@ -196,6 +196,7 @@ export default function Home() {
               </div>
             ))}
           </div>
+          <GapY size={53} />
         </div>
       </div>
     </div>

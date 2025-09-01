@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { format } from "date-fns";
+import { useUser, useSignOut } from "@/hooks/useAuthQueries";
 
 interface BookingHistory {
   id: string;
@@ -19,14 +20,23 @@ interface BookingHistory {
 }
 
 export default function MyPage() {
+  // React Query hooks 사용
+  const { data: user, isLoading: userLoading } = useUser();
+  const signOutMutation = useSignOut();
+
   const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
-  const [userProfile] = useState({
-    name: "K-pop Fan",
-    email: "fan@example.com",
-    avatar: "/dummy-profile.png",
-  });
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([]);
   const [favoriteIdol, setFavoriteIdol] = useState<string>("");
+
+  // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
+  const userProfile = {
+    name:
+      user?.user_metadata?.full_name ||
+      user?.email?.split("@")[0] ||
+      "K-pop Fan",
+    email: user?.email || "fan@example.com",
+    avatar: user?.user_metadata?.avatar_url || "/dummy-profile.png",
+  };
 
   useEffect(() => {
     // localStorage에서 예약 정보 가져오기
@@ -80,6 +90,15 @@ export default function MyPage() {
     }
   };
 
+  // 사용자 정보 로딩 중일 때
+  if (userLoading) {
+    return (
+      <div className="min-h-screen text-white bg-black flex items-center justify-center">
+        <div className="text-lg">사용자 정보를 불러오는 중...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen text-white bg-black">
       {/* Header */}
@@ -105,8 +124,13 @@ export default function MyPage() {
                 <h2 className="text-lg font-semibold">{userProfile.name}</h2>
                 <p className="text-gray-400 text-sm">{userProfile.email}</p>
               </div>
-              <Button variant="ghost" size="sm">
-                Edit
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => signOutMutation.mutate()}
+                disabled={signOutMutation.isPending}
+              >
+                {signOutMutation.isPending ? "로그아웃 중..." : "로그아웃"}
               </Button>
             </div>
           </CardContent>
