@@ -22,10 +22,10 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "DOKI",
-    url: "https://your-domain.com", // 실제 도메인으로 변경하세요
+    url: "https://your-domain.com",
     images: [
       {
-        url: "/main-logo.png", // public 폴더의 이미지 경로
+        url: "/main-logo.png",
         width: 1200,
         height: 630,
         alt: "DOKI 로고",

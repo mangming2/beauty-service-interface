@@ -11,22 +11,13 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
+        getAll() {
+          return req.cookies.getAll();
         },
-        set(name: string, value: string, options: any) {
-          res.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: any) {
-          res.cookies.set({
-            name,
-            value: "",
-            ...options,
-          });
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            res.cookies.set(name, value, options)
+          );
         },
       },
     }
@@ -38,7 +29,7 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   // 인증이 필요하지 않은 페이지들 (공개 페이지)
-  const publicPages = ["/", "/login"];
+  const publicPages = ["/", "/login", "/auth/callback"];
   const isPublicPage = publicPages.some(page => req.nextUrl.pathname === page);
 
   // 인증이 필요한 페이지에 접근하려고 하는데 로그인이 안된 경우

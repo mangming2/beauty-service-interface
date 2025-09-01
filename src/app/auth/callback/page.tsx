@@ -59,7 +59,7 @@ export default function AuthCallbackPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-cente">
         <div className="text-center">
           <Icons.spinner className="mx-auto h-12 w-12 animate-spin text-indigo-600" />
           <p className="mt-4 text-lg text-gray-600">

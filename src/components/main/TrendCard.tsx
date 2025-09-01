@@ -29,12 +29,12 @@ export function TrendCard({
               className="object-cover"
             />
           </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-white text-sm">{title}</h3>
+          <div className="flex flex-col flex-1 gap-y-[8px]">
+            <h3 className="font-medium text-white title-sm">{title}</h3>
             <p className="text-xs text-gray-400">
               ♫ {artist} · {location}
             </p>
-            <p className="text-xs text-gray-300 mt-1">{description}</p>
+            <p className="text-md text-white">{description}</p>
           </div>
         </div>
       </CardContent>

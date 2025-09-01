@@ -19,16 +19,17 @@ export default function ProfileSetupPage() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const { updateProfile, isAuthenticated } = useAuth();
+  const { updateProfile, isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // 로딩이 완료된 후에만 인증 상태 체크
+    if (!loading && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, loading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +40,7 @@ export default function ProfileSetupPage() {
     }
 
     try {
-      setLoading(true);
+      setFormLoading(true);
       setMessage("");
 
       const { error } = await updateProfile({
@@ -52,20 +53,19 @@ export default function ProfileSetupPage() {
       if (error) {
         setMessage("프로필 저장 중 오류가 발생했습니다.");
       } else {
-        setMessage("프로필이 성공적으로 저장되었습니다!");
-        setTimeout(() => {
-          router.push("/my");
-        }, 1500);
+        // 프로필 저장 성공 시 즉시 리다이렉트
+        router.push("/my");
       }
     } catch (error) {
       setMessage("프로필 저장 중 오류가 발생했습니다.");
       console.error("Profile setup error:", error);
     } finally {
-      setLoading(false);
+      setFormLoading(false);
     }
   };
 
-  if (!isAuthenticated) {
+  // 로딩 중이거나 인증되지 않은 경우 로딩 표시
+  if (loading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Icons.spinner className="h-8 w-8 animate-spin text-indigo-600" />
@@ -137,8 +137,8 @@ export default function ProfileSetupPage() {
                 </div>
               )}
 
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? (
+              <Button type="submit" disabled={formLoading} className="w-full">
+                {formLoading ? (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <Icons.userPlus className="mr-2 h-4 w-4" />
