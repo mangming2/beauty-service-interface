@@ -159,6 +159,7 @@ export default function Home() {
           <div className="flex flex-col">
             {[
               {
+                id: "aespa-futuristic",
                 titleKey: "trends.romanticSchool.title",
                 artistKey: "trends.romanticSchool.artist",
                 locationKey: "trends.romanticSchool.location",
@@ -166,6 +167,7 @@ export default function Home() {
                 imageSrc: "/dummy-profile.png",
               },
               {
+                id: "y2k-highteen",
                 titleKey: "trends.y2kHighteen.title",
                 artistKey: "trends.y2kHighteen.artist",
                 locationKey: "trends.y2kHighteen.location",
@@ -173,6 +175,7 @@ export default function Home() {
                 imageSrc: "/dummy-profile.png",
               },
               {
+                id: "k-traditional",
                 titleKey: "trends.kTraditional.title",
                 artistKey: "trends.kTraditional.artist",
                 locationKey: "trends.kTraditional.location",
@@ -182,6 +185,7 @@ export default function Home() {
             ].map((trend, index, array) => (
               <div key={index}>
                 <TrendCard
+                  id={trend.id}
                   title={<TranslatedText translationKey={trend.titleKey} />}
                   artist={<TranslatedText translationKey={trend.artistKey} />}
                   location={
