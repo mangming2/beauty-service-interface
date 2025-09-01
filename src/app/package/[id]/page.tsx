@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import { Divider } from "../../../components/ui/divider";
+import KakaoMap from "@/components/common/KakaoMap";
 
 interface PackageDetail {
   id: string;
@@ -340,26 +341,7 @@ export default function PackageDetail() {
 
           {/* Map Section */}
           <div className="mb-6">
-            <div className="bg-gray-800 rounded-lg h-48 mb-3 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-6 h-6 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6 1C4.34315 1 3 2.34315 3 4C3 6 6 10 6 10C6 10 9 6 9 4C9 2.34315 7.65685 1 6 1Z"
-                      fill="white"
-                    />
-                    <circle cx="6" cy="4" r="1" fill="red" />
-                  </svg>
-                </div>
-                <p className="text-sm text-gray-400">트라이볼</p>
-              </div>
-            </div>
+            <KakaoMap address="사당동 142-38" height="192px" className="mb-3" />
             <p className="text-sm text-gray-400">
               {packageDetail.travelTime}{" "}
               <span className="text-pink-500">{packageDetail.mapLocation}</span>
