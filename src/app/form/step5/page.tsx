@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
@@ -12,14 +12,13 @@ import { SeoulMap } from "@/components/common/SeoulMap";
 import { Step5Schema, Step5Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
-import { submitBeautyForm } from "@/lib/beautyFormService";
+import { useSubmitBeautyForm } from "@/hooks/useFormQueries";
 
 export default function FormPage5() {
   const router = useRouter();
   const { isAuthenticated, loading } = useAuth();
   const { formData, updateStep5, setCurrentStep } = useFormStore();
-  const [submitError, setSubmitError] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitFormMutation = useSubmitBeautyForm();
 
   const form = useForm<Step5Data>({
     resolver: zodResolver(Step5Schema),
@@ -71,32 +70,14 @@ export default function FormPage5() {
   };
 
   const onSubmit = async (data: Step5Data) => {
-    setSubmitError("");
-    setIsSubmitting(true);
-
     // Zustand store에 마지막 스텝 데이터 저장
     updateStep5(data);
 
     // 전체 폼 데이터 가져오기 (업데이트된 데이터 포함)
     const completeFormData = { ...formData, ...data };
 
-    try {
-      // 전체 폼 데이터 제출
-      const result = await submitBeautyForm(completeFormData);
-
-      if (result.success) {
-        // 성공 시 완료 페이지로 이동
-        router.push("/form/complete");
-      } else {
-        // 실패 시 에러 메시지 표시
-        setSubmitError(result.error || "폼 제출 중 오류가 발생했습니다.");
-      }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setSubmitError("폼 제출 중 오류가 발생했습니다.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    // React Query mutation 실행
+    submitFormMutation.mutate(completeFormData);
   };
 
   return (
@@ -140,9 +121,10 @@ export default function FormPage5() {
           )}
 
           {/* Submit Error Display */}
-          {submitError && (
+          {submitFormMutation.isError && (
             <div className="mt-4 text-red-400 text-sm text-center px-[16px]">
-              {submitError}
+              {(submitFormMutation.error as Error)?.message ||
+                "폼 제출 중 오류가 발생했습니다."}
             </div>
           )}
         </form>
@@ -152,17 +134,21 @@ export default function FormPage5() {
       <div className="mt-auto p-4 bg-transparent">
         <Button
           className={`w-full h-[52px] flex justify-between items-center ${
-            selectedRegions && selectedRegions.length > 0 && !isSubmitting
+            selectedRegions &&
+            selectedRegions.length > 0 &&
+            !submitFormMutation.isPending
               ? "bg-pink-500 hover:bg-pink-600"
               : "bg-gray-600 cursor-not-allowed"
           }`}
           onClick={handleSubmit(onSubmit)}
           disabled={
-            !selectedRegions || selectedRegions.length === 0 || isSubmitting
+            !selectedRegions ||
+            selectedRegions.length === 0 ||
+            submitFormMutation.isPending
           }
         >
           <span className="font-medium">
-            {isSubmitting ? "제출 중..." : "제출하기"}
+            {submitFormMutation.isPending ? "제출 중..." : "제출하기"}
           </span>
           <ArrowRightIcon
             color="white"

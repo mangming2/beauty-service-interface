@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { format } from "date-fns";
+
 import { useUser, useSignOut } from "@/hooks/useAuthQueries";
 
 interface BookingHistory {

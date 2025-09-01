@@ -1,73 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import PackageCard from "@/components/main/PackageCard";
-import { useAuth } from "@/hooks/useAuth";
-import { getUserFormSubmission } from "@/lib/beautyFormService";
-
-interface FormSubmission {
-  id: number;
-  selected_concepts: string[];
-  favorite_idol: string;
-  idol_option: string;
-  date_range: {
-    from: string;
-    to: string;
-  } | null;
-  selected_regions: string[];
-  created_at: string;
-}
+import { useUser } from "@/hooks/useAuthQueries";
+import { useUserFormSubmission } from "@/hooks/useFormQueries";
 
 export default function FormComplete() {
   const router = useRouter();
-  const { user, isAuthenticated, loading } = useAuth();
-  const [formSubmission, setFormSubmission] = useState<FormSubmission | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+  const { data: user, isLoading: userLoading } = useUser();
+  const {
+    data: formSubmission,
+    isLoading: formLoading,
+    error: formError,
+  } = useUserFormSubmission(user?.id);
 
   useEffect(() => {
-    const fetchLatestSubmission = async () => {
-      if (!isAuthenticated || !user) {
-        router.push("/login");
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        // 사용자의 폼 제출 데이터 가져오기
-        const result = await getUserFormSubmission();
-
-        if (result.error) {
-          console.error("Failed to fetch submission:", result.error);
-          setError("제출된 데이터를 불러올 수 없습니다.");
-          return;
-        }
-
-        if (result.data) {
-          setFormSubmission(result.data);
-        }
-      } catch (err) {
-        console.error("Error fetching submission:", err);
-        setError("데이터를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (!loading) {
-      fetchLatestSubmission();
+    if (!userLoading && !user) {
+      router.push("/login");
     }
-  }, [isAuthenticated, user, loading, router]);
+  }, [user, userLoading, router]);
 
   // 로딩 상태
-  if (loading || isLoading) {
+  if (userLoading || formLoading) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-lg">데이터를 불러오는 중...</div>
@@ -76,11 +35,14 @@ export default function FormComplete() {
   }
 
   // 에러 상태
-  if (error) {
+  if (formError) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg text-red-400 mb-4">{error}</div>
+          <div className="text-lg text-red-400 mb-4">
+            {(formError as Error)?.message ||
+              "데이터를 불러오는 중 오류가 발생했습니다."}
+          </div>
           <button
             onClick={() => router.push("/form/step1")}
             className="px-4 py-2 bg-pink-500 rounded text-white"
