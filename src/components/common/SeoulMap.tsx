@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import Image from "next/image";
 
 type SeoulMapProps = {
   selectedId?: string;
@@ -33,13 +34,30 @@ export const SeoulMap = ({
   };
 
   return (
-    <div className={className}>
+    <div
+      className={`relative ${className}`}
+      style={{ minWidth: "360px", minHeight: "293px" }}
+    >
+      <Image
+        src={"/Name.svg"}
+        width={274}
+        height={197}
+        alt="Name"
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-90 pointer-events-none"
+        style={{
+          minWidth: "274px",
+          minHeight: "197px",
+          maxWidth: "274px",
+          maxHeight: "197px",
+        }}
+      />
       <svg
         viewBox="0 0 360 293"
         xmlns="http://www.w3.org/2000/svg"
         role="img"
         aria-label="서울 지도"
         className="w-full h-auto select-none"
+        style={{ minWidth: "360px", minHeight: "293px" }}
       >
         <g>
           <path
