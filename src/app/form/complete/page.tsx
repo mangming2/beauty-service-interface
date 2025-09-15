@@ -9,6 +9,7 @@ import { GapY } from "../../../components/ui/gap";
 import PackageCard from "@/components/main/PackageCard";
 import { useUser } from "@/hooks/useAuthQueries";
 import { useUserFormSubmission } from "@/hooks/useFormQueries";
+import { Divider } from "../../../components/ui/divider";
 
 export default function FormComplete() {
   const router = useRouter();
@@ -86,7 +87,7 @@ export default function FormComplete() {
             All summed up in tags
           </h2>
         </div>
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-1 flex-nowrap overflow-x-auto pb-2">
           {formSubmission.selected_concepts?.map(
             (concept: string, index: number) => (
               <Badge
@@ -142,26 +143,74 @@ export default function FormComplete() {
       </div>
 
       <GapY size={12} />
-
-      <div className="w-[364px] h-[448px] relative">
-        <Image
-          src="/dummy-profile.png"
-          alt="dummy profile"
-          fill
-          className="object-cover"
-        />
+      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
+        <div className="w-[348px] h-[196px] relative flex-shrink-0">
+          <Image
+            src="/dummy-profile.png"
+            alt="dummy profile"
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="w-[348px] h-[196px] relative flex-shrink-0">
+          <Image
+            src="/dummy-profile.png"
+            alt="dummy profile"
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="w-[348px] h-[196px] relative flex-shrink-0">
+          <Image
+            src="/dummy-profile.png"
+            alt="dummy profile"
+            fill
+            className="object-cover"
+          />
+        </div>
       </div>
 
       <GapY size={12} />
 
-      {/* Distance Info */}
-      <div className="flex items-center justify-center w-full h-[28px] bg-white/10 rounded-[32px]">
-        <span className="text-gray-300 text-sm">
-          About 1.5 km from the{" "}
-          <span className="text-pink-400 font-medium">
-            {formSubmission.selected_regions?.[0] || "Seoul"}
-          </span>{" "}
-        </span>
+      {/* Salon Recommendation Cards */}
+      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
+        <div className="">
+          <div>
+            <div className="flex gap-2 mb-2">
+              <span className="text-pink-400 text-sm">#aespa</span>
+              <span className="text-pink-400 text-sm">#metallic</span>
+              <span className="text-pink-400 text-sm">#sm</span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <h3 className="text-white title-sm font-semibold mb-2">
+                DOKI MAKE SALON
+              </h3>
+              <span className="text-pink-400 title-sm font-semibold">
+                ₩ 50,000 ~
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-pink-400">★</span>
+              <span className="text-white text-sm">4.8</span>
+              <span className="text-gray-400 text-sm">review 15</span>
+            </div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-gray-300 text-sm">2.3km (Yongsan)</span>
+            </div>
+            <div className="text-gray-400 text-xs mb-2">
+              Korean / English / Japanese
+            </div>
+
+            <Divider />
+            <GapY size={12} />
+            <div className="text-gray-300 text-sm">
+              Go bold with smoky makeup and metallic accessories. With expert
+              guidance in a professional studio
+            </div>
+          </div>
+        </div>
       </div>
 
       <GapY size={12} />
@@ -194,6 +243,43 @@ export default function FormComplete() {
 
         <PackageCard
           packageId="triples-dreamy-2"
+          imageSrc="/dummy-profile.png"
+          imageAlt="tripleS - Dreamy & Mystic Idol"
+          artist="tripleS"
+          location="Gapyeong"
+          title="Dreamy & Mystic Idol..."
+          onClick={handlePackageClick}
+        />
+      </div>
+
+      <GapY size={12} />
+
+      <div className="flex justify-between h-[44px]">
+        <h3 className="flex items-center title-md font-medium">
+          Looking for another date?
+        </h3>
+        <div className="flex flex-col h-full gap-[5px] justify-end">
+          <div className="flex items-center gap-[5px]">
+            <span className="text-gray_1 text-sm">more</span>
+            <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" />
+          </div>
+        </div>
+      </div>
+
+      <GapY size={8} />
+
+      <div className="flex gap-2">
+        <PackageCard
+          packageId="triples-dreamy"
+          imageSrc="/dummy-profile.png"
+          imageAlt="tripleS - Dreamy & Mystic Idol"
+          artist="tripleS"
+          location="Gapyeong"
+          title="Dreamy & Mystic Idol..."
+          onClick={handlePackageClick}
+        />
+        <PackageCard
+          packageId="triples-dreamy"
           imageSrc="/dummy-profile.png"
           imageAlt="tripleS - Dreamy & Mystic Idol"
           artist="tripleS"

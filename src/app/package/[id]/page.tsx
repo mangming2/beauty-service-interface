@@ -234,7 +234,7 @@ export default function PackageDetail() {
             {packageDetail.components.map(component => (
               <div key={component.id}>
                 <Card className="bg-transparent border-none py-1">
-                  <CardContent>
+                  <CardContent className="px-0 py-2">
                     <div className="flex gap-1 items-center">
                       <div className="relative w-[80px] h-[80px] overflow-hidden flex-shrink-0">
                         <Image
@@ -251,7 +251,7 @@ export default function PackageDetail() {
                         <p className="text-gray-400 text-sm mb-1">
                           {component.location}
                         </p>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-300 text-sm line-clamp-2">
                           {component.description}
                         </p>
                       </div>
@@ -264,53 +264,51 @@ export default function PackageDetail() {
           </div>
 
           {/* Collapsible Sections */}
-          <div className="space-y-4 mb-6">
-            <div className="bg-gray-container rounded-lg p-4">
-              <div className="flex justify-between items-center cursor-pointer">
-                <h3 className="font-semibold">Included & Not Included</h3>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4 6L8 10L12 6"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between bg-gray-container rounded-lg p-4 h-[44px]">
+              <span className="font-semibold">Included & Not Included</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 6L8 10L12 6"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
 
-            <div className="bg-gray-container rounded-lg p-4">
-              <div className="flex justify-between items-center cursor-pointer">
-                <h3 className="font-semibold">Booking Checklist</h3>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4 6L8 10L12 6"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+            <div className="flex items-center justify-between bg-gray-container rounded-lg p-4 h-[44px]">
+              <span className="font-semibold">Booking Checklist</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 6L8 10L12 6"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
           </div>
 
+          <GapY size={20} />
+
           {/* Customer Reviews */}
-          <div className="mb-6">
-            <h3 className="text-lg font-bold mb-4">Customers review</h3>
+          <div>
+            <span className="title-md font-bold mb-4">Customers review</span>
             <div className="grid grid-cols-2 gap-3">
               {packageDetail.reviews.map(review => (
                 <Card
@@ -342,13 +340,21 @@ export default function PackageDetail() {
             </div>
           </div>
 
+          <GapY size={20} />
+
           {/* Map Section */}
-          <div className="mb-6">
+          <div>
             <KakaoMap address="사당동 142-38" height="192px" className="mb-3" />
-            <p className="text-sm text-gray-400">
-              {packageDetail.travelTime}{" "}
-              <span className="text-pink-500">{packageDetail.mapLocation}</span>
-            </p>
+
+            {/* Distance Info */}
+            <div className="flex items-center justify-center w-full h-[28px] bg-white/10 rounded-[32px]">
+              <span className="text-gray-300 text-sm">
+                {packageDetail.travelTime} from the{" "}
+                <span className="text-pink-400 font-medium">
+                  {packageDetail.mapLocation}
+                </span>{" "}
+              </span>
+            </div>
           </div>
         </div>
       </div>
