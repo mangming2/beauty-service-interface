@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { SeoulMap } from "@/components/common/SeoulMap";
@@ -88,14 +87,14 @@ export default function FormPage5() {
         <GapY size={12} />
 
         {/* Header */}
-        <div className="px-[16px]">
+        <div>
           <h1 className="h-[68px] text-xl font-semibold mb-6">
             Where would you like to visit?
           </h1>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="px-[16px]">
+          <div>
             <SeoulMap
               selectedIds={selectedRegions || []}
               onSelect={handleRegionClick}
@@ -105,10 +104,12 @@ export default function FormPage5() {
 
           <GapY size={12} />
 
-          <div className="px-[16px] flex justify-center">
+          <div className="flex justify-center">
             {selectedRegions && selectedRegions.length > 0 && (
-              <div className="p-[12px] bg-gray rounded-[32px] text-lg text-center w-fit">
-                {selectedRegions.join(", ")}
+              <div className="min-w-[200px] p-3 bg-gray rounded-[32px] text-lg text-center w-fit">
+                {selectedRegions.length === 1
+                  ? selectedRegions[0]
+                  : `${selectedRegions[0]}, ... and ${selectedRegions.length - 1} others`}
               </div>
             )}
           </div>
@@ -131,14 +132,14 @@ export default function FormPage5() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto p-4 bg-transparent">
+      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
-          className={`w-full h-[52px] flex justify-between items-center ${
+          className={`w-full h-[52px] flex justify-center items-center ${
             selectedRegions &&
             selectedRegions.length > 0 &&
             !submitFormMutation.isPending
-              ? "bg-pink-500 hover:bg-pink-600"
-              : "bg-gray-600 cursor-not-allowed"
+              ? "bg-primary hover:bg-primary"
+              : "bg-disabled cursor-not-allowed"
           }`}
           onClick={handleSubmit(onSubmit)}
           disabled={
@@ -147,15 +148,9 @@ export default function FormPage5() {
             submitFormMutation.isPending
           }
         >
-          <span className="font-medium">
+          <span className="text-white font-medium">
             {submitFormMutation.isPending ? "제출 중..." : "제출하기"}
           </span>
-          <ArrowRightIcon
-            color="white"
-            width={7}
-            height={16}
-            className="size-auto"
-          />
         </Button>
       </div>
     </div>

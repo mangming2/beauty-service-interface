@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { Step2Schema, Step2Data } from "@/types/form";
@@ -81,21 +80,15 @@ export default function FormPage2() {
       {/* Navigation */}
       <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
-          className={`w-full h-[52px] flex justify-between items-center ${
+          className={`w-full h-[52px] flex justify-center items-center ${
             isValid
-              ? "bg-pink-500 hover:bg-pink-600"
-              : "bg-gray-600 cursor-not-allowed"
+              ? "bg-primary hover:bg-primary"
+              : "bg-disabled cursor-not-allowed"
           }`}
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid}
         >
-          <span className="font-medium">Next</span>
-          <ArrowRightIcon
-            color="white"
-            width={7}
-            height={16}
-            className="size-auto"
-          />
+          <span className="text-white font-medium">Next</span>
         </Button>
       </div>
     </div>

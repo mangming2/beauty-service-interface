@@ -74,7 +74,7 @@ export default function Home() {
           </div>
         </div>
 
-        <GapY size={12} />
+        <GapY size={20} />
 
         {/* CTA Banner */}
         <Link href="/form/step1">
@@ -93,9 +93,7 @@ export default function Home() {
           </Button>
         </Link>
 
-        <Link href="/form/complete">나중에 삭제할것</Link>
-
-        <GapY size={12} />
+        <GapY size={20} />
 
         {/* Choose Your Concept Section */}
         <div className="flex flex-col gap-[14px]">
@@ -133,7 +131,7 @@ export default function Home() {
           </div>
         </div>
 
-        <GapY size={12} />
+        <GapY size={20} />
 
         {/* Latest Trends Section */}
         <div>
@@ -154,7 +152,7 @@ export default function Home() {
             </div>
           </div>
 
-          <GapY size={16} />
+          <GapY size={8} />
 
           <div className="flex flex-col">
             {[
@@ -200,7 +198,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <GapY size={53} />
+          <GapY size={44} />
         </div>
       </div>
     </div>

@@ -23,9 +23,9 @@ export function TrendCard({
   return (
     <Link href={`/package/${id}`}>
       <Card className="flex py-[8px] bg-transparent border-0 cursor-pointer hover:bg-gray-800/20 transition-colors">
-        <CardContent className="p-4">
+        <CardContent className="py-4 px-0">
           <div className="flex gap-3">
-            <div className="relative w-[91px] h-[91px] bg-gray rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <div className="relative w-[92px] h-[92px] bg-gray rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
               <Image
                 src={imageSrc}
                 alt={typeof title === "string" ? title : "Trend"}

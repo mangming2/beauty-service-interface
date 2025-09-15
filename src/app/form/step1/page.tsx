@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import GirlCrush from "@/assets/3d-images/girl-crush.png";
 import LovelyFresh from "@/assets/3d-images/lovely-fresh.png";
@@ -93,11 +92,11 @@ export default function FormPage1() {
 
         {/* Concept Selection */}
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex items-center justify-center flex-wrap gap-x-[20px] gap-y-[36px]">
+          <div className="flex w-[372px] items-center justify-center flex-wrap gap-x-[12px] gap-y-[36px]">
             {concepts.map(concept => (
               <Card
                 key={concept.id}
-                className="w-[112px] py-0 px-0 border-none cursor-pointer transition-all duration-200 bg-transparent"
+                className="w-[116px] py-0 px-0 border-none cursor-pointer transition-all duration-200 bg-transparent"
                 onClick={() => handleConceptClick(concept.id)}
               >
                 <CardContent className="flex p-0 flex-col gap-[8px] items-center">
@@ -138,21 +137,15 @@ export default function FormPage1() {
       {/* Navigation */}
       <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
-          className={`w-full h-[52px] flex justify-between items-center ${
+          className={`w-full h-[52px] flex justify-center items-center ${
             selectedConcepts && selectedConcepts.length > 0
-              ? "bg-pink-500 hover:bg-pink-600"
-              : "bg-gray-600 cursor-not-allowed"
+              ? "bg-primary hover:bg-primary"
+              : "bg-disabled cursor-not-allowed"
           }`}
           onClick={handleSubmit(onSubmit)}
           disabled={!selectedConcepts || selectedConcepts.length === 0}
         >
-          <span className="font-medium">Next</span>
-          <ArrowRightIcon
-            color="white"
-            width={7}
-            height={16}
-            className="size-auto"
-          />
+          <span className="text-white font-medium">Next</span>
         </Button>
       </div>
     </div>

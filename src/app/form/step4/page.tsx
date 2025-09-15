@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { ArrowRightIcon } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -115,15 +114,15 @@ export default function FormPage4() {
         <GapY size={12} />
 
         {/* Header */}
-        <div className="px-[16px]">
+        <div>
           <h1 className="text-xl font-semibold mb-6">
             When would you like to join the tour?
           </h1>
         </div>
 
         {/* Calendar - Centered */}
-        <div className="flex-1 flex px-[16px]">
-          <div className="w-full max-w-xs mx-auto">
+        <div className="flex-1 flex">
+          <div className="w-full">
             {/* Custom Calendar Header */}
             <div className="flex items-center justify-between mb-4 px-2">
               <button
@@ -212,23 +211,17 @@ export default function FormPage4() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto p-4 bg-transparent">
+      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
         <Button
-          className={`w-full h-[52px] flex justify-between items-center ${
+          className={`w-full h-[52px] flex justify-center items-center ${
             dateRange?.from && dateRange?.to
-              ? "bg-pink-500 hover:bg-pink-600"
-              : "bg-gray-600 cursor-not-allowed"
+              ? "bg-primary hover:bg-primary"
+              : "bg-disabled cursor-not-allowed"
           }`}
           onClick={handleSubmit(onSubmit)}
           disabled={!dateRange?.from || !dateRange?.to}
         >
-          <span className="font-medium">Next</span>
-          <ArrowRightIcon
-            color="white"
-            width={7}
-            height={16}
-            className="size-auto"
-          />
+          <span className="text-white font-medium">Next</span>
         </Button>
       </div>
     </div>
