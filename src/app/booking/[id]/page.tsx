@@ -123,14 +123,7 @@ export default function BookingPage() {
   };
 
   const handleCheckout = () => {
-    // 예약 완료 처리
-    console.log("Booking completed for package:", packageId);
-
-    // 예약 완료 상태를 localStorage에 저장
-    localStorage.setItem("bookingCompleted", "true");
-
-    // 마이페이지로 이동
-    router.push("/my");
+    router.push(`/booking/${packageId}/date`);
   };
 
   const platformFee = 20000;

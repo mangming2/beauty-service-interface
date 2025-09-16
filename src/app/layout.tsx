@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "DOKI",
   description: "A modern beauty service interface built with Next.js",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
     title: "DOKI - 뷰티 서비스 인터페이스",
     description: "모던한 뷰티 서비스를 위한 인터페이스",
