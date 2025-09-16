@@ -87,7 +87,7 @@ export default function FormComplete() {
             All summed up in tags
           </h2>
         </div>
-        <div className="flex gap-1 flex-nowrap overflow-x-auto pb-2">
+        <div className="flex gap-1 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
           {formSubmission.selected_concepts?.map(
             (concept: string, index: number) => (
               <Badge
@@ -143,7 +143,7 @@ export default function FormComplete() {
       </div>
 
       <GapY size={12} />
-      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
+      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
         <div className="w-[348px] h-[196px] relative flex-shrink-0">
           <Image
             src="/dummy-profile.png"
