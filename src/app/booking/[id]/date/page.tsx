@@ -47,7 +47,7 @@ export default function BookingDatePage() {
   const weekDates = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   return (
-    <div className="min-h-screen text-white bg-black">
+    <div className=" text-white bg-black">
       {/* Header */}
 
       <div className="px-4 py-6">
