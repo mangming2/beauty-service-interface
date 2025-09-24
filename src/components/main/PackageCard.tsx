@@ -23,12 +23,12 @@ export default function PackageCard({
 }: PackageCardProps) {
   return (
     <Card
-      className="bg-transparent border-0 cursor-pointer flex-1"
+      className="bg-transparent border-0 cursor-pointer w-[168px] pt-0 pb-2"
       onClick={() => onClick(packageId)}
     >
-      <CardContent className="p-0 bg-white/10 rounded-[8px]">
+      <CardContent className="p-0 bg-gray-container rounded-[8px]">
         <div className="flex flex-col">
-          <div className="relative w-full h-[200px] bg-gray rounded-t-lg overflow-hidden">
+          <div className="relative w-[168px] h-[168px] bg-gray rounded-t-lg overflow-hidden">
             <Image
               src={imageSrc}
               alt={imageAlt}
@@ -36,7 +36,7 @@ export default function PackageCard({
               className="object-cover"
             />
           </div>
-          <div className="p-2">
+          <div className="px-2 py-1">
             <p className="text-xs gap-1 flex items-center text-gray-400">
               <span className="text-black">♫</span>
               <span>{artist}</span>

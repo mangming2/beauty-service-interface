@@ -130,18 +130,6 @@ export default function FormComplete() {
       </div>
       <GapY size={16} />
 
-      <div className="flex justify-between h-[44px]">
-        <h3 className="flex items-center title-md font-medium">
-          Based on your answers
-        </h3>
-        <div className="flex flex-col h-full gap-[5px] justify-end">
-          <div className="flex items-center gap-[5px]">
-            <span className="text-gray_1 text-sm">more</span>
-            <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" />
-          </div>
-        </div>
-      </div>
-
       <GapY size={12} />
       <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
         <div className="w-[348px] h-[196px] relative flex-shrink-0">
@@ -195,98 +183,97 @@ export default function FormComplete() {
               <span className="text-pink-400">★</span>
               <span className="text-white text-sm">4.8</span>
               <span className="text-gray-400 text-sm">review 15</span>
-            </div>
-            <div className="flex justify-between items-center mb-2">
               <span className="text-gray-300 text-sm">2.3km (Yongsan)</span>
             </div>
             <div className="text-gray-400 text-xs mb-2">
               Korean / English / Japanese
             </div>
+          </div>
+        </div>
+      </div>
 
-            <Divider />
-            <GapY size={12} />
-            <div className="text-gray-300 text-sm">
-              Go bold with smoky makeup and metallic accessories. With expert
-              guidance in a professional studio
+      <GapY size={12} />
+
+      <div className="flex flex-col gap-2 pl-5 bg-gray-container">
+        <div className="flex justify-between h-[44px]">
+          <h3 className="flex items-center title-md font-medium">
+            How about this package?
+          </h3>
+          <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
+            <div className="flex items-center gap-[5px]">
+              <span className="text-gray_1 text-sm">more</span>
+              <ArrowRightIcon
+                width={3}
+                height={7}
+                color="var(--color-gray_1)"
+              />
             </div>
           </div>
         </div>
+        {/* Package Cards */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          <PackageCard
+            packageId="triples-dreamy"
+            imageSrc="/dummy-profile.png"
+            imageAlt="tripleS - Dreamy & Mystic Idol"
+            artist="tripleS"
+            location="Gapyeong"
+            title="Dreamy & Mystic Idol..."
+            onClick={handlePackageClick}
+          />
+
+          <PackageCard
+            packageId="triples-dreamy-2"
+            imageSrc="/dummy-profile.png"
+            imageAlt="tripleS - Dreamy & Mystic Idol"
+            artist="tripleS"
+            location="Gapyeong"
+            title="Dreamy & Mystic Idol..."
+            onClick={handlePackageClick}
+          />
+        </div>
       </div>
 
       <GapY size={12} />
 
-      <div className="flex justify-between h-[44px]">
-        <h3 className="flex items-center title-md font-medium">
-          How about this package?
-        </h3>
-        <div className="flex flex-col h-full gap-[5px] justify-end">
-          <div className="flex items-center gap-[5px]">
-            <span className="text-gray_1 text-sm">more</span>
-            <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" />
+      <div className="flex flex-col gap-2 pl-5 bg-gray-container">
+        <div className="flex justify-between h-[44px]">
+          <h3 className="flex items-center title-md font-medium">
+            Looking for another Date?
+          </h3>
+          <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
+            <div className="flex items-center gap-[5px]">
+              <span className="text-gray_1 text-sm">more</span>
+              <ArrowRightIcon
+                width={3}
+                height={7}
+                color="var(--color-gray_1)"
+              />
+            </div>
           </div>
         </div>
-      </div>
+        {/* Package Cards */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          <PackageCard
+            packageId="triples-dreamy"
+            imageSrc="/dummy-profile.png"
+            imageAlt="tripleS - Dreamy & Mystic Idol"
+            artist="tripleS"
+            location="Gapyeong"
+            title="Dreamy & Mystic Idol..."
+            onClick={handlePackageClick}
+          />
 
-      <GapY size={8} />
-
-      {/* Package Cards */}
-      <div className="flex gap-2">
-        <PackageCard
-          packageId="triples-dreamy"
-          imageSrc="/dummy-profile.png"
-          imageAlt="tripleS - Dreamy & Mystic Idol"
-          artist="tripleS"
-          location="Gapyeong"
-          title="Dreamy & Mystic Idol..."
-          onClick={handlePackageClick}
-        />
-
-        <PackageCard
-          packageId="triples-dreamy-2"
-          imageSrc="/dummy-profile.png"
-          imageAlt="tripleS - Dreamy & Mystic Idol"
-          artist="tripleS"
-          location="Gapyeong"
-          title="Dreamy & Mystic Idol..."
-          onClick={handlePackageClick}
-        />
-      </div>
-
-      <GapY size={12} />
-
-      <div className="flex justify-between h-[44px]">
-        <h3 className="flex items-center title-md font-medium">
-          Looking for another date?
-        </h3>
-        <div className="flex flex-col h-full gap-[5px] justify-end">
-          <div className="flex items-center gap-[5px]">
-            <span className="text-gray_1 text-sm">more</span>
-            <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" />
-          </div>
+          <PackageCard
+            packageId="triples-dreamy-2"
+            imageSrc="/dummy-profile.png"
+            imageAlt="tripleS - Dreamy & Mystic Idol"
+            artist="tripleS"
+            location="Gapyeong"
+            title="Dreamy & Mystic Idol..."
+            onClick={handlePackageClick}
+          />
         </div>
-      </div>
-
-      <GapY size={8} />
-
-      <div className="flex gap-2">
-        <PackageCard
-          packageId="triples-dreamy"
-          imageSrc="/dummy-profile.png"
-          imageAlt="tripleS - Dreamy & Mystic Idol"
-          artist="tripleS"
-          location="Gapyeong"
-          title="Dreamy & Mystic Idol..."
-          onClick={handlePackageClick}
-        />
-        <PackageCard
-          packageId="triples-dreamy"
-          imageSrc="/dummy-profile.png"
-          imageAlt="tripleS - Dreamy & Mystic Idol"
-          artist="tripleS"
-          location="Gapyeong"
-          title="Dreamy & Mystic Idol..."
-          onClick={handlePackageClick}
-        />
       </div>
     </div>
   );
