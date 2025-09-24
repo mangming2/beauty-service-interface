@@ -476,6 +476,36 @@ const RestartIcon = ({ color, ...rest }: IconProps) => {
   );
 };
 
+const PlusIcon = ({ color, ...rest }: IconProps) => {
+  return (
+    <svg
+      width="30"
+      height="30"
+      viewBox="0 0 30 30"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <rect
+        x="14"
+        width="2.5"
+        height="30"
+        rx="1.25"
+        fill={color ?? "#FFFFFE"}
+      />
+      <rect
+        x="30"
+        y="14"
+        width="2.5"
+        height="30"
+        rx="1.25"
+        transform="rotate(90 30 14)"
+        fill={color ?? "#FFFFFE"}
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -495,6 +525,7 @@ export {
   AppleIcon,
   GoogleIcon,
   RestartIcon,
+  PlusIcon,
 };
 
 export const Icons = {
@@ -513,4 +544,5 @@ export const Icons = {
   login: LoginIcon,
   userPlus: UserPlusIcon,
   restart: RestartIcon,
+  plus: PlusIcon,
 };

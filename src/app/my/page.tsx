@@ -11,8 +11,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Icons } from "@/components/common/Icons";
 import Image from "next/image";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 
 import { useUser, useSignOut } from "@/hooks/useAuthQueries";
 
@@ -43,6 +45,7 @@ export default function MyPage() {
   // React Query hooks 사용
   const { data: user, isLoading: userLoading } = useUser();
   const signOutMutation = useSignOut();
+  const router = useRouter();
 
   const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -387,7 +390,7 @@ export default function MyPage() {
                             </SheetTitle>
                           </SheetHeader>
 
-                          <div className="space-y-4 overflow-y-auto h-full pb-6">
+                          <div className="space-y-4 overflow-y-auto h-full pb-6 relative">
                             <div className="border-l-4 border-pink-500 pl-4">
                               <div className="text-gray-400 text-sm">07.15</div>
                               <div className="text-white font-semibold">
@@ -434,6 +437,16 @@ export default function MyPage() {
                                 5 p.m.
                               </div>
                             </div>
+
+                            {/* Plus Button - Fixed Position */}
+                            <Button
+                              onClick={() =>
+                                router.push(`/my/schedule/${booking.id}`)
+                              }
+                              className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600 p-0 shadow-lg"
+                            >
+                              <Icons.plus className="w-6 h-6 text-white" />
+                            </Button>
                           </div>
                         </SheetContent>
                       </Sheet>
