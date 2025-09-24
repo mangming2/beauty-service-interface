@@ -455,6 +455,27 @@ const GoogleIcon = ({ color, ...rest }: IconProps) => {
   );
 };
 
+const RestartIcon = ({ color, ...rest }: IconProps) => {
+  return (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M1 16.2542C1 24.3981 7.71573 31 16 31C24.2843 31 31 24.3981 31 16.2542C31 8.11037 24.3333 1.50847 16 1.50847C6 1.50847 1 9.70056 1 9.70056M1 9.70056L1 1M1 9.70056H8.7585"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -473,6 +494,7 @@ export {
   XIcon,
   AppleIcon,
   GoogleIcon,
+  RestartIcon,
 };
 
 export const Icons = {
@@ -490,4 +512,5 @@ export const Icons = {
   spinner: SpinnerIcon,
   login: LoginIcon,
   userPlus: UserPlusIcon,
+  restart: RestartIcon,
 };

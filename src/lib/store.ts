@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { FormData } from "@/types/form";
 
-export type Language = "ko" | "en" | "ja" | "zh";
+export type Language = "Ko" | "En" | "Jp";
 
 interface LanguageState {
   currentLanguage: Language;
@@ -12,7 +12,7 @@ interface LanguageState {
 export const useLanguageStore = create<LanguageState>()(
   persist(
     set => ({
-      currentLanguage: "ko",
+      currentLanguage: "Ko",
       setLanguage: language => set({ currentLanguage: language }),
     }),
     {
@@ -23,10 +23,9 @@ export const useLanguageStore = create<LanguageState>()(
 
 // 언어별 표시 텍스트
 export const languageLabels: Record<Language, string> = {
-  ko: "한국어",
-  en: "English",
-  ja: "日본語",
-  zh: "中文",
+  Ko: "한국어",
+  En: "English",
+  Jp: "日本語",
 };
 
 // 폼 상태 관리

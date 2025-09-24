@@ -24,25 +24,23 @@ export const LanguageSelector = () => {
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="h-8 px-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full border border-gray-600"
+          className="h-8 px-3 bg-gray text-white rounded-full border border-gray-600"
         >
-          <Globe className="h-4 w-4 mr-2" />
-          <span className="text-sm font-medium">
-            {languageLabels[currentLanguage]}
-          </span>
-          <ChevronDown className="h-4 w-4 ml-2" />
+          <Globe width={14} height={14} />
+          <span className="text-sm font-medium">{currentLanguage}</span>
+          <ChevronDown className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-32 p-1 bg-gray-800 border-gray-600">
+      <PopoverContent className="w-17 py-1 px-0 bg-[#303035] rounded-[1px] border-none">
         <div className="space-y-1">
           {Object.entries(languageLabels).map(([code, label]) => (
             <button
               key={code}
               onClick={() => handleLanguageChange(code as Language)}
-              className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
+              className={`w-full h-5 text-left px-2 text-sm transition-colors ${
                 currentLanguage === code
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  ? "bg-pink-font text-white"
+                  : "text-gray-300 hover:text-white"
               }`}
             >
               <div className="flex items-center">

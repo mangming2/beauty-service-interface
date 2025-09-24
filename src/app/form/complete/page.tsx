@@ -3,13 +3,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRightIcon } from "@/components/common/Icons";
+import { ArrowRightIcon, RestartIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import PackageCard from "@/components/main/PackageCard";
 import { useUser } from "@/hooks/useAuthQueries";
 import { useUserFormSubmission } from "@/hooks/useFormQueries";
-import { Divider } from "../../../components/ui/divider";
 
 export default function FormComplete() {
   const router = useRouter();
@@ -78,7 +77,7 @@ export default function FormComplete() {
   };
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen text-white relative">
       <GapY size={12} />
       {/* Tags Section */}
       <div>
@@ -275,6 +274,17 @@ export default function FormComplete() {
           />
         </div>
       </div>
+
+      <GapY size={24} />
+
+      {/* Fixed Floating Restart Form Button */}
+      <button
+        onClick={() => router.push("/form/step1")}
+        className="sticky bottom-20 right-6 flex justify-center items-center cursor-pointer p-3 rounded-full z-50 ml-auto"
+        style={{ backgroundColor: "var(--pink-font)" }}
+      >
+        <RestartIcon width={35} height={35} color="white" />
+      </button>
     </div>
   );
 }
