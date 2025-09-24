@@ -1,5 +1,5 @@
 export const translations = {
-  ko: {
+  Ko: {
     location: "서울, 대한민국",
     mostPopular: "가장 인기있는",
     discoverStyle: "당신만의 K-pop 스타일을 발견하세요!",
@@ -59,7 +59,7 @@ export const translations = {
       dokiDebut: "도키 데뷔",
     },
   },
-  en: {
+  En: {
     location: "Seoul, South Korea",
     mostPopular: "Most Popular",
     discoverStyle: "Discover your K-pop style!",
@@ -118,7 +118,7 @@ export const translations = {
       dokiDebut: "Doki Debut",
     },
   },
-  ja: {
+  Jp: {
     location: "ソウル、韓国",
     mostPopular: "最も人気",
     discoverStyle: "K-POPスタイルを発見しよう！",
@@ -178,7 +178,7 @@ export const translations = {
       dokiDebut: "ドキデビュー",
     },
   },
-  zh: {
+  ZH: {
     location: "首尔，韩国",
     mostPopular: "最受欢迎",
     discoverStyle: "发现你的K-pop风格！",

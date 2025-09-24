@@ -6,17 +6,17 @@ export const useTranslation = () => {
 
   const t = (key: string) => {
     const keys = key.split(".");
-    let value: any = translations[currentLanguage];
+    let value: string | Record<string, unknown> = translations[currentLanguage];
 
     for (const k of keys) {
       if (value && typeof value === "object" && k in value) {
-        value = value[k];
+        value = value[k] as string | Record<string, unknown>;
       } else {
         // Fallback to Korean if translation not found
-        value = translations.ko;
+        value = translations.Ko;
         for (const fallbackKey of keys) {
           if (value && typeof value === "object" && fallbackKey in value) {
-            value = value[fallbackKey];
+            value = value[fallbackKey] as string | Record<string, unknown>;
           } else {
             return key; // Return key if translation still not found
           }
