@@ -3,8 +3,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRightIcon } from "@/components/common/Icons";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Image from "next/image";
 import { format } from "date-fns";
 
@@ -18,6 +24,19 @@ interface BookingHistory {
   status: "confirmed" | "completed" | "cancelled";
   imageSrc: string;
   price: number;
+  location?: string;
+  guests?: number;
+}
+
+interface Review {
+  id: string;
+  packageTitle: string;
+  date: string;
+  rating: number;
+  comment: string;
+  imageSrc: string;
+  location: string;
+  reviewed: boolean;
 }
 
 export default function MyPage() {
@@ -26,8 +45,8 @@ export default function MyPage() {
   const signOutMutation = useSignOut();
 
   const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
-  const [selectedConcepts, setSelectedConcepts] = useState<string[]>([]);
-  const [favoriteIdol, setFavoriteIdol] = useState<string>("");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
 
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   const userProfile = {
@@ -40,56 +59,117 @@ export default function MyPage() {
   };
 
   useEffect(() => {
-    // localStorage에서 예약 정보 가져오기
-    const savedDate = localStorage.getItem("selectedBookingDate");
-    const savedTime = localStorage.getItem("selectedBookingTime");
-    const concepts = JSON.parse(
-      localStorage.getItem("selectedConcepts") || "[]"
-    );
-    const idol = localStorage.getItem("favoriteIdol") || "";
+    const newBooking: BookingHistory = {
+      id: "1",
+      packageTitle: "Futuristic Chic Idol Debut",
+      date: format(new Date(), "yyyy.MM.dd"),
+      time: format(new Date(), "HH:mm"),
+      status: "confirmed",
+      imageSrc: "/dummy-profile.png",
+      price: 170000,
+      location: "Songdo, Incheon",
+      guests: 2,
+    };
+    setBookingHistory([newBooking]);
 
-    setSelectedConcepts(concepts);
-    setFavoriteIdol(idol);
-
-    if (savedDate && savedTime) {
-      const newBooking: BookingHistory = {
-        id: "1",
-        packageTitle: "Futuristic & Cyber Chic Idol Debut",
-        date: format(new Date(savedDate), "yyyy.MM.dd"),
-        time: savedTime,
+    // Add multiple booking history entries for demonstration
+    const additionalBookings: BookingHistory[] = [
+      {
+        id: "2",
+        packageTitle: "Futuristic Chic Idol Debut",
+        date: "2026.08.15",
+        time: "14:00",
         status: "confirmed",
         imageSrc: "/dummy-profile.png",
         price: 170000,
-      };
-      setBookingHistory([newBooking]);
-    }
+        location: "Songdo, Incheon",
+        guests: 2,
+      },
+      {
+        id: "3",
+        packageTitle: "Elegant Glam Photo Shoot",
+        date: "2026.09.20",
+        time: "16:00",
+        status: "confirmed",
+        imageSrc: "/dummy-profile.png",
+        price: 150000,
+        location: "Gangnam, Seoul",
+        guests: 1,
+      },
+      {
+        id: "4",
+        packageTitle: "Girl Crush Concept",
+        date: "2026.10.05",
+        time: "13:00",
+        status: "confirmed",
+        imageSrc: "/dummy-profile.png",
+        price: 180000,
+        location: "Hongdae, Seoul",
+        guests: 3,
+      },
+      {
+        id: "5",
+        packageTitle: "Futuristic Chic Idol Debut",
+        date: "2025.07.14",
+        time: "14:00",
+        status: "completed",
+        imageSrc: "/dummy-profile.png",
+        price: 170000,
+        location: "Songdo, Incheon",
+        guests: 2,
+      },
+      {
+        id: "6",
+        packageTitle: "Lovely Fresh Style",
+        date: "2025.05.22",
+        time: "11:00",
+        status: "completed",
+        imageSrc: "/dummy-profile.png",
+        price: 140000,
+        location: "Myeongdong, Seoul",
+        guests: 2,
+      },
+      {
+        id: "7",
+        packageTitle: "Highteen Concept",
+        date: "2025.03.10",
+        time: "15:30",
+        status: "completed",
+        imageSrc: "/dummy-profile.png",
+        price: 160000,
+        location: "Itaewon, Seoul",
+        guests: 1,
+      },
+    ];
+
+    setBookingHistory([newBooking, ...additionalBookings]);
+
+    // Add reviews
+    const reviewData: Review[] = [
+      {
+        id: "1",
+        packageTitle: "Futuristic Chic Idol Debut",
+        date: "2025.07.14",
+        rating: 5,
+        comment: "Amazing experience! The styling was perfect.",
+        imageSrc: "/dummy-profile.png",
+        location: "Songdo, Incheon",
+        reviewed: true,
+      },
+      {
+        id: "2",
+        packageTitle: "Futuristic Chic Idol Debut",
+        date: "2024.07.14",
+        rating: 5,
+        comment: "Loved the futuristic concept!",
+        imageSrc: "/dummy-profile.png",
+        location: "Songdo, Incheon",
+        reviewed: true,
+      },
+    ];
+
+    setReviews(reviewData);
   }, []);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return "bg-green-500";
-      case "completed":
-        return "bg-blue-500";
-      case "cancelled":
-        return "bg-red-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return "Confirmed";
-      case "completed":
-        return "Completed";
-      case "cancelled":
-        return "Cancelled";
-      default:
-        return "Unknown";
-    }
-  };
 
   // 사용자 정보 로딩 중일 때
   if (userLoading) {
@@ -102,180 +182,267 @@ export default function MyPage() {
 
   return (
     <div className="min-h-screen text-white bg-black">
-      {/* Header */}
+      {/* Header with Profile */}
       <div className="px-4 py-6">
-        <h1 className="text-2xl font-bold mb-2">My Page</h1>
-        <p className="text-gray-400">Welcome back, {userProfile.name}!</p>
-      </div>
-
-      {/* Profile Section */}
-      <div className="px-4 mb-6">
-        <Card className="bg-gray-900 border-gray-700">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden">
-                <Image
-                  src={userProfile.avatar}
-                  alt="Profile"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold">{userProfile.name}</h2>
-                <p className="text-gray-400 text-sm">{userProfile.email}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => signOutMutation.mutate()}
-                disabled={signOutMutation.isPending}
-              >
-                {signOutMutation.isPending ? "로그아웃 중..." : "로그아웃"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Booking History */}
-      <div className="px-4 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">Booking History</h2>
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative w-12 h-12 rounded-full overflow-hidden">
+            <Image
+              src={userProfile.avatar}
+              alt="Profile"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold">{userProfile.name}</h1>
+            <p className="text-gray-400 text-sm">{userProfile.email}</p>
+          </div>
           <Button
             variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white p-0 h-auto"
+            onClick={() => signOutMutation.mutate()}
+            disabled={signOutMutation.isPending}
+            className="text-gray-400 hover:text-white"
           >
-            <span className="text-sm">View all</span>
-            <ArrowRightIcon
-              color="currentColor"
-              width={12}
-              height={12}
-              className="ml-1"
-            />
+            {signOutMutation.isPending ? "..." : "로그아웃"}
           </Button>
         </div>
+      </div>
 
-        {bookingHistory.length > 0 ? (
-          <div className="space-y-3">
-            {bookingHistory.map(booking => (
-              <Card key={booking.id} className="bg-gray-900 border-gray-700">
-                <CardContent className="p-4">
-                  <div className="flex gap-3">
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
-                        src={booking.imageSrc}
-                        alt={booking.packageTitle}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start mb-1">
-                        <h3 className="font-semibold text-white">
-                          {booking.packageTitle}
-                        </h3>
-                        <Badge
-                          className={`${getStatusColor(booking.status)} text-white text-xs`}
+      {/* Tabs Navigation */}
+      <div className="px-4">
+        <Tabs defaultValue="my-reviews" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-gray-700">
+            <TabsTrigger
+              value="my-reviews"
+              className="relative bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-500 data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-500"
+            >
+              My reviews
+            </TabsTrigger>
+            <TabsTrigger
+              value="booking-history"
+              className="relative bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-500 data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-500"
+            >
+              Booking History
+            </TabsTrigger>
+          </TabsList>
+
+          {/* My Reviews Tab */}
+          <TabsContent value="my-reviews" className="mt-6">
+            <div className="space-y-4">
+              {reviews.length > 0 ? (
+                <>
+                  {/* Upcoming Bookings */}
+                  <div>
+                    <h2 className="text-lg font-bold mb-4">
+                      Upcoming Bookings
+                    </h2>
+                    {bookingHistory
+                      .filter(booking => booking.status === "confirmed")
+                      .map(booking => (
+                        <Card
+                          key={booking.id}
+                          className="bg-gray-900 border-gray-700 mb-4"
                         >
-                          {getStatusText(booking.status)}
-                        </Badge>
-                      </div>
-                      <p className="text-gray-400 text-sm mb-1">
-                        {booking.date} at {booking.time}
-                      </p>
-                      <p className="text-pink-500 font-semibold">
-                        ₩{booking.price.toLocaleString()}
-                      </p>
-                    </div>
+                          <CardContent className="p-4">
+                            <div className="flex justify-between items-start mb-3">
+                              <h3 className="font-bold text-white text-lg">
+                                DOKI MAKE SALON
+                              </h3>
+                              <span className="text-pink-500 font-bold text-xl">
+                                D-26
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-400 mb-1">
+                              {booking.date} • {booking.time} (Yongsan) •{" "}
+                              {booking.guests} Guests
+                            </p>
+                          </CardContent>
+                        </Card>
+                      ))}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card className="bg-gray-900 border-gray-700">
-            <CardContent className="p-6 text-center">
-              <p className="text-gray-400 mb-2">No bookings yet</p>
-              <Button className="bg-pink-500 hover:bg-pink-600">
-                Book Your First Package
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-      </div>
 
-      {/* Quick Actions */}
-      <div className="px-4 mb-6">
-        <h2 className="text-lg font-bold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            variant="ghost"
-            className="h-16 bg-gray-900 border border-gray-700 hover:bg-gray-800"
-          >
-            <div className="text-center">
-              <div className="text-2xl mb-1">📅</div>
-              <span className="text-sm">My Schedule</span>
+                  {/* Completed Reviews */}
+                  <div>
+                    <h2 className="text-lg font-bold mb-4">Completed</h2>
+                    {["2025", "2024"].map(year => (
+                      <div key={year} className="mb-6">
+                        <h3 className="text-white font-bold mb-3">{year}</h3>
+                        {reviews
+                          .filter(review => review.date.includes(year))
+                          .map(review => (
+                            <Card
+                              key={review.id}
+                              className="bg-gray-900 border-gray-700 mb-3"
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex gap-3">
+                                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                    <Image
+                                      src={review.imageSrc}
+                                      alt={review.packageTitle}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                  <div className="flex-1">
+                                    <h4 className="font-semibold text-white mb-1">
+                                      {review.packageTitle}
+                                    </h4>
+                                    <p className="text-gray-400 text-sm mb-2">
+                                      {review.location}
+                                    </p>
+                                    <p className="text-gray-400 text-sm">
+                                      {review.date}
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-col gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="bg-gray-800 hover:bg-gray-700 text-gray-300"
+                                    >
+                                      View Details
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      className="bg-pink-500 hover:bg-pink-600"
+                                    >
+                                      Review
+                                    </Button>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <Card className="bg-gray-900 border-gray-700">
+                  <CardContent className="p-6 text-center">
+                    <p className="text-gray-400 mb-2">No reviews yet</p>
+                    <Button className="bg-pink-500 hover:bg-pink-600">
+                      Book Your First Package
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
             </div>
-          </Button>
-          <Button
-            variant="ghost"
-            className="h-16 bg-gray-900 border border-gray-700 hover:bg-gray-800"
-          >
-            <div className="text-center">
-              <div className="text-2xl mb-1">💖</div>
-              <span className="text-sm">Wishlist</span>
-            </div>
-          </Button>
-          <Button
-            variant="ghost"
-            className="h-16 bg-gray-900 border border-gray-700 hover:bg-gray-800"
-          >
-            <div className="text-center">
-              <div className="text-2xl mb-1">⚙️</div>
-              <span className="text-sm">Settings</span>
-            </div>
-          </Button>
-          <Button
-            variant="ghost"
-            className="h-16 bg-gray-900 border border-gray-700 hover:bg-gray-800"
-          >
-            <div className="text-center">
-              <div className="text-2xl mb-1">❓</div>
-              <span className="text-sm">Help</span>
-            </div>
-          </Button>
-        </div>
-      </div>
+          </TabsContent>
 
-      {/* Preferences */}
-      <div className="px-4 mb-6">
-        <h2 className="text-lg font-bold mb-4">Your Preferences</h2>
-        <Card className="bg-gray-900 border-gray-700">
-          <CardContent className="p-4">
-            <div className="space-y-3">
-              <div>
-                <p className="text-sm text-gray-400 mb-1">Favorite Concepts</p>
-                <div className="flex gap-2 flex-wrap">
-                  {selectedConcepts.map((concept: string, index: number) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="bg-pink-500/20 text-pink-300 border-pink-500"
-                    >
-                      {concept}
-                    </Badge>
-                  ))}
+          {/* Schedule Tab */}
+          <TabsContent value="booking-history" className="mt-6">
+            <div className="space-y-4">
+              {/* Booking History List */}
+              {["2026", "2025"].map(year => (
+                <div key={year} className="mb-6">
+                  <h3 className="text-white font-bold mb-3">{year}</h3>
+                  {bookingHistory
+                    .filter(booking => booking.date.includes(year))
+                    .map(booking => (
+                      <Sheet key={booking.id}>
+                        <SheetTrigger asChild>
+                          <Card
+                            className={`border-gray-700 mb-3 cursor-pointer transition-all duration-200 ${
+                              selectedBooking === booking.id
+                                ? "bg-gray-800 border-pink-500"
+                                : "bg-gray-900"
+                            } hover:bg-gray-800`}
+                            onClick={() => setSelectedBooking(booking.id)}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex gap-3">
+                                <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                  <Image
+                                    src={booking.imageSrc}
+                                    alt={booking.packageTitle}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-white mb-1">
+                                    {booking.packageTitle}
+                                  </h4>
+                                  <p className="text-gray-400 text-sm mb-1">
+                                    {booking.location}
+                                  </p>
+                                  <p className="text-gray-400 text-sm">
+                                    {booking.date}
+                                  </p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </SheetTrigger>
+                        <SheetContent
+                          side="bottom"
+                          className="bg-gray-900 border-gray-700 text-white rounded-t-2xl h-[70vh]"
+                        >
+                          <SheetHeader className="pb-4">
+                            <SheetTitle className="text-white text-lg font-bold">
+                              Futuristic Chic Idol Debut
+                            </SheetTitle>
+                          </SheetHeader>
+
+                          <div className="space-y-4 overflow-y-auto h-full pb-6">
+                            <div className="border-l-4 border-pink-500 pl-4">
+                              <div className="text-gray-400 text-sm">07.15</div>
+                              <div className="text-white font-semibold">
+                                Tri-bowl
+                              </div>
+                              <div className="text-gray-400 text-sm">
+                                2 p.m.
+                              </div>
+                            </div>
+
+                            <div className="border-l-4 border-pink-500 pl-4">
+                              <div className="text-white font-semibold">
+                                Incheon Bridge Observatory
+                              </div>
+                              <div className="text-gray-400 text-sm">
+                                4 p.m.
+                              </div>
+                            </div>
+
+                            <div className="border-l-4 border-gray-600 pl-4">
+                              <div className="text-gray-400 text-sm">07.16</div>
+                              <div className="text-white font-semibold">
+                                Salon DOKI
+                              </div>
+                              <div className="text-gray-400 text-sm">
+                                10 a.m.
+                              </div>
+                            </div>
+
+                            <div className="border-l-4 border-gray-600 pl-4">
+                              <div className="text-white font-semibold">
+                                Studio HYPE
+                              </div>
+                              <div className="text-gray-400 text-sm">
+                                1 p.m.
+                              </div>
+                            </div>
+
+                            <div className="border-l-4 border-gray-600 pl-4">
+                              <div className="text-white font-semibold">
+                                Urban History Museum
+                              </div>
+                              <div className="text-gray-400 text-sm">
+                                5 p.m.
+                              </div>
+                            </div>
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                    ))}
                 </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400 mb-1">Favorite Idol</p>
-                <p className="text-white">{favoriteIdol || "Not set"}</p>
-              </div>
+              ))}
             </div>
-          </CardContent>
-        </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
