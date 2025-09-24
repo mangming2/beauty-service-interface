@@ -69,10 +69,8 @@ export default function BookingPayPage() {
     };
   }, [packageId]);
 
-  const handlePayNow = () => {
-    // Handle payment logic here
-    console.log("Processing payment...");
-    router.push(`/package/${packageId}`);
+  const handleSave = () => {
+    router.push(`/booking/${packageId}/complete`);
   };
 
   const platformFee = 20000;
@@ -251,13 +249,13 @@ export default function BookingPayPage() {
         </div>
       </div>
 
-      {/* Pay Now Button */}
+      {/* Save Button */}
       <div className="px-4 py-4 bg-black border-t border-gray-800">
         <Button
           className="w-full bg-pink-500 hover:bg-pink-600 h-[52px]"
-          onClick={handlePayNow}
+          onClick={handleSave}
         >
-          <span className="font-medium">{t("booking.payNow")}</span>
+          <span className="font-medium">Save</span>
         </Button>
       </div>
     </div>

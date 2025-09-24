@@ -130,62 +130,68 @@ export default function FormComplete() {
       <GapY size={16} />
 
       <GapY size={12} />
-      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
-        <div className="w-[348px] h-[196px] relative flex-shrink-0">
-          <Image
-            src="/dummy-profile.png"
-            alt="dummy profile"
-            fill
-            className="object-cover"
-          />
+
+      <div
+        className="flex flex-col cursor-pointer"
+        onClick={() => router.push("/package/aespa-futuristic")}
+      >
+        <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
+          <div className="w-[348px] h-[196px] relative flex-shrink-0">
+            <Image
+              src="/dummy-profile.png"
+              alt="dummy profile"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div className="w-[348px] h-[196px] relative flex-shrink-0">
+            <Image
+              src="/dummy-profile.png"
+              alt="dummy profile"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div className="w-[348px] h-[196px] relative flex-shrink-0">
+            <Image
+              src="/dummy-profile.png"
+              alt="dummy profile"
+              fill
+              className="object-cover"
+            />
+          </div>
         </div>
-        <div className="w-[348px] h-[196px] relative flex-shrink-0">
-          <Image
-            src="/dummy-profile.png"
-            alt="dummy profile"
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="w-[348px] h-[196px] relative flex-shrink-0">
-          <Image
-            src="/dummy-profile.png"
-            alt="dummy profile"
-            fill
-            className="object-cover"
-          />
-        </div>
-      </div>
 
-      <GapY size={12} />
+        <GapY size={12} />
 
-      {/* Salon Recommendation Cards */}
-      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
-        <div className="">
-          <div>
-            <div className="flex gap-2 mb-2">
-              <span className="text-pink-400 text-sm">#aespa</span>
-              <span className="text-pink-400 text-sm">#metallic</span>
-              <span className="text-pink-400 text-sm">#sm</span>
-            </div>
+        {/* Salon Recommendation Cards */}
+        <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
+          <div className="">
+            <div>
+              <div className="flex gap-2 mb-2">
+                <span className="text-pink-400 text-sm">#aespa</span>
+                <span className="text-pink-400 text-sm">#metallic</span>
+                <span className="text-pink-400 text-sm">#sm</span>
+              </div>
 
-            <div className="flex justify-between items-center">
-              <h3 className="text-white title-sm font-semibold mb-2">
-                DOKI MAKE SALON
-              </h3>
-              <span className="text-pink-400 title-sm font-semibold">
-                ₩ 50,000 ~
-              </span>
-            </div>
+              <div className="flex justify-between items-center">
+                <h3 className="text-white title-sm font-semibold mb-2">
+                  DOKI MAKE SALON
+                </h3>
+                <span className="text-pink-400 title-sm font-semibold">
+                  ₩ 50,000 ~
+                </span>
+              </div>
 
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-pink-400">★</span>
-              <span className="text-white text-sm">4.8</span>
-              <span className="text-gray-400 text-sm">review 15</span>
-              <span className="text-gray-300 text-sm">2.3km (Yongsan)</span>
-            </div>
-            <div className="text-gray-400 text-xs mb-2">
-              Korean / English / Japanese
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-pink-400">★</span>
+                <span className="text-white text-sm">4.8</span>
+                <span className="text-gray-400 text-sm">review 15</span>
+                <span className="text-gray-300 text-sm">2.3km (Yongsan)</span>
+              </div>
+              <div className="text-gray-400 text-xs mb-2">
+                Korean / English / Japanese
+              </div>
             </div>
           </div>
         </div>
