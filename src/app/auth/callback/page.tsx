@@ -40,7 +40,9 @@ export default function AuthCallbackPage() {
             {(error as Error)?.message || "인증 처리 중 오류가 발생했습니다."}
           </p>
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => {
+              setTimeout(() => router.push("/login"), 0);
+            }}
             className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
           >
             로그인 페이지로 돌아가기

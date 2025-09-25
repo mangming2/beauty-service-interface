@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MainLogo from "../../../public/main-logo.png";
 import { XIcon, AppleIcon, GoogleIcon } from "@/components/common/Icons";
@@ -23,18 +23,19 @@ export default function LoginPage() {
   // 실시간 인증 상태 감지
   useAuthStateListener();
 
-  // 이미 로그인된 사용자라면 리다이렉트
-  if (user && !userLoading) {
-    router.push("/my");
-    return null;
-  }
+  // 이미 로그인된 사용자라면 리다이렉트 (useEffect로 처리)
+  useEffect(() => {
+    if (user && !userLoading) {
+      router.push("/my");
+    }
+  }, [user, userLoading, router]);
 
   const handleGoogleLogin = async () => {
     try {
       setMessage("");
       await googleLoginMutation.mutateAsync();
     } catch (error: unknown) {
-      setMessage((error as any)?.message || "로그인 중 오류가 발생했습니다.");
+      setMessage((error as Error)?.message || "로그인 중 오류가 발생했습니다.");
     }
   };
 

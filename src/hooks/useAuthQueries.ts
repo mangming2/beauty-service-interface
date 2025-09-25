@@ -122,7 +122,7 @@ export function useAuthCallback() {
       const session = await getSession();
 
       if (!session) {
-        router.push("/login");
+        setTimeout(() => router.push("/login"), 0);
         return { success: false, redirectTo: "/login" };
       }
 
@@ -130,26 +130,12 @@ export function useAuthCallback() {
       const user = await getUser();
 
       if (!user) {
-        router.push("/login");
+        setTimeout(() => router.push("/login"), 0);
         return { success: false, redirectTo: "/login" };
       }
 
-      // 3. 프로필 확인
-      const profile = await getUserProfile(user.id);
-
-      if (!profile) {
-        // 프로필이 없으면 프로필 생성 페이지로 이동
-        router.push("/profile/setup");
-        return {
-          success: true,
-          redirectTo: "/profile/setup",
-          hasProfile: false,
-        };
-      } else {
-        // 프로필이 있으면 메인 페이지로 이동
-        router.push("/my");
-        return { success: true, redirectTo: "/my", hasProfile: true };
-      }
+      setTimeout(() => router.push("/"), 0);
+      return { success: true, redirectTo: "/" };
     },
     staleTime: 0, // 항상 새로 실행
     gcTime: 0, // 캐시하지 않음
@@ -184,7 +170,10 @@ export function useAuthStateListener() {
           console.log("User signed out");
           // 모든 auth 캐시 제거
           queryClient.removeQueries({ queryKey: authKeys.all });
-          router.push("/login");
+          // setTimeout을 사용하여 렌더링 사이클 밖에서 라우팅 실행
+          setTimeout(() => {
+            router.push("/login");
+          }, 0);
         }
       });
 
