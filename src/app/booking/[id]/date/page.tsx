@@ -47,16 +47,9 @@ export default function BookingDatePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      {/* Header */}
-      <div className="text-center mb-6">
-        <h1 className="text-gray-800 text-lg font-medium">
-          {t("booking.dateTimeSelection")}
-        </h1>
-      </div>
-
+    <div className="min-h-screen p-4">
       {/* Main Card */}
-      <div className="bg-gray-800 rounded-2xl p-6 mx-auto max-w-md">
+      <div className="mx-auto max-w-md">
         {/* Booking Date Title */}
         <div className="text-white text-lg font-semibold mb-6">
           {t("booking.bookingDate")}
@@ -69,7 +62,7 @@ export default function BookingDatePage() {
           </div>
 
           {/* Date Display - Start and End side by side */}
-          <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="flex w-full items-center justify-between gap-2 mb-4">
             <div className="text-center">
               <div className="text-white text-sm font-medium mb-1">시작일</div>
               <div

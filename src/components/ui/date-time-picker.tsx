@@ -140,6 +140,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     label: string;
   }) => {
     const [scrollPosition, setScrollPosition] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
     const itemHeight = 32;
     const visibleItems = 3;
     const containerHeight = itemHeight * visibleItems;
@@ -147,44 +148,61 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     useEffect(() => {
       const selectedIndex = items.findIndex(item => item === selectedValue);
       if (selectedIndex !== -1) {
-        setScrollPosition(-selectedIndex * itemHeight);
+        // 중앙에 선택된 항목이 오도록 조정 (위아래로 2개씩 보이도록)
+        setScrollPosition(-(selectedIndex - 1) * itemHeight);
       }
     }, [selectedValue, items]);
 
     const handleWheel = (e: React.WheelEvent) => {
       e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+
+      if (isDragging) return;
       const delta = e.deltaY > 0 ? itemHeight : -itemHeight;
       const newPosition = Math.max(
-        -(items.length - 1) * itemHeight,
-        Math.min(0, scrollPosition + delta)
+        -(items.length - 1) * itemHeight, // 중앙 정렬을 위해 조정
+        Math.min(2 * itemHeight, scrollPosition + delta) // 상단 여백 고려
       );
       setScrollPosition(newPosition);
 
-      const selectedIndex = Math.round(-newPosition / itemHeight);
+      const selectedIndex = Math.round(
+        -(newPosition - 1 * itemHeight) / itemHeight
+      );
       if (selectedIndex >= 0 && selectedIndex < items.length) {
         onSelect(items[selectedIndex]);
       }
     };
 
     const handleMouseDown = (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+
+      setIsDragging(true);
       const startY = e.clientY;
       const startScroll = scrollPosition;
 
       const handleMouseMove = (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         const deltaY = e.clientY - startY;
         const newPosition = Math.max(
-          -(items.length - 1) * itemHeight,
-          Math.min(0, startScroll + deltaY)
+          -(items.length - 1) * itemHeight, // 중앙 정렬을 위해 조정
+          Math.min(2 * itemHeight, startScroll + deltaY) // 상단 여백 고려
         );
         setScrollPosition(newPosition);
 
-        const selectedIndex = Math.round(-newPosition / itemHeight);
+        const selectedIndex = Math.round(
+          -(newPosition - 1 * itemHeight) / itemHeight
+        );
         if (selectedIndex >= 0 && selectedIndex < items.length) {
           onSelect(items[selectedIndex]);
         }
       };
 
       const handleMouseUp = () => {
+        setIsDragging(false);
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
       };
@@ -197,10 +215,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       <div className="flex flex-col items-center">
         <div className="text-xs text-white/50 mb-1">{label}</div>
         <div
-          className="relative overflow-hidden"
+          className="relative overflow-hidden select-none"
           style={{ height: containerHeight }}
           onWheel={handleWheel}
           onMouseDown={handleMouseDown}
+          onTouchStart={e => e.preventDefault()}
+          onTouchMove={e => e.preventDefault()}
+          onContextMenu={e => e.preventDefault()}
+          onDragStart={e => e.preventDefault()}
         >
           <div
             className="flex flex-col transition-transform duration-200 ease-out"
@@ -236,52 +258,94 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       {isOpen && (
         <div className="relative">
           <div className="flex items-center justify-center gap-4 text-white">
-            <WheelPicker
-              items={years}
-              selectedValue={selectedDate.getFullYear()}
-              onSelect={year => handleYearChange(year as number)}
-              label="Year"
-            />
-            <WheelPicker
-              items={months}
-              selectedValue={months[selectedDate.getMonth()]}
-              onSelect={month =>
-                handleMonthChange(months.indexOf(month as string))
-              }
-              label="Month"
-            />
-            <WheelPicker
-              items={days}
-              selectedValue={selectedDate.getDate()}
-              onSelect={day => handleDayChange(day as number)}
-              label="Day"
-            />
-            <WheelPicker
-              items={hours.map(h => h.toString().padStart(2, "0"))}
-              selectedValue={selectedDate
-                .getHours()
-                .toString()
-                .padStart(2, "0")}
-              onSelect={hour => handleHourChange(parseInt(hour as string))}
-              label="Hour"
-            />
-            <WheelPicker
-              items={minutes.map(m => m.toString().padStart(2, "0"))}
-              selectedValue={selectedDate
-                .getMinutes()
-                .toString()
-                .padStart(2, "0")}
-              onSelect={minute =>
-                handleMinuteChange(parseInt(minute as string))
-              }
-              label="Min"
-            />
-            <WheelPicker
-              items={["AM", "PM"]}
-              selectedValue={selectedDate.getHours() >= 12 ? "PM" : "AM"}
-              onSelect={period => handlePeriodChange(period as "AM" | "PM")}
-              label="AM/PM"
-            />
+            <div
+              className="wheel-container"
+              data-wheel="year"
+              onWheel={e => e.stopPropagation()}
+              onMouseDown={e => e.stopPropagation()}
+            >
+              <WheelPicker
+                items={years}
+                selectedValue={selectedDate.getFullYear()}
+                onSelect={year => handleYearChange(year as number)}
+                label="Year"
+              />
+            </div>
+            <div
+              className="wheel-container"
+              data-wheel="month"
+              onWheel={e => e.stopPropagation()}
+              onMouseDown={e => e.stopPropagation()}
+            >
+              <WheelPicker
+                items={months}
+                selectedValue={months[selectedDate.getMonth()]}
+                onSelect={month =>
+                  handleMonthChange(months.indexOf(month as string))
+                }
+                label="Month"
+              />
+            </div>
+            <div
+              className="wheel-container"
+              data-wheel="day"
+              onWheel={e => e.stopPropagation()}
+              onMouseDown={e => e.stopPropagation()}
+            >
+              <WheelPicker
+                items={days}
+                selectedValue={selectedDate.getDate()}
+                onSelect={day => handleDayChange(day as number)}
+                label="Day"
+              />
+            </div>
+            <div
+              className="wheel-container"
+              data-wheel="hour"
+              onWheel={e => e.stopPropagation()}
+              onMouseDown={e => e.stopPropagation()}
+            >
+              <WheelPicker
+                items={hours.map(h => h.toString().padStart(2, "0"))}
+                selectedValue={selectedDate
+                  .getHours()
+                  .toString()
+                  .padStart(2, "0")}
+                onSelect={hour => handleHourChange(parseInt(hour as string))}
+                label="Hour"
+              />
+            </div>
+            <div
+              className="wheel-container"
+              data-wheel="minute"
+              onWheel={e => e.stopPropagation()}
+              onMouseDown={e => e.stopPropagation()}
+            >
+              <WheelPicker
+                items={minutes.map(m => m.toString().padStart(2, "0"))}
+                selectedValue={selectedDate
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0")}
+                onSelect={minute =>
+                  handleMinuteChange(parseInt(minute as string))
+                }
+                label="Min"
+              />
+            </div>
+            <div
+              className="wheel-container"
+              data-wheel="period"
+              onWheel={e => e.stopPropagation()}
+              onMouseDown={e => e.stopPropagation()}
+            >
+              <WheelPicker
+                items={["AM", "PM"]}
+                selectedValue={selectedDate.getHours() >= 12 ? "PM" : "AM"}
+                onSelect={period => handlePeriodChange(period as "AM" | "PM")}
+                label="AM/PM"
+              />
+            </div>
           </div>
         </div>
       )}
