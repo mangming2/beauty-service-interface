@@ -157,6 +157,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       e.preventDefault();
       e.stopPropagation();
       e.nativeEvent.stopImmediatePropagation();
+      e.nativeEvent.preventDefault();
 
       if (isDragging) return;
       const delta = e.deltaY > 0 ? itemHeight : -itemHeight;
@@ -178,6 +179,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       e.preventDefault();
       e.stopPropagation();
       e.nativeEvent.stopImmediatePropagation();
+      e.nativeEvent.preventDefault();
 
       setIsDragging(true);
       const startY = e.clientY;
@@ -219,10 +221,22 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           style={{ height: containerHeight }}
           onWheel={handleWheel}
           onMouseDown={handleMouseDown}
-          onTouchStart={e => e.preventDefault()}
-          onTouchMove={e => e.preventDefault()}
-          onContextMenu={e => e.preventDefault()}
-          onDragStart={e => e.preventDefault()}
+          onTouchStart={e => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onTouchMove={e => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onContextMenu={e => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onDragStart={e => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
         >
           <div
             className="flex flex-col transition-transform duration-200 ease-out"
@@ -261,8 +275,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <div
               className="wheel-container"
               data-wheel="year"
-              onWheel={e => e.stopPropagation()}
-              onMouseDown={e => e.stopPropagation()}
+              onWheel={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               <WheelPicker
                 items={years}
@@ -274,8 +294,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <div
               className="wheel-container"
               data-wheel="month"
-              onWheel={e => e.stopPropagation()}
-              onMouseDown={e => e.stopPropagation()}
+              onWheel={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               <WheelPicker
                 items={months}
@@ -289,8 +315,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <div
               className="wheel-container"
               data-wheel="day"
-              onWheel={e => e.stopPropagation()}
-              onMouseDown={e => e.stopPropagation()}
+              onWheel={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               <WheelPicker
                 items={days}
@@ -302,8 +334,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <div
               className="wheel-container"
               data-wheel="hour"
-              onWheel={e => e.stopPropagation()}
-              onMouseDown={e => e.stopPropagation()}
+              onWheel={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               <WheelPicker
                 items={hours.map(h => h.toString().padStart(2, "0"))}
@@ -318,8 +356,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <div
               className="wheel-container"
               data-wheel="minute"
-              onWheel={e => e.stopPropagation()}
-              onMouseDown={e => e.stopPropagation()}
+              onWheel={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               <WheelPicker
                 items={minutes.map(m => m.toString().padStart(2, "0"))}
@@ -336,8 +380,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <div
               className="wheel-container"
               data-wheel="period"
-              onWheel={e => e.stopPropagation()}
-              onMouseDown={e => e.stopPropagation()}
+              onWheel={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               <WheelPicker
                 items={["AM", "PM"]}
