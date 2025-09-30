@@ -132,21 +132,11 @@ export default function FormPage5() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto py-4">
         <Button
-          className={`w-full h-[52px] flex justify-center items-center ${
-            selectedRegions &&
-            selectedRegions.length > 0 &&
-            !submitFormMutation.isPending
-              ? "bg-primary hover:bg-primary"
-              : "bg-disabled cursor-not-allowed"
-          }`}
+          className="w-full h-[52px]"
+          disabled={selectedRegions && selectedRegions.length === 0}
           onClick={handleSubmit(onSubmit)}
-          disabled={
-            !selectedRegions ||
-            selectedRegions.length === 0 ||
-            submitFormMutation.isPending
-          }
         >
           <span className="text-white font-medium">
             {submitFormMutation.isPending ? "제출 중..." : "제출하기"}

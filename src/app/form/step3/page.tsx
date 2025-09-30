@@ -91,17 +91,13 @@ export default function FormPage3() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto py-4">
         <Button
-          className={`w-full h-[52px] flex justify-center items-center ${
-            selectedOption
-              ? "bg-primary hover:bg-primary"
-              : "bg-disabled cursor-not-allowed"
-          }`}
+          className="w-full h-[52px]"
           onClick={handleSubmit(onSubmit)}
           disabled={!selectedOption}
         >
-          <span className="text-white font-medium">Next</span>
+          Next
         </Button>
       </div>
     </div>

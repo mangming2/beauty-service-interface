@@ -211,17 +211,13 @@ export default function FormPage4() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto py-4">
         <Button
-          className={`w-full h-[52px] flex justify-center items-center ${
-            dateRange?.from && dateRange?.to
-              ? "bg-primary hover:bg-primary"
-              : "bg-disabled cursor-not-allowed"
-          }`}
+          className="w-full h-[52px]"
           onClick={handleSubmit(onSubmit)}
           disabled={!dateRange?.from || !dateRange?.to}
         >
-          <span className="text-white font-medium">Next</span>
+          Next
         </Button>
       </div>
     </div>

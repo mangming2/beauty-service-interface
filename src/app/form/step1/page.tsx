@@ -42,7 +42,7 @@ export default function FormPage1() {
     watch,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = form;
   const selectedConcepts = watch("selectedConcepts");
 
@@ -135,17 +135,13 @@ export default function FormPage1() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4 bg-transparent border-t border-gray-800">
+      <div className="mt-auto py-4">
         <Button
-          className={`w-full h-[52px] flex justify-center items-center ${
-            selectedConcepts && selectedConcepts.length > 0
-              ? "bg-primary hover:bg-primary"
-              : "bg-disabled cursor-not-allowed"
-          }`}
+          className="w-full h-[52px]"
           onClick={handleSubmit(onSubmit)}
-          disabled={!selectedConcepts || selectedConcepts.length === 0}
+          disabled={selectedConcepts && selectedConcepts.length === 0}
         >
-          <span className="text-white font-medium">Next</span>
+          Next
         </Button>
       </div>
     </div>

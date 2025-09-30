@@ -36,6 +36,7 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-pink-font: var(--pink-font);
+  --color-pink-dark: var(--pink-dark);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -83,6 +84,7 @@
   --primary: #f92595;
   --secondary: #d8569a;
   --pink-font: #ff60b3;
+  --pink-dark: #cf2880;
   --gray-outline: #35373a;
   --disabled: #aba9a9;
   --gray-container: #2a2c30;
