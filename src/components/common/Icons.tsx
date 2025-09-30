@@ -141,6 +141,27 @@ const ArrowRightIcon = ({ color = "white", ...rest }: IconProps) => {
   );
 };
 
+const ArrowLeftIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="9"
+      height="18"
+      viewBox="0 0 9 18"
+      fill="none"
+      preserveAspectRatio="none"
+      {...rest}
+    >
+      <path
+        d="M7.69992 0.988765L1.59933 8.10612C1.1585 8.62042 1.1585 9.37933 1.59933 9.89363L7.69992 17.011"
+        stroke={color ?? "white"}
+        strokeWidth="1.71667"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
 const GirlCrushIcon = ({ color = "white", ...rest }: IconProps) => {
   return (
     <svg
@@ -513,6 +534,7 @@ export {
   LocationIcon,
   CaretDownIcon,
   ArrowRightIcon,
+  ArrowLeftIcon,
   GirlCrushIcon,
   HeartIcon,
   HighHeelIcon,
@@ -535,6 +557,7 @@ export const Icons = {
   location: LocationIcon,
   caretDown: CaretDownIcon,
   arrowRight: ArrowRightIcon,
+  arrowLeft: ArrowLeftIcon,
   girlCrush: GirlCrushIcon,
   heart: HeartIcon,
   highHeel: HighHeelIcon,

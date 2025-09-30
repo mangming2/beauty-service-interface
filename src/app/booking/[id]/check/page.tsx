@@ -24,9 +24,14 @@ interface BookingData {
   totalPrice: number;
   selectedDate: string;
   selectedTime: string;
+  makeOverDateTime: Date;
+  dokiDebutDateTime: Date;
 }
 
 const getBookingData = (packageId: string): BookingData => {
+  const makeOverDate = new Date(2025, 6, 21, 10, 0); // July 21, 2025, 10:00 AM
+  const dokiDebutDate = new Date(2025, 6, 21, 14, 0); // July 21, 2025, 2:00 PM
+
   return {
     packageId,
     packageTitle: "Futuristic Chic Idol Debut",
@@ -49,6 +54,8 @@ const getBookingData = (packageId: string): BookingData => {
     totalPrice: 170000,
     selectedDate: "2025.07.21",
     selectedTime: "10:00",
+    makeOverDateTime: makeOverDate,
+    dokiDebutDateTime: dokiDebutDate,
   };
 };
 
@@ -75,6 +82,10 @@ export default function BookingPayPage() {
 
   const handleSave = () => {
     router.push(`/booking/${packageId}/complete`);
+  };
+
+  const handleDateTimeClick = () => {
+    router.push(`/booking/${packageId}/date`);
   };
 
   const platformFee = 20000;
@@ -179,7 +190,10 @@ export default function BookingPayPage() {
             </p>
           </div>
 
-          <div className="flex justify-between items-center">
+          <div
+            className="flex justify-between items-center cursor-pointer"
+            onClick={handleDateTimeClick}
+          >
             <div className="flex gap-3 items-center">
               <div className="flex gap-2 items-center">
                 <span className="text-white font-medium">

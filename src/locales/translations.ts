@@ -57,6 +57,10 @@ export const translations = {
       pending: "대기 중",
       makeOver: "메이크오버",
       dokiDebut: "도키 데뷔",
+      dateTimeSelection: "날짜 및 시간 선택",
+      makeOverDateTime: "Make Over Date & Time",
+      dokiDebutDateTime: "Doki Debut Date & Time",
+      save: "저장",
     },
   },
   En: {
@@ -116,6 +120,10 @@ export const translations = {
       pending: "Pending",
       makeOver: "Make Over",
       dokiDebut: "Doki Debut",
+      dateTimeSelection: "Select Date and Time",
+      makeOverDateTime: "Make Over Date & Time",
+      dokiDebutDateTime: "Doki Debut Date & Time",
+      save: "Save",
     },
   },
   Jp: {
@@ -176,6 +184,10 @@ export const translations = {
       pending: "保留中",
       makeOver: "メイクオーバー",
       dokiDebut: "ドキデビュー",
+      dateTimeSelection: "日時選択",
+      makeOverDateTime: "Make Over Date & Time",
+      dokiDebutDateTime: "Doki Debut Date & Time",
+      save: "保存",
     },
   },
   ZH: {
@@ -233,6 +245,10 @@ export const translations = {
       pending: "待定",
       makeOver: "美妆改造",
       dokiDebut: "Doki出道",
+      dateTimeSelection: "选择日期和时间",
+      makeOverDateTime: "Make Over Date & Time",
+      dokiDebutDateTime: "Doki Debut Date & Time",
+      save: "保存",
     },
   },
 };
