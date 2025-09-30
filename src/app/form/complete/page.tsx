@@ -166,7 +166,7 @@ export default function FormComplete() {
 
         {/* Salon Recommendation Cards */}
         <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
-          <div className="">
+          <div className="w-[372px]">
             <div>
               <div className="flex gap-2 mb-2">
                 <span className="text-pink-400 text-sm">#aespa</span>

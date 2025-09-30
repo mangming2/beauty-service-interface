@@ -437,10 +437,10 @@ export default function PackageDetail() {
             <p className="text-gray-400 text-sm">25.07.14 - 25.07.22</p>
           </div>
           <Button
-            className="bg-pink-500 hover:bg-pink-600 px-6 py-3 rounded-lg"
+            className="w-[164px] x-6 py-3 rounded-lg"
             onClick={handleBook}
           >
-            <span className="font-medium">Book Now</span>
+            Book Now
           </Button>
         </div>
       </div>

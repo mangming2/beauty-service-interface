@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { GapY } from "../../../../components/ui/gap";
+import DokiDebut from "@/assets/3d-images/doki-debut.png";
+import MakeOver from "@/assets/3d-images/make-over.png";
+import { ArrowRightIcon } from "@/components/common/Icons";
 
 interface BookingData {
   packageId: string;
@@ -87,60 +91,64 @@ export default function BookingPayPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen text-white">
       {/* Main Content */}
-      <div className="px-4">
+      <div>
         {/* Reservation Status */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2">
-            {t("booking.paymentTitle")}
-          </h1>
-          <p className="text-gray-300 text-sm mb-1">
-            {t("booking.delayNotice")}
-          </p>
-          <p className="text-gray-300 text-sm mb-6">
-            {t("booking.realTimeUpdate")}
-          </p>
+        <div className="flex flex-col gap-[27px] p-5 bg-gray-container">
+          <div>
+            <span className="title-lg font-bold">
+              {t("booking.paymentTitle")}
+            </span>
+            <p className="text-gray-300 text-md">{t("booking.delayNotice")}</p>
+            <p className="text-gray-300 text-md">
+              {t("booking.realTimeUpdate")}
+            </p>
+          </div>
 
           {/* Progress Bar */}
-          <div className="mb-4">
-            <div className="flex justify-between text-xs text-gray-400 mb-2">
-              <span className={currentStep >= 1 ? "text-pink-400" : ""}>
+          <div>
+            <div className="flex justify-between text-xs text-gray-400">
+              <span className={currentStep >= 1 ? "text-white" : ""}>
                 {t("booking.sending")}
               </span>
-              <span className={currentStep >= 2 ? "text-pink-400" : ""}>
+              <span className={currentStep >= 2 ? "text-white" : ""}>
                 {t("booking.processing")}
               </span>
-              <span className={currentStep >= 3 ? "text-pink-400" : ""}>
+              <span className={currentStep >= 3 ? "text-white" : ""}>
                 {t("booking.accepted")}
               </span>
             </div>
             <div className="w-full bg-gray-800 rounded-full h-1">
               <div
-                className="bg-gradient-to-r from-pink-500 to-pink-400 h-1 rounded-full transition-all duration-1000 ease-out"
+                className="bg-gradient-to-r from-pink-500 to-pink-400 h-[6px] rounded-full transition-all duration-1000 ease-out"
                 style={{ width: `${(currentStep / 3) * 100}%` }}
               ></div>
             </div>
           </div>
-
-          <p className="text-sm text-gray-300 mb-4">
-            {t("booking.updateWithin")}
-          </p>
         </div>
 
+        <GapY size={8} />
+
         {/* Order Status */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">{t("booking.orderStatus")}</h2>
-          <div className="space-y-4">
+        <div className="flex flex-col gap-3 py-3 px-5 bg-gray-container">
+          <span className="title-lg font-bold">{t("booking.orderStatus")}</span>
+          <p className="text-gray-300 text-md">
+            Please proceed with reservations by vendor.
+          </p>
+          <p className="text-gray-300 text-md">
+            You can modify your reservation status anytime later.
+          </p>
+
+          <div className="flex flex-col gap-1">
             {bookingData.components.map(component => (
-              <div key={component.id} className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div key={component.id} className="flex items-center gap-2">
+                <div className="w-12 h-12 bg-gray rounded-full flex items-center justify-center flex-shrink-0">
                   <Image
-                    src="/dummy-profile.png"
+                    src={component.id === "debut" ? DokiDebut : MakeOver}
                     alt={component.title}
-                    width={40}
-                    height={40}
-                    className="rounded-lg object-cover"
+                    width={component.id === "debut" ? 11 : 24}
+                    height={component.id === "debut" ? 24 : 22}
                   />
                 </div>
                 <div className="flex-1">
@@ -149,16 +157,7 @@ export default function BookingPayPage() {
                   </h3>
                   <p className="text-sm text-gray-400">{component.location}</p>
                 </div>
-                <Badge
-                  variant={
-                    component.status === "accepted" ? "default" : "secondary"
-                  }
-                  className={
-                    component.status === "accepted"
-                      ? "bg-pink-500 text-white"
-                      : "bg-gray-700 text-gray-300"
-                  }
-                >
+                <Badge disabled={component.status === "accepted"}>
                   {component.status === "accepted"
                     ? t("booking.accepted")
                     : t("booking.pending")}
@@ -167,28 +166,59 @@ export default function BookingPayPage() {
             ))}
           </div>
         </div>
+        <GapY size={8} />
 
-        {/* Package Details */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4 cursor-pointer">
-            <h2 className="text-xl font-bold">{t("booking.packageDetails")}</h2>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M4 6L8 10L12 6"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+        {/* Booking Date */}
+        <div className="flex flex-col gap-3 py-3 px-5 bg-gray-container">
+          <div className="flex flex-col gap-1">
+            <span className="title-md font-bold">
+              {t("booking.bookingDate")}
+            </span>
+            <p className="text-gray-300 text-md">
+              You can tap to edit the date and time.
+            </p>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-4">
-            <div className="mb-4">
-              <h3 className="font-semibold mb-3">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-3 items-center">
+              <div className="flex gap-2 items-center">
+                <span className="text-white font-medium">
+                  {t("booking.date")}
+                </span>
+                <span className="text-gray-400 text-sm">
+                  {bookingData.selectedDate}
+                </span>
+              </div>
+              <div className="flex gap-2 items-center">
+                <span className="text-white font-medium">
+                  {t("booking.time")}
+                </span>
+                <span className="text-gray-400 text-sm">
+                  {bookingData.selectedTime}
+                </span>
+              </div>
+            </div>
+            <ArrowRightIcon color="white" />
+          </div>
+        </div>
+
+        <GapY size={8} />
+
+        {/* Package Details */}
+        <div className="flex flex-col gap-3 py-3 px-5 bg-gray-container">
+          <div className="flex items-center justify-between cursor-pointer">
+            <h2 className="text-xl font-bold">{t("booking.packageDetails")}</h2>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold">
                 {t("booking.package")}: {bookingData.packageTitle}
               </h3>
+              <ArrowRightIcon color="white" />
             </div>
+
+            <GapY size={17} />
 
             <div className="space-y-3">
               {bookingData.components.map(component => (
@@ -217,44 +247,11 @@ export default function BookingPayPage() {
             </div>
           </div>
         </div>
-
-        {/* Booking Date */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">{t("booking.bookingDate")}</h2>
-          <div className="bg-gray-900 rounded-lg p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-white font-medium">{t("booking.date")}</p>
-                <p className="text-gray-400 text-sm">
-                  {bookingData.selectedDate}
-                </p>
-              </div>
-              <div>
-                <p className="text-white font-medium">{t("booking.time")}</p>
-                <p className="text-gray-400 text-sm">
-                  {bookingData.selectedTime}
-                </p>
-              </div>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M6 3L10 8L6 13"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Save Button */}
-      <div className="px-4 py-4 bg-black border-t border-gray-800">
-        <Button
-          className="w-full bg-pink-500 hover:bg-pink-600 h-[52px]"
-          onClick={handleSave}
-        >
+      <div className="px-4 py-4">
+        <Button className="w-full h-[52px]" onClick={handleSave}>
           <span className="font-medium">Save</span>
         </Button>
       </div>

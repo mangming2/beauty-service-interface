@@ -42,7 +42,7 @@ export default function FormPage1() {
     watch,
     setValue,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
   } = form;
   const selectedConcepts = watch("selectedConcepts");
 

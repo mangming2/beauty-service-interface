@@ -37,8 +37,8 @@ export function FormButton() {
 
   return (
     <Link href={targetUrl}>
-      <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-between items-center cursor-pointer">
-        <div className="text-md">Your K-pop style is Ready</div>
+      <Button className="w-full  h-[52px] flex justify-between items-center">
+        <div className="text-lg">Your K-pop style is Ready</div>
         <div className="flex w-[28px] items-center justify-center py-[6px]">
           <ArrowRightIcon
             color="white"
