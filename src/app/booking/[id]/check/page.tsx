@@ -2,14 +2,12 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { GapY } from "../../../../components/ui/gap";
-import DokiDebut from "@/assets/3d-images/doki-debut.png";
-import MakeOver from "@/assets/3d-images/make-over.png";
-import { ArrowRightIcon } from "@/components/common/Icons";
+import { ArrowRightIcon, LocationIcon } from "@/components/common/Icons";
+import { dummyLink } from "@/constants";
 
 interface BookingData {
   packageId: string;
@@ -81,11 +79,11 @@ export default function BookingPayPage() {
   }, [packageId]);
 
   const handleSave = () => {
-    router.push(`/booking/${packageId}/complete`);
+    router.push(`/booking/${packageId}/done`);
   };
 
-  const handleDateTimeClick = () => {
-    router.push(`/booking/${packageId}/date`);
+  const handleOrderLink = () => {
+    window.open(dummyLink, "_blank");
   };
 
   const platformFee = 20000;
@@ -102,15 +100,13 @@ export default function BookingPayPage() {
   }
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen bg-gray-container text-white">
       {/* Main Content */}
       <div>
         {/* Reservation Status */}
-        <div className="flex flex-col gap-[27px] p-5 bg-gray-container">
+        <div className="flex flex-col gap-[27px] p-5 bg-background">
           <div>
-            <span className="title-lg font-bold">
-              {t("booking.paymentTitle")}
-            </span>
+            <span className="title-lg font-bold">Booking Status</span>
             <p className="text-gray-300 text-md">{t("booking.delayNotice")}</p>
             <p className="text-gray-300 text-md">
               {t("booking.realTimeUpdate")}
@@ -142,84 +138,69 @@ export default function BookingPayPage() {
         <GapY size={8} />
 
         {/* Order Status */}
-        <div className="flex flex-col gap-3 py-3 px-5 bg-gray-container">
-          <span className="title-lg font-bold">{t("booking.orderStatus")}</span>
-          <p className="text-gray-300 text-md">
-            Please proceed with reservations by vendor.
-          </p>
-          <p className="text-gray-300 text-md">
-            You can modify your reservation status anytime later.
-          </p>
-
+        <div className="flex flex-col gap-3 p-5 bg-background">
           <div className="flex flex-col gap-1">
-            {bookingData.components.map(component => (
-              <div key={component.id} className="flex items-center gap-2">
-                <div className="w-12 h-12 bg-gray rounded-full flex items-center justify-center flex-shrink-0">
-                  <Image
-                    src={component.id === "debut" ? DokiDebut : MakeOver}
-                    alt={component.title}
-                    width={component.id === "debut" ? 11 : 24}
-                    height={component.id === "debut" ? 24 : 22}
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-white">
-                    {component.title}
-                  </h3>
-                  <p className="text-sm text-gray-400">{component.location}</p>
-                </div>
-                <Badge disabled={component.status === "accepted"}>
-                  {component.status === "accepted"
-                    ? t("booking.accepted")
-                    : t("booking.pending")}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </div>
-        <GapY size={8} />
-
-        {/* Booking Date */}
-        <div className="flex flex-col gap-3 py-3 px-5 bg-gray-container">
-          <div className="flex flex-col gap-1">
-            <span className="title-md font-bold">
-              {t("booking.bookingDate")}
+            <span className="title-lg font-bold">
+              {t("booking.orderStatus")}
             </span>
             <p className="text-gray-300 text-md">
-              You can tap to edit the date and time.
+              Please proceed with reservations by vendor.
+            </p>
+            <p className="text-gray-300 text-md">
+              You can modify your reservation status anytime later.
             </p>
           </div>
-
-          <div
-            className="flex justify-between items-center cursor-pointer"
-            onClick={handleDateTimeClick}
-          >
-            <div className="flex gap-3 items-center">
-              <div className="flex gap-2 items-center">
-                <span className="text-white font-medium">
-                  {t("booking.date")}
-                </span>
-                <span className="text-gray-400 text-sm">
-                  {bookingData.selectedDate}
-                </span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <span className="text-white font-medium">
-                  {t("booking.time")}
-                </span>
-                <span className="text-gray-400 text-sm">
-                  {bookingData.selectedTime}
-                </span>
-              </div>
-            </div>
-            <ArrowRightIcon color="white" />
+          <div className="flex flex-col gap-3">
+            {bookingData.components.map(component => {
+              const imageSrc =
+                component.id === "debut"
+                  ? "/dummy-profile.png"
+                  : "/dummy-profile.png";
+              const guideTitle = "Booking Guide";
+              const guideDetail =
+                component.id === "debut"
+                  ? "· Reserve through the official website"
+                  : "· 1:1 Inquiry via WeChat";
+              const vendor = component.location.split(" (")[0];
+              return (
+                <div
+                  key={component.id}
+                  className="flex items-center gap-3 bg-gray-container rounded-lg p-3"
+                >
+                  <div className="relative w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                    <Image
+                      src={imageSrc}
+                      alt={component.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-white text-[18px] leading-6 truncate">
+                      {component.title}
+                    </h3>
+                    <div className="mt-1 flex items-center text-sm text-gray-400 gap-2">
+                      <span className="inline-flex items-center gap-1">
+                        <LocationIcon width={14} height={14} color="#9CA3AF" />
+                        <span className="truncate">{vendor}</span>
+                      </span>
+                      <span className="opacity-60">·</span>
+                      <span className="text-pink-400">PreBook</span>
+                    </div>
+                    <div className="mt-3">
+                      <p className="text-gray-300 text-sm">{guideTitle}</p>
+                      <p className="text-gray-300 text-sm">{guideDetail}</p>
+                    </div>
+                  </div>
+                  <ArrowRightIcon color="white" onClick={handleOrderLink} />
+                </div>
+              );
+            })}
           </div>
         </div>
-
         <GapY size={8} />
-
         {/* Package Details */}
-        <div className="flex flex-col gap-3 py-3 px-5 bg-gray-container">
+        <div className="flex flex-col gap-3 p-5 bg-background">
           <div className="flex items-center justify-between cursor-pointer">
             <h2 className="text-xl font-bold">{t("booking.packageDetails")}</h2>
           </div>

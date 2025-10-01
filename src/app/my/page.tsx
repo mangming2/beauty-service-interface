@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { Icons } from "@/components/common/Icons";
 import Image from "next/image";
-import { format } from "date-fns";
+import { format, parse, differenceInCalendarDays } from "date-fns";
 import { useRouter } from "next/navigation";
 
 import { useUser, useSignOut } from "@/hooks/useAuthQueries";
@@ -174,6 +174,18 @@ export default function MyPage() {
     setReviews(reviewData);
   }, []);
 
+  const getDDayLabel = (dateString: string) => {
+    try {
+      const date = parse(dateString, "yyyy.MM.dd", new Date());
+      const diff = differenceInCalendarDays(date, new Date());
+      if (diff > 0) return `D-${diff}`;
+      if (diff === 0) return "D-DAY";
+      return `D+${Math.abs(diff)}`;
+    } catch {
+      return "";
+    }
+  };
+
   // 사용자 정보 로딩 중일 때
   if (userLoading) {
     return (
@@ -240,29 +252,44 @@ export default function MyPage() {
                     <h2 className="text-lg font-bold mb-4">
                       Upcoming Bookings
                     </h2>
-                    {bookingHistory
-                      .filter(booking => booking.status === "confirmed")
-                      .map(booking => (
-                        <Card
-                          key={booking.id}
-                          className="bg-gray-900 border-gray-700 mb-4"
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex justify-between items-start mb-3">
-                              <h3 className="font-bold text-white text-lg">
-                                DOKI MAKE SALON
-                              </h3>
-                              <span className="text-pink-500 font-bold text-xl">
-                                D-26
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-400 mb-1">
-                              {booking.date} • {booking.time} (Yongsan) •{" "}
-                              {booking.guests} Guests
-                            </p>
-                          </CardContent>
-                        </Card>
-                      ))}
+                    <div className="flex flex-col gap-1">
+                      {bookingHistory
+                        .filter(booking => booking.status === "confirmed")
+                        .map(booking => (
+                          <Card
+                            key={booking.id}
+                            className="bg-gray-container border-none rounded-1 p-0"
+                          >
+                            <CardContent className="p-3">
+                              <div className="flex items-center">
+                                <div className="flex justify-between w-full">
+                                  <div className="flex flex-col items-start justify-between">
+                                    <h3 className="font-bold text-white text-lg">
+                                      DOKI MAKE SALON
+                                    </h3>
+                                    <p className="text-sm text-gray-400">
+                                      <span>
+                                        {booking.date} • {booking.time}
+                                      </span>{" "}
+                                      <span>
+                                        ({booking.location?.split(",")[0]})
+                                      </span>{" "}
+                                      <span>• {booking.guests} Guests</span>
+                                    </p>
+                                  </div>
+
+                                  <div className="flex items-center px-3 gap-3">
+                                    <span className="text-pink-500 font-bold title-lg truncate">
+                                      {getDDayLabel(booking.date)}
+                                    </span>
+                                    <Icons.arrowRight width={6} height={12} />
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                    </div>
                   </div>
 
                   {/* Completed Reviews */}
