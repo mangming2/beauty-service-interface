@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { GapY } from "../../../../components/ui/gap";
 import { ArrowRightIcon, LocationIcon } from "@/components/common/Icons";
-import { dummyLink } from "@/constants";
 
 interface BookingData {
   packageId: string;
