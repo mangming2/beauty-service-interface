@@ -12,9 +12,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Icons } from "@/components/common/Icons";
+import ScheduleModal from "@/components/common/ScheduleModal";
 import Image from "next/image";
 import { format, parse, differenceInCalendarDays } from "date-fns";
-import { useRouter } from "next/navigation";
 
 import { useUser, useSignOut } from "@/hooks/useAuthQueries";
 import Link from "next/link";
@@ -46,11 +46,25 @@ export default function MyPage() {
   // React Query hooks 사용
   const { data: user, isLoading: userLoading } = useUser();
   const signOutMutation = useSignOut();
-  const router = useRouter();
+
+  // Schedule Modal state
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState<string>("");
 
   const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
+
+  const handleScheduleAdd = (bookingId: string) => {
+    setSelectedBookingId(bookingId);
+    setIsScheduleModalOpen(true);
+  };
+
+  const handleScheduleSave = (title: string, date: Date) => {
+    console.log("새 일정 저장:", { bookingId: selectedBookingId, title, date });
+    // TODO: 실제 API 호출로 일정 저장
+    alert(`일정이 저장되었습니다: ${title} - ${date.toLocaleString()}`);
+  };
 
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   const userProfile = {
@@ -417,6 +431,12 @@ export default function MyPage() {
                         <SheetContent
                           side="bottom"
                           className="bg-gray-900 border-gray-700 text-white rounded-t-2xl h-[70vh]"
+                          onInteractOutside={e => {
+                            // 모달이 열려있으면 바텀시트 닫기 방지
+                            if (isScheduleModalOpen) {
+                              e.preventDefault();
+                            }
+                          }}
                         >
                           <SheetHeader className="pb-4">
                             <SheetTitle className="text-white text-lg font-bold">
@@ -474,9 +494,7 @@ export default function MyPage() {
 
                             {/* Plus Button - Fixed Position */}
                             <Button
-                              onClick={() =>
-                                router.push(`/my/schedule/${booking.id}`)
-                              }
+                              onClick={() => handleScheduleAdd(booking.id)}
                               className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600 p-0 shadow-lg"
                             >
                               <Icons.plus className="w-6 h-6 text-white" />
@@ -491,6 +509,16 @@ export default function MyPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Schedule Modal - Portal로 렌더링 */}
+      {isScheduleModalOpen && (
+        <ScheduleModal
+          isOpen={isScheduleModalOpen}
+          onClose={() => setIsScheduleModalOpen(false)}
+          onSave={handleScheduleSave}
+          bookingId={selectedBookingId}
+        />
+      )}
     </div>
   );
 }
