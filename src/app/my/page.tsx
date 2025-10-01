@@ -17,6 +17,7 @@ import { format, parse, differenceInCalendarDays } from "date-fns";
 import { useRouter } from "next/navigation";
 
 import { useUser, useSignOut } from "@/hooks/useAuthQueries";
+import Link from "next/link";
 
 interface BookingHistory {
   id: string;
@@ -167,7 +168,7 @@ export default function MyPage() {
         comment: "Loved the futuristic concept!",
         imageSrc: "/dummy-profile.png",
         location: "Songdo, Incheon",
-        reviewed: true,
+        reviewed: false,
       },
     ];
 
@@ -226,24 +227,24 @@ export default function MyPage() {
 
       {/* Tabs Navigation */}
       <div className="px-4">
-        <Tabs defaultValue="my-reviews" className="w-full">
+        <Tabs defaultValue="booking-history" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-gray-700">
-            <TabsTrigger
-              value="my-reviews"
-              className="relative bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-500 data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-500"
-            >
-              My reviews
-            </TabsTrigger>
             <TabsTrigger
               value="booking-history"
               className="relative bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-500 data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-500"
             >
               Booking History
             </TabsTrigger>
+            <TabsTrigger
+              value="schedule"
+              className="relative bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-500 data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-500"
+            >
+              Schedule
+            </TabsTrigger>
           </TabsList>
 
-          {/* My Reviews Tab */}
-          <TabsContent value="my-reviews" className="mt-6">
+          {/* Booking History Tab */}
+          <TabsContent value="booking-history" className="mt-6">
             <div className="space-y-4">
               {reviews.length > 0 ? (
                 <>
@@ -256,38 +257,43 @@ export default function MyPage() {
                       {bookingHistory
                         .filter(booking => booking.status === "confirmed")
                         .map(booking => (
-                          <Card
+                          <Link
+                            href={`/booking/${booking.id}/check`}
                             key={booking.id}
-                            className="bg-gray-container border-none rounded-1 p-0"
                           >
-                            <CardContent className="p-3">
-                              <div className="flex items-center">
-                                <div className="flex justify-between w-full">
-                                  <div className="flex flex-col items-start justify-between">
-                                    <h3 className="font-bold text-white text-lg">
-                                      DOKI MAKE SALON
-                                    </h3>
-                                    <p className="text-sm text-gray-400">
-                                      <span>
-                                        {booking.date} • {booking.time}
-                                      </span>{" "}
-                                      <span>
-                                        ({booking.location?.split(",")[0]})
-                                      </span>{" "}
-                                      <span>• {booking.guests} Guests</span>
-                                    </p>
-                                  </div>
+                            <Card
+                              key={booking.id}
+                              className="bg-gray-container border-none rounded-1 p-0"
+                            >
+                              <CardContent className="p-3">
+                                <div className="flex items-center">
+                                  <div className="flex justify-between w-full">
+                                    <div className="flex flex-col items-start justify-between">
+                                      <h3 className="font-bold text-white text-lg">
+                                        DOKI MAKE SALON
+                                      </h3>
+                                      <p className="text-sm text-gray-400">
+                                        <span>
+                                          {booking.date} • {booking.time}
+                                        </span>{" "}
+                                        <span>
+                                          ({booking.location?.split(",")[0]})
+                                        </span>{" "}
+                                        <span>• {booking.guests} Guests</span>
+                                      </p>
+                                    </div>
 
-                                  <div className="flex items-center px-3 gap-3">
-                                    <span className="text-pink-500 font-bold title-lg truncate">
-                                      {getDDayLabel(booking.date)}
-                                    </span>
-                                    <Icons.arrowRight width={6} height={12} />
+                                    <div className="flex items-center px-3 gap-3">
+                                      <span className="text-pink-500 font-bold title-lg truncate">
+                                        {getDDayLabel(booking.date)}
+                                      </span>
+                                      <Icons.arrowRight width={6} height={12} />
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
+                          </Link>
                         ))}
                     </div>
                   </div>
@@ -303,11 +309,11 @@ export default function MyPage() {
                           .map(review => (
                             <Card
                               key={review.id}
-                              className="bg-gray-900 border-gray-700 mb-3"
+                              className="bg-transparent border-none mb-3"
                             >
-                              <CardContent className="p-4">
-                                <div className="flex gap-3">
-                                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                              <CardContent className="p-0">
+                                <div className="flex gap-3 p-2">
+                                  <div className="relative w-[91px] h-[91px] rounded-lg overflow-hidden flex-shrink-0">
                                     <Image
                                       src={review.imageSrc}
                                       alt={review.packageTitle}
@@ -315,32 +321,33 @@ export default function MyPage() {
                                       className="object-cover"
                                     />
                                   </div>
-                                  <div className="flex-1">
-                                    <h4 className="font-semibold text-white mb-1">
-                                      {review.packageTitle}
-                                    </h4>
-                                    <p className="text-gray-400 text-sm mb-2">
-                                      {review.location}
-                                    </p>
+                                  <div className="flex flex-col justify-between">
+                                    <div className="flex flex-col">
+                                      <h4 className="font-semibold text-white mb-1">
+                                        {review.packageTitle}
+                                      </h4>
+                                      <p className="text-gray-400 text-sm mb-2">
+                                        {review.location}
+                                      </p>
+                                    </div>
                                     <p className="text-gray-400 text-sm">
                                       {review.date}
                                     </p>
                                   </div>
-                                  <div className="flex flex-col gap-2">
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      className="bg-gray-800 hover:bg-gray-700 text-gray-300"
-                                    >
-                                      View Details
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      className="bg-pink-500 hover:bg-pink-600"
-                                    >
-                                      Review
-                                    </Button>
-                                  </div>
+                                </div>
+                                <div className="flex items-end gap-4 w-full max-w-xs">
+                                  <Button
+                                    className="flex-1 h-10 bg-gray-700 text-white hover:bg-gray-600"
+                                    variant="default"
+                                  >
+                                    View Details
+                                  </Button>
+                                  <Button
+                                    className={`${review.reviewed ? "flex-1 h-10 bg-gray-700 text-gray-300 cursor-not-allowed hover:bg-gray-700" : "flex-1 h-10 bg-pink-500 hover:bg-pink-600"}`}
+                                    disabled={review.reviewed}
+                                  >
+                                    Review
+                                  </Button>
                                 </div>
                               </CardContent>
                             </Card>
@@ -363,7 +370,7 @@ export default function MyPage() {
           </TabsContent>
 
           {/* Schedule Tab */}
-          <TabsContent value="booking-history" className="mt-6">
+          <TabsContent value="schedule" className="mt-6">
             <div className="space-y-4">
               {/* Booking History List */}
               {["2026", "2025"].map(year => (
