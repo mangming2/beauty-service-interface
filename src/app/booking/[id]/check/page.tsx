@@ -83,7 +83,7 @@ export default function BookingPayPage() {
   };
 
   const handleOrderLink = () => {
-    window.open(dummyLink, "_blank");
+    router.push(`/booking/${packageId}/booking-link`);
   };
 
   const platformFee = 20000;

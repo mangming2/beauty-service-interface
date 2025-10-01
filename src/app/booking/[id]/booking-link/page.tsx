@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { format, addDays, startOfWeek, addWeeks, subWeeks } from "date-fns";
+import { dummyLink } from "@/constants";
+import Image from "next/image";
 
 const timeSlots = [
   { time: "09:00", available: true },
@@ -16,7 +18,7 @@ const timeSlots = [
   { time: "16:00", available: false },
 ];
 
-export default function BookingDatePage() {
+export default function BookingLinkPage() {
   const params = useParams();
   const router = useRouter();
   const packageId = params.id as string;
@@ -24,11 +26,6 @@ export default function BookingDatePage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [currentWeek, setCurrentWeek] = useState<Date>(new Date(2025, 6, 20)); // July 21, 2025 (Monday)
-
-  const handleConfirm = () => {
-    console.log("handleConfirm");
-    router.push(`/booking/${packageId}/pay`);
-  };
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
@@ -46,15 +43,41 @@ export default function BookingDatePage() {
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 0 }); // Sunday start
   const weekDates = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
+  const handleBookLink = () => {
+    window.open(dummyLink, "_blank");
+  };
+
+  const handleConfirm = () => {
+    console.log("handleConfirm");
+    router.push(`/booking/${packageId}/check`);
+  };
+
   return (
-    <div className=" text-white bg-black">
+    <div className=" text-white">
       {/* Header */}
 
-      <div className="px-4 py-6">
+      <div className="py-6">
+        {/*패키지 설명 */}
+        <div className="mb-8">
+          <Image
+            src="/dummy-profile.png"
+            alt="package"
+            width={0}
+            height={200}
+            sizes="100vw"
+            className="w-full h-[200px] object-cover"
+          />
+          <h2 className="title-lg font-semibold mb-4">Make Over</h2>
+          <p className="text-gray-400">Salon Doki</p>
+          <div className="flex justify-between items-center gap-2 text-lg text-white">
+            <span>Make-ip & Hair</span>
+            <span>₩ 70,000</span>
+          </div>
+        </div>
         {/* Choose your date */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4">Choose your date.</h2>
-          <div className="bg-gray-900 rounded-lg p-4">
+          <div className=" rounded-lg p-4">
             {/* Year/Month display with navigation */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -99,7 +122,7 @@ export default function BookingDatePage() {
                 return (
                   <button
                     key={index}
-                    className={`h-10 w-10 flex items-center justify-center rounded text-sm ${
+                    className={`h-10 w-10 flex items-center justify-center rounded-full text-sm ${
                       isDisabled
                         ? "text-gray-500 cursor-not-allowed"
                         : isSelected
@@ -143,12 +166,19 @@ export default function BookingDatePage() {
       </div>
 
       {/* Checkout Button */}
-      <div className="px-4 py-4 bg-black border-t border-gray-800">
+      <div className="flex justify-center px-4 py-4 gap-2 border-gray-800">
         <Button
-          className="w-full bg-pink-500 hover:bg-pink-600 h-[52px]"
+          variant="secondary"
+          className="w-[128px] bg-pink-500 hover:bg-pink-600 h-[52px]"
+          onClick={handleBookLink}
+        >
+          <span className="font-medium">Book Link</span>
+        </Button>
+        <Button
+          className="w-[236px] bg-pink-500 hover:bg-pink-600 h-[52px]"
           onClick={handleConfirm}
         >
-          <span className="font-medium">Checkout</span>
+          <span className="font-medium">Complete</span>
         </Button>
       </div>
     </div>
