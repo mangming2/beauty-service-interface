@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { GapY } from "../../../../components/ui/gap";
 import { ArrowRightIcon, LocationIcon } from "@/components/common/Icons";
+import Link from "next/link";
 
 interface BookingData {
   packageId: string;
@@ -79,10 +80,6 @@ export default function BookingPayPage() {
 
   const handleSave = () => {
     router.push(`/booking/${packageId}/done`);
-  };
-
-  const handleOrderLink = () => {
-    router.push(`/booking/${packageId}/booking-link`);
   };
 
   const platformFee = 20000;
@@ -162,37 +159,46 @@ export default function BookingPayPage() {
                   : "· 1:1 Inquiry via WeChat";
               const vendor = component.location.split(" (")[0];
               return (
-                <div
+                <Link
+                  href={`/booking/${packageId}/booking-link`}
                   key={component.id}
-                  className="flex items-center gap-3 bg-gray-container rounded-lg p-3"
                 >
-                  <div className="relative w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
-                    <Image
-                      src={imageSrc}
-                      alt={component.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white text-[18px] leading-6 truncate">
-                      {component.title}
-                    </h3>
-                    <div className="mt-1 flex items-center text-sm text-gray-400 gap-2">
-                      <span className="inline-flex items-center gap-1">
-                        <LocationIcon width={14} height={14} color="#9CA3AF" />
-                        <span className="truncate">{vendor}</span>
-                      </span>
-                      <span className="opacity-60">·</span>
-                      <span className="text-pink-400">PreBook</span>
+                  <div
+                    key={component.id}
+                    className="flex items-center gap-3 bg-gray-container rounded-lg p-3 cursor-pointer"
+                  >
+                    <div className="relative w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
+                      <Image
+                        src={imageSrc}
+                        alt={component.title}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
-                    <div className="mt-3">
-                      <p className="text-gray-300 text-sm">{guideTitle}</p>
-                      <p className="text-gray-300 text-sm">{guideDetail}</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white text-[18px] leading-6 truncate">
+                        {component.title}
+                      </h3>
+                      <div className="mt-1 flex items-center text-sm text-gray-400 gap-2">
+                        <span className="inline-flex items-center gap-1">
+                          <LocationIcon
+                            width={14}
+                            height={14}
+                            color="#9CA3AF"
+                          />
+                          <span className="truncate">{vendor}</span>
+                        </span>
+                        <span className="opacity-60">·</span>
+                        <span className="text-pink-400">PreBook</span>
+                      </div>
+                      <div className="mt-3">
+                        <p className="text-gray-300 text-sm">{guideTitle}</p>
+                        <p className="text-gray-300 text-sm">{guideDetail}</p>
+                      </div>
                     </div>
+                    <ArrowRightIcon color="white" />
                   </div>
-                  <ArrowRightIcon color="white" onClick={handleOrderLink} />
-                </div>
+                </Link>
               );
             })}
           </div>

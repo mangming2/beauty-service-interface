@@ -351,10 +351,10 @@ export default function MyPage() {
                                 </div>
                                 <div className="flex items-end gap-4 w-full max-w-xs">
                                   <Button
-                                    className="flex-1 h-10 bg-gray-700 text-white hover:bg-gray-600"
-                                    variant="default"
+                                    className="flex-1 h-10"
+                                    variant="gray"
                                   >
-                                    View Details
+                                    Booking Details
                                   </Button>
                                   <Button
                                     className={`${review.reviewed ? "flex-1 h-10 bg-gray-700 text-gray-300 cursor-not-allowed hover:bg-gray-700" : "flex-1 h-10 bg-pink-500 hover:bg-pink-600"}`}

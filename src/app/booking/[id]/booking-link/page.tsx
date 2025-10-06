@@ -168,8 +168,8 @@ export default function BookingLinkPage() {
       {/* Checkout Button */}
       <div className="flex justify-center px-4 py-4 gap-2 border-gray-800">
         <Button
-          variant="secondary"
-          className="w-[128px] bg-pink-500 hover:bg-pink-600 h-[52px]"
+          variant="gray"
+          className="w-[128px] h-[52px]"
           onClick={handleBookLink}
         >
           <span className="font-medium">Book Link</span>
