@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import DateTimePicker from "@/components/ui/date-time-picker";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Divider } from "../ui/divider";
+import { ArrowRightIcon } from "@/components/common/Icons";
 
 interface ScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (title: string, date: Date) => void;
+  onSave: (title: string, startDate: Date, endDate: Date) => void;
   bookingId: string;
 }
 
@@ -20,8 +21,10 @@ export default function ScheduleModal({
   onSave,
 }: ScheduleModalProps) {
   const [title, setTitle] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date(Date.now() + 60 * 60 * 1000)); // 1시간 후
   const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
+  const [editingDate, setEditingDate] = useState<"start" | "end">("start");
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear().toString().slice(-2);
@@ -41,21 +44,27 @@ export default function ScheduleModal({
       alert("제목을 입력해주세요.");
       return;
     }
-    onSave(title, selectedDate);
+    if (startDate >= endDate) {
+      alert("종료일은 시작일보다 늦어야 합니다.");
+      return;
+    }
+    onSave(title, startDate, endDate);
     handleClose();
   };
 
   const handleClose = () => {
     setTitle("");
-    setSelectedDate(new Date());
+    setStartDate(new Date());
+    setEndDate(new Date(Date.now() + 60 * 60 * 1000));
     setIsDateTimePickerOpen(false);
+    setEditingDate("start");
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && handleClose()}>
       <DialogContent
-        className="bg-background border-none text-white max-w-md"
+        className="bg-black border-none text-white max-w-md"
         showCloseButton={false}
       >
         <DialogTitle className="sr-only">Schedule Appointment</DialogTitle>
@@ -71,29 +80,57 @@ export default function ScheduleModal({
         <Divider />
 
         {/* Date & Time Section */}
-        <div className="mb-6">
+        <div className=" mb-6">
           <div className="text-white title-sm font-medium mb-3">
             Date & Time
           </div>
 
-          {/* Date Display */}
-          <div
-            className="p-4 cursor-pointer transition-colors"
-            onClick={() => setIsDateTimePickerOpen(!isDateTimePickerOpen)}
-          >
-            <div className="text-white text-lg font-medium">
-              {formatDate(selectedDate)}
+          <div className="flex gap-10 justify-center items-center">
+            {/* Start Date Display */}
+            <div
+              className={`p-4 cursor-pointer`}
+              onClick={() => {
+                setEditingDate("start");
+                setIsDateTimePickerOpen(!isDateTimePickerOpen);
+              }}
+            >
+              <div className="text-white text-sm font-medium mb-1">시작일</div>
+              <div className="text-white text-lg font-medium">
+                {formatDate(startDate)}
+              </div>
+              <div className="text-white title-lg">{formatTime(startDate)}</div>
             </div>
-            <div className="text-white title-lg">
-              {formatTime(selectedDate)}
+
+            {/* Arrow */}
+            <ArrowRightIcon />
+
+            {/* End Date Display */}
+            <div
+              className={`p-4 cursor-pointer`}
+              onClick={() => {
+                setEditingDate("end");
+                setIsDateTimePickerOpen(!isDateTimePickerOpen);
+              }}
+            >
+              <div className="text-white text-sm font-medium mb-1">종료일</div>
+              <div className="text-white text-lg font-medium">
+                {formatDate(endDate)}
+              </div>
+              <div className="text-white title-lg">{formatTime(endDate)}</div>
             </div>
           </div>
 
           <div className="mt-4">
             <DateTimePicker
-              value={selectedDate}
-              onChange={setSelectedDate}
-              isOpen={true}
+              value={editingDate === "start" ? startDate : endDate}
+              onChange={date => {
+                if (editingDate === "start") {
+                  setStartDate(date);
+                } else {
+                  setEndDate(date);
+                }
+              }}
+              isOpen={isDateTimePickerOpen}
             />
           </div>
         </div>

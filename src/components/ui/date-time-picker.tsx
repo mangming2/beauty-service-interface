@@ -160,7 +160,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       e.nativeEvent.preventDefault();
 
       if (isDragging) return;
-      const delta = e.deltaY > 0 ? itemHeight : -itemHeight;
+
+      // 더 부드러운 스크롤을 위해 델타값을 조정
+      const delta = e.deltaY > 0 ? itemHeight * 0.8 : -itemHeight * 0.8;
       const newPosition = Math.max(
         -(items.length - 1) * itemHeight, // 중앙 정렬을 위해 조정
         Math.min(2 * itemHeight, scrollPosition + delta) // 상단 여백 고려
@@ -188,7 +190,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       const handleMouseMove = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        const deltaY = e.clientY - startY;
+        const deltaY = (e.clientY - startY) * 0.8; // 더 부드러운 드래그를 위해 감속
         const newPosition = Math.max(
           -(items.length - 1) * itemHeight, // 중앙 정렬을 위해 조정
           Math.min(2 * itemHeight, startScroll + deltaY) // 상단 여백 고려
@@ -218,7 +220,10 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <div className="text-xs text-white/50 mb-1">{label}</div>
         <div
           className="relative overflow-hidden select-none"
-          style={{ height: containerHeight }}
+          style={{
+            height: containerHeight,
+            scrollBehavior: "smooth",
+          }}
           onWheel={handleWheel}
           onMouseDown={handleMouseDown}
           onTouchStart={e => {
@@ -239,7 +244,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           }}
         >
           <div
-            className="flex flex-col transition-transform duration-200 ease-out"
+            className="flex flex-col transition-transform duration-300 ease-out"
             style={{
               transform: `translateY(${scrollPosition}px)`,
               height: items.length * itemHeight,
@@ -249,10 +254,10 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
               <div
                 key={index}
                 className={cn(
-                  "flex items-center justify-center h-8 text-sm transition-all duration-200 cursor-pointer",
+                  "flex items-center justify-center h-8 text-sm transition-all duration-300 ease-out cursor-pointer",
                   item === selectedValue
-                    ? "text-white font-semibold text-base"
-                    : "text-white/30 text-sm"
+                    ? "text-white font-semibold text-base scale-110"
+                    : "text-white/30 text-sm scale-100"
                 )}
                 style={{ height: itemHeight }}
                 onClick={() => onSelect(item)}

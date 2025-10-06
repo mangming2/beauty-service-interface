@@ -128,14 +128,25 @@ export default function Schedule() {
     setIsScheduleModalOpen(true);
   };
 
-  const handleScheduleSave = (title: string, date: Date) => {
-    console.log("새 일정 저장:", { bookingId: selectedBookingId, title, date });
+  const handleScheduleSave = (
+    title: string,
+    startDate: Date,
+    endDate: Date
+  ) => {
+    console.log("새 일정 저장:", {
+      bookingId: selectedBookingId,
+      title,
+      startDate,
+      endDate,
+    });
     // TODO: 실제 API 호출로 일정 저장
-    alert(`일정이 저장되었습니다: ${title} - ${date.toLocaleString()}`);
+    alert(
+      `일정이 저장되었습니다: ${title} - ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}`
+    );
   };
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col w-full space-y-4">
       {/* Booking History List */}
       {["2026", "2025"].map(year => (
         <div key={year} className="mb-6">
@@ -146,14 +157,14 @@ export default function Schedule() {
               <Sheet key={booking.id}>
                 <SheetTrigger asChild>
                   <Card
-                    className={`border-gray-700 mb-3 cursor-pointer transition-all duration-200 ${
+                    className={`flex w-full bg-transparent py-0 border-none mb-3 cursor-pointer transition-all duration-200 ${
                       selectedBooking === booking.id
-                        ? "bg-gray-800 border-pink-500"
-                        : "bg-gray-900"
-                    } hover:bg-gray-800`}
+                        ? "bg-gray"
+                        : "bg-transparent"
+                    } hover:bg-gray`}
                     onClick={() => setSelectedBooking(booking.id)}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-2 w-full">
                       <div className="flex gap-3">
                         <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                           <Image
@@ -180,7 +191,7 @@ export default function Schedule() {
                 </SheetTrigger>
                 <SheetContent
                   side="bottom"
-                  className="bg-gray-900 border-gray-700 text-white rounded-t-2xl h-[70vh]"
+                  className="bg-black border-none text-white rounded-t-2xl h-[70vh]"
                   onInteractOutside={e => {
                     // 모달이 열려있으면 바텀시트 닫기 방지
                     if (isScheduleModalOpen) {
@@ -194,9 +205,9 @@ export default function Schedule() {
                     </SheetTitle>
                   </SheetHeader>
 
-                  <div className="space-y-4 overflow-y-auto h-full pb-6 relative">
+                  <div className="space-y-4 overflow-y-auto h-full px-5 pb-6 relative">
+                    <div className="text-gray-400 text-sm">07.15</div>
                     <div className="border-l-4 border-pink-500 pl-4">
-                      <div className="text-gray-400 text-sm">07.15</div>
                       <div className="text-white font-semibold">Tri-bowl</div>
                       <div className="text-gray-400 text-sm">2 p.m.</div>
                     </div>
@@ -208,8 +219,8 @@ export default function Schedule() {
                       <div className="text-gray-400 text-sm">4 p.m.</div>
                     </div>
 
+                    <div className="text-gray-400 text-sm">07.16</div>
                     <div className="border-l-4 border-gray-600 pl-4">
-                      <div className="text-gray-400 text-sm">07.16</div>
                       <div className="text-white font-semibold">Salon DOKI</div>
                       <div className="text-gray-400 text-sm">10 a.m.</div>
                     </div>

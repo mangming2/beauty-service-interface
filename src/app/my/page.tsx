@@ -63,7 +63,7 @@ export default function MyPage() {
 
       {/* Tabs Navigation */}
       <div className="px-4">
-        <Tabs defaultValue="booking-history" className="w-fit">
+        <Tabs defaultValue="booking-history" className="w-full">
           <TabsList className="bg-transparent p-0 gap-3 border-b border-gray-700 rounded-none">
             <TabsTrigger
               value="booking-history"
