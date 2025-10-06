@@ -20,8 +20,9 @@ interface BookingHistory {
   guests?: number;
 }
 
-interface Review {
+interface CompletedBooking {
   id: string;
+  packageId: string;
   packageTitle: string;
   date: string;
   rating: number;
@@ -33,7 +34,9 @@ interface Review {
 
 export default function BookingHistory() {
   const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [completedBookings, setCompletedBookings] = useState<
+    CompletedBooking[]
+  >([]);
 
   useEffect(() => {
     const newBooking: BookingHistory = {
@@ -121,9 +124,10 @@ export default function BookingHistory() {
     setBookingHistory([newBooking, ...additionalBookings]);
 
     // Add reviews
-    const reviewData: Review[] = [
+    const completedBookingData: CompletedBooking[] = [
       {
         id: "1",
+        packageId: "aespa-futuristic",
         packageTitle: "Futuristic Chic Idol Debut",
         date: "2025.07.14",
         rating: 5,
@@ -134,6 +138,7 @@ export default function BookingHistory() {
       },
       {
         id: "2",
+        packageId: "aespa-futuristic",
         packageTitle: "Futuristic Chic Idol Debut",
         date: "2024.07.14",
         rating: 5,
@@ -144,7 +149,7 @@ export default function BookingHistory() {
       },
     ];
 
-    setReviews(reviewData);
+    setCompletedBookings(completedBookingData);
   }, []);
 
   const getDDayLabel = (dateString: string) => {
@@ -161,7 +166,7 @@ export default function BookingHistory() {
 
   return (
     <div className="space-y-4">
-      {reviews.length > 0 ? (
+      {bookingHistory.length > 0 ? (
         <>
           {/* Upcoming Bookings */}
           <div>
@@ -206,25 +211,25 @@ export default function BookingHistory() {
             </div>
           </div>
 
-          {/* Completed Reviews */}
+          {/* Completed Bookings */}
           <div>
             <h2 className="text-lg font-bold mb-4">Completed</h2>
             {["2025", "2024"].map(year => (
               <div key={year} className="mb-6">
                 <h3 className="text-white font-bold mb-3">{year}</h3>
-                {reviews
-                  .filter(review => review.date.includes(year))
-                  .map(review => (
+                {completedBookings
+                  .filter(booking => booking.date.includes(year))
+                  .map(booking => (
                     <Card
-                      key={review.id}
+                      key={booking.id}
                       className="bg-transparent border-none mb-3"
                     >
                       <CardContent className="p-0">
                         <div className="flex gap-3 p-2">
                           <div className="relative w-[91px] h-[91px] rounded-lg overflow-hidden flex-shrink-0">
                             <Image
-                              src={review.imageSrc}
-                              alt={review.packageTitle}
+                              src={booking.imageSrc}
+                              alt={booking.packageTitle}
                               fill
                               className="object-cover"
                             />
@@ -232,14 +237,14 @@ export default function BookingHistory() {
                           <div className="flex flex-col justify-between">
                             <div className="flex flex-col">
                               <h4 className="font-semibold text-white mb-1">
-                                {review.packageTitle}
+                                {booking.packageTitle}
                               </h4>
                               <p className="text-gray-400 text-sm mb-2">
-                                {review.location}
+                                {booking.location}
                               </p>
                             </div>
                             <p className="text-gray-400 text-sm">
-                              {review.date}
+                              {booking.date}
                             </p>
                           </div>
                         </div>
@@ -247,12 +252,14 @@ export default function BookingHistory() {
                           <Button className="flex-1 h-10" variant="gray">
                             Booking Details
                           </Button>
-                          <Button
-                            className={`${review.reviewed ? "flex-1 h-10 bg-gray-700 text-gray-300 cursor-not-allowed hover:bg-gray-700" : "flex-1 h-10 bg-pink-500 hover:bg-pink-600"}`}
-                            disabled={review.reviewed}
-                          >
-                            Review
-                          </Button>
+                          <Link href={`/my/reviews/${booking.packageId}`}>
+                            <Button
+                              className={`${booking.reviewed ? "flex-1 h-10 bg-gray-700 text-gray-300 cursor-not-allowed hover:bg-gray-700" : "flex-1 h-10 bg-pink-500 hover:bg-pink-600"}`}
+                              disabled={booking.reviewed}
+                            >
+                              Review
+                            </Button>
+                          </Link>
                         </div>
                       </CardContent>
                     </Card>

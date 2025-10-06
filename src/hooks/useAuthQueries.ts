@@ -8,6 +8,7 @@ import {
   signOut,
   updateProfile,
   onAuthStateChange,
+  createUserProfile,
 } from "@/api/auth";
 
 // Query Keys
@@ -178,6 +179,18 @@ export function useAuthStateListener() {
           console.log("User signed in:", session?.user);
           // 사용자 관련 데이터 refetch
           queryClient.invalidateQueries({ queryKey: authKeys.all });
+
+          // Google 로그인 시 프로필 자동 생성
+          if (session?.user) {
+            console.log("Calling createUserProfile for user:", session.user.id);
+            createUserProfile(session.user)
+              .then(result => {
+                console.log("Profile created successfully:", result);
+              })
+              .catch(error => {
+                console.error("Failed to create profile:", error);
+              });
+          }
         } else if (event === "SIGNED_OUT") {
           console.log("User signed out");
           // 모든 auth 캐시 제거

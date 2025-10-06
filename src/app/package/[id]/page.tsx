@@ -9,6 +9,7 @@ import { GapY } from "../../../components/ui/gap";
 import { Divider } from "../../../components/ui/divider";
 import KakaoMap from "@/components/common/KakaoMap";
 import { usePackageDetail } from "@/hooks/usePackageQueries";
+import Link from "next/link";
 
 export default function PackageDetail() {
   const params = useParams();
@@ -245,35 +246,39 @@ export default function PackageDetail() {
             <span className="flex items-center h-11 title-md font-bold mb-4">
               Customers review
             </span>
-            <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
-              {packageDetail.reviews.map(review => (
-                <Card
-                  key={review.id}
-                  className="w-[250px] h-[132px] flex-shrink-0 p-[14px] bg-gray-container border-none text-white"
-                >
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-gray-container overflow-hidden">
-                        <Image
-                          src={review.avatar_src}
-                          alt={review.username}
-                          width={32}
-                          height={32}
-                          className="object-cover"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">{review.username}</p>
-                        <div className="flex text-xs">
-                          {renderStars(review.rating)}
+            <Link href={`/package/${packageDetail.id}/reviews`}>
+              <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
+                {packageDetail.reviews.map(review => (
+                  <Card
+                    key={review.id}
+                    className="w-[250px] h-[132px] flex-shrink-0 p-[14px] bg-gray-container border-none text-white"
+                  >
+                    <CardContent className="p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-full bg-gray-container overflow-hidden">
+                          <Image
+                            src={review.avatar_src}
+                            alt={review.username}
+                            width={32}
+                            height={32}
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">
+                            {review.username}
+                          </p>
+                          <div className="flex text-xs">
+                            {renderStars(review.rating)}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <p className="text-sm text-gray-300">{review.comment}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <p className="text-sm text-gray-300">{review.comment}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </Link>
           </div>
 
           <GapY size={20} />

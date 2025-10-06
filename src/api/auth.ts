@@ -49,6 +49,56 @@ export const getUserProfile = async (userId: string) => {
   return data;
 };
 
+// Google 로그인 후 프로필 자동 생성
+export const createUserProfile = async (user: any) => {
+  if (!user) {
+    throw new Error("User is required");
+  }
+
+  // 디버깅: Google에서 받아온 데이터 확인
+  console.log("User metadata during profile creation:", user.user_metadata);
+  console.log("User object:", user);
+
+  // Google 프로필 정보 추출
+  const profileData = {
+    id: user.id,
+    full_name:
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email?.split("@")[0] ||
+      "User",
+    avatar_src:
+      user.user_metadata?.avatar_url ||
+      user.user_metadata?.picture ||
+      user.user_metadata?.picture_url ||
+      (user.email
+        ? `https://www.gravatar.com/avatar/${user.email}?d=identicon`
+        : null),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  console.log("Profile data to be saved:", profileData);
+
+  console.log("Attempting to upsert profile data to Supabase...");
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .upsert(profileData, {
+      onConflict: "id",
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error upserting profile:", error);
+    throw error;
+  }
+
+  console.log("Profile upserted successfully:", data);
+  return data;
+};
+
 // Google OAuth 로그인
 export const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
