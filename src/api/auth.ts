@@ -50,7 +50,11 @@ export const getUserProfile = async (userId: string) => {
 };
 
 // Google 로그인 후 프로필 자동 생성
-export const createUserProfile = async (user: any) => {
+export const createUserProfile = async (user: {
+  id: string;
+  user_metadata?: Record<string, unknown>;
+  email?: string;
+}) => {
   if (!user) {
     throw new Error("User is required");
   }
@@ -58,6 +62,13 @@ export const createUserProfile = async (user: any) => {
   // 디버깅: Google에서 받아온 데이터 확인
   console.log("User metadata during profile creation:", user.user_metadata);
   console.log("User object:", user);
+
+  // 기존 프로필이 있는지 확인
+  const existingProfile = await getUserProfile(user.id);
+  if (existingProfile) {
+    console.log("Profile already exists, skipping creation:", existingProfile);
+    return existingProfile;
+  }
 
   // Google 프로필 정보 추출
   const profileData = {
@@ -127,6 +138,7 @@ export const updateProfile = async (
   userId: string,
   profileData: Record<string, unknown>
 ) => {
+  // 1. profiles 테이블 업데이트
   const { data, error } = await supabase
     .from("profiles")
     .upsert(
@@ -144,6 +156,20 @@ export const updateProfile = async (
 
   if (error) {
     throw error;
+  }
+
+  // 2. auth.users.user_metadata도 함께 업데이트 (동기화)
+  if (profileData.full_name) {
+    const { error: authError } = await supabase.auth.updateUser({
+      data: {
+        full_name: profileData.full_name,
+      },
+    });
+
+    if (authError) {
+      console.warn("Failed to update auth user metadata:", authError);
+      // auth 업데이트 실패해도 profiles 업데이트는 성공했으므로 계속 진행
+    }
   }
 
   return data;

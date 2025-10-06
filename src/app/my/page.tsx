@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
 
-import { useUser, useSignOut } from "@/hooks/useAuthQueries";
+import { useUser, useSignOut, useUserProfile } from "@/hooks/useAuthQueries";
 import BookingHistory from "@/components/my/BookingHistory";
 import Schedule from "@/components/my/Schedule";
 import { PageLoading } from "@/components/common";
@@ -14,20 +14,26 @@ import Link from "next/link";
 export default function MyPage() {
   // React Query hooks 사용
   const { data: user, isLoading: userLoading } = useUser();
+  const { data: profile, isLoading: profileLoading } = useUserProfile(user?.id);
   const signOutMutation = useSignOut();
 
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
+  // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
   const userProfile = {
     name:
+      profile?.full_name ||
       user?.user_metadata?.full_name ||
       user?.email?.split("@")[0] ||
       "K-pop Fan",
     email: user?.email || "fan@example.com",
-    avatar: user?.user_metadata?.avatar_url || "/dummy-profile.png",
+    avatar:
+      profile?.avatar_src ||
+      user?.user_metadata?.avatar_url ||
+      "/dummy-profile.png",
   };
 
   // 사용자 정보 로딩 중일 때
-  if (userLoading) {
+  if (userLoading || profileLoading) {
     return <PageLoading message="사용자 정보를 불러오는 중..." />;
   }
 

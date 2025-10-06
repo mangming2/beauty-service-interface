@@ -2,11 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { Icons } from "@/components/common/Icons";
-import { useAuthCallback } from "@/hooks/useAuthQueries";
+import { useAuthCallback, useAuthStateListener } from "@/hooks/useAuthQueries";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
   const { data: callbackResult, isLoading, error } = useAuthCallback();
+
+  // 실시간 인증 상태 감지 (프로필 생성용)
+  useAuthStateListener();
 
   if (isLoading) {
     return (

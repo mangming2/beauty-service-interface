@@ -5,19 +5,26 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useUser, useUpdateProfile } from "@/hooks/useAuthQueries";
+import {
+  useUser,
+  useUpdateProfile,
+  useUserProfile,
+} from "@/hooks/useAuthQueries";
 import { PageLoading } from "@/components/common";
 import { LanguageSelector } from "@/components/common";
 
 export default function EditProfilePage() {
   const router = useRouter();
   const { data: user, isLoading: userLoading } = useUser();
+  const { data: profile, isLoading: profileLoading } = useUserProfile(user?.id);
   const updateProfileMutation = useUpdateProfile();
 
   // 사용자 정보에서 닉네임 초기값 계산
+  // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
   const getInitialNickname = () => {
     if (!user) return "";
     return (
+      profile?.full_name ||
       user.user_metadata?.full_name ||
       user.user_metadata?.username ||
       user.email?.split("@")[0] ||
@@ -57,7 +64,7 @@ export default function EditProfilePage() {
   };
 
   // 사용자 정보 로딩 중일 때
-  if (userLoading) {
+  if (userLoading || profileLoading) {
     return <PageLoading message="사용자 정보를 불러오는 중..." />;
   }
 
@@ -78,9 +85,9 @@ export default function EditProfilePage() {
       {/* Profile Image Section */}
       <div className="flex flex-col items-center px-4 py-8">
         <div className="relative w-32 h-32 rounded-full border border-gray-300 overflow-hidden">
-          {user?.user_metadata?.avatar_url ? (
+          {profile?.avatar_src || user?.user_metadata?.avatar_url ? (
             <Image
-              src={user.user_metadata.avatar_url}
+              src={profile?.avatar_src || user?.user_metadata?.avatar_url || ""}
               alt="Profile"
               fill
               className="object-cover"

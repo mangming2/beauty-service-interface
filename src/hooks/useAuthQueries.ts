@@ -98,7 +98,10 @@ export function useUpdateProfile() {
       return await updateProfile(userId, profileData);
     },
     onSuccess: (data, variables) => {
-      // 현재 사용자 정보 캐시 업데이트
+      // 1. profiles 테이블 캐시 업데이트
+      queryClient.setQueryData(authKeys.profile(variables.userId), data);
+
+      // 2. auth.users 캐시 업데이트 (user_metadata 동기화)
       queryClient.setQueryData(authKeys.user(), (oldUser: any) => {
         if (!oldUser) return oldUser;
         return {
@@ -110,10 +113,22 @@ export function useUpdateProfile() {
         };
       });
 
-      // 해당 사용자의 프로필 캐시 업데이트
-      queryClient.setQueryData(authKeys.profile(variables.userId), data);
+      // 3. 세션 캐시도 업데이트 (세션에 user 정보가 포함되어 있음)
+      queryClient.setQueryData(authKeys.session(), (oldSession: any) => {
+        if (!oldSession?.user) return oldSession;
+        return {
+          ...oldSession,
+          user: {
+            ...oldSession.user,
+            user_metadata: {
+              ...oldSession.user.user_metadata,
+              full_name: variables.profileData.full_name,
+            },
+          },
+        };
+      });
 
-      // 또는 프로필 쿼리 무효화
+      // 4. 관련 쿼리들 무효화하여 최신 데이터 보장
       queryClient.invalidateQueries({
         queryKey: authKeys.profile(variables.userId),
       });
@@ -145,6 +160,16 @@ export function useAuthCallback() {
       if (!user) {
         setTimeout(() => router.push("/login"), 0);
         return { success: false, redirectTo: "/login" };
+      }
+
+      // 3. 프로필 자동 생성 (Google 로그인 시)
+      try {
+        console.log("Creating profile for user:", user.id);
+        await createUserProfile(user);
+        console.log("Profile created successfully in callback");
+      } catch (error) {
+        console.error("Failed to create profile in callback:", error);
+        // 프로필 생성 실패해도 로그인은 계속 진행
       }
 
       setTimeout(() => router.push("/"), 0);
