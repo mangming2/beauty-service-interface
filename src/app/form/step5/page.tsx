@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { SeoulMap } from "@/components/common/SeoulMap";
+import { FormLoading } from "@/components/common";
 import { Step5Schema, Step5Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
@@ -46,11 +47,7 @@ export default function FormPage5() {
 
   // 로딩 중일 때는 로딩 화면 표시
   if (loading) {
-    return (
-      <div className="text-white bg-transparent flex flex-col flex-1 items-center justify-center">
-        <div className="text-lg">로딩 중...</div>
-      </div>
-    );
+    return <FormLoading />;
   }
 
   const handleRegionClick = (regionId: string) => {

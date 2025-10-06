@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MainLogo from "../../../public/main-logo.png";
 import { XIcon, AppleIcon, GoogleIcon } from "@/components/common/Icons";
+import { AuthLoading } from "@/components/common";
 import Image from "next/image";
 import { GapY } from "../../components/ui/gap";
 import {
@@ -53,14 +54,7 @@ export default function LoginPage() {
 
   // 사용자 정보 로딩 중일 때 로딩 표시
   if (userLoading) {
-    return (
-      <div className="flex flex-col flex-1 items-center justify-center">
-        <div className="mb-16 text-center">
-          <Image src={MainLogo} alt="Main Logo" width={196} height={54} />
-        </div>
-        <div className="text-white text-md">로딩 중...</div>
-      </div>
-    );
+    return <AuthLoading />;
   }
 
   return (

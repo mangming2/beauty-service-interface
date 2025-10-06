@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useUser, useSignOut } from "@/hooks/useAuthQueries";
 import BookingHistory from "@/components/my/BookingHistory";
 import Schedule from "@/components/my/Schedule";
+import { PageLoading } from "@/components/common";
 
 export default function MyPage() {
   // React Query hooks 사용
@@ -25,11 +26,7 @@ export default function MyPage() {
 
   // 사용자 정보 로딩 중일 때
   if (userLoading) {
-    return (
-      <div className="min-h-screen text-white bg-black flex items-center justify-center">
-        <div className="text-lg">사용자 정보를 불러오는 중...</div>
-      </div>
-    );
+    return <PageLoading message="사용자 정보를 불러오는 중..." />;
   }
 
   return (

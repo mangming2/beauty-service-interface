@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { Icons } from "@/components/common/Icons";
+import { PageLoading } from "@/components/common";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -21,14 +21,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   }, [isAuthenticated, loading, router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Icons.spinner className="mx-auto h-12 w-12 animate-spin text-indigo-600" />
-          <p className="mt-4 text-lg text-gray-600">로딩 중...</p>
-        </div>
-      </div>
-    );
+    return <PageLoading message="인증 확인 중..." />;
   }
 
   if (!isAuthenticated) {

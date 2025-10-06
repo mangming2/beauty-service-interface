@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRightIcon } from "@/components/common/Icons";
+import { ButtonLoading } from "@/components/common";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserFormSubmission } from "@/hooks/useFormQueries";
@@ -11,8 +12,17 @@ export function FormButton() {
   const { user, isAuthenticated } = useAuth();
   const { data: formSubmission, isLoading } = useUserFormSubmission(user?.id);
 
-  // 로딩 중이거나 인증되지 않은 경우 기본 링크 제공
-  if (isLoading || !isAuthenticated) {
+  // 로딩 중인 경우 로딩 표시
+  if (isLoading) {
+    return (
+      <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-center items-center cursor-pointer">
+        <ButtonLoading size="sm" />
+      </Button>
+    );
+  }
+
+  // 인증되지 않은 경우 기본 링크 제공
+  if (!isAuthenticated) {
     return (
       <Link href="/form/step1">
         <Button className="w-full bg-pink-500 hover:bg-pink-600 border-0 px-[12px] py-[8px] h-[52px] flex justify-between items-center cursor-pointer">

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightIcon, RestartIcon } from "@/components/common/Icons";
+import { PageLoading } from "@/components/common";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import PackageCard from "@/components/main/PackageCard";
@@ -31,11 +32,7 @@ export default function FormComplete() {
 
   // 로딩 상태
   if (userLoading || formLoading || packagesLoading) {
-    return (
-      <div className="min-h-screen text-white flex items-center justify-center">
-        <div className="text-lg">데이터를 불러오는 중...</div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   // 에러 상태
