@@ -8,177 +8,48 @@ import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import { Divider } from "../../../components/ui/divider";
 import KakaoMap from "@/components/common/KakaoMap";
-
-interface PackageDetail {
-  id: string;
-  title: string;
-  location: string;
-  description: string;
-  imageSrc: string;
-  components: PackageComponent[];
-  included: string[];
-  notIncluded: string[];
-  checklist: string[];
-  reviews: Review[];
-  travelTime: string;
-  mapLocation: string;
-}
-
-interface PackageComponent {
-  id: string;
-  title: string;
-  location: string;
-  description: string;
-  imageSrc: string;
-}
-
-interface Review {
-  id: string;
-  username: string;
-  rating: number;
-  comment: string;
-  avatarSrc: string;
-}
-
-const packageDetails: Record<string, PackageDetail> = {
-  "aespa-futuristic": {
-    id: "aespa-futuristic",
-    title: "Futuristic & Cyber Chic Idol Debut",
-    location: "Songdo, Incheon",
-    description:
-      "Experience the future of K-pop with cutting-edge cyber styling and futuristic photography.",
-    imageSrc: "/dummy-profile.png",
-    components: [
-      {
-        id: "makeover",
-        title: "Make Over",
-        location: "Salon DOKI (Songdo, Incheon)",
-        description:
-          "Styled by artists with real K-pop idol experience! Includes full base makeup, eye detail, and volumized",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "debut",
-        title: "Doki Debut",
-        location: "Studio HYPE (Songdo, Incheon)",
-        description:
-          "A private studio designed for K-pop fans, complete with spotlight and stage-style lighting.",
-        imageSrc: "/dummy-profile.png",
-      },
-    ],
-    included: [
-      "Professional makeup & styling",
-      "Futuristic costume rental",
-      "Studio photography session",
-      "Video recording",
-      "Digital photo album",
-      "Light refreshments",
-    ],
-    notIncluded: [
-      "Transportation to/from location",
-      "Personal accessories",
-      "Additional photo prints",
-    ],
-    checklist: [
-      "Bring comfortable shoes for walking",
-      "Arrive 15 minutes before appointment",
-      "Bring any personal makeup preferences",
-      "Have your phone fully charged for photos",
-    ],
-    reviews: [
-      {
-        id: "1",
-        username: "LoveJimin",
-        rating: 5,
-        comment: "Fantastic experience!",
-        avatarSrc: "/dummy-profile.png",
-      },
-      {
-        id: "2",
-        username: "aewinter",
-        rating: 5,
-        comment: "Highly recommended!",
-        avatarSrc: "/dummy-profile.png",
-      },
-    ],
-    travelTime: "About 1.5 hour from the",
-    mapLocation: "Seoul",
-  },
-  "aespa-savage": {
-    id: "aespa-savage",
-    title: "Girl Crush Idol Debut",
-    location: "Songdo, Incheon",
-    description:
-      "Channel your inner girl crush with bold styling and powerful photography.",
-    imageSrc: "/dummy-profile.png",
-    components: [
-      {
-        id: "makeover",
-        title: "Make Over",
-        location: "Salon DOKI (Songdo, Incheon)",
-        description:
-          "Styled by artists with real K-pop idol experience! Includes full base makeup, eye detail, and volumized",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "debut",
-        title: "Doki Debut",
-        location: "Studio HYPE (Songdo, Incheon)",
-        description:
-          "A private studio designed for K-pop fans, complete with spotlight and stage-style lighting.",
-        imageSrc: "/dummy-profile.png",
-      },
-    ],
-    included: [
-      "Professional makeup & styling",
-      "Girl crush costume rental",
-      "Studio photography session",
-      "Video recording",
-      "Digital photo album",
-      "Light refreshments",
-    ],
-    notIncluded: [
-      "Transportation to/from location",
-      "Personal accessories",
-      "Additional photo prints",
-    ],
-    checklist: [
-      "Bring comfortable shoes for walking",
-      "Arrive 15 minutes before appointment",
-      "Bring any personal makeup preferences",
-      "Have your phone fully charged for photos",
-    ],
-    reviews: [
-      {
-        id: "1",
-        username: "LoveJimin",
-        rating: 5,
-        comment: "Fantastic experience!",
-        avatarSrc: "/dummy-profile.png",
-      },
-      {
-        id: "2",
-        username: "aewinter",
-        rating: 5,
-        comment: "Highly recommended!",
-        avatarSrc: "/dummy-profile.png",
-      },
-    ],
-    travelTime: "About 1.5 hour from the",
-    mapLocation: "Seoul",
-  },
-};
+import { usePackageDetail } from "@/hooks/usePackageQueries";
 
 export default function PackageDetail() {
   const params = useParams();
   const router = useRouter();
   const packageId = params.id as string;
-  const packageDetail = packageDetails[packageId];
+
+  // 슈퍼베이스에서 패키지 데이터 가져오기
+  const { data: packageDetail, isLoading, error } = usePackageDetail(packageId);
 
   // State for collapsible sections
   const [isIncludedExpanded, setIsIncludedExpanded] = useState(false);
   const [isChecklistExpanded, setIsChecklistExpanded] = useState(false);
 
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="min-h-screen text-white bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg">패키지 정보를 불러오는 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="min-h-screen text-white bg-black flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-xl font-semibold mb-4">
+            패키지를 불러오는 중 오류가 발생했습니다
+          </h1>
+          <Button onClick={() => router.push("/form/complete")}>
+            Go back to packages
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // 패키지를 찾을 수 없는 경우
   if (!packageDetail) {
     return (
       <div className="min-h-screen text-white bg-black flex items-center justify-center">
@@ -212,7 +83,7 @@ export default function PackageDetail() {
       {/* Main Package Image */}
       <div className="relative w-full h-[412px]">
         <Image
-          src={packageDetail.imageSrc}
+          src={packageDetail.image_src}
           alt={packageDetail.title}
           fill
           className="object-cover"
@@ -243,7 +114,7 @@ export default function PackageDetail() {
                     <div className="flex gap-1 items-center">
                       <div className="relative w-[80px] h-[80px] overflow-hidden flex-shrink-0">
                         <Image
-                          src={component.imageSrc}
+                          src={component.image_src}
                           alt={component.title}
                           fill
                           className="object-cover"
@@ -305,16 +176,11 @@ export default function PackageDetail() {
                       </span>
                     </div>
                     <div className="space-y-2 ml-6">
-                      <div className="text-sm text-gray-300">
-                        - Girl group outfit, shoes, and accessories
-                      </div>
-                      <div className="text-sm text-gray-300">
-                        - Hair styling
-                      </div>
-                      <div className="text-sm text-gray-300">- Makeup</div>
-                      <div className="text-sm text-gray-300">
-                        - Photo shoot session
-                      </div>
+                      {packageDetail.included.map((item, index) => (
+                        <div key={index} className="text-sm text-gray-300">
+                          - {item}
+                        </div>
+                      ))}
                     </div>
                   </div>
 
@@ -326,9 +192,9 @@ export default function PackageDetail() {
                       </span>
                     </div>
                     <div className="space-y-1 ml-6 text-sm text-gray-300">
-                      <div>Transportation to the studio</div>
-                      <div>Any items or services not listed above</div>
-                      <div>Travel insurance</div>
+                      {packageDetail.not_included.map((item, index) => (
+                        <div key={index}>{item}</div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -389,7 +255,7 @@ export default function PackageDetail() {
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-full bg-gray-container overflow-hidden">
                         <Image
-                          src={review.avatarSrc}
+                          src={review.avatar_src}
                           alt={review.username}
                           width={32}
                           height={32}
@@ -414,14 +280,18 @@ export default function PackageDetail() {
 
           {/* Map Section */}
           <div>
-            <KakaoMap address="사당동 142-38" height="192px" className="mb-3" />
+            <KakaoMap
+              address={packageDetail.map_address || "사당동 142-38"}
+              height="192px"
+              className="mb-3"
+            />
 
             {/* Distance Info */}
             <div className="flex items-center justify-center w-full h-[28px] bg-white/10 rounded-[32px]">
               <span className="text-gray-300 text-sm">
-                {packageDetail.travelTime} from the{" "}
+                {packageDetail.travel_time} from the{" "}
                 <span className="text-pink-400 font-medium">
-                  {packageDetail.mapLocation}
+                  {packageDetail.map_location}
                 </span>{" "}
               </span>
             </div>
@@ -433,8 +303,13 @@ export default function PackageDetail() {
       <div className="bg-transparent px-4 py-4 border-t border-gray-container">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-white font-semibold">₩ 170,000 / person</p>
-            <p className="text-gray-400 text-sm">25.07.14 - 25.07.22</p>
+            <p className="text-white font-semibold">
+              ₩ {packageDetail.price.toLocaleString()} / person
+            </p>
+            <p className="text-gray-400 text-sm">
+              {packageDetail.valid_period_start} -{" "}
+              {packageDetail.valid_period_end}
+            </p>
           </div>
           <Button
             className="w-[164px] x-6 py-3 rounded-lg"

@@ -9,6 +9,7 @@ import { GapY } from "../../../components/ui/gap";
 import PackageCard from "@/components/main/PackageCard";
 import { useUser } from "@/hooks/useAuthQueries";
 import { useUserFormSubmission } from "@/hooks/useFormQueries";
+import { useAllPackages } from "@/hooks/usePackageQueries";
 
 export default function FormComplete() {
   const router = useRouter();
@@ -19,6 +20,9 @@ export default function FormComplete() {
     error: formError,
   } = useUserFormSubmission(user?.id);
 
+  // 패키지 데이터 가져오기
+  const { data: packages, isLoading: packagesLoading } = useAllPackages();
+
   useEffect(() => {
     if (!userLoading && !user) {
       router.push("/login");
@@ -26,7 +30,7 @@ export default function FormComplete() {
   }, [user, userLoading, router]);
 
   // 로딩 상태
-  if (userLoading || formLoading) {
+  if (userLoading || formLoading || packagesLoading) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-lg">데이터를 불러오는 중...</div>
@@ -217,25 +221,18 @@ export default function FormComplete() {
         </div>
         {/* Package Cards */}
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-          <PackageCard
-            packageId="triples-dreamy"
-            imageSrc="/dummy-profile.png"
-            imageAlt="tripleS - Dreamy & Mystic Idol"
-            artist="tripleS"
-            location="Gapyeong"
-            title="Dreamy & Mystic Idol..."
-            onClick={handlePackageClick}
-          />
-
-          <PackageCard
-            packageId="triples-dreamy-2"
-            imageSrc="/dummy-profile.png"
-            imageAlt="tripleS - Dreamy & Mystic Idol"
-            artist="tripleS"
-            location="Gapyeong"
-            title="Dreamy & Mystic Idol..."
-            onClick={handlePackageClick}
-          />
+          {packages?.slice(0, 2).map(pkg => (
+            <PackageCard
+              key={pkg.id}
+              packageId={pkg.id}
+              imageSrc={pkg.image_src}
+              imageAlt={`${pkg.artist} - ${pkg.title}`}
+              artist={pkg.artist}
+              location={pkg.location}
+              title={pkg.title}
+              onClick={handlePackageClick}
+            />
+          ))}
         </div>
       </div>
 
@@ -259,25 +256,18 @@ export default function FormComplete() {
         </div>
         {/* Package Cards */}
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-          <PackageCard
-            packageId="triples-dreamy"
-            imageSrc="/dummy-profile.png"
-            imageAlt="tripleS - Dreamy & Mystic Idol"
-            artist="tripleS"
-            location="Gapyeong"
-            title="Dreamy & Mystic Idol..."
-            onClick={handlePackageClick}
-          />
-
-          <PackageCard
-            packageId="triples-dreamy-2"
-            imageSrc="/dummy-profile.png"
-            imageAlt="tripleS - Dreamy & Mystic Idol"
-            artist="tripleS"
-            location="Gapyeong"
-            title="Dreamy & Mystic Idol..."
-            onClick={handlePackageClick}
-          />
+          {packages?.slice(2, 4).map(pkg => (
+            <PackageCard
+              key={pkg.id}
+              packageId={pkg.id}
+              imageSrc={pkg.image_src}
+              imageAlt={`${pkg.artist} - ${pkg.title}`}
+              artist={pkg.artist}
+              location={pkg.location}
+              title={pkg.title}
+              onClick={handlePackageClick}
+            />
+          ))}
         </div>
       </div>
 
