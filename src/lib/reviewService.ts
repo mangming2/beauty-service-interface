@@ -3,6 +3,7 @@ import { supabase } from "./supabase";
 export interface PackageReview {
   id: string;
   package_id: string;
+  user_id: string;
   username: string;
   rating: number;
   comment: string;
@@ -62,7 +63,7 @@ export async function getPackageReviews(
     return {
       ...review,
       username: profile?.full_name || review.username,
-      avatar_src: profile?.avatar_src || null, // 프로필의 avatar_src 사용
+      avatar_src: profile?.avatar_src || null,
     };
   });
 

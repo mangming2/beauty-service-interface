@@ -9,6 +9,7 @@ import { GapY } from "../../../components/ui/gap";
 import { Divider } from "../../../components/ui/divider";
 import KakaoMap from "@/components/common/KakaoMap";
 import { usePackageDetail } from "@/hooks/usePackageQueries";
+import { usePackageReviews } from "@/hooks/useReviewQueries";
 import Link from "next/link";
 
 export default function PackageDetail() {
@@ -18,6 +19,15 @@ export default function PackageDetail() {
 
   // 슈퍼베이스에서 패키지 데이터 가져오기
   const { data: packageDetail, isLoading, error } = usePackageDetail(packageId);
+
+  // 리뷰 데이터 별도로 가져오기
+  const {
+    data: reviews,
+    isLoading: reviewsLoading,
+    error: reviewsError,
+  } = usePackageReviews(packageId);
+
+  console.log(reviews);
 
   // State for collapsible sections
   const [isIncludedExpanded, setIsIncludedExpanded] = useState(false);
@@ -248,35 +258,61 @@ export default function PackageDetail() {
             </span>
             <Link href={`/package/${packageDetail.id}/reviews`}>
               <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
-                {packageDetail.reviews.map(review => (
-                  <Card
-                    key={review.id}
-                    className="w-[250px] h-[132px] flex-shrink-0 p-[14px] bg-gray-container border-none text-white"
-                  >
-                    <CardContent className="p-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-gray-container overflow-hidden">
-                          <Image
-                            src={review.avatar_src}
-                            alt={review.username}
-                            width={32}
-                            height={32}
-                            className="object-cover"
-                          />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            {review.username}
-                          </p>
-                          <div className="flex text-xs">
-                            {renderStars(review.rating)}
+                {reviewsLoading ? (
+                  <div className="flex items-center justify-center w-[250px] h-[132px]">
+                    <div className="text-gray-400">리뷰를 불러오는 중...</div>
+                  </div>
+                ) : reviewsError ? (
+                  <div className="flex items-center justify-center w-[250px] h-[132px]">
+                    <div className="text-gray-400">
+                      리뷰를 불러올 수 없습니다.
+                    </div>
+                  </div>
+                ) : reviews && reviews.length > 0 ? (
+                  reviews.slice(0, 5).map(review => (
+                    <Card
+                      key={review.id}
+                      className="w-[250px] h-[132px] flex-shrink-0 p-[14px] bg-gray-container border-none text-white"
+                    >
+                      <CardContent className="p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 rounded-full bg-gray-container overflow-hidden">
+                            {review.avatar_src ? (
+                              <Image
+                                src={review.avatar_src}
+                                alt={review.username}
+                                width={32}
+                                height={32}
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                                <span className="text-white text-xs font-medium">
+                                  {review.username.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {review.username}
+                            </p>
+                            <div className="flex text-xs">
+                              {renderStars(review.rating)}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <p className="text-sm text-gray-300">{review.comment}</p>
-                    </CardContent>
-                  </Card>
-                ))}
+                        <p className="text-sm text-gray-300">
+                          {review.comment}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center w-[250px] h-[132px]">
+                    <div className="text-gray-400">아직 리뷰가 없습니다.</div>
+                  </div>
+                )}
               </div>
             </Link>
           </div>

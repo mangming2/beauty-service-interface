@@ -66,7 +66,37 @@ export const createUserProfile = async (user: {
   // 기존 프로필이 있는지 확인
   const existingProfile = await getUserProfile(user.id);
   if (existingProfile) {
-    console.log("Profile already exists, skipping creation:", existingProfile);
+    // avatar_src가 없거나 null인 경우 업데이트
+    if (
+      !existingProfile.avatar_src &&
+      (user.user_metadata?.avatar_url ||
+        user.user_metadata?.picture ||
+        user.user_metadata?.picture_url)
+    ) {
+      const updatedProfileData = {
+        id: user.id,
+        avatar_src:
+          user.user_metadata?.avatar_url ||
+          user.user_metadata?.picture ||
+          user.user_metadata?.picture_url,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .update(updatedProfileData)
+        .eq("id", user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error updating profile avatar:", error);
+        return existingProfile;
+      }
+
+      return data;
+    }
+
     return existingProfile;
   }
 
@@ -88,10 +118,6 @@ export const createUserProfile = async (user: {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
-
-  console.log("Profile data to be saved:", profileData);
-
-  console.log("Attempting to upsert profile data to Supabase...");
 
   const { data, error } = await supabase
     .from("profiles")
@@ -173,6 +199,52 @@ export const updateProfile = async (
   }
 
   return data;
+};
+
+// 기존 사용자들의 avatar_src 업데이트 (관리자용)
+export const updateExistingUserAvatars = async () => {
+  try {
+    // avatar_src가 null인 모든 프로필 조회
+    const { data: profilesWithoutAvatar, error: fetchError } = await supabase
+      .from("profiles")
+      .select("id")
+      .is("avatar_src", null);
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    if (!profilesWithoutAvatar || profilesWithoutAvatar.length === 0) {
+      console.log("No profiles found without avatar_src");
+      return { updated: 0, message: "No profiles need updating" };
+    }
+
+    console.log(
+      `Found ${profilesWithoutAvatar.length} profiles without avatar_src`
+    );
+
+    // 각 사용자의 auth 정보에서 avatar URL 가져와서 업데이트
+    const updatedCount = 0;
+    for (const profile of profilesWithoutAvatar) {
+      try {
+        // auth.users 테이블에서 user_metadata 조회 (이건 직접 접근이 어려우므로)
+        // 대신 사용자가 다시 로그인할 때 자동으로 업데이트되도록 함
+        console.log(
+          `Profile ${profile.id} needs avatar update - will be updated on next login`
+        );
+      } catch (error) {
+        console.error(`Error processing profile ${profile.id}:`, error);
+      }
+    }
+
+    return {
+      updated: updatedCount,
+      message: `${profilesWithoutAvatar.length} profiles will be updated on next login`,
+    };
+  } catch (error) {
+    console.error("Error updating existing user avatars:", error);
+    throw error;
+  }
 };
 
 // 인증 상태 변경 리스너 설정

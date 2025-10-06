@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import {
   usePackageReviews,
   usePackageReviewSummary,
@@ -20,6 +21,7 @@ export default function ReviewsPage() {
   } = usePackageReviews(packageId);
   const { data: summary, isLoading: summaryLoading } =
     usePackageReviewSummary(packageId);
+  console.log(reviews);
 
   if (reviewsLoading || summaryLoading) {
     return (
@@ -126,9 +128,11 @@ export default function ReviewsPage() {
                     {/* Avatar */}
                     <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden">
                       {review.avatar_src ? (
-                        <img
+                        <Image
                           src={review.avatar_src}
                           alt={review.username}
+                          width={40}
+                          height={40}
                           className="w-full h-full object-cover"
                         />
                       ) : (
