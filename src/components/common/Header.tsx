@@ -6,6 +6,7 @@ import { LanguageSelector } from "./LanguageSelector";
 export const Header = () => {
   const pathname = usePathname();
   const isFormPage = pathname.startsWith("/form");
+  const isWishPage = pathname === "/wish";
 
   return (
     <header>
@@ -15,9 +16,9 @@ export const Header = () => {
           boxShadow: "0 4px 7px -2px rgba(0,0,0,0.15)",
         }}
       >
-        {isFormPage ? (
-          <h1 className="text-white title-md">My Idol Form</h1>
-        ) : (
+        {isFormPage && <h1 className="text-white title-md">My Idol Form</h1>}
+        {isWishPage && <h1 className="text-white title-md">Wish list</h1>}
+        {!isFormPage && !isWishPage && (
           <Image src="/main-logo.png" alt="Main Logo" width={66} height={18} />
         )}
         <LanguageSelector />
