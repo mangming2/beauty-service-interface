@@ -527,6 +527,26 @@ const PlusIcon = ({ color, ...rest }: IconProps) => {
   );
 };
 
+const EditIcon = ({ color, ...rest }: IconProps) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      {...rest}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12.3569 5.96658L5.72752 12.5805C5.50427 12.8032 5.32531 13.066 5.20008 13.3551L4.1847 15.6986C4.11097 15.8688 4.28048 16.0429 4.45329 15.9744L6.7197 15.0768C7.04105 14.9495 7.33247 14.7573 7.5756 14.5122L14.2156 7.81819L12.3569 5.96658ZM15.0959 6.93074L15.6331 6.38921C16.1394 5.8788 16.1369 5.05651 15.6276 4.54912C15.1164 4.03985 14.2878 4.04017 13.777 4.54982L13.2418 5.08374L15.0959 6.93074Z"
+        fill={color ?? "#FFFFFE"}
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -548,6 +568,7 @@ export {
   GoogleIcon,
   RestartIcon,
   PlusIcon,
+  EditIcon,
 };
 
 export const Icons = {
@@ -568,4 +589,5 @@ export const Icons = {
   userPlus: UserPlusIcon,
   restart: RestartIcon,
   plus: PlusIcon,
+  edit: EditIcon,
 };

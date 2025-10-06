@@ -97,6 +97,18 @@ export function useUpdateProfile() {
       return await updateProfile(userId, profileData);
     },
     onSuccess: (data, variables) => {
+      // 현재 사용자 정보 캐시 업데이트
+      queryClient.setQueryData(authKeys.user(), (oldUser: any) => {
+        if (!oldUser) return oldUser;
+        return {
+          ...oldUser,
+          user_metadata: {
+            ...oldUser.user_metadata,
+            full_name: variables.profileData.full_name,
+          },
+        };
+      });
+
       // 해당 사용자의 프로필 캐시 업데이트
       queryClient.setQueryData(authKeys.profile(variables.userId), data);
 

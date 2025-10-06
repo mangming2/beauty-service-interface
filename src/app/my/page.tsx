@@ -8,6 +8,8 @@ import { useUser, useSignOut } from "@/hooks/useAuthQueries";
 import BookingHistory from "@/components/my/BookingHistory";
 import Schedule from "@/components/my/Schedule";
 import { PageLoading } from "@/components/common";
+import { EditIcon } from "@/components/common/Icons";
+import Link from "next/link";
 
 export default function MyPage() {
   // React Query hooks 사용
@@ -43,7 +45,12 @@ export default function MyPage() {
             />
           </div>
           <div className="flex-1">
-            <h1 className="text-xl font-bold">{userProfile.name}</h1>
+            <div className="flex items-center gap-1">
+              <h1 className="text-xl font-bold">{userProfile.name}</h1>
+              <Link href="/my/edit">
+                <EditIcon className="cursor-pointer" width={20} height={20} />
+              </Link>
+            </div>
             <p className="text-gray-400 text-sm">{userProfile.email}</p>
           </div>
           <Button
