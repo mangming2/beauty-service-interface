@@ -33,7 +33,7 @@ export interface Package {
   title: string;
   description: string;
   location: string;
-  image_src: string;
+  image_src: string[];
   price: number;
   currency: string;
   valid_period_start: string;
@@ -80,7 +80,6 @@ export async function getAllPackages(): Promise<Package[]> {
 
     return data || [];
   } catch (error) {
-    console.error("Get all packages error:", error);
     throw error;
   }
 }
@@ -107,7 +106,11 @@ export async function getPackageDetail(
       throw packageError;
     }
 
-    // 관련 데이터들을 병렬로 가져오기
+    if (!packageData) {
+      return null;
+    }
+
+    // 관련 데이터들을 병렬로 가져오기 (에러 처리 개선)
     const [
       { data: components },
       { data: inclusions },
@@ -139,7 +142,7 @@ export async function getPackageDetail(
         ?.filter(item => item.type === "not_included")
         .map(item => item.item) || [];
 
-    return {
+    const result = {
       ...packageData,
       components: components || [],
       included,
@@ -147,8 +150,9 @@ export async function getPackageDetail(
       checklist: checklist?.map(item => item.item) || [],
       reviews: reviews || [],
     };
+
+    return result;
   } catch (error) {
-    console.error("Get package detail error:", error);
     throw error;
   }
 }
@@ -171,7 +175,6 @@ export async function getPackagesByArtist(artist: string): Promise<Package[]> {
 
     return data || [];
   } catch (error) {
-    console.error("Get packages by artist error:", error);
     throw error;
   }
 }
@@ -194,7 +197,6 @@ export async function getPackagesByTag(tag: string): Promise<Package[]> {
 
     return data || [];
   } catch (error) {
-    console.error("Get packages by tag error:", error);
     throw error;
   }
 }
@@ -219,7 +221,6 @@ export async function searchPackages(query: string): Promise<Package[]> {
 
     return data || [];
   } catch (error) {
-    console.error("Search packages error:", error);
     throw error;
   }
 }

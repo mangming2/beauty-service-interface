@@ -31,43 +31,63 @@ export interface CreateReviewData {
 export async function getPackageReviews(
   packageId: string
 ): Promise<PackageReview[]> {
-  // 먼저 리뷰 데이터를 가져옴
-  const { data: reviews, error: reviewsError } = await supabase
-    .from("package_reviews")
-    .select("*")
-    .eq("package_id", packageId);
+  try {
+    console.log("Fetching reviews for package ID:", packageId);
 
-  if (reviewsError) {
-    throw new Error("Failed to fetch package reviews");
+    // 먼저 리뷰 데이터를 가져옴
+    const { data: reviews, error: reviewsError } = await supabase
+      .from("package_reviews")
+      .select("*")
+      .eq("package_id", packageId);
+
+    if (reviewsError) {
+      console.error("Reviews fetch error:", reviewsError);
+      if (reviewsError.code === "PGRST116") {
+        console.log(
+          "No reviews found for package or RLS policy blocking access"
+        );
+        return [];
+      }
+      throw new Error(
+        `Failed to fetch package reviews: ${reviewsError.message}`
+      );
+    }
+
+    if (!reviews || reviews.length === 0) {
+      console.log("No reviews found for package");
+      return [];
+    }
+
+    console.log(`Found ${reviews.length} reviews for package`);
+
+    // 각 리뷰의 사용자 프로필 정보를 가져옴
+    const userIds = [...new Set(reviews.map(review => review.user_id))];
+
+    const { data: profiles, error: profilesError } = await supabase
+      .from("profiles")
+      .select("id, full_name, avatar_src")
+      .in("id", userIds);
+
+    if (profilesError) {
+      console.warn("Failed to fetch user profiles:", profilesError);
+    }
+
+    // 리뷰와 프로필 정보를 결합
+    const reviewsWithProfile = reviews.map(review => {
+      const profile = profiles?.find(p => p.id === review.user_id);
+      return {
+        ...review,
+        username: profile?.full_name || review.username,
+        avatar_src: profile?.avatar_src || null,
+      };
+    });
+
+    console.log("Reviews with profiles processed successfully");
+    return reviewsWithProfile;
+  } catch (error) {
+    console.error("Get package reviews error:", error);
+    throw error;
   }
-
-  if (!reviews || reviews.length === 0) {
-    return [];
-  }
-
-  // 각 리뷰의 사용자 프로필 정보를 가져옴
-  const userIds = [...new Set(reviews.map(review => review.user_id))];
-
-  const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
-    .select("id, full_name, avatar_src")
-    .in("id", userIds);
-
-  if (profilesError) {
-    console.warn("Failed to fetch user profiles:", profilesError);
-  }
-
-  // 리뷰와 프로필 정보를 결합
-  const reviewsWithProfile = reviews.map(review => {
-    const profile = profiles?.find(p => p.id === review.user_id);
-    return {
-      ...review,
-      username: profile?.full_name || review.username,
-      avatar_src: profile?.avatar_src || null,
-    };
-  });
-
-  return reviewsWithProfile;
 }
 
 // 특정 패키지의 리뷰 요약 정보 조회

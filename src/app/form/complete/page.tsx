@@ -222,7 +222,7 @@ export default function FormComplete() {
             <PackageCard
               key={pkg.id}
               packageId={pkg.id}
-              imageSrc={pkg.image_src}
+              imageSrc={pkg.image_src[0] || "/dummy-profile.png"}
               imageAlt={`${pkg.artist} - ${pkg.title}`}
               artist={pkg.artist}
               location={pkg.location}
@@ -257,7 +257,7 @@ export default function FormComplete() {
             <PackageCard
               key={pkg.id}
               packageId={pkg.id}
-              imageSrc={pkg.image_src}
+              imageSrc={pkg.image_src[0] || "/dummy-profile.png"}
               imageAlt={`${pkg.artist} - ${pkg.title}`}
               artist={pkg.artist}
               location={pkg.location}

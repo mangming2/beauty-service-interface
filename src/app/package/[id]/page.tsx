@@ -19,6 +19,7 @@ export default function PackageDetail() {
 
   // 슈퍼베이스에서 패키지 데이터 가져오기
   const { data: packageDetail, isLoading, error } = usePackageDetail(packageId);
+  console.log(packageDetail);
 
   // 리뷰 데이터 별도로 가져오기
   const {
@@ -26,8 +27,6 @@ export default function PackageDetail() {
     isLoading: reviewsLoading,
     error: reviewsError,
   } = usePackageReviews(packageId);
-
-  console.log(reviews);
 
   // State for collapsible sections
   const [isIncludedExpanded, setIsIncludedExpanded] = useState(false);
@@ -94,7 +93,7 @@ export default function PackageDetail() {
       {/* Main Package Image */}
       <div className="relative w-full h-[412px]">
         <Image
-          src={packageDetail.image_src}
+          src={packageDetail.image_src[0] || "/dummy-profile.png"}
           alt={packageDetail.title}
           fill
           className="object-cover"
@@ -125,7 +124,7 @@ export default function PackageDetail() {
                     <div className="flex gap-1 items-center">
                       <div className="relative w-[80px] h-[80px] overflow-hidden flex-shrink-0">
                         <Image
-                          src={component.image_src}
+                          src={component.image_src || "/dummy-profile.png"}
                           alt={component.title}
                           fill
                           className="object-cover"

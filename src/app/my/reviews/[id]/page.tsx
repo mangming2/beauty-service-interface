@@ -140,7 +140,7 @@ export default function CreateReviewPage() {
                 <div className="flex gap-3">
                   <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                     <Image
-                      src={packageDetail.image_src}
+                      src={packageDetail.image_src[0] || "/dummy-profile.png"}
                       alt={packageDetail.title}
                       fill
                       className="object-cover"
