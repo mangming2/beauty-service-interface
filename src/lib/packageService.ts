@@ -142,13 +142,35 @@ export async function getPackageDetail(
         ?.filter(item => item.type === "not_included")
         .map(item => item.item) || [];
 
+    // 리뷰 데이터에 프로필 정보 추가
+    let reviewsWithProfile = reviews || [];
+    if (reviews && reviews.length > 0) {
+      // 각 리뷰의 사용자 프로필 정보를 가져옴
+      const userIds = [...new Set(reviews.map(review => review.user_id))];
+
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, avatar_src")
+        .in("id", userIds);
+
+      // 리뷰와 프로필 정보를 결합
+      reviewsWithProfile = reviews.map(review => {
+        const profile = profiles?.find(p => p.id === review.user_id);
+        return {
+          ...review,
+          username: profile?.full_name || review.username,
+          avatar_src: profile?.avatar_src || null,
+        };
+      });
+    }
+
     const result = {
       ...packageData,
       components: components || [],
       included,
       not_included,
       checklist: checklist?.map(item => item.item) || [],
-      reviews: reviews || [],
+      reviews: reviewsWithProfile,
     };
 
     return result;

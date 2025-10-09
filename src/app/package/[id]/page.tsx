@@ -9,7 +9,6 @@ import { GapY } from "../../../components/ui/gap";
 import { Divider } from "../../../components/ui/divider";
 import KakaoMap from "@/components/common/KakaoMap";
 import { usePackageDetail } from "@/hooks/usePackageQueries";
-import { usePackageReviews } from "@/hooks/useReviewQueries";
 import Link from "next/link";
 
 export default function PackageDetail() {
@@ -17,16 +16,11 @@ export default function PackageDetail() {
   const router = useRouter();
   const packageId = params.id as string;
 
-  // 슈퍼베이스에서 패키지 데이터 가져오기
+  // 슈퍼베이스에서 패키지 데이터 가져오기 (리뷰 데이터 포함)
   const { data: packageDetail, isLoading, error } = usePackageDetail(packageId);
-  console.log(packageDetail);
 
-  // 리뷰 데이터 별도로 가져오기
-  const {
-    data: reviews,
-    isLoading: reviewsLoading,
-    error: reviewsError,
-  } = usePackageReviews(packageId);
+  // packageDetail에서 리뷰 데이터 추출
+  const reviews = packageDetail?.reviews || [];
 
   // State for collapsible sections
   const [isIncludedExpanded, setIsIncludedExpanded] = useState(false);
@@ -257,11 +251,11 @@ export default function PackageDetail() {
             </span>
             <Link href={`/package/${packageDetail.id}/reviews`}>
               <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
-                {reviewsLoading ? (
+                {isLoading ? (
                   <div className="flex items-center justify-center w-[250px] h-[132px]">
                     <div className="text-gray-400">리뷰를 불러오는 중...</div>
                   </div>
-                ) : reviewsError ? (
+                ) : error ? (
                   <div className="flex items-center justify-center w-[250px] h-[132px]">
                     <div className="text-gray-400">
                       리뷰를 불러올 수 없습니다.
