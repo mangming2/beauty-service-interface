@@ -9,17 +9,6 @@ export interface PackageComponent {
   image_src: string;
 }
 
-export interface PackageInclusion {
-  id: number;
-  type: "included" | "not_included";
-  item: string;
-}
-
-export interface PackageChecklist {
-  id: number;
-  item: string;
-}
-
 export interface PackageReview {
   id: string;
   username: string;
@@ -91,13 +80,24 @@ export async function getPackageDetail(
   packageId: string
 ): Promise<PackageDetail | null> {
   try {
-    // 패키지 기본 정보
-    const { data: packageData, error: packageError } = await supabase
-      .from("packages")
-      .select("*")
-      .eq("id", packageId)
-      .eq("is_active", true)
-      .single();
+    // 패키지 기본 정보와 관련 데이터들을 병렬로 가져오기
+    const [
+      { data: packageData, error: packageError },
+      { data: components },
+      { data: reviews },
+    ] = await Promise.all([
+      supabase
+        .from("packages")
+        .select("*")
+        .eq("id", packageId)
+        .eq("is_active", true)
+        .single(),
+      supabase
+        .from("package_components")
+        .select("*")
+        .eq("package_id", packageId),
+      supabase.from("package_reviews").select("*").eq("package_id", packageId),
+    ]);
 
     if (packageError) {
       if (packageError.code === "PGRST116") {
@@ -109,38 +109,6 @@ export async function getPackageDetail(
     if (!packageData) {
       return null;
     }
-
-    // 관련 데이터들을 병렬로 가져오기 (에러 처리 개선)
-    const [
-      { data: components },
-      { data: inclusions },
-      { data: checklist },
-      { data: reviews },
-    ] = await Promise.all([
-      supabase
-        .from("package_components")
-        .select("*")
-        .eq("package_id", packageId),
-      supabase
-        .from("package_inclusions")
-        .select("*")
-        .eq("package_id", packageId),
-      supabase
-        .from("package_checklists")
-        .select("*")
-        .eq("package_id", packageId),
-      supabase.from("package_reviews").select("*").eq("package_id", packageId),
-    ]);
-
-    // 포함/불포함 사항 분리
-    const included =
-      inclusions
-        ?.filter(item => item.type === "included")
-        .map(item => item.item) || [];
-    const not_included =
-      inclusions
-        ?.filter(item => item.type === "not_included")
-        .map(item => item.item) || [];
 
     // 리뷰 데이터에 프로필 정보 추가
     let reviewsWithProfile = reviews || [];
@@ -167,9 +135,9 @@ export async function getPackageDetail(
     const result = {
       ...packageData,
       components: components || [],
-      included,
-      not_included,
-      checklist: checklist?.map(item => item.item) || [],
+      included: packageData.included || [],
+      not_included: packageData.not_included || [],
+      checklist: packageData.checklist || [],
       reviews: reviewsWithProfile,
     };
 
