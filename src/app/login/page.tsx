@@ -60,16 +60,16 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center">
       {/* DOKI Logo */}
-      <div className="mb-16 text-center">
+      <div className="text-center mt-auto">
         <Image src={MainLogo} alt="Main Logo" width={196} height={54} />
       </div>
 
       {/* Social Login Section */}
-      <div className="text-center p-[12px]">
+      <div className="text-center p-[12px] mt-auto">
         <p className="h-[24px] text-disabled text-md">소셜 로그인</p>
         <GapY size={8} />
         <div className="flex justify-center gap-x-[14px]">
-          <button
+          {/* <button
             onClick={handleXLogin}
             disabled={googleLoginMutation.isPending || userLoading}
             className="w-[40px] h-[40px] bg-gray-container rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -82,7 +82,7 @@ export default function LoginPage() {
             className="w-[40px] h-[40px] bg-gray-container rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <AppleIcon width={23} height={28} />
-          </button>
+          </button> */}
           <button
             onClick={handleGoogleLogin}
             disabled={googleLoginMutation.isPending || userLoading}

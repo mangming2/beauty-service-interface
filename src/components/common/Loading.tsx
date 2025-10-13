@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Spinner } from "@/components/ui/spinner";
+import LottieAnimation from "@/components/common/LottieAnimation";
 import { cn } from "@/lib/utils";
 
 interface LoadingProps {
@@ -20,13 +20,17 @@ interface LoadingProps {
   logoPath?: string;
   /** 로고 크기 */
   logoSize?: { width: number; height: number };
+  /** 로띠 애니메이션 파일 경로 */
+  lottieSrc?: string;
+  /** 로띠 애니메이션 크기 */
+  lottieSize?: { width: number; height: number };
 }
 
-const sizeClasses = {
-  sm: "size-4",
-  md: "size-6",
-  lg: "size-8",
-  xl: "size-12",
+const lottieSizes = {
+  sm: { width: 40, height: 40 },
+  md: { width: 60, height: 60 },
+  lg: { width: 80, height: 80 },
+  xl: { width: 120, height: 120 },
 };
 
 const backgroundClasses = {
@@ -44,6 +48,8 @@ export function Loading({
   className,
   logoPath = "/main-logo.png",
   logoSize = { width: 196, height: 54 },
+  lottieSrc = "/dummy-loading.lottie",
+  lottieSize,
 }: LoadingProps) {
   const containerClasses = cn(
     "flex flex-col items-center justify-center text-white",
@@ -52,7 +58,7 @@ export function Loading({
     className
   );
 
-  const spinnerClasses = cn(sizeClasses[size], "text-white");
+  const finalLottieSize = lottieSize || lottieSizes[size];
 
   return (
     <div className={containerClasses}>
@@ -67,7 +73,12 @@ export function Loading({
           />
         </div>
       )}
-      <Spinner className={spinnerClasses} />
+      <LottieAnimation
+        src={lottieSrc}
+        width={finalLottieSize.width}
+        height={finalLottieSize.height}
+        className="mx-auto"
+      />
       {message && (
         <div
           className={cn(
@@ -132,7 +143,7 @@ export function InlineLoading({
 }) {
   return (
     <div className="flex items-center justify-center gap-2 text-white">
-      <Spinner className="size-4" />
+      <LottieAnimation src="/dummy-loading.lottie" width={16} height={16} />
       <span className="text-sm">{message}</span>
     </div>
   );

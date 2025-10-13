@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Icons } from "@/components/common/Icons";
+import LottieAnimation from "@/components/common/LottieAnimation";
 import { useAuthCallback, useAuthStateListener } from "@/hooks/useAuthQueries";
 
 export default function AuthCallbackPage() {
@@ -15,7 +15,12 @@ export default function AuthCallbackPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Icons.spinner className="mx-auto h-12 w-12 animate-spin text-indigo-600" />
+          <LottieAnimation
+            src="/dummy-loading.lottie"
+            width={120}
+            height={120}
+            className="mx-auto"
+          />
           <p className="mt-4 text-lg text-gray-600">
             인증을 처리하고 있습니다...
           </p>
@@ -60,7 +65,12 @@ export default function AuthCallbackPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Icons.spinner className="mx-auto h-12 w-12 animate-spin text-green-600" />
+          <LottieAnimation
+            src="/dummy-loading.lottie"
+            width={120}
+            height={120}
+            className="mx-auto"
+          />
           <p className="mt-4 text-lg text-gray-600">
             로그인 성공! 페이지를 이동하고 있습니다...
           </p>
