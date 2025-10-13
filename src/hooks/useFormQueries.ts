@@ -35,7 +35,6 @@ export function useUserFormSubmission(userId?: string) {
 // 뷰티 폼 제출 Mutation
 export function useSubmitBeautyForm() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: (formData: Partial<FormData>) => submitBeautyForm(formData),
@@ -47,8 +46,7 @@ export function useSubmitBeautyForm() {
         queryKey: formKeys.submissions(),
       });
 
-      // 완료 페이지로 이동
-      router.push("/form/complete");
+      // 리다이렉트는 호출하는 컴포넌트에서 처리
     },
     onError: (error: unknown) => {
       console.error("Form submission error:", error);

@@ -14,7 +14,6 @@ import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
-import { Loading } from "../components/common";
 
 export const generateMetadata = (): Metadata => {
   return {

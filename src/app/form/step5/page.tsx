@@ -73,7 +73,12 @@ export default function FormPage5() {
     const completeFormData = { ...formData, ...data };
 
     // React Query mutation 실행
-    submitFormMutation.mutate(completeFormData);
+    submitFormMutation.mutate(completeFormData, {
+      onSuccess: () => {
+        // 성공 시 로딩 페이지로 이동
+        router.push("/form/loading");
+      },
+    });
   };
 
   return (
