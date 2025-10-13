@@ -88,7 +88,7 @@ export default function ScheduleModal({
           <div className="flex gap-10 justify-center items-center">
             {/* Start Date Display */}
             <div
-              className={`p-4 cursor-pointer`}
+              className={`p-4 cursor-pointer w-24 text-center`}
               onClick={() => {
                 setEditingDate("start");
                 setIsDateTimePickerOpen(!isDateTimePickerOpen);
@@ -106,7 +106,7 @@ export default function ScheduleModal({
 
             {/* End Date Display */}
             <div
-              className={`p-4 cursor-pointer`}
+              className={`p-4 cursor-pointer w-24 text-center`}
               onClick={() => {
                 setEditingDate("end");
                 setIsDateTimePickerOpen(!isDateTimePickerOpen);

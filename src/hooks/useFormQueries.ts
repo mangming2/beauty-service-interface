@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { submitBeautyForm, getUserFormSubmission } from "@/api/form";
 import { FormData } from "@/types/form";
 

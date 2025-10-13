@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GapY } from "@/components/ui/gap";
-import { FormLoading } from "@/components/common";
 import LottieAnimation from "../../../components/common/LottieAnimation";
 
 export default function FormLoadingPage() {
@@ -30,7 +29,7 @@ export default function FormLoadingPage() {
     <div className="bg-transparent flex flex-col flex-1">
       <div className="flex-1 flex flex-col">
         <GapY size={40} />
-        {!isAnalyzing ? (
+        {isAnalyzing ? (
           <>
             <div className="flex flex-col text-white items-start">
               <h1 className="title-lg ">Just a moment, please.</h1>
