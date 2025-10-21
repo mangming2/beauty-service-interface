@@ -8,6 +8,7 @@ import Image from "next/image";
 import { GapY } from "../../../../components/ui/gap";
 import { ArrowRightIcon, LocationIcon } from "@/components/common/Icons";
 import Link from "next/link";
+import { Divider } from "@/components/ui/divider";
 
 interface BookingData {
   packageId: string;
@@ -57,7 +58,7 @@ const getBookingData = (packageId: string): BookingData => {
   };
 };
 
-export default function BookingPayPage() {
+export default function BookingCheckPage() {
   const params = useParams();
   const { t } = useTranslation();
   const router = useRouter();
@@ -96,18 +97,25 @@ export default function BookingPayPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-container text-white">
+    <div className="min-h-screen bg-background text-white">
       {/* Main Content */}
       <div>
         {/* Reservation Status */}
-        <div className="flex flex-col gap-[27px] p-5 bg-background">
-          <div>
-            <span className="title-lg font-bold">Booking Status</span>
-            <p className="text-gray-300 text-md">{t("booking.delayNotice")}</p>
-            <p className="text-gray-300 text-md">
-              {t("booking.realTimeUpdate")}
-            </p>
+        <div className="flex flex-col p-5">
+          <div className="flex flex-col gap-1">
+            <div className="h-8 title-lg font-bold">Booking Status</div>
+
+            <div className="flex flex-col h-10">
+              <p className="text-gray-300 text-md">
+                {t("booking.delayNotice")}
+              </p>
+              <p className="text-gray-300 text-md">
+                {t("booking.realTimeUpdate")}
+              </p>
+            </div>
           </div>
+
+          <GapY size={16} />
 
           {/* Progress Bar */}
           <div>
@@ -131,21 +139,25 @@ export default function BookingPayPage() {
           </div>
         </div>
 
-        <GapY size={8} />
+        <GapY size={16} />
+
+        <Divider className="h-[8px] bg-gray-container" />
 
         {/* Order Status */}
-        <div className="flex flex-col gap-3 p-5 bg-background">
+        <div className="flex flex-col p-5">
           <div className="flex flex-col gap-1">
-            <span className="title-lg font-bold">
-              {t("booking.orderStatus")}
-            </span>
-            <p className="text-gray-300 text-md">
-              Please proceed with reservations by vendor.
-            </p>
-            <p className="text-gray-300 text-md">
-              You can modify your reservation status anytime later.
-            </p>
+            <div className="h-8 title-lg font-bold">Order Status</div>
+
+            <div className="flex flex-col h-10">
+              <p className="text-gray-300 text-md">
+                Please proceed with reservations by vendor.
+              </p>
+              <p className="text-gray-300 text-md">You can modify later.</p>
+            </div>
           </div>
+
+          <GapY size={12} />
+
           <div className="flex flex-col gap-3">
             {bookingData.components.map(component => {
               const imageSrc =
@@ -165,7 +177,7 @@ export default function BookingPayPage() {
                 >
                   <div
                     key={component.id}
-                    className="flex items-center gap-3 bg-gray-container rounded-lg p-3 cursor-pointer"
+                    className="flex items-center gap-3 bg-gray-container rounded-[4px] p-3 cursor-pointer"
                   >
                     <div className="relative w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
                       <Image
@@ -189,7 +201,7 @@ export default function BookingPayPage() {
                           <span className="truncate">{vendor}</span>
                         </span>
                         <span className="opacity-60">·</span>
-                        <span className="text-pink-400">PreBook</span>
+                        <span className="text-pink-font">PreBook</span>
                       </div>
                       <div className="mt-3">
                         <p className="text-gray-300 text-sm">{guideTitle}</p>
@@ -250,9 +262,9 @@ export default function BookingPayPage() {
       </div>
 
       {/* Save Button */}
-      <div className="px-4 py-4">
-        <Button className="w-full h-[52px]" onClick={handleSave}>
-          <span className="font-medium">Save</span>
+      <div className="px-4 py-4 bg-transparent">
+        <Button className="w-full h-[52px] bg-primary" onClick={handleSave}>
+          <span className="text-lg">Save</span>
         </Button>
       </div>
     </div>
