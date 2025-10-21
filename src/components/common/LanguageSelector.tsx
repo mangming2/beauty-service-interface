@@ -7,7 +7,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { useLanguageStore, languageLabels, type Language } from "@/lib/store";
 
 export const LanguageSelector = () => {
@@ -22,14 +21,13 @@ export const LanguageSelector = () => {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-8 px-3 bg-gray text-white rounded-full border border-gray-600"
-        >
-          <Globe width={14} height={14} />
-          <span className="text-sm font-medium">{currentLanguage}</span>
-          <ChevronDown className="h-4 w-4" />
-        </Button>
+        <button className="flex items-center justify-center h-6 p-[5px] gap-[5px] bg-gray text-white rounded-full border border-gray-600">
+          <div className="flex items-center gap-0.5">
+            <Globe width={14} height={14} />
+            <span className="text-sm font-medium">{currentLanguage}</span>
+          </div>
+          <ChevronDown width={14} height={14} />
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-17 py-1 px-0 bg-[#303035] rounded-[1px] border-none">
         <div className="space-y-1">

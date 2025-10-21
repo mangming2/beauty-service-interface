@@ -11,13 +11,15 @@ export const Header = () => {
   return (
     <header>
       <div
-        className="container mx-auto py-3 flex justify-between items-center"
+        className="container mx-auto py-[14px] flex justify-between items-center"
         style={{
           boxShadow: "0 4px 7px -2px rgba(0,0,0,0.15)",
         }}
       >
-        {isFormPage && <h1 className="text-white title-md">My Idol Form</h1>}
-        {isWishPage && <h1 className="text-white title-md">Wish list</h1>}
+        {isFormPage && (
+          <h1 className="text-white h-6 title-md">My Idol Form</h1>
+        )}
+        {isWishPage && <h1 className="text-white h-6 title-md">Wish list</h1>}
         {!isFormPage && !isWishPage && (
           <Image src="/main-logo.png" alt="Main Logo" width={66} height={18} />
         )}

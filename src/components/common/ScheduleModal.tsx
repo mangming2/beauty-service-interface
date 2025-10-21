@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DateTimePicker from "@/components/ui/date-time-picker";
@@ -21,10 +21,18 @@ export default function ScheduleModal({
   onSave,
 }: ScheduleModalProps) {
   const [title, setTitle] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date(Date.now() + 60 * 60 * 1000)); // 1시간 후
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
   const [editingDate, setEditingDate] = useState<"start" | "end">("start");
+
+  // Initialize dates after component mounts to avoid hydration mismatch
+  useEffect(() => {
+    const now = new Date();
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    setStartDate(now);
+    setEndDate(oneHourLater);
+  }, []);
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear().toString().slice(-2);
@@ -44,6 +52,10 @@ export default function ScheduleModal({
       alert("제목을 입력해주세요.");
       return;
     }
+    if (!startDate || !endDate) {
+      alert("날짜를 설정해주세요.");
+      return;
+    }
     if (startDate >= endDate) {
       alert("종료일은 시작일보다 늦어야 합니다.");
       return;
@@ -54,8 +66,10 @@ export default function ScheduleModal({
 
   const handleClose = () => {
     setTitle("");
-    setStartDate(new Date());
-    setEndDate(new Date(Date.now() + 60 * 60 * 1000));
+    const now = new Date();
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    setStartDate(now);
+    setEndDate(oneHourLater);
     setIsDateTimePickerOpen(false);
     setEditingDate("start");
     onClose();
@@ -96,9 +110,11 @@ export default function ScheduleModal({
             >
               <div className="text-white text-sm font-medium mb-1">시작일</div>
               <div className="text-white text-lg font-medium">
-                {formatDate(startDate)}
+                {startDate ? formatDate(startDate) : "--"}
               </div>
-              <div className="text-white title-lg">{formatTime(startDate)}</div>
+              <div className="text-white title-lg">
+                {startDate ? formatTime(startDate) : "--"}
+              </div>
             </div>
 
             {/* Arrow */}
@@ -114,15 +130,21 @@ export default function ScheduleModal({
             >
               <div className="text-white text-sm font-medium mb-1">종료일</div>
               <div className="text-white text-lg font-medium">
-                {formatDate(endDate)}
+                {endDate ? formatDate(endDate) : "--"}
               </div>
-              <div className="text-white title-lg">{formatTime(endDate)}</div>
+              <div className="text-white title-lg">
+                {endDate ? formatTime(endDate) : "--"}
+              </div>
             </div>
           </div>
 
           <div className="mt-4">
             <DateTimePicker
-              value={editingDate === "start" ? startDate : endDate}
+              value={
+                editingDate === "start"
+                  ? startDate || new Date()
+                  : endDate || new Date()
+              }
               onChange={date => {
                 if (editingDate === "start") {
                   setStartDate(date);
