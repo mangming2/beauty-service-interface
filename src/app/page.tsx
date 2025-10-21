@@ -126,7 +126,7 @@ export default function Home() {
               <TranslatedText translationKey="latestTrends" />
             </h2>
             <div className="flex items-baseline gap-[4px]">
-              <Link href="#" className="text-gray_1 caption-md">
+              <Link href="/recommend" className="text-gray_1 caption-md">
                 <TranslatedText translationKey="more" />
               </Link>
               <ArrowRightIcon
