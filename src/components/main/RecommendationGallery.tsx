@@ -22,7 +22,7 @@ export default function RecommendationGallery({
   onClick,
 }: RecommendationGalleryProps) {
   return (
-    <div className="flex flex-col cursor-pointer" onClick={onClick}>
+    <div className="flex flex-col py-4 cursor-pointer" onClick={onClick}>
       <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
         {images.map((imageSrc, index) => (
           <div
@@ -42,7 +42,7 @@ export default function RecommendationGallery({
       <GapY size={12} />
 
       {/* Salon Recommendation Cards */}
-      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
+      <div className="flex gap-3 flex-nowrap overflow-x-auto">
         <div className="w-[372px]">
           <div>
             <div className="flex gap-2 mb-2">

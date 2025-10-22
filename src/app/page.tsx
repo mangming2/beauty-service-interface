@@ -46,7 +46,7 @@ export const generateMetadata = (): Metadata => {
 export default function Home() {
   return (
     <div className="min-h-screen text-white">
-      <GapY size={20} />
+      <GapY size={24} />
       {/* Main Content */}
       <div>
         {/* Most Popular Section */}

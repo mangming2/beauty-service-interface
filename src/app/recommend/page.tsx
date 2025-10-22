@@ -102,7 +102,7 @@ export default function RecommendPage() {
       <div>
         {/* Tags Section */}
         <div>
-          <div className="flex gap-1 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
             {availableTags.map((tag, index) => (
               <Badge
                 key={index}
@@ -120,9 +120,7 @@ export default function RecommendPage() {
           </div>
         </div>
 
-        <GapY size={16} />
-
-        <GapY size={12} />
+        <GapY size={20} />
 
         {/* 필터링된 갤러리들과 패키지 섹션을 교대로 렌더링 */}
         {filteredGalleries.map((gallery, index) => {
@@ -141,7 +139,7 @@ export default function RecommendPage() {
               {/* 두 번째 갤러리 다음에 패키지 섹션 추가 */}
               {isLastInPair && (
                 <>
-                  <GapY size={12} />
+                  <GapY size={20} />
                   <PackageSection
                     title="How about this package?"
                     packages={[
@@ -162,13 +160,14 @@ export default function RecommendPage() {
                     ]}
                     onPackageClick={() => {}}
                   />
+                  <GapY size={20} />
                 </>
               )}
 
               {/* 마지막 갤러리가 홀수 번째일 때 추가 패키지 섹션 */}
               {isLastGallery && isEvenIndex && (
                 <>
-                  <GapY size={12} />
+                  <GapY size={20} />
                   <PackageSection
                     title="Looking for another Date?"
                     packages={[
@@ -191,9 +190,6 @@ export default function RecommendPage() {
                   />
                 </>
               )}
-
-              {/* 갤러리 사이 간격 */}
-              {!isLastGallery && <GapY size={12} />}
             </div>
           );
         })}
