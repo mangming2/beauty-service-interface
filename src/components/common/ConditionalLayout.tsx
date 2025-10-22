@@ -14,7 +14,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const isLoginPage = pathname === "/login";
 
   return (
-    <div className="max-w-[412px] mx-auto pb-[64px] px-[20px] min-h-screen relative flex flex-col">
+    <div className="max-w-[412px] mx-auto pb-[64px] min-h-screen relative flex flex-col">
       {!isLoginPage && <Header />}
       <div className="flex-1 flex flex-col">
         {isLoginPage ? children : <ProtectedLayout>{children}</ProtectedLayout>}

@@ -10,6 +10,7 @@ import { Divider } from "../../../components/ui/divider";
 import KakaoMap from "@/components/common/KakaoMap";
 import { usePackageDetail } from "@/hooks/usePackageQueries";
 import Link from "next/link";
+import { LocationIcon } from "../../../components/common/Icons";
 
 export default function PackageDetail() {
   const params = useParams();
@@ -94,8 +95,6 @@ export default function PackageDetail() {
         />
       </div>
 
-      <GapY size={8} />
-
       {/* Contents : 제목 ~ 지도까지지 */}
       <div className="flex flex-col px-5 py-4">
         {/* Package Title and Location */}
@@ -104,17 +103,18 @@ export default function PackageDetail() {
           <p className="text-gray_1 text-md">{packageDetail.location}</p>
         </div>
 
-        <GapY size={12} />
+        <GapY size={20} />
 
         {/* Package Details Section */}
         <div>
           <h2 className="text-lg ">Package Details</h2>
+          <GapY size={12} />
           {/* Package Components */}
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full gap-3">
             {packageDetail.components.map(component => (
               <div key={component.id}>
-                <Card className="bg-transparent border-none py-1">
-                  <CardContent className="px-0 py-2">
+                <Card className="bg-gray-container border-solid border-[1px] border-[#2E3033] rounded-[4px] p-3">
+                  <CardContent className="p-0">
                     <div className="flex gap-1 items-center">
                       <div className="relative w-[80px] h-[80px] overflow-hidden flex-shrink-0">
                         <Image
@@ -125,12 +125,20 @@ export default function PackageDetail() {
                         />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-white mb-1">
+                        <h3 className="text-lg text-white mb-1">
                           {component.title}
                         </h3>
-                        <p className="text-gray-400 text-sm mb-1">
-                          {component.location}
-                        </p>
+                        <div className="flex items-center gap-1">
+                          <LocationIcon
+                            width={11}
+                            height={13}
+                            color="#ABA9A9"
+                          />
+                          <p className="text-gray-400 text-sm">
+                            {component.location}
+                          </p>
+                        </div>
+                        <GapY size={12} />
                         <p className="text-gray-300 text-sm line-clamp-2">
                           {component.description}
                         </p>
@@ -143,112 +151,13 @@ export default function PackageDetail() {
             ))}
           </div>
 
-          {/* Collapsible Sections */}
-          <div className="flex flex-col gap-2">
-            {/* Included & Not Included Section */}
-            <div className="bg-gray-container rounded-lg overflow-hidden">
-              <button
-                className="flex items-center justify-between w-full p-4 h-[44px] hover:bg-gray-700 transition-colors"
-                onClick={() => setIsIncludedExpanded(!isIncludedExpanded)}
-              >
-                <span className="font-semibold">Included & Not Included</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${isIncludedExpanded ? "rotate-180" : ""}`}
-                >
-                  <path
-                    d="M4 6L8 10L12 6"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              {isIncludedExpanded && (
-                <div className="px-4 pb-4">
-                  {/* Included Section */}
-                  <div className="mb-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="font-semibold text-white">
-                        ✅ Included
-                      </span>
-                    </div>
-                    <div className="space-y-2 ml-6">
-                      {packageDetail.included.map((item, index) => (
-                        <div key={index} className="text-sm text-gray-300">
-                          - {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Not Included Section */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="font-semibold text-white">
-                        ❌ Not Included (Please prepare separately)
-                      </span>
-                    </div>
-                    <div className="space-y-1 ml-6 text-sm text-gray-300">
-                      {packageDetail.not_included.map((item, index) => (
-                        <div key={index}>{item}</div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Booking Checklist Section */}
-            <div className="bg-gray-container rounded-lg overflow-hidden">
-              <button
-                className="flex items-center justify-between w-full p-4 h-[44px] hover:bg-gray-700 transition-colors"
-                onClick={() => setIsChecklistExpanded(!isChecklistExpanded)}
-              >
-                <span className="font-semibold">Booking Checklist</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`transform transition-transform ${isChecklistExpanded ? "rotate-180" : ""}`}
-                >
-                  <path
-                    d="M4 6L8 10L12 6"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              {isChecklistExpanded && (
-                <div className="px-4 pb-4 space-y-2">
-                  {packageDetail.checklist.map((item, index) => (
-                    <div key={index} className="text-sm text-gray-300">
-                      • {item}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
           <GapY size={20} />
-
           {/* Customer Reviews */}
           <div>
-            <span className="flex items-center h-11 title-md font-bold mb-4">
+            <span className="flex items-center h-8 title-md font-bold">
               Customers review
             </span>
+            <GapY size={8} />
             <Link href={`/package/${packageDetail.id}/reviews`}>
               <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
                 {isLoading ? (
@@ -265,18 +174,18 @@ export default function PackageDetail() {
                   reviews.slice(0, 5).map(review => (
                     <Card
                       key={review.id}
-                      className="w-[250px] h-[132px] flex-shrink-0 p-[14px] bg-gray-container border-none text-white"
+                      className="w-[250px] h-[132px] flex-shrink-0 p-[13px] bg-gray-container border-none text-white"
                     >
-                      <CardContent className="p-3">
+                      <CardContent className="p-0">
                         <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 rounded-full bg-gray-container overflow-hidden">
+                          <div className="rounded-full bg-gray-container overflow-hidden w-7 h-7 flex-shrink-0">
                             {review.avatar_src ? (
                               <Image
                                 src={review.avatar_src}
                                 alt={review.username}
-                                width={32}
-                                height={32}
-                                className="object-cover"
+                                width={28}
+                                height={28}
+                                className="object-cover w-7 h-7"
                               />
                             ) : (
                               <div className="w-full h-full bg-gray-600 flex items-center justify-center">
@@ -286,11 +195,11 @@ export default function PackageDetail() {
                               </div>
                             )}
                           </div>
-                          <div>
-                            <p className="text-sm font-medium">
+                          <div className="flex flex-1 justify-between items-center min-w-0">
+                            <p className="text-sm font-medium truncate">
                               {review.username}
                             </p>
-                            <div className="flex text-xs">
+                            <div className="flex text-xs flex-shrink-0">
                               {renderStars(review.rating)}
                             </div>
                           </div>
@@ -333,20 +242,23 @@ export default function PackageDetail() {
         </div>
       </div>
 
+      <GapY size={61} />
+
       {/* Booking Footer */}
-      <div className="bg-transparent px-4 py-4 border-t border-gray-container">
+      <div className="bg-transparent px-5 pt-2 pb-3 border-t border-gray-container">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-white font-semibold">
-              ₩ {packageDetail.price.toLocaleString()} / person
+            <p className="title-md text-white font-semibold">
+              ₩ {packageDetail.price.toLocaleString()}{" "}
+              <span className="text-lg">/person</span>
             </p>
-            <p className="text-gray-400 text-sm">
+            <div className="flex items-center justify-center rounded-[32px] py-1 px-4 bg-gray-container text-white caption-sm">
               {packageDetail.valid_period_start} -{" "}
               {packageDetail.valid_period_end}
-            </p>
+            </div>
           </div>
           <Button
-            className="w-[164px] x-6 py-3 rounded-lg"
+            className="text-lg w-[188px] h-[52px] rounded-lg"
             onClick={handleBook}
           >
             Book Now
