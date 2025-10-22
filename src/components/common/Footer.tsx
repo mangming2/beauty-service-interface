@@ -8,8 +8,11 @@ export const Footer = () => {
   const pathname = usePathname();
 
   return (
-    <footer className="fixed bottom-0 left-1/2 bg-background transform -translate-x-1/2 z-50 w-[412px] max-w-screen">
-      <div className="py-[8px] flex justify-between items-center">
+    <footer
+      className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 w-[412px] max-w-screen flex h-16 py-2 items-start flex-shrink-0 bg-[#1F2125]"
+      style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+    >
+      <div className="flex justify-between items-center w-full h-full">
         <div className="flex items-center justify-center w-[129px] p-[4px]">
           <IconButton
             icon={<HomeIcon color={pathname === "/" ? "#f92595" : "white"} />}
