@@ -56,7 +56,7 @@ export function PopularCarousel({ items }: PopularCarouselProps) {
             return (
               <CarouselItem
                 key={index}
-                className="basis-[372px] shrink-0 pl-[4px] pr-[4px]"
+                className="basis-[382px] shrink-0 pl-[4px] pr-[4px]"
               >
                 <div className="w-full h-full flex items-center justify-center">
                   <div
