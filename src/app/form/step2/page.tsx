@@ -47,7 +47,7 @@ export default function FormPage2() {
         <ProgressBar />
         <GapY size={20} />
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col px-5">
           {/* Header */}
           <div>
             <h1 className="h-[68px] text-xl font-semibold">
@@ -78,7 +78,10 @@ export default function FormPage2() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4">
+      <div
+        className="mt-auto py-4 px-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Button
           className="w-full h-[52px]"
           onClick={handleSubmit(onSubmit)}

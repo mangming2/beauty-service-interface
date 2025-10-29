@@ -20,7 +20,7 @@ export const ProgressBar = () => {
 
   return (
     <div>
-      <div className="flex items-center gap-[6px]">
+      <div className="flex px-5 items-center gap-[6px]">
         {/* Progress Bar */}
         <div className="flex-1 h-[2px] bg-[#D9D9D9] rounded-full overflow-hidden">
           <div

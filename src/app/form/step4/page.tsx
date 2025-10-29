@@ -114,7 +114,7 @@ export default function FormPage4() {
         <GapY size={12} />
 
         {/* Header */}
-        <div>
+        <div className="px-5">
           <h1 className="text-xl font-semibold mb-6">
             When would you like to join the tour?
           </h1>
@@ -124,14 +124,14 @@ export default function FormPage4() {
         <div className="flex-1 flex">
           <div className="w-full">
             {/* Custom Calendar Header */}
-            <div className="flex items-center justify-between mb-4 px-2">
+            <div className="flex items-center justify-center gap-[120px] mb-4 px-2">
               <button
                 onClick={goToPreviousMonth}
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </button>
-              <span className="text-gray-300 font-medium">
+              <span className=" text-[20px] font-normal leading-[125%]">
                 {format(currentMonth, "yyyy.MM")}
               </span>
               <button
@@ -211,7 +211,10 @@ export default function FormPage4() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4">
+      <div
+        className="mt-auto py-4 px-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Button
           className="w-full h-[52px]"
           onClick={handleSubmit(onSubmit)}

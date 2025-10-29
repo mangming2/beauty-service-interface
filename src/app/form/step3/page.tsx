@@ -52,11 +52,11 @@ export default function FormPage3() {
         <ProgressBar />
         <GapY size={20} />
 
-        <div className="flex-1 flex flex-col gap-y-[40px]">
+        <div className="flex-1 flex flex-col gap-y-[40px] px-5">
           {/* Header */}
           <div>
             <h1 className="h-[68px] text-xl font-semibold">
-              Which idol do you want to be?
+              Which package would you like?
             </h1>
           </div>
 
@@ -91,7 +91,10 @@ export default function FormPage3() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4">
+      <div
+        className="mt-auto py-4 px-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Button
           className="w-full h-[52px]"
           onClick={handleSubmit(onSubmit)}

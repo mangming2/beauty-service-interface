@@ -31,7 +31,7 @@ export default function FormLoadingPage() {
         <GapY size={40} />
         {isAnalyzing ? (
           <>
-            <div className="flex flex-col text-white items-start">
+            <div className="flex flex-col text-white items-start px-5">
               <h1 className="title-lg ">Just a moment, please.</h1>
               <h2 className="title-sm ">
                 Analyzing your input to recommend the most suitable package.
@@ -47,7 +47,7 @@ export default function FormLoadingPage() {
           </>
         ) : showComplete ? (
           <>
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start px-5">
               <h1 className="title-lg text-white">All done!</h1>
               <h1 className="title-lg text-white">
                 Here&apos;s your style result
@@ -110,7 +110,12 @@ export default function FormLoadingPage() {
                 </defs>
               </svg>
             </div>
-            <div className="mt-auto py-4">
+            <div
+              className="mt-auto py-4 px-5"
+              style={{
+                boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)",
+              }}
+            >
               <Button
                 onClick={handleNext}
                 className="w-full h-[52px] bg-pink-500 hover:bg-pink-600"

@@ -89,14 +89,14 @@ export default function FormPage5() {
         <GapY size={12} />
 
         {/* Header */}
-        <div>
+        <div className="px-5">
           <h1 className="h-[68px] text-xl font-semibold mb-6">
             Where would you like to visit?
           </h1>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
+          <div className="px-5">
             <SeoulMap
               selectedIds={selectedRegions || []}
               onSelect={handleRegionClick}
@@ -134,7 +134,10 @@ export default function FormPage5() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4">
+      <div
+        className="mt-auto py-4 px-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Button
           className="w-full h-[52px]"
           disabled={selectedRegions && selectedRegions.length === 0}

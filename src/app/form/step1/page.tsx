@@ -82,7 +82,7 @@ export default function FormPage1() {
 
         <GapY size={20} />
         {/* Header */}
-        <div>
+        <div className="px-5">
           <h1 className="text-xl font-semibold">
             What kind of Vibe or concept do you love most? (max 3)
           </h1>
@@ -91,7 +91,10 @@ export default function FormPage1() {
         <GapY size={32} />
 
         {/* Concept Selection */}
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col items-center"
+        >
           <div className="flex w-[372px] items-center justify-center flex-wrap gap-x-[12px] gap-y-[36px]">
             {concepts.map(concept => (
               <Card
@@ -135,7 +138,10 @@ export default function FormPage1() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-auto py-4">
+      <div
+        className="mt-auto py-4 px-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Button
           className="w-full h-[52px]"
           onClick={handleSubmit(onSubmit)}
