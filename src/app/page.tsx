@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Metadata } from "next";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { ConceptCard } from "@/components/main/ConceptCard";
@@ -14,6 +13,7 @@ import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
+import { PopularCarousel } from "@/components/main/PopularCarousel";
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -48,32 +48,30 @@ export default function Home() {
     <div className="min-h-screen text-white">
       <GapY size={24} />
       {/* Main Content */}
-      <div>
-        {/* Most Popular Section */}
-        <div className="relative rounded-[8px] border border-card-border">
-          <div className="absolute top-3 left-3 z-10 bg-black bg-opacity-50 text-white px-2 py-1 rounded caption-sm">
-            <TranslatedText translationKey="mostPopular" />
-          </div>
-          <div>
-            {/* aespa Giselle image */}
-            <div className="relative w-full h-[380px]">
-              <Image
-                src="/dummy-profile.png"
-                alt="aespa Giselle Metallic Concept"
-                className="object-cover w-full h-full"
-                fill
-                priority
-              />
-            </div>
-            <div className="flex flex-col gap-[4px] p-[12px]">
-              <div className="caption-sm text-primary">
-                #aespa #metallic #sm
-              </div>
-              <div className="text-md">Songdo, Incheon</div>
-            </div>
-          </div>
-        </div>
-
+      {/* Most Popular Section */}
+      <PopularCarousel
+        items={[
+          {
+            imageSrc: "/aespa-1.jpg",
+            alt: "Futuristic Chic Idol Debut",
+            tags: "#aespa #metallic #sm",
+            location: "Songdo, Incheon",
+          },
+          {
+            imageSrc: "/aespa-2.jpg",
+            alt: "Metallic Concept",
+            tags: "#aespa #metallic #sm",
+            location: "Songdo, Incheon",
+          },
+          {
+            imageSrc: "/dummy-profile.png",
+            alt: "Concept 3",
+            tags: "#kpop #idol #debut",
+            location: "Seoul",
+          },
+        ]}
+      />
+      <div className="px-5">
         <GapY size={20} />
 
         {/* CTA Banner */}

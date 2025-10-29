@@ -23,10 +23,6 @@ export default function PackageDetail() {
   // packageDetail에서 리뷰 데이터 추출
   const reviews = packageDetail?.reviews || [];
 
-  // State for collapsible sections
-  const [isIncludedExpanded, setIsIncludedExpanded] = useState(false);
-  const [isChecklistExpanded, setIsChecklistExpanded] = useState(false);
-
   // 로딩 상태
   if (isLoading) {
     return (
