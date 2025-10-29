@@ -1,14 +1,41 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { GapY } from "@/components/ui/gap";
 import { Badge } from "@/components/ui/badge";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
 
-export default function RecommendPage() {
+function RecommendContent() {
+  const searchParams = useSearchParams();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const availableTags = ["SMent", "Aespa", "Girl crush", "Metallic"];
+  // 기본 태그 목록
+  const baseTags = ["SMent", "Aespa", "Girl crush", "Metallic"];
+
+  // URL 쿼리 파라미터에서 태그 읽기
+  useEffect(() => {
+    const tagsParam = searchParams.get("tags");
+    if (tagsParam) {
+      const tags = tagsParam
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(Boolean);
+      setSelectedTags(tags);
+    }
+  }, [searchParams]);
+
+  // URL에서 받은 태그 가져오기
+  const tagsParam = searchParams.get("tags");
+  const urlTags = tagsParam
+    ? tagsParam
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(Boolean)
+    : [];
+
+  // 기본 태그와 URL에서 받은 태그를 합치고 중복 제거
+  const availableTags = Array.from(new Set([...baseTags, ...urlTags]));
 
   // 각 갤러리의 태그 정보
   const galleries = [
@@ -197,5 +224,15 @@ export default function RecommendPage() {
         <GapY size={24} />
       </div>
     </div>
+  );
+}
+
+export default function RecommendPage() {
+  return (
+    <Suspense
+      fallback={<div className="min-h-screen text-white">Loading...</div>}
+    >
+      <RecommendContent />
+    </Suspense>
   );
 }

@@ -14,6 +14,7 @@ import Etc from "@/assets/3d-images/etc.png";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
 import { PopularCarousel } from "@/components/main/PopularCarousel";
+import { ConceptScrollContainer } from "@/components/main/ConceptScrollContainer";
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -84,35 +85,60 @@ export default function Home() {
           <h2 className="title-md">
             <TranslatedText translationKey="chooseConcept" />
           </h2>
-          <div className="flex gap-[4px] overflow-x-auto pb-2 scrollbar-hide">
+          <ConceptScrollContainer>
             {[
               {
                 src: GirlCrush,
                 alt: "Girl Crush",
                 labelKey: "concepts.girlCrush",
+                tags: ["Girl crush"],
               },
               {
                 src: LovelyFresh,
                 alt: "Lovely & Fresh",
                 labelKey: "concepts.lovelyFresh",
+                tags: ["Lovely & Fresh"],
               },
               {
                 src: ElegantGlam,
                 alt: "Elegant & Glam",
                 labelKey: "concepts.elegantGlam",
+                tags: ["Elegant & Glam"],
               },
-              { src: Dreamy, alt: "Dreamy", labelKey: "concepts.dreamy" },
-              { src: Highteen, alt: "Highteen", labelKey: "concepts.highteen" },
-              { src: Etc, alt: "Etc", labelKey: "concepts.etc" },
-            ].map((concept, index) => (
-              <ConceptCard
-                key={index}
-                src={concept.src}
-                alt={concept.alt}
-                label={<TranslatedText translationKey={concept.labelKey} />}
-              />
-            ))}
-          </div>
+              {
+                src: Dreamy,
+                alt: "Dreamy",
+                labelKey: "concepts.dreamy",
+                tags: ["Dreamy"],
+              },
+              {
+                src: Highteen,
+                alt: "Highteen",
+                labelKey: "concepts.highteen",
+                tags: ["Highteen"],
+              },
+              {
+                src: Etc,
+                alt: "Etc",
+                labelKey: "concepts.etc",
+                tags: ["Etc"],
+              },
+            ].map((concept, index) => {
+              const href =
+                concept.tags.length > 0
+                  ? `/recommend?tags=${encodeURIComponent(concept.tags.join(","))}`
+                  : "/recommend";
+              return (
+                <ConceptCard
+                  key={index}
+                  src={concept.src}
+                  alt={concept.alt}
+                  label={<TranslatedText translationKey={concept.labelKey} />}
+                  href={href}
+                />
+              );
+            })}
+          </ConceptScrollContainer>
         </div>
 
         <GapY size={20} />
