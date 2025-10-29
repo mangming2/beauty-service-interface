@@ -12,6 +12,77 @@ import { useUser } from "@/hooks/useAuthQueries";
 import { useUserFormSubmission } from "@/hooks/useFormQueries";
 import { useAllPackages } from "@/hooks/usePackageQueries";
 
+// TODO: 백엔드 연동 시 더미 데이터를 실제 API 응답으로 교체
+const DUMMY_RECOMMENDATION_GALLERIES = [
+  {
+    images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+    salonInfo: {
+      tags: ["aespa", "metallic", "sm"],
+      name: "DOKI MAKE SALON",
+      price: "₩ 50,000 ~",
+      rating: 4.8,
+      reviewCount: 15,
+      distance: "2.3km (Yongsan)",
+      location: "Yongsan",
+      languages: "Korean / English / Japanese",
+    },
+    packagePath: "/package/aespa-futuristic",
+  },
+  {
+    images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+    salonInfo: {
+      tags: ["girl crush", "metallic", "sm"],
+      name: "STYLE STUDIO",
+      price: "₩ 45,000 ~",
+      rating: 4.6,
+      reviewCount: 23,
+      distance: "1.8km (Gangnam)",
+      location: "Gangnam",
+      languages: "Korean / English",
+    },
+    packagePath: "/package/girl-crush",
+  },
+  {
+    images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+    salonInfo: {
+      tags: ["metallic", "girl crush"],
+      name: "GLAM BEAUTY",
+      price: "₩ 60,000 ~",
+      rating: 4.9,
+      reviewCount: 8,
+      distance: "3.2km (Hongdae)",
+      location: "Hongdae",
+      languages: "Korean / English / Japanese",
+    },
+    packagePath: "/package/glam-beauty",
+  },
+  {
+    images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+    salonInfo: {
+      tags: ["elegant", "glam"],
+      name: "ELEGANT STUDIO",
+      price: "₩ 55,000 ~",
+      rating: 4.7,
+      reviewCount: 12,
+      distance: "2.1km (Myeongdong)",
+      location: "Myeongdong",
+      languages: "Korean / English / Japanese",
+    },
+    packagePath: "/package/elegant-studio",
+  },
+];
+
+const DUMMY_PACKAGE_SECTIONS = [
+  {
+    title: "How about this package?",
+    packageIndices: [0, 1], // packages 배열에서 가져올 인덱스
+  },
+  {
+    title: "Looking for another Date?",
+    packageIndices: [2, 3], // packages 배열에서 가져올 인덱스
+  },
+];
+
 export default function FormComplete() {
   const router = useRouter();
   const { data: user, isLoading: userLoading } = useUser();
@@ -79,180 +150,127 @@ export default function FormComplete() {
 
   return (
     <div className="min-h-screen text-white relative">
-      <GapY size={12} />
-      {/* Tags Section */}
+      <GapY size={8} />
+
+      {/* Main Content */}
       <div>
-        <div className="h-[44px] flex items-center">
-          <h2 className="h-[28px] title-md font-medium">
-            All summed up in tags
-          </h2>
-        </div>
-        <div className="flex gap-1 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
-          {formSubmission.selected_concepts?.map(
-            (concept: string, index: number) => (
+        {/* Tags Section */}
+        <div className="px-5">
+          <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
+            {formSubmission.selected_concepts?.map(
+              (concept: string, index: number) => (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+                >
+                  {concept}
+                </Badge>
+              )
+            )}
+            {formSubmission.favorite_idol && (
               <Badge
-                key={index}
                 variant="secondary"
                 className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
               >
-                {concept}
+                {formSubmission.favorite_idol}
               </Badge>
-            )
-          )}
-          {formSubmission.favorite_idol && (
-            <Badge
-              variant="secondary"
-              className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-            >
-              {formSubmission.favorite_idol}
-            </Badge>
-          )}
-          {formSubmission.idol_option && (
-            <Badge
-              variant="secondary"
-              className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-            >
-              {formSubmission.idol_option}
-            </Badge>
-          )}
-          {formSubmission.selected_regions?.map(
-            (region: string, index: number) => (
+            )}
+            {formSubmission.idol_option && (
               <Badge
-                key={`region-${index}`}
                 variant="secondary"
                 className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
               >
-                {region}
+                {formSubmission.idol_option}
               </Badge>
-            )
-          )}
+            )}
+            {formSubmission.selected_regions?.map(
+              (region: string, index: number) => (
+                <Badge
+                  key={`region-${index}`}
+                  variant="secondary"
+                  className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+                >
+                  {region}
+                </Badge>
+              )
+            )}
+          </div>
         </div>
+
+        <GapY size={20} />
+
+        {/* RecommendationGalleries */}
+        {DUMMY_RECOMMENDATION_GALLERIES.map((gallery, index) => {
+          const isSecondGallery = index === 1;
+          const isFourthGallery = index === 3;
+
+          return (
+            <div key={index}>
+              <div className="px-5">
+                <RecommendationGallery
+                  images={gallery.images}
+                  salonInfo={gallery.salonInfo}
+                  onClick={() => router.push(gallery.packagePath)}
+                />
+              </div>
+
+              {/* 두 번째 갤러리 다음에 패키지 섹션 추가 */}
+              {isSecondGallery && (
+                <>
+                  <GapY size={20} />
+                  <PackageSection
+                    title={DUMMY_PACKAGE_SECTIONS[0].title}
+                    packages={
+                      packages
+                        ?.slice(
+                          DUMMY_PACKAGE_SECTIONS[0].packageIndices[0],
+                          DUMMY_PACKAGE_SECTIONS[0].packageIndices[1] + 1
+                        )
+                        .map(pkg => ({
+                          id: pkg.id,
+                          title: pkg.title,
+                          artist: pkg.artist,
+                          location: pkg.location,
+                          imageSrc: pkg.image_src[0] || "/dummy-profile.png",
+                        })) || []
+                    }
+                    onPackageClick={handlePackageClick}
+                  />
+                  <GapY size={20} />
+                </>
+              )}
+
+              {/* 네 번째 갤러리 다음에 패키지 섹션 추가 */}
+              {isFourthGallery && (
+                <>
+                  <GapY size={20} />
+                  <PackageSection
+                    title={DUMMY_PACKAGE_SECTIONS[1].title}
+                    packages={
+                      packages
+                        ?.slice(
+                          DUMMY_PACKAGE_SECTIONS[1].packageIndices[0],
+                          DUMMY_PACKAGE_SECTIONS[1].packageIndices[1] + 1
+                        )
+                        .map(pkg => ({
+                          id: pkg.id,
+                          title: pkg.title,
+                          artist: pkg.artist,
+                          location: pkg.location,
+                          imageSrc: pkg.image_src[0] || "/dummy-profile.png",
+                        })) || []
+                    }
+                    onPackageClick={handlePackageClick}
+                  />
+                </>
+              )}
+            </div>
+          );
+        })}
+
+        <GapY size={24} />
       </div>
-      <GapY size={16} />
-
-      <GapY size={12} />
-
-      {/* 첫 번째 RecommendationGallery */}
-      <RecommendationGallery
-        images={[
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-        ]}
-        salonInfo={{
-          tags: ["aespa", "metallic", "sm"],
-          name: "DOKI MAKE SALON",
-          price: "₩ 50,000 ~",
-          rating: 4.8,
-          reviewCount: 15,
-          distance: "2.3km (Yongsan)",
-          location: "Yongsan",
-          languages: "Korean / English / Japanese",
-        }}
-        onClick={() => router.push("/package/aespa-futuristic")}
-      />
-
-      <GapY size={12} />
-
-      {/* 두 번째 RecommendationGallery */}
-      <RecommendationGallery
-        images={[
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-        ]}
-        salonInfo={{
-          tags: ["girl crush", "metallic", "sm"],
-          name: "STYLE STUDIO",
-          price: "₩ 45,000 ~",
-          rating: 4.6,
-          reviewCount: 23,
-          distance: "1.8km (Gangnam)",
-          location: "Gangnam",
-          languages: "Korean / English",
-        }}
-        onClick={() => router.push("/package/girl-crush")}
-      />
-
-      <GapY size={12} />
-
-      {/* 첫 번째 PackageSection (2개 갤러리 후) */}
-      <PackageSection
-        title="How about this package?"
-        packages={
-          packages?.slice(0, 2).map(pkg => ({
-            id: pkg.id,
-            title: pkg.title,
-            artist: pkg.artist,
-            location: pkg.location,
-            imageSrc: pkg.image_src[0] || "/dummy-profile.png",
-          })) || []
-        }
-        onPackageClick={handlePackageClick}
-      />
-
-      <GapY size={12} />
-
-      {/* 세 번째 RecommendationGallery */}
-      <RecommendationGallery
-        images={[
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-        ]}
-        salonInfo={{
-          tags: ["metallic", "girl crush"],
-          name: "GLAM BEAUTY",
-          price: "₩ 60,000 ~",
-          rating: 4.9,
-          reviewCount: 8,
-          distance: "3.2km (Hongdae)",
-          location: "Hongdae",
-          languages: "Korean / English / Japanese",
-        }}
-        onClick={() => router.push("/package/glam-beauty")}
-      />
-
-      <GapY size={12} />
-
-      {/* 네 번째 RecommendationGallery */}
-      <RecommendationGallery
-        images={[
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-          "/dummy-profile.png",
-        ]}
-        salonInfo={{
-          tags: ["elegant", "glam"],
-          name: "ELEGANT STUDIO",
-          price: "₩ 55,000 ~",
-          rating: 4.7,
-          reviewCount: 12,
-          distance: "2.1km (Myeongdong)",
-          location: "Myeongdong",
-          languages: "Korean / English / Japanese",
-        }}
-        onClick={() => router.push("/package/elegant-studio")}
-      />
-
-      <GapY size={12} />
-
-      {/* 두 번째 PackageSection (4개 갤러리 후) */}
-      <PackageSection
-        title="Looking for another Date?"
-        packages={
-          packages?.slice(2, 4).map(pkg => ({
-            id: pkg.id,
-            title: pkg.title,
-            artist: pkg.artist,
-            location: pkg.location,
-            imageSrc: pkg.image_src[0] || "/dummy-profile.png",
-          })) || []
-        }
-        onPackageClick={handlePackageClick}
-      />
-
-      <GapY size={24} />
 
       {/* Fixed Floating Restart Form Button */}
       <button

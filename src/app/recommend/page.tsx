@@ -6,12 +6,124 @@ import { Badge } from "@/components/ui/badge";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
 
+// 기본 태그 목록
+const BASE_TAGS = [
+  "SMent",
+  "Aespa",
+  "Girl crush",
+  "Metallic",
+  "example1",
+  "example2",
+];
+
+// 갤러리 데이터
+const GALLERIES_DATA = [
+  {
+    id: 1,
+    images: ["/dummy-package.png", "/dummy-package.png", "/dummy-package.png"],
+    salonInfo: {
+      tags: ["aespa", "metallic", "sm"],
+      name: "DOKI MAKE SALON",
+      price: "₩ 50,000 ~",
+      rating: 4.8,
+      reviewCount: 15,
+      distance: "2.3km (Yongsan)",
+      location: "Yongsan",
+      languages: "Korean / English / Japanese",
+    },
+    onClick: () => {},
+  },
+  {
+    id: 2,
+    images: ["/dummy-package.png", "/dummy-package.png", "/dummy-package.png"],
+    salonInfo: {
+      tags: ["aespa", "girl crush", "sm"],
+      name: "STYLE STUDIO",
+      price: "₩ 45,000 ~",
+      rating: 4.6,
+      reviewCount: 23,
+      distance: "1.8km (Gangnam)",
+      location: "Gangnam",
+      languages: "Korean / English",
+    },
+    onClick: () => {},
+  },
+  {
+    id: 3,
+    images: ["/dummy-package.png", "/dummy-package.png", "/dummy-package.png"],
+    salonInfo: {
+      tags: ["metallic", "girl crush"],
+      name: "GLAM BEAUTY",
+      price: "₩ 60,000 ~",
+      rating: 4.9,
+      reviewCount: 8,
+      distance: "3.2km (Hongdae)",
+      location: "Hongdae",
+      languages: "Korean / English / Japanese",
+    },
+    onClick: () => {},
+  },
+];
+
+// 패키지 섹션 데이터
+const PACKAGE_SECTIONS_DATA = {
+  middle: {
+    title: "How about this package?",
+    packages: [
+      {
+        id: "triples-dreamy",
+        title: "Dreamy & Mystic Idol...",
+        artist: "tripleS",
+        location: "Gapyeong",
+        imageSrc: "/dummy-profile.png",
+      },
+      {
+        id: "blackpink-romantic-1",
+        title: "Romantic & Elegant i...",
+        artist: "Blackpink",
+        location: "Yongin",
+        imageSrc: "/dummy-profile.png",
+      },
+      {
+        id: "blackpink-romantic-2",
+        title: "Romantic & Elegant i...",
+        artist: "Blackpink",
+        location: "Yongin",
+        imageSrc: "/dummy-profile.png",
+      },
+    ],
+  },
+  last: {
+    title: "Looking for another Date?",
+    packages: [
+      {
+        id: "hitst-special-1",
+        title: "HITST Special Package",
+        artist: "HITST",
+        location: "Seoul",
+        imageSrc: "/dummy-profile.png",
+      },
+      {
+        id: "summer-vibes",
+        title: "Summer Vibes Package",
+        artist: "Various",
+        location: "Busan",
+        imageSrc: "/dummy-profile.png",
+      },
+      {
+        id: "hitst-special-2",
+        title: "HITST Special Package",
+        artist: "HITST",
+        location: "Seoul",
+        imageSrc: "/dummy-profile.png",
+      },
+    ],
+  },
+};
+
 function RecommendContent() {
   const searchParams = useSearchParams();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  // 기본 태그 목록
-  const baseTags = ["SMent", "Aespa", "Girl crush", "Metallic"];
 
   // URL 쿼리 파라미터에서 태그 읽기
   useEffect(() => {
@@ -35,73 +147,12 @@ function RecommendContent() {
     : [];
 
   // 기본 태그와 URL에서 받은 태그를 합치고 중복 제거
-  const availableTags = Array.from(new Set([...baseTags, ...urlTags]));
-
-  // 각 갤러리의 태그 정보
-  const galleries = [
-    {
-      id: 1,
-      images: [
-        "/dummy-profile.png",
-        "/dummy-profile.png",
-        "/dummy-profile.png",
-      ],
-      salonInfo: {
-        tags: ["aespa", "metallic", "sm"],
-        name: "DOKI MAKE SALON",
-        price: "₩ 50,000 ~",
-        rating: 4.8,
-        reviewCount: 15,
-        distance: "2.3km (Yongsan)",
-        location: "Yongsan",
-        languages: "Korean / English / Japanese",
-      },
-      onClick: () => {},
-    },
-    {
-      id: 2,
-      images: [
-        "/dummy-profile.png",
-        "/dummy-profile.png",
-        "/dummy-profile.png",
-      ],
-      salonInfo: {
-        tags: ["aespa", "girl crush", "sm"],
-        name: "STYLE STUDIO",
-        price: "₩ 45,000 ~",
-        rating: 4.6,
-        reviewCount: 23,
-        distance: "1.8km (Gangnam)",
-        location: "Gangnam",
-        languages: "Korean / English",
-      },
-      onClick: () => {},
-    },
-    {
-      id: 3,
-      images: [
-        "/dummy-profile.png",
-        "/dummy-profile.png",
-        "/dummy-profile.png",
-      ],
-      salonInfo: {
-        tags: ["metallic", "girl crush"],
-        name: "GLAM BEAUTY",
-        price: "₩ 60,000 ~",
-        rating: 4.9,
-        reviewCount: 8,
-        distance: "3.2km (Hongdae)",
-        location: "Hongdae",
-        languages: "Korean / English / Japanese",
-      },
-      onClick: () => {},
-    },
-  ];
+  const availableTags = Array.from(new Set([...BASE_TAGS, ...urlTags]));
 
   // 태그 필터링 함수
   const filteredGalleries =
     selectedTags.length > 0
-      ? galleries.filter(gallery =>
+      ? GALLERIES_DATA.filter(gallery =>
           selectedTags.some(selectedTag =>
             gallery.salonInfo.tags.some(
               tag =>
@@ -110,7 +161,7 @@ function RecommendContent() {
             )
           )
         )
-      : galleries;
+      : GALLERIES_DATA;
 
   const handleTagClick = (tag: string) => {
     setSelectedTags(
@@ -128,7 +179,7 @@ function RecommendContent() {
       {/* Main Content */}
       <div>
         {/* Tags Section */}
-        <div>
+        <div className="px-5">
           <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
             {availableTags.map((tag, index) => (
               <Badge
@@ -157,34 +208,21 @@ function RecommendContent() {
 
           return (
             <div key={gallery.id}>
-              <RecommendationGallery
-                images={gallery.images}
-                salonInfo={gallery.salonInfo}
-                onClick={gallery.onClick}
-              />
+              <div className="px-5">
+                <RecommendationGallery
+                  images={gallery.images}
+                  salonInfo={gallery.salonInfo}
+                  onClick={gallery.onClick}
+                />
+              </div>
 
               {/* 두 번째 갤러리 다음에 패키지 섹션 추가 */}
               {isLastInPair && (
                 <>
                   <GapY size={20} />
                   <PackageSection
-                    title="How about this package?"
-                    packages={[
-                      {
-                        id: "triples-dreamy",
-                        title: "Dreamy & Mystic Idol...",
-                        artist: "tripleS",
-                        location: "Gapyeong",
-                        imageSrc: "/dummy-profile.png",
-                      },
-                      {
-                        id: "blackpink-romantic",
-                        title: "Romantic & Elegant i...",
-                        artist: "Blackpink",
-                        location: "Yongin",
-                        imageSrc: "/dummy-profile.png",
-                      },
-                    ]}
+                    title={PACKAGE_SECTIONS_DATA.middle.title}
+                    packages={PACKAGE_SECTIONS_DATA.middle.packages}
                     onPackageClick={() => {}}
                   />
                   <GapY size={20} />
@@ -196,23 +234,8 @@ function RecommendContent() {
                 <>
                   <GapY size={20} />
                   <PackageSection
-                    title="Looking for another Date?"
-                    packages={[
-                      {
-                        id: "hitst-special",
-                        title: "HITST Special Package",
-                        artist: "HITST",
-                        location: "Seoul",
-                        imageSrc: "/dummy-profile.png",
-                      },
-                      {
-                        id: "summer-vibes",
-                        title: "Summer Vibes Package",
-                        artist: "Various",
-                        location: "Busan",
-                        imageSrc: "/dummy-profile.png",
-                      },
-                    ]}
+                    title={PACKAGE_SECTIONS_DATA.last.title}
+                    packages={PACKAGE_SECTIONS_DATA.last.packages}
                     onPackageClick={() => {}}
                   />
                 </>

@@ -32,7 +32,7 @@ export default function PackageSection({
         </div>
       </div>
       {/* Package Cards */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide pr-5">
         {packages.map(package_ => (
           <PackageCard
             key={package_.id}
