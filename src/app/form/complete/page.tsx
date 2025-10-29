@@ -275,10 +275,10 @@ export default function FormComplete() {
       {/* Fixed Floating Restart Form Button */}
       <button
         onClick={() => router.push("/form/step1")}
-        className="sticky bottom-20 right-6 flex justify-center items-center cursor-pointer p-3 rounded-full z-50 ml-auto"
+        className="w-16 h-16 sticky bottom-20 right-6 flex justify-center items-center cursor-pointer p-3 rounded-full z-50 ml-auto"
         style={{ backgroundColor: "var(--pink-font)" }}
       >
-        <RestartIcon width={35} height={35} color="white" />
+        <RestartIcon width={30} height={30} color="white" />
       </button>
     </div>
   );
