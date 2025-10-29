@@ -86,7 +86,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             disabled={googleLoginMutation.isPending || userLoading}
-            className="w-[40px] h-[40px] bg-gray-container rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-[40px] h-[40px] bg-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {googleLoginMutation.isPending ? (
               <div className="w-[24px] h-[24px] border-2 border-white border-t-transparent rounded-full animate-spin" />
