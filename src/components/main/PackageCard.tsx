@@ -38,10 +38,9 @@ export default function PackageCard({
           </div>
           <div className="px-2 py-1">
             <p className="text-xs gap-1 flex items-center text-gray-400">
-              <span className="text-black">♫</span>
-              <span>{artist}</span>
-              <span>·</span>
-              <span>{location}</span>
+              <span className="max-w-[121px] overflow-hidden text-ellipsis whitespace-nowrap">
+                🎵 {artist} · {location}
+              </span>
             </p>
             <GapY size={4} />
             <h3 className="font-medium text-white text-lg leading-[140%] overflow-hidden text-ellipsis whitespace-nowrap">

@@ -62,18 +62,24 @@ export default function RecommendationGallery({
               </span>
             </div>
 
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-pink-400">★</span>
-              <span className="text-white text-sm">{salonInfo.rating}</span>
-              <span className="text-gray-400 text-sm">
-                review {salonInfo.reviewCount}
-              </span>
-              <span className="text-gray-300 text-sm">
-                {salonInfo.distance}
-              </span>
-            </div>
-            <div className="text-gray-400 text-xs mb-2">
-              {salonInfo.languages}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <span className="text-pink-400">★</span>
+                <span className="text-gray-font text-sm">
+                  {salonInfo.rating}
+                </span>
+                <span className="text-gray-font text-sm">·</span>
+                <span className="text-gray-font text-sm">
+                  review {salonInfo.reviewCount}
+                </span>
+                <span className="text-gray-font text-sm">·</span>
+                <span className="text-gray-font text-sm">
+                  {salonInfo.distance}
+                </span>
+              </div>
+              <div className="text-gray-font text-sm">
+                {salonInfo.languages}
+              </div>
             </div>
           </div>
         </div>

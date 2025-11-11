@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from "@/components/common/Icons";
+//import { ArrowRightIcon } from "@/components/common/Icons";
 import PackageCard from "@/components/main/PackageCard";
 
 interface Package {
@@ -27,7 +27,7 @@ export default function PackageSection({
         <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
           <div className="flex items-center gap-[5px]">
             <span className="text-gray_1 text-sm">more</span>
-            <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" />
+            {/* <ArrowRightIcon width={3} height={7} color="var(--color-gray_1)" /> */}
           </div>
         </div>
       </div>

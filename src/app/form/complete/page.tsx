@@ -75,11 +75,11 @@ const DUMMY_RECOMMENDATION_GALLERIES = [
 const DUMMY_PACKAGE_SECTIONS = [
   {
     title: "How about this package?",
-    packageIndices: [0, 1], // packages 배열에서 가져올 인덱스
+    packageIndices: [0, 2], // packages 배열에서 가져올 인덱스 (3개: 0, 1, 2)
   },
   {
     title: "Looking for another Date?",
-    packageIndices: [2, 3], // packages 배열에서 가져올 인덱스
+    packageIndices: [0, 2], // packages 배열에서 가져올 인덱스 (3개: 3, 4, 5)
   },
 ];
 
@@ -155,7 +155,10 @@ export default function FormComplete() {
       {/* Main Content */}
       <div>
         {/* Tags Section */}
-        <div className="px-5">
+        <div className="flex flex-col px-5 py-1 gap-2">
+          <div className="flex items-center title-md h-11">
+            All summed up in tags
+          </div>
           <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
             {formSubmission.selected_concepts?.map(
               (concept: string, index: number) => (
