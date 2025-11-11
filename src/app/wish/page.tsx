@@ -2,13 +2,64 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRightIcon } from "@/components/common/Icons";
 import { PageLoading } from "@/components/common";
-import Image from "next/image";
 import { GapY } from "../../components/ui/gap";
-import PackageCard from "@/components/main/PackageCard";
+import RecommendationGallery from "@/components/main/RecommendationGallery";
+import PackageSection from "@/components/main/PackageSection";
 import { useUser } from "@/hooks/useAuthQueries";
 import { useUserFormSubmission } from "@/hooks/useFormQueries";
+import { useAllPackages } from "@/hooks/usePackageQueries";
+
+// TODO: 백엔드 연동 시 더미 데이터를 실제 API 응답으로 교체
+const DUMMY_RECOMMENDATION_GALLERIES = [
+  {
+    images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+    salonInfo: {
+      tags: ["aespa", "metallic", "sm"],
+      name: "DOKI MAKE SALON",
+      price: "₩ 50,000 ~",
+      rating: 4.8,
+      reviewCount: 15,
+      distance: "2.3km (Yongsan)",
+      location: "Yongsan",
+      languages: "Korean / English / Japanese",
+    },
+    packagePath: "/package/aespa-futuristic",
+  },
+  {
+    images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+    salonInfo: {
+      tags: ["girl crush", "metallic", "sm"],
+      name: "STYLE STUDIO",
+      price: "₩ 45,000 ~",
+      rating: 4.6,
+      reviewCount: 23,
+      distance: "1.8km (Gangnam)",
+      location: "Gangnam",
+      languages: "Korean / English",
+    },
+    packagePath: "/package/girl-crush",
+  },
+  {
+    images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+    salonInfo: {
+      tags: ["metallic", "girl crush"],
+      name: "GLAM BEAUTY",
+      price: "₩ 60,000 ~",
+      rating: 4.9,
+      reviewCount: 8,
+      distance: "3.2km (Hongdae)",
+      location: "Hongdae",
+      languages: "Korean / English / Japanese",
+    },
+    packagePath: "/package/glam-beauty",
+  },
+];
+
+const DUMMY_PACKAGE_SECTION = {
+  title: "How about this package?",
+  packageIndices: [0, 2], // packages 배열에서 가져올 인덱스
+};
 
 export default function Wish() {
   const router = useRouter();
@@ -19,6 +70,9 @@ export default function Wish() {
     error: formError,
   } = useUserFormSubmission(user?.id);
 
+  // 패키지 데이터 가져오기
+  const { data: packages, isLoading: packagesLoading } = useAllPackages();
+
   useEffect(() => {
     if (!userLoading && !user) {
       router.push("/login");
@@ -26,7 +80,7 @@ export default function Wish() {
   }, [user, userLoading, router]);
 
   // 로딩 상태
-  if (userLoading || formLoading) {
+  if (userLoading || formLoading || packagesLoading) {
     return <PageLoading />;
   }
 
@@ -74,116 +128,47 @@ export default function Wish() {
 
   return (
     <div className="min-h-screen text-white relative">
-      <GapY size={16} />
+      <GapY size={8} />
 
-      <GapY size={12} />
-
-      <div
-        className="flex flex-col cursor-pointer"
-        onClick={() => router.push("/package/aespa-futuristic")}
-      >
-        <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
-          <div className="w-[348px] h-[196px] relative flex-shrink-0">
-            <Image
-              src="/dummy-profile.png"
-              alt="dummy profile"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="w-[348px] h-[196px] relative flex-shrink-0">
-            <Image
-              src="/dummy-profile.png"
-              alt="dummy profile"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="w-[348px] h-[196px] relative flex-shrink-0">
-            <Image
-              src="/dummy-profile.png"
-              alt="dummy profile"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </div>
-
-        <GapY size={12} />
-
-        {/* Salon Recommendation Cards */}
-        <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2">
-          <div className="w-[372px]">
-            <div>
-              <div className="flex gap-2 mb-2">
-                <span className="text-pink-400 text-sm">#aespa</span>
-                <span className="text-pink-400 text-sm">#metallic</span>
-                <span className="text-pink-400 text-sm">#sm</span>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <h3 className="text-white title-sm font-semibold mb-2">
-                  DOKI MAKE SALON
-                </h3>
-                <span className="text-pink-400 title-sm font-semibold">
-                  ₩ 50,000 ~
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-pink-400">★</span>
-                <span className="text-white text-sm">4.8</span>
-                <span className="text-gray-400 text-sm">review 15</span>
-                <span className="text-gray-300 text-sm">2.3km (Yongsan)</span>
-              </div>
-              <div className="text-gray-400 text-xs mb-2">
-                Korean / English / Japanese
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <GapY size={12} />
-
-      <div className="flex flex-col gap-2 pl-5 bg-gray-container">
-        <div className="flex justify-between h-[44px]">
-          <h3 className="flex items-center title-md font-medium">
-            How about this package?
-          </h3>
-          <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
-            <div className="flex items-center gap-[5px]">
-              <span className="text-gray_1 text-sm">more</span>
-              <ArrowRightIcon
-                width={3}
-                height={7}
-                color="var(--color-gray_1)"
+      {/* Main Content */}
+      <div>
+        {/* RecommendationGalleries */}
+        {DUMMY_RECOMMENDATION_GALLERIES.map((gallery, index) => (
+          <div key={index}>
+            <div className="pl-5">
+              <RecommendationGallery
+                images={gallery.images}
+                salonInfo={gallery.salonInfo}
+                onClick={() => router.push(gallery.packagePath)}
               />
             </div>
+            {index < DUMMY_RECOMMENDATION_GALLERIES.length - 1 && (
+              <GapY size={4} />
+            )}
           </div>
-        </div>
-        {/* Package Cards */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-          <PackageCard
-            packageId="triples-dreamy"
-            imageSrc="/dummy-profile.png"
-            imageAlt="tripleS - Dreamy & Mystic Idol"
-            artist="tripleS"
-            location="Gapyeong"
-            title="Dreamy & Mystic Idol..."
-            onClick={handlePackageClick}
-          />
+        ))}
 
-          <PackageCard
-            packageId="triples-dreamy-2"
-            imageSrc="/dummy-profile.png"
-            imageAlt="tripleS - Dreamy & Mystic Idol"
-            artist="tripleS"
-            location="Gapyeong"
-            title="Dreamy & Mystic Idol..."
-            onClick={handlePackageClick}
-          />
-        </div>
+        <GapY size={20} />
+
+        {/* PackageSection */}
+        <PackageSection
+          title={DUMMY_PACKAGE_SECTION.title}
+          packages={
+            packages
+              ?.slice(
+                DUMMY_PACKAGE_SECTION.packageIndices[0],
+                DUMMY_PACKAGE_SECTION.packageIndices[1] + 1
+              )
+              .map(pkg => ({
+                id: pkg.id,
+                title: pkg.title,
+                artist: pkg.artist,
+                location: pkg.location,
+                imageSrc: pkg.image_src[0] || "/dummy-profile.png",
+              })) || []
+          }
+          onPackageClick={handlePackageClick}
+        />
       </div>
 
       <GapY size={24} />
