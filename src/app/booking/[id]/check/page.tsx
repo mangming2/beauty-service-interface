@@ -191,31 +191,31 @@ export default function BookingCheckPage() {
                       <h3 className="font-semibold text-white text-[18px] leading-6 truncate">
                         {component.title}
                       </h3>
-                      <div className="mt-1 flex items-center text-sm text-gray-400 gap-2">
+                      <div className="mt-1 flex items-center text-sm text-gray-400 gap-3">
                         <span className="inline-flex items-center gap-1">
                           <LocationIcon
-                            width={14}
-                            height={14}
-                            color="#9CA3AF"
+                            width={11}
+                            height={13}
+                            color="#ABA9A9"
                           />
-                          <span className="truncate">{vendor}</span>
+                          <p className="text-gray-400 text-sm">{vendor}</p>
                         </span>
                         <span className="opacity-60">·</span>
                         <span className="text-pink-font">PreBook</span>
                       </div>
                       <div className="mt-3">
-                        <p className="text-gray-300 text-sm">{guideTitle}</p>
-                        <p className="text-gray-300 text-sm">{guideDetail}</p>
+                        <p className="text-white text-sm">{guideTitle}</p>
+                        <p className="text-white text-sm">{guideDetail}</p>
                       </div>
                     </div>
-                    <ArrowRightIcon color="white" />
+                    <ArrowRightIcon width={7} height={16} color="white" />
                   </div>
                 </Link>
               );
             })}
           </div>
         </div>
-        <GapY size={8} />
+        <Divider className="h-[8px] bg-gray-container" />
         {/* Package Details */}
         <div className="flex flex-col gap-3 p-5 bg-background">
           <div className="flex items-center justify-between cursor-pointer">
