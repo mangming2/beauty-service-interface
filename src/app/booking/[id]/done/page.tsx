@@ -1,8 +1,10 @@
 import { Button } from "../../../../components/ui/button";
 import Link from "next/link";
+import { GapY } from "../../../../components/ui/gap";
 export default function BookingDonePage() {
   return (
-    <div className="text-white bg-transparent flex flex-col flex-1 ">
+    <div className="px-5 text-white bg-transparent flex flex-col flex-1 ">
+      <GapY size={40} />
       <div className="flex flex-col title-lg text-white ">
         <span>All done!</span>
         <span>Rate your booking experience wth DOKI</span>
