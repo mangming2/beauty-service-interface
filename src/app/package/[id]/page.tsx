@@ -91,9 +91,9 @@ export default function PackageDetail() {
       </div>
 
       {/* Contents : 제목 ~ 지도까지지 */}
-      <div className="flex flex-col px-5 py-4">
+      <div className="flex flex-col py-4">
         {/* Package Title and Location */}
-        <div>
+        <div className="px-5">
           <h1 className="title-md">{packageDetail.title}</h1>
           <p className="text-gray_1 text-md">{packageDetail.location}</p>
         </div>
@@ -102,16 +102,16 @@ export default function PackageDetail() {
 
         {/* Package Details Section */}
         <div>
-          <h2 className="text-lg ">Package Details</h2>
+          <h2 className="title-md px-5">Package Details</h2>
           <GapY size={12} />
           {/* Package Components */}
-          <div className="flex flex-col w-full gap-3">
+          <div className="flex flex-col w-full gap-3 px-5">
             {packageDetail.components.map(component => (
               <div key={component.id}>
                 <Card className="bg-gray-container border-solid border-[1px] border-[#2E3033] rounded-[4px] p-3">
                   <CardContent className="p-0">
                     <div className="flex gap-1 items-center">
-                      <div className="relative w-[80px] h-[80px] overflow-hidden flex-shrink-0">
+                      <div className="relative w-[96px] h-[96px] overflow-hidden flex-shrink-0">
                         <Image
                           src={component.image_src || "/dummy-profile.png"}
                           alt={component.title}
@@ -120,9 +120,9 @@ export default function PackageDetail() {
                         />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg text-white mb-1">
+                        <p className="text-lg text-white mb-1">
                           {component.title}
-                        </h3>
+                        </p>
                         <div className="flex items-center gap-1">
                           <LocationIcon
                             width={11}
@@ -148,7 +148,7 @@ export default function PackageDetail() {
 
           <GapY size={20} />
           {/* Customer Reviews */}
-          <div>
+          <div className="pl-5">
             <span className="flex items-center h-8 title-md font-bold">
               Customers review
             </span>
@@ -217,18 +217,18 @@ export default function PackageDetail() {
           <GapY size={20} />
 
           {/* Map Section */}
-          <div>
+          <div className="px-5">
             <KakaoMap
               address={packageDetail.map_address || "사당동 142-38"}
-              height="192px"
+              height="372px"
               className="mb-3"
             />
 
             {/* Distance Info */}
             <div className="flex items-center justify-center w-full h-[28px] bg-white/10 rounded-[32px]">
               <span className="text-gray-300 text-sm">
-                {packageDetail.travel_time} from the{" "}
-                <span className="text-pink-400 font-medium">
+                {packageDetail.travel_time}{" "}
+                <span className="text-primary font-medium">
                   {packageDetail.map_location}
                 </span>{" "}
               </span>
@@ -242,12 +242,15 @@ export default function PackageDetail() {
       {/* Booking Footer */}
       <div className="bg-transparent px-5 pt-2 pb-3 border-t border-gray-container">
         <div className="flex justify-between items-center">
-          <div>
+          <div className="flex flex-col gap-1">
             <p className="title-md text-white font-semibold">
               ₩ {packageDetail.price.toLocaleString()}{" "}
               <span className="text-lg">/person</span>
             </p>
-            <div className="flex items-center justify-center rounded-[32px] py-1 px-4 bg-gray-container text-white caption-sm">
+            <div
+              className="flex items-center justify-center rounded-[32px] py-1 px-4 text-white caption-sm"
+              style={{ background: "rgba(255, 255, 255, 0.16)" }}
+            >
               {packageDetail.valid_period_start} -{" "}
               {packageDetail.valid_period_end}
             </div>
