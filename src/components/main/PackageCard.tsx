@@ -33,7 +33,7 @@ export default function PackageCard({
               src={imageSrc}
               alt={imageAlt}
               fill
-              className="object-cover"
+              className="object-cover rounded-t-lg"
             />
           </div>
           <div className="px-2 py-1">

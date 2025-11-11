@@ -210,7 +210,7 @@ export default function FormComplete() {
 
           return (
             <div key={index}>
-              <div className="px-5">
+              <div className="pl-5">
                 <RecommendationGallery
                   images={gallery.images}
                   salonInfo={gallery.salonInfo}
