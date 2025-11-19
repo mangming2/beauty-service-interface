@@ -15,6 +15,7 @@ import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
 import { PopularCarousel } from "@/components/main/PopularCarousel";
 import { ConceptScrollContainer } from "@/components/main/ConceptScrollContainer";
+import { Loading } from "../components/common";
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -47,6 +48,8 @@ export const generateMetadata = (): Metadata => {
 export default function Home() {
   return (
     <div className="min-h-screen text-white">
+      <Loading showLogo={false} lottieSize={{ width: 300, height: 300 }} />
+      <Loading showLogo={false} lottieSize={{ width: 200, height: 200 }} />
       <GapY size={24} />
       {/* Main Content */}
       {/* Most Popular Section */}

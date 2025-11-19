@@ -48,7 +48,7 @@ export function Loading({
   className,
   logoPath = "/main-logo.png",
   logoSize = { width: 196, height: 54 },
-  lottieSrc = "/dummy-loading.lottie",
+  lottieSrc = "/logo-loading.lottie",
   lottieSize,
 }: LoadingProps) {
   const containerClasses = cn(
