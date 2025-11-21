@@ -39,7 +39,7 @@ export default function FormLoadingPage() {
             </div>
             <div className="self-center">
               <LottieAnimation
-                src="/dummy-loading.lottie"
+                src="/logo-loading.lottie"
                 width={100}
                 height={100}
               />
