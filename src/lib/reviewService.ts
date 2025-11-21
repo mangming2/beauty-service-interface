@@ -9,6 +9,7 @@ export interface PackageReview {
   comment: string;
   avatar_src?: string;
   created_at?: string;
+  package_title?: string; // 패키지 제목 (사용자 리뷰 목록용)
 }
 
 export interface ReviewSummary {
@@ -134,4 +135,82 @@ export async function createReview(
   }
 
   return data;
+}
+
+// 특정 사용자의 리뷰 목록 조회 (패키지 정보 포함)
+export async function getUserReviews(userId: string): Promise<PackageReview[]> {
+  try {
+    // 먼저 리뷰 데이터를 가져옴
+    const { data: reviews, error: reviewsError } = await supabase
+      .from("package_reviews")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (reviewsError) {
+      console.error("User reviews fetch error:", reviewsError);
+      if (reviewsError.code === "PGRST116") {
+        return [];
+      }
+      throw new Error(`Failed to fetch user reviews: ${reviewsError.message}`);
+    }
+
+    if (!reviews || reviews.length === 0) {
+      return [];
+    }
+
+    // 각 리뷰의 패키지 정보를 가져옴
+    const packageIds = [...new Set(reviews.map(review => review.package_id))];
+
+    const { data: packages, error: packagesError } = await supabase
+      .from("packages")
+      .select("id, title")
+      .in("id", packageIds);
+
+    if (packagesError) {
+      console.warn("Failed to fetch package titles:", packagesError);
+    }
+
+    // 리뷰와 패키지 정보를 결합
+    const reviewsWithPackage = reviews.map(review => {
+      const packageData = packages?.find(p => p.id === review.package_id);
+      return {
+        ...review,
+        package_title: packageData?.title || "Unknown Package",
+      };
+    });
+
+    return reviewsWithPackage;
+  } catch (error) {
+    console.error("Get user reviews error:", error);
+    throw error;
+  }
+}
+
+// 리뷰 삭제
+export async function deleteReview(reviewId: string): Promise<void> {
+  const { error } = await supabase
+    .from("package_reviews")
+    .delete()
+    .eq("id", reviewId);
+
+  if (error) {
+    throw new Error(`Failed to delete review: ${error.message}`);
+  }
+}
+
+// 여러 리뷰 삭제
+export async function deleteReviews(reviewIds: string[]): Promise<void> {
+  if (reviewIds.length === 0) {
+    return;
+  }
+
+  const { error } = await supabase
+    .from("package_reviews")
+    .delete()
+    .in("id", reviewIds);
+
+  if (error) {
+    throw new Error(`Failed to delete reviews: ${error.message}`);
+  }
 }
