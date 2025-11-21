@@ -17,7 +17,7 @@ export default function AuthCallbackPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <LottieAnimation
-            src="/dummy-loading.lottie"
+            src="/logo-loading.lottie"
             width={120}
             height={120}
             className="mx-auto"

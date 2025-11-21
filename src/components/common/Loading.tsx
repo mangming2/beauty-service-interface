@@ -143,7 +143,7 @@ export function InlineLoading({
 }) {
   return (
     <div className="flex items-center justify-center gap-2 text-white">
-      <LottieAnimation src="/dummy-loading.lottie" width={16} height={16} />
+      <LottieAnimation src="/logo-loading.lottie" width={16} height={16} />
       <span className="text-sm">{message}</span>
     </div>
   );
