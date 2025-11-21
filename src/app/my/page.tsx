@@ -10,13 +10,15 @@ import Schedule from "@/components/my/Schedule";
 import { PageLoading } from "@/components/common";
 import { EditIcon } from "@/components/common/Icons";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { GapY } from "../../components/ui/gap";
 
 export default function MyPage() {
   // React Query hooks 사용
   const { data: user, isLoading: userLoading } = useUser();
   const { data: profile, isLoading: profileLoading } = useUserProfile(user?.id);
   const signOutMutation = useSignOut();
-
+  const router = useRouter();
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
   const userProfile = {
@@ -38,11 +40,11 @@ export default function MyPage() {
   }
 
   return (
-    <div className="min-h-screen text-white bg-black">
+    <div className="min-h-screen text-white bg-background">
       {/* Header with Profile */}
-      <div className="px-4 py-6">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden">
+      <div className="px-4 pt-6 pb-3">
+        <div className="flex gap-4 mb-6">
+          <div className="relative w-20 h-20 rounded-full overflow-hidden">
             <Image
               src={userProfile.avatar}
               alt="Profile"
@@ -59,17 +61,30 @@ export default function MyPage() {
             </div>
             <p className="text-gray-400 text-sm">{userProfile.email}</p>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => signOutMutation.mutate()}
-            disabled={signOutMutation.isPending}
-            className="text-gray-400 hover:text-white"
-          >
-            {signOutMutation.isPending ? "..." : "로그아웃"}
-          </Button>
         </div>
       </div>
+
+      <div className="flex gap-2">
+        <Button
+          variant="graySmall"
+          onClick={() => router.push("/my/reviews")}
+          width={80}
+          height={32}
+        >
+          My reviews
+        </Button>
+        <Button
+          variant="graySmall"
+          onClick={() => signOutMutation.mutate()}
+          disabled={signOutMutation.isPending}
+          width={80}
+          height={32}
+        >
+          {signOutMutation.isPending ? "..." : "로그아웃"}
+        </Button>
+      </div>
+
+      <GapY size={20} />
 
       {/* Tabs Navigation */}
       <div className="px-4">
@@ -77,13 +92,13 @@ export default function MyPage() {
           <TabsList className="bg-transparent p-0 gap-3 border-b border-gray-700 rounded-none">
             <TabsTrigger
               value="booking-history"
-              className="relative bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-font data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-font"
+              className="relative title-sm bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-font data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-font"
             >
               Booking History
             </TabsTrigger>
             <TabsTrigger
               value="schedule"
-              className="relative bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-font data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-font"
+              className="relative title-sm bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-font data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-font"
             >
               Schedule
             </TabsTrigger>

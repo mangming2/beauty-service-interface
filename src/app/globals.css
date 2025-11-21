@@ -42,6 +42,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-gray: var(--gray);
+  --color-gray-2: var(--gray-2);
   --color-gray-font: var(--gray-font);
   --color-gray_1: var(--gray_1);
   --color-gray-container: var(--gray-container);
@@ -115,6 +116,7 @@
   --gray: #4a4b52;
   --gray-font: #d2d3d3;
   --gray_1: #bcbcbc;
+  --gray-2: #b7b7b7;
 }
 
 @layer base {

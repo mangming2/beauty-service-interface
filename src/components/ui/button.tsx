@@ -20,6 +20,8 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-none hover:text-accent-foreground dark:hover:bg-accent/50 cursor-pointer",
         gray: "bg-gray text-white hover:bg-gray-600 disabled:bg-gray-700 disabled:cursor-not-allowed disabled:text-white",
+        graySmall:
+          "bg-gray text-white hover:bg-gray-600 disabled:bg-gray-700 disabled:cursor-not-allowed disabled:text-white rounded-[2px] p-1",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -41,17 +43,31 @@ function Button({
   variant,
   size,
   asChild = false,
+  width,
+  height,
+  style,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    width?: number | string;
+    height?: number | string;
   }) {
   const Comp = asChild ? Slot : "button";
+
+  const customStyle = {
+    ...style,
+    ...(width && { width: typeof width === "number" ? `${width}px` : width }),
+    ...(height && {
+      height: typeof height === "number" ? `${height}px` : height,
+    }),
+  };
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      style={customStyle}
       {...props}
     />
   );
