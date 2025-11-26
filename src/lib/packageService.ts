@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { apiGet } from "./apiClient";
 
 // 타입 정의
 export interface PackageComponent {
@@ -57,16 +57,7 @@ export interface PackageDetail extends Package {
  */
 export async function getAllPackages(): Promise<Package[]> {
   try {
-    const { data, error } = await supabase
-      .from("packages")
-      .select("*")
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      throw error;
-    }
-
+    const data = await apiGet<Package[]>("/packages?is_active=true");
     return data || [];
   } catch (error) {
     throw error;
@@ -80,69 +71,17 @@ export async function getPackageDetail(
   packageId: string
 ): Promise<PackageDetail | null> {
   try {
-    // 패키지 기본 정보와 관련 데이터들을 병렬로 가져오기
-    const [
-      { data: packageData, error: packageError },
-      { data: components },
-      { data: reviews },
-    ] = await Promise.all([
-      supabase
-        .from("packages")
-        .select("*")
-        .eq("id", packageId)
-        .eq("is_active", true)
-        .single(),
-      supabase
-        .from("package_components")
-        .select("*")
-        .eq("package_id", packageId),
-      supabase.from("package_reviews").select("*").eq("package_id", packageId),
-    ]);
+    const data = await apiGet<PackageDetail>(`/packages/${packageId}`);
 
-    if (packageError) {
-      if (packageError.code === "PGRST116") {
-        return null; // 패키지를 찾을 수 없음
-      }
-      throw packageError;
-    }
-
-    if (!packageData) {
+    if (!data) {
       return null;
     }
 
-    // 리뷰 데이터에 프로필 정보 추가
-    let reviewsWithProfile = reviews || [];
-    if (reviews && reviews.length > 0) {
-      // 각 리뷰의 사용자 프로필 정보를 가져옴
-      const userIds = [...new Set(reviews.map(review => review.user_id))];
-
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, full_name, avatar_src")
-        .in("id", userIds);
-
-      // 리뷰와 프로필 정보를 결합
-      reviewsWithProfile = reviews.map(review => {
-        const profile = profiles?.find(p => p.id === review.user_id);
-        return {
-          ...review,
-          username: profile?.full_name || review.username,
-          avatar_src: profile?.avatar_src || null,
-        };
-      });
+    return data;
+  } catch (error: any) {
+    if (error?.status === 404) {
+      return null; // 패키지를 찾을 수 없음
     }
-
-    const result = {
-      ...packageData,
-      components: components || [],
-      included: packageData.included || [],
-      not_included: packageData.not_included || [],
-      checklist: packageData.checklist || [],
-      reviews: reviewsWithProfile,
-    };
-
-    return result;
-  } catch (error) {
     throw error;
   }
 }
@@ -152,17 +91,9 @@ export async function getPackageDetail(
  */
 export async function getPackagesByArtist(artist: string): Promise<Package[]> {
   try {
-    const { data, error } = await supabase
-      .from("packages")
-      .select("*")
-      .eq("artist", artist)
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      throw error;
-    }
-
+    const data = await apiGet<Package[]>(
+      `/packages?artist=${encodeURIComponent(artist)}&is_active=true`
+    );
     return data || [];
   } catch (error) {
     throw error;
@@ -174,17 +105,9 @@ export async function getPackagesByArtist(artist: string): Promise<Package[]> {
  */
 export async function getPackagesByTag(tag: string): Promise<Package[]> {
   try {
-    const { data, error } = await supabase
-      .from("packages")
-      .select("*")
-      .contains("tags", [tag])
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      throw error;
-    }
-
+    const data = await apiGet<Package[]>(
+      `/packages?tag=${encodeURIComponent(tag)}&is_active=true`
+    );
     return data || [];
   } catch (error) {
     throw error;
@@ -196,19 +119,9 @@ export async function getPackagesByTag(tag: string): Promise<Package[]> {
  */
 export async function searchPackages(query: string): Promise<Package[]> {
   try {
-    const { data, error } = await supabase
-      .from("packages")
-      .select("*")
-      .or(
-        `title.ilike.%${query}%,description.ilike.%${query}%,artist.ilike.%${query}%,concept.ilike.%${query}%`
-      )
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      throw error;
-    }
-
+    const data = await apiGet<Package[]>(
+      `/packages/search?q=${encodeURIComponent(query)}&is_active=true`
+    );
     return data || [];
   } catch (error) {
     throw error;
