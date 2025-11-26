@@ -64,7 +64,7 @@ export default function MyPage() {
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex px-3 gap-2">
         <Button
           variant="graySmall"
           onClick={() => router.push("/my/reviews")}

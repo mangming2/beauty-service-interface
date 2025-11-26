@@ -11,7 +11,7 @@ import {
   useUserProfile,
 } from "@/hooks/useAuthQueries";
 import { PageLoading } from "@/components/common";
-import { LanguageSelector } from "@/components/common";
+import { GapY } from "../../../components/ui/gap";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -75,15 +75,10 @@ export default function EditProfilePage() {
   const isFormValid = isNicknameValid && !updateProfileMutation.isPending;
 
   return (
-    <div className="min-h-screen text-white bg-black">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-6">
-        <h1 className="text-xl font-bold">My Page</h1>
-        <LanguageSelector />
-      </div>
-
+    <div className="text-white bg-transparent flex flex-col flex-1">
+      <GapY size={100} />
       {/* Profile Image Section */}
-      <div className="flex flex-col items-center px-4 py-8">
+      <div className="flex flex-col items-center px-4">
         <div className="relative w-32 h-32 rounded-full border border-gray-300 overflow-hidden">
           {profile?.avatar_src || user?.user_metadata?.avatar_url ? (
             <Image
@@ -110,6 +105,7 @@ export default function EditProfilePage() {
           )}
         </div>
       </div>
+      <GapY size={62} />
 
       {/* Nickname Input Section */}
       <div className="px-4 py-4">
@@ -121,27 +117,28 @@ export default function EditProfilePage() {
             placeholder="Doki01"
             className="w-full bg-gray-800 border-gray-600 text-white placeholder-gray-400"
           />
-          <p className="text-gray-400 text-sm mt-2 text-center">
+          <p className="text-gray-400 text-sm mt-2">
             Please enter 2-10 letters or numbers.
           </p>
         </div>
       </div>
 
       {/* Complete Button */}
-      <div className="px-4 py-8">
-        <div className="max-w-sm mx-auto">
-          <Button
-            onClick={handleComplete}
-            disabled={!isFormValid}
-            className={`w-full h-12 rounded-lg font-medium transition-colors ${
-              isFormValid
-                ? "bg-pink-500 hover:bg-pink-600 text-white"
-                : "bg-gray-600 text-gray-400 cursor-not-allowed"
-            }`}
-          >
-            {updateProfileMutation.isPending ? "Updating..." : "Complete"}
-          </Button>
-        </div>
+      <div
+        className="mt-auto py-4 px-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
+        <Button
+          onClick={handleComplete}
+          disabled={!isFormValid}
+          className={`w-full h-12 rounded-lg font-medium transition-colors ${
+            isFormValid
+              ? "bg-pink-500 hover:bg-pink-600 text-white"
+              : "bg-gray-600 text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          {updateProfileMutation.isPending ? "Updating..." : "Complete"}
+        </Button>
       </div>
     </div>
   );

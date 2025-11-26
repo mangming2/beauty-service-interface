@@ -16,13 +16,13 @@ const NORMAL_PAGES = [
   "/recommend",
   "/package",
   "/my/reviews",
-  "/my/edit",
   "/booking",
   "/form/step1",
   "/form/step2",
   "/form/step3",
   "/form/step4",
   "/form/step5",
+  "/my/edit",
 ];
 
 // Header/Footer가 필요 없는 특수 페이지
@@ -53,7 +53,13 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
 
   // 특수 페이지는 레이아웃 없이 그대로 렌더링
   if (isSpecial) {
-    return <>{children}</>;
+    return (
+      <div
+        className={`max-w-[412px] mx-auto min-h-screen relative flex flex-col`}
+      >
+        <div className="flex-1 flex flex-col">{children}</div>
+      </div>
+    );
   }
 
   // 일반 페이지는 Header/Footer 포함
