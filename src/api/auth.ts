@@ -1,52 +1,77 @@
-import { supabase } from "@/lib/supabase";
-import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import {
+  apiGet,
+  apiPost,
+  apiPut,
+  getSession as getSessionFromClient,
+} from "@/lib/apiClient";
+
+// 타입 정의
+export interface User {
+  id: string;
+  email?: string;
+  user_metadata?: Record<string, unknown>;
+}
+
+export interface Session {
+  user: User;
+  access_token?: string;
+  expires_at?: number;
+}
+
+export interface Profile {
+  id: string;
+  full_name?: string;
+  phone?: string;
+  birth_date?: string;
+  avatar_src?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type AuthChangeEvent =
+  | "SIGNED_IN"
+  | "SIGNED_OUT"
+  | "TOKEN_REFRESHED"
+  | "USER_UPDATED";
 
 // 사용자 정보 조회
-export const getUser = async () => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    throw error;
+export const getUser = async (): Promise<User | null> => {
+  try {
+    const session = await getSession();
+    return session?.user || null;
+  } catch (error) {
+    console.error("Get user error:", error);
+    return null;
   }
-
-  return user;
 };
 
 // 세션 정보 조회
-export const getSession = async () => {
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
-
-  if (error) {
-    throw error;
-  }
-
-  return session;
+export const getSession = async (): Promise<Session | null> => {
+  return await getSessionFromClient();
 };
 
 // 사용자 프로필 조회
-export const getUserProfile = async (userId: string) => {
+export const getUserProfile = async (
+  userId: string
+): Promise<Profile | null> => {
   if (!userId) {
     throw new Error("User ID is required");
   }
 
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  if (error && error.code !== "PGRST116") {
-    // PGRST116은 "no rows returned" 에러
+  try {
+    const data = await apiGet<Profile>(`/profiles/${userId}`);
+    return data;
+  } catch (error: unknown) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "status" in error &&
+      (error as { status: number }).status === 404
+    ) {
+      return null;
+    }
     throw error;
   }
-
-  return data;
 };
 
 // Google 로그인 후 프로필 자동 생성
@@ -54,7 +79,7 @@ export const createUserProfile = async (user: {
   id: string;
   user_metadata?: Record<string, unknown>;
   email?: string;
-}) => {
+}): Promise<Profile> => {
   if (!user) {
     throw new Error("User is required");
   }
@@ -74,7 +99,6 @@ export const createUserProfile = async (user: {
         user.user_metadata?.picture_url)
     ) {
       const updatedProfileData = {
-        id: user.id,
         avatar_src:
           user.user_metadata?.avatar_url ||
           user.user_metadata?.picture ||
@@ -82,19 +106,16 @@ export const createUserProfile = async (user: {
         updated_at: new Date().toISOString(),
       };
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .update(updatedProfileData)
-        .eq("id", user.id)
-        .select()
-        .single();
-
-      if (error) {
+      try {
+        const data = await apiPut<Profile>(
+          `/profiles/${user.id}`,
+          updatedProfileData
+        );
+        return data;
+      } catch (error) {
         console.error("Error updating profile avatar:", error);
         return existingProfile;
       }
-
-      return data;
     }
 
     return existingProfile;
@@ -119,42 +140,40 @@ export const createUserProfile = async (user: {
     updated_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabase
-    .from("profiles")
-    .upsert(profileData, {
-      onConflict: "id",
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error upserting profile:", error);
+  try {
+    const data = await apiPost<Profile>("/profiles", profileData);
+    console.log("Profile created successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("Error creating profile:", error);
     throw error;
   }
-
-  console.log("Profile upserted successfully:", data);
-  return data;
 };
 
 // Google OAuth 로그인
-export const signInWithGoogle = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-    },
-  });
+export const signInWithGoogle = async (): Promise<void> => {
+  // Google OAuth 로그인은 백엔드에서 처리하도록 리다이렉트
+  const redirectUrl = `${window.location.origin}/auth/callback`;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
-  if (error) {
-    throw error;
-  }
+  window.location.href = `${apiUrl}/auth/google?redirect_uri=${encodeURIComponent(redirectUrl)}`;
 };
 
 // 로그아웃
-export const signOut = async () => {
-  const { error } = await supabase.auth.signOut();
+export const signOut = async (): Promise<void> => {
+  try {
+    await apiPost("/auth/logout");
 
-  if (error) {
+    // 로컬 스토리지에서 토큰 제거
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth_token");
+    }
+  } catch (error) {
+    console.error("Sign out error:", error);
+    // 에러가 발생해도 토큰은 제거
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth_token");
+    }
     throw error;
   }
 };
@@ -163,83 +182,28 @@ export const signOut = async () => {
 export const updateProfile = async (
   userId: string,
   profileData: Record<string, unknown>
-) => {
-  // 1. profiles 테이블 업데이트
-  const { data, error } = await supabase
-    .from("profiles")
-    .upsert(
-      {
-        id: userId,
-        ...profileData,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "id",
-      }
-    )
-    .select()
-    .single();
-
-  if (error) {
+): Promise<Profile> => {
+  try {
+    const data = await apiPut<Profile>(`/profiles/${userId}`, {
+      ...profileData,
+      updated_at: new Date().toISOString(),
+    });
+    return data;
+  } catch (error) {
     throw error;
   }
-
-  // 2. auth.users.user_metadata도 함께 업데이트 (동기화)
-  if (profileData.full_name) {
-    const { error: authError } = await supabase.auth.updateUser({
-      data: {
-        full_name: profileData.full_name,
-      },
-    });
-
-    if (authError) {
-      console.warn("Failed to update auth user metadata:", authError);
-      // auth 업데이트 실패해도 profiles 업데이트는 성공했으므로 계속 진행
-    }
-  }
-
-  return data;
 };
 
 // 기존 사용자들의 avatar_src 업데이트 (관리자용)
 export const updateExistingUserAvatars = async () => {
   try {
-    // avatar_src가 null인 모든 프로필 조회
-    const { data: profilesWithoutAvatar, error: fetchError } = await supabase
-      .from("profiles")
-      .select("id")
-      .is("avatar_src", null);
-
-    if (fetchError) {
-      throw fetchError;
-    }
-
-    if (!profilesWithoutAvatar || profilesWithoutAvatar.length === 0) {
-      console.log("No profiles found without avatar_src");
-      return { updated: 0, message: "No profiles need updating" };
-    }
-
+    // 백엔드 API로 대체 필요 (현재는 클라이언트에서 직접 처리 불가)
     console.log(
-      `Found ${profilesWithoutAvatar.length} profiles without avatar_src`
+      "updateExistingUserAvatars: This function needs backend implementation"
     );
-
-    // 각 사용자의 auth 정보에서 avatar URL 가져와서 업데이트
-    const updatedCount = 0;
-    for (const profile of profilesWithoutAvatar) {
-      try {
-        // auth.users 테이블에서 user_metadata 조회 (이건 직접 접근이 어려우므로)
-        // 대신 사용자가 다시 로그인할 때 자동으로 업데이트되도록 함
-        console.log(
-          `Profile ${profile.id} needs avatar update - will be updated on next login`
-        );
-      } catch (error) {
-        console.error(`Error processing profile ${profile.id}:`, error);
-      }
-    }
-
     return {
-      updated: updatedCount,
-      message: `${profilesWithoutAvatar.length} profiles will be updated on next login`,
+      updated: 0,
+      message: "This function needs backend implementation",
     };
   } catch (error) {
     console.error("Error updating existing user avatars:", error);
@@ -247,13 +211,36 @@ export const updateExistingUserAvatars = async () => {
   }
 };
 
-// 인증 상태 변경 리스너 설정
+// 인증 상태 변경 리스너 설정 (일반 백엔드에서는 폴링 또는 WebSocket 사용)
+let authStateListeners: Array<
+  (event: AuthChangeEvent, session: Session | null) => void
+> = [];
+
 export const onAuthStateChange = (
   callback: (event: AuthChangeEvent, session: Session | null) => void
 ) => {
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange(callback);
+  authStateListeners.push(callback);
 
-  return subscription;
+  // 주기적으로 세션 확인 (간단한 구현)
+  const checkInterval = setInterval(async () => {
+    try {
+      const session = await getSessionFromClient();
+      if (session) {
+        callback("TOKEN_REFRESHED", session);
+      } else {
+        callback("SIGNED_OUT", null);
+      }
+    } catch {
+      callback("SIGNED_OUT", null);
+    }
+  }, 30000); // 30초마다 확인
+
+  return {
+    unsubscribe: () => {
+      authStateListeners = authStateListeners.filter(
+        listener => listener !== callback
+      );
+      clearInterval(checkInterval);
+    },
+  };
 };
