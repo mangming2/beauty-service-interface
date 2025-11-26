@@ -7,6 +7,8 @@ export const Header = () => {
   const pathname = usePathname();
   const isFormPage = pathname.startsWith("/form");
   const isWishPage = pathname === "/wish";
+  const isMyPage = pathname === "/my";
+  const isMyEditPage = pathname === "/my/edit";
 
   return (
     <header>
@@ -20,7 +22,10 @@ export const Header = () => {
           <h1 className="text-white h-6 title-md">My Idol Form</h1>
         )}
         {isWishPage && <h1 className="text-white h-6 title-md">Wish list</h1>}
-        {!isFormPage && !isWishPage && (
+        {(isMyEditPage || isMyPage) && (
+          <h1 className="text-white h-6 title-md">My Page</h1>
+        )}
+        {!isFormPage && !isWishPage && !isMyEditPage && !isMyPage && (
           <Image src="/main-logo.png" alt="Main Logo" width={66} height={18} />
         )}
         <LanguageSelector />
