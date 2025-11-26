@@ -43,12 +43,12 @@ export default function NotFound() {
           boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)",
         }}
       >
-        <Link href="/login">
+        <Link href="/">
           <Button
             variant="default"
             className="w-full h-12 text-lg font-semibold"
           >
-            Back to login page
+            Back to main page
           </Button>
         </Link>
       </div>

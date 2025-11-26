@@ -66,7 +66,7 @@ export default function Error({ error }: ErrorProps) {
             variant="default"
             className="w-full h-12 text-lg font-semibold"
           >
-            Back to login page
+            Back to main page
           </Button>
         </Link>
       </div>
