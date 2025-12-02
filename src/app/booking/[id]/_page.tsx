@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRightIcon } from "@/components/common/Icons";
@@ -102,16 +103,7 @@ export default function BookingPage() {
   }, []);
 
   if (!bookingPackage) {
-    return (
-      <div className="min-h-screen text-white bg-black flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold mb-4">Package not found</h1>
-          <Button onClick={() => router.push("/form/complete")}>
-            Go back to packages
-          </Button>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const handleBack = () => {

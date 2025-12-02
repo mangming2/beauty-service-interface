@@ -1,7 +1,7 @@
 "use client";
 
-import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Icons } from "../common/Icons";
 
 interface StarRatingProps {
   rating: number;
@@ -30,14 +30,8 @@ export function StarRating({
     }
   };
 
-  const handleStarHover = () => {
-    if (!readonly) {
-      // 호버 효과는 필요시 추가 구현
-    }
-  };
-
   return (
-    <div className={cn("flex items-center gap-1", className)}>
+    <div className={cn("flex items-center gap-3", className)}>
       {Array.from({ length: 5 }, (_, index) => {
         const starValue = index + 1;
         const isFilled = starValue <= rating;
@@ -47,21 +41,15 @@ export function StarRating({
             key={index}
             type="button"
             onClick={() => handleStarClick(starValue)}
-            onMouseEnter={() => handleStarHover()}
             disabled={readonly}
             className={cn(
-              "transition-colors duration-200",
-              !readonly && "hover:scale-110 cursor-pointer",
+              !readonly && "cursor-pointer",
               readonly && "cursor-default"
             )}
           >
-            <Star
-              className={cn(
-                sizeClasses[size],
-                isFilled
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-400 hover:text-yellow-300"
-              )}
+            <Icons.star
+              color={isFilled ? "#facc15" : "#4A4B52"}
+              className={sizeClasses[size]}
             />
           </button>
         );

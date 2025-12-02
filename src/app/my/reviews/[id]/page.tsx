@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { usePackageDetail } from "@/hooks/usePackageQueries";
 import { useCreateReview } from "@/hooks/useReviewQueries";
@@ -11,6 +11,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 import { format } from "date-fns";
+import { GapY } from "@/components/ui/gap";
+import { Divider } from "@/components/ui/divider";
 
 export default function CreateReviewPage() {
   const params = useParams();
@@ -62,10 +64,6 @@ export default function CreateReviewPage() {
     }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   if (packageLoading || userLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -75,132 +73,107 @@ export default function CreateReviewPage() {
   }
 
   if (!packageDetail) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-center">
-          <p className="text-lg">패키지를 찾을 수 없습니다.</p>
-          <Button onClick={handleBack} className="mt-4">
-            돌아가기
-          </Button>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleBack}
-          className="p-0 h-auto"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.5 12.5L5.5 8L10.5 3.5"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Button>
-        <h1 className="text-lg font-semibold">리뷰 작성</h1>
-        <div className="w-6"></div>
-      </div>
-
-      <div className="container mx-auto px-4 py-6 max-w-md">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Rating Section */}
-          <div className="text-center">
-            <h2 className="text-xl font-bold mb-4">
-              How did you like the package?
-            </h2>
-            <StarRating
-              rating={rating}
-              onRatingChange={setRating}
-              size="lg"
-              className="justify-center"
-            />
+    <div className="text-white bg-transparent flex flex-col flex-1">
+      <form onSubmit={handleSubmit} className="flex flex-col flex-1">
+        {/* Rating Section */}
+        <div>
+          <div className="flex flex-col p-5">
+            <h2 className="title-lg mb-4">How did you like the package?</h2>
           </div>
+          <GapY size={20} />
+          <StarRating
+            rating={rating}
+            onRatingChange={setRating}
+            size="lg"
+            className="justify-center"
+          />
+        </div>
 
-          {/* Package Details */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Your Package</h3>
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-4">
-                <div className="flex gap-3">
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                    <Image
-                      src={packageDetail.image_src[0] || "/dummy-profile.png"}
-                      alt={packageDetail.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-white mb-1">
-                      {packageDetail.title}
-                    </h4>
-                    <p className="text-gray-400 text-sm mb-1">
-                      {packageDetail.location}
-                    </p>
-                    <p className="text-gray-400 text-sm">
-                      {format(new Date(), "yy.MM.dd")}
-                    </p>
-                  </div>
+        <GapY size={20} />
+
+        {/* Package Details */}
+        <div className="px-5">
+          <h3 className="title-sm">Your Package</h3>
+          <GapY size={12} />
+          <Card className="bg-transparent border-none">
+            <CardContent className="p-0">
+              <div className="flex gap-2">
+                <div className="relative w-20 h-20 overflow-hidden flex-shrink-0">
+                  <Image
+                    src={packageDetail.image_src[0] || "/dummy-profile.png"}
+                    alt={packageDetail.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex-1">
+                  <h4 className="text-lg text-white truncate">
+                    {packageDetail.title}
+                  </h4>
+                  <p className="text-sm text-gray-font">
+                    {packageDetail.location}
+                  </p>
+                  <GapY size={20} />
+                  <p className="caption-md text-gray-400">
+                    {format(new Date(), "yy.MM.dd")}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Divider height={8} />
+
+        {/* Review Input Section */}
+        <div>
+          <div className="flex py-3 px-5">
+            <h3 className="title-sm">Your Review</h3>
           </div>
 
-          {/* Review Input Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Your Review</h3>
-
-            {/* Comment Input */}
-            <div>
-              <textarea
-                placeholder="Share your detailed review!"
-                value={comment}
-                onChange={e => setComment(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-pink-500 resize-none"
-                rows={6}
-                maxLength={300}
-              />
-              <div className="text-right text-gray-400 text-sm mt-2">
-                {comment.length}/300
-              </div>
+          {/* Comment Input */}
+          <div className="px-5">
+            <textarea
+              placeholder="Share your detailed review!"
+              value={comment}
+              onChange={e => setComment(e.target.value)}
+              className="h-[85px] w-full px-4 py-3 rounded-1 bg-gray-outline border-none text-white placeholder-gray-400 focus:outline-none focus:border-pink-500 resize-none"
+              rows={6}
+              maxLength={300}
+            />
+            <div className="text-right text-gray-400 text-sm mt-2">
+              {comment.length}/300
             </div>
           </div>
+        </div>
 
-          {/* Submit Button */}
-          <div className="pt-4">
-            <Button
-              type="submit"
-              className="w-full bg-pink-500 hover:bg-pink-600 h-[52px] text-white font-medium"
-              disabled={createReviewMutation.isPending}
-            >
-              {createReviewMutation.isPending ? (
-                <div className="flex items-center gap-2">
-                  <Spinner className="w-4 h-4" />
-                  저장 중...
-                </div>
-              ) : (
-                "Save"
-              )}
-            </Button>
-          </div>
-        </form>
-      </div>
+        {/* Submit Button */}
+        <div
+          className="mt-auto py-4 px-5"
+          style={{
+            boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)",
+          }}
+        >
+          <Button
+            type="submit"
+            className="w-full h-[52px] text-lg"
+            disabled={createReviewMutation.isPending}
+          >
+            {createReviewMutation.isPending ? (
+              <div className="flex items-center gap-2">
+                <Spinner className="w-4 h-4" />
+                저장 중...
+              </div>
+            ) : (
+              "Save"
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -141,7 +141,7 @@ export default function BookingCheckPage() {
 
         <GapY size={16} />
 
-        <Divider className="h-[8px] bg-gray-container" />
+        <Divider height={8} className="bg-gray-container" />
 
         {/* Order Status */}
         <div className="flex flex-col p-5">
@@ -215,7 +215,7 @@ export default function BookingCheckPage() {
             })}
           </div>
         </div>
-        <Divider className="h-[8px] bg-gray-container" />
+        <Divider height={8} className="bg-gray-container" />
         {/* Package Details */}
         <div className="flex flex-col gap-3 p-5 bg-background">
           <div className="flex items-center justify-between cursor-pointer">
