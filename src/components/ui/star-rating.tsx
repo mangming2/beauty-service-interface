@@ -24,6 +24,12 @@ export function StarRating({
     lg: "w-8 h-8",
   };
 
+  const gapClasses = {
+    sm: "gap-1",
+    md: "gap-2",
+    lg: "gap-3",
+  };
+
   const handleStarClick = (starRating: number) => {
     if (!readonly && onRatingChange) {
       onRatingChange(starRating);
@@ -31,7 +37,7 @@ export function StarRating({
   };
 
   return (
-    <div className={cn("flex items-center gap-3", className)}>
+    <div className={cn("flex items-center", gapClasses[size], className)}>
       {Array.from({ length: 5 }, (_, index) => {
         const starValue = index + 1;
         const isFilled = starValue <= rating;

@@ -1,18 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useAuthQueries";
 import { useUserReviews, useDeleteReviews } from "@/hooks/useReviewQueries";
 import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { PageLoading } from "@/components/common";
 import { format } from "date-fns";
 import { Check } from "lucide-react";
 
 export default function MyReviewsPage() {
-  const router = useRouter();
   const { data: user, isLoading: userLoading } = useUser();
   const { data: reviews, isLoading: reviewsLoading } = useUserReviews(
     user?.id || ""
@@ -63,14 +60,6 @@ export default function MyReviewsPage() {
     setSelectedReviews(newSelected);
   };
 
-  const handleSelectAll = () => {
-    if (selectedReviews.size === reviews?.length) {
-      setSelectedReviews(new Set());
-    } else {
-      setSelectedReviews(new Set(reviews?.map(r => r.id) || []));
-    }
-  };
-
   const handleDeleteSelected = async () => {
     if (selectedReviews.size === 0) return;
 
@@ -90,43 +79,16 @@ export default function MyReviewsPage() {
     }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <div className="min-h-screen text-white bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleBack}
-          className="p-0 h-auto"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.5 12.5L5.5 8L10.5 3.5"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Button>
-        <h1 className="text-lg font-semibold">My Reviews</h1>
+      <div className="flex justify-end px-4 py-3">
         {!isEditMode ? (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsEditMode(true)}
-            className="text-white"
+            className="text-disabled"
           >
             Edit
           </Button>
@@ -138,7 +100,7 @@ export default function MyReviewsPage() {
               setIsEditMode(false);
               setSelectedReviews(new Set());
             }}
-            className="text-white"
+            className="text-disabled"
           >
             Cancel
           </Button>
@@ -147,17 +109,7 @@ export default function MyReviewsPage() {
 
       {/* Edit Mode Actions */}
       {isEditMode && (
-        <div className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleSelectAll}
-            className="text-white"
-          >
-            {selectedReviews.size === reviews?.length
-              ? "Deselect All"
-              : "Select All"}
-          </Button>
+        <div className="flex justify-end px-5">
           <Button
             variant="ghost"
             size="sm"
@@ -167,14 +119,7 @@ export default function MyReviewsPage() {
             }
             className="text-white disabled:text-gray-500"
           >
-            {deleteReviewsMutation.isPending ? (
-              <div className="flex items-center gap-2">
-                <Spinner className="w-4 h-4" />
-                삭제 중...
-              </div>
-            ) : (
-              `Delete Selected${selectedReviews.size > 0 ? ` · ${selectedReviews.size}` : ""}`
-            )}
+            {`Delete Selected${selectedReviews.size > 0 ? ` · ${selectedReviews.size}` : ""}`}
           </Button>
         </div>
       )}
@@ -186,7 +131,7 @@ export default function MyReviewsPage() {
             {reviews.map((review, index) => (
               <div key={review.id}>
                 <div
-                  className={`py-4 flex items-start gap-3 ${
+                  className={`py-4 flex gap-3 ${
                     isEditMode ? "cursor-pointer" : ""
                   }`}
                   onClick={() => {
@@ -195,27 +140,6 @@ export default function MyReviewsPage() {
                     }
                   }}
                 >
-                  {/* Selection Checkbox (Edit Mode) */}
-                  {isEditMode && (
-                    <div className="pt-1">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${
-                          selectedReviews.has(review.id)
-                            ? "bg-white"
-                            : "bg-transparent"
-                        }`}
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleToggleSelect(review.id);
-                        }}
-                      >
-                        {selectedReviews.has(review.id) && (
-                          <Check className="w-3 h-3 text-black" />
-                        )}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Review Content */}
                   <div className="flex-1">
                     {/* Title */}
@@ -235,8 +159,29 @@ export default function MyReviewsPage() {
                     </div>
 
                     {/* Comment */}
-                    <div className="text-white text-sm">{review.comment}</div>
+                    <div className="text-white text-md">{review.comment}</div>
                   </div>
+
+                  {/* Selection Checkbox (Edit Mode) */}
+                  {isEditMode && (
+                    <div className="flex self-center">
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${
+                          selectedReviews.has(review.id)
+                            ? "bg-white"
+                            : "bg-transparent"
+                        }`}
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleToggleSelect(review.id);
+                        }}
+                      >
+                        {selectedReviews.has(review.id) && (
+                          <Check className="w-3 h-3 text-black" />
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {index < reviews.length - 1 && (
                   <div className="h-px bg-gray-700" />
