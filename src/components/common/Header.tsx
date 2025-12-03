@@ -13,7 +13,7 @@ export const Header = () => {
   return (
     <header>
       <div
-        className="container mx-auto px-5 py-3 flex justify-between items-center"
+        className="container mx-auto px-5 py-[14px] flex justify-between items-center"
         style={{
           boxShadow: "0 4px 7px -2px rgba(0,0,0,0.15)",
         }}

@@ -24,6 +24,7 @@ const NORMAL_PAGES = [
   "/form/step3",
   "/form/step4",
   "/form/step5",
+  "/form/complete",
   "/my/edit",
 ];
 
@@ -31,7 +32,7 @@ const NORMAL_PAGES = [
 const HEADER_ONLY_PAGES = ["/form/loading", "/my/reviews/[id]"];
 
 // Header/Footer가 필요 없는 특수 페이지
-const SPECIAL_PAGES = ["/login", "/auth/callback", "/form/complete"];
+const SPECIAL_PAGES = ["/login", "/auth/callback"];
 
 function isNormalPage(pathname: string): boolean {
   // 정확히 일치하는 페이지
