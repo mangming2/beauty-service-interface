@@ -1,11 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect } from "react";
 import {
-  apiGet,
-  apiPost,
-  apiPut,
-  getSession as getSessionFromClient,
-} from "@/lib/apiClient";
+  login,
+  verifyToken,
+  logout,
+  getSessionInfo,
+  getUserProfile,
+  updateProfile,
+  createUserProfile,
+} from "@/api/auth";
 import type { User, Session, Profile } from "@/api/auth";
 import type { LogoutResponse, UpdateProfileRequest } from "@/types/api";
 
@@ -23,7 +27,7 @@ export function useUser() {
     queryKey: authKeys.user(),
     queryFn: async () => {
       try {
-        const session = await getSessionFromClient();
+        const session = await getSessionInfo();
         return session?.user || null;
       } catch (error) {
         console.error("Get user error:", error);
@@ -50,7 +54,7 @@ export function useUser() {
 export function useSession() {
   return useQuery<Session | null>({
     queryKey: authKeys.session(),
-    queryFn: getSessionFromClient,
+    queryFn: getSessionInfo,
     staleTime: 5 * 60 * 1000, // 5분
   });
 }
@@ -63,21 +67,7 @@ export function useUserProfile(userId?: string) {
       if (!userId) {
         throw new Error("User ID is required");
       }
-
-      try {
-        const data = await apiGet<Profile>(`/profiles/${userId}`);
-        return data;
-      } catch (error: unknown) {
-        if (
-          error &&
-          typeof error === "object" &&
-          "status" in error &&
-          (error as { status: number }).status === 404
-        ) {
-          return null;
-        }
-        throw error;
-      }
+      return await getUserProfile(userId);
     },
     enabled: !!userId, // userId가 있을 때만 실행
     staleTime: 10 * 60 * 1000, // 10분
@@ -88,12 +78,13 @@ export function useUserProfile(userId?: string) {
 export function useGoogleLogin() {
   return useMutation({
     mutationFn: async () => {
-      // Google OAuth 로그인은 백엔드에서 처리하도록 리다이렉트
+      // POST /auth/login API 호출
       const redirectUrl = `${window.location.origin}/auth/callback`;
-      const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const data = await login();
 
-      window.location.href = `${apiUrl}/auth/google?redirect_uri=${encodeURIComponent(redirectUrl)}`;
+      // accessToken을 쿼리 파라미터로 콜백 URL에 전달
+      const callbackUrl = `${redirectUrl}?accessToken=${encodeURIComponent(data.accessToken)}`;
+      window.location.href = callbackUrl;
     },
     onError: (error: unknown) => {
       console.error("Google login error:", error);
@@ -108,22 +99,7 @@ export function useSignOut() {
 
   return useMutation<LogoutResponse, Error, void>({
     mutationFn: async () => {
-      try {
-        const response = await apiPost<LogoutResponse>("/auth/logout");
-        return response;
-
-        // 로컬 스토리지에서 토큰 제거
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("auth_token");
-        }
-      } catch (error) {
-        console.error("Sign out error:", error);
-        // 에러가 발생해도 토큰은 제거
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("auth_token");
-        }
-        throw error;
-      }
+      return await logout();
     },
     onSuccess: () => {
       // 모든 auth 관련 캐시 제거
@@ -153,17 +129,7 @@ export function useUpdateProfile() {
       profileData: UpdateProfileRequest;
     }) => {
       const { userId, profileData } = updates;
-
-      try {
-        const requestData: UpdateProfileRequest = {
-          ...profileData,
-          updated_at: new Date().toISOString(),
-        };
-        const data = await apiPut<Profile>(`/profiles/${userId}`, requestData);
-        return data;
-      } catch (error) {
-        throw error;
-      }
+      return await updateProfile(userId, profileData);
     },
     onSuccess: (data, variables) => {
       // 1. profiles 테이블 캐시 업데이트
@@ -210,92 +176,6 @@ export function useUpdateProfile() {
   });
 }
 
-// 프로필 생성 함수 (내부 사용)
-async function createUserProfile(user: {
-  id: string;
-  user_metadata?: Record<string, unknown>;
-  email?: string;
-}): Promise<Profile> {
-  if (!user) {
-    throw new Error("User is required");
-  }
-
-  // 디버깅: Google에서 받아온 데이터 확인
-  console.log("User metadata during profile creation:", user.user_metadata);
-  console.log("User object:", user);
-
-  // 기존 프로필이 있는지 확인
-  try {
-    const existingProfile = await apiGet<Profile>(`/profiles/${user.id}`);
-
-    // avatar_src가 없거나 null인 경우 업데이트
-    if (
-      !existingProfile.avatar_src &&
-      (user.user_metadata?.avatar_url ||
-        user.user_metadata?.picture ||
-        user.user_metadata?.picture_url)
-    ) {
-      const updatedProfileData = {
-        avatar_src:
-          user.user_metadata?.avatar_url ||
-          user.user_metadata?.picture ||
-          user.user_metadata?.picture_url,
-        updated_at: new Date().toISOString(),
-      };
-
-      try {
-        const data = await apiPut<Profile>(
-          `/profiles/${user.id}`,
-          updatedProfileData
-        );
-        return data;
-      } catch (error) {
-        console.error("Error updating profile avatar:", error);
-        return existingProfile;
-      }
-    }
-
-    return existingProfile;
-  } catch (error: unknown) {
-    // 프로필이 없는 경우 생성
-    if (
-      error &&
-      typeof error === "object" &&
-      "status" in error &&
-      (error as { status: number }).status === 404
-    ) {
-      // Google 프로필 정보 추출
-      const profileData = {
-        id: user.id,
-        full_name:
-          user.user_metadata?.full_name ||
-          user.user_metadata?.name ||
-          user.email?.split("@")[0] ||
-          "User",
-        avatar_src:
-          user.user_metadata?.avatar_url ||
-          user.user_metadata?.picture ||
-          user.user_metadata?.picture_url ||
-          (user.email
-            ? `https://www.gravatar.com/avatar/${user.email}?d=identicon`
-            : null),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-
-      try {
-        const data = await apiPost<Profile>("/profiles", profileData);
-        console.log("Profile created successfully:", data);
-        return data;
-      } catch (error) {
-        console.error("Error creating profile:", error);
-        throw error;
-      }
-    }
-    throw error;
-  }
-}
-
 // Auth Callback 처리를 위한 Hook
 export function useAuthCallback() {
   const router = useRouter();
@@ -303,34 +183,62 @@ export function useAuthCallback() {
   return useQuery({
     queryKey: [...authKeys.all, "callback"],
     queryFn: async () => {
-      // 1. 세션 확인
-      const session = await getSessionFromClient();
+      // URL에서 accessToken 가져오기
+      if (typeof window === "undefined") {
+        return { success: false, redirectTo: "/login" };
+      }
 
-      if (!session) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const accessToken = urlParams.get("accessToken");
+
+      if (!accessToken) {
         setTimeout(() => router.push("/login"), 0);
         return { success: false, redirectTo: "/login" };
       }
 
-      // 2. 사용자 정보 가져오기
-      const user = session.user;
-
-      if (!user) {
-        setTimeout(() => router.push("/login"), 0);
-        return { success: false, redirectTo: "/login" };
-      }
-
-      // 3. 프로필 자동 생성 (Google 로그인 시)
       try {
-        console.log("Creating profile for user:", user.id);
-        await createUserProfile(user);
-        console.log("Profile created successfully in callback");
-      } catch (error) {
-        console.error("Failed to create profile in callback:", error);
-        // 프로필 생성 실패해도 로그인은 계속 진행
-      }
+        // 검증 API 호출 (Refresh Token은 쿠키로 자동 설정됨)
+        const data = await verifyToken(accessToken);
 
-      setTimeout(() => router.push("/"), 0);
-      return { success: true, redirectTo: "/" };
+        // 최종 accessToken 저장
+        if (data.accessToken && typeof window !== "undefined") {
+          localStorage.setItem("auth_token", data.accessToken);
+          document.cookie = `auth_token=${data.accessToken}; path=/; max-age=86400; SameSite=Lax`;
+        }
+
+        // 세션 확인
+        const session = await getSessionInfo();
+
+        if (!session) {
+          setTimeout(() => router.push("/login"), 0);
+          return { success: false, redirectTo: "/login" };
+        }
+
+        // 사용자 정보 가져오기
+        const user = session.user;
+
+        if (!user) {
+          setTimeout(() => router.push("/login"), 0);
+          return { success: false, redirectTo: "/login" };
+        }
+
+        // 프로필 자동 생성 (Google 로그인 시)
+        try {
+          console.log("Creating profile for user:", user.id);
+          await createUserProfile(user);
+          console.log("Profile created successfully in callback");
+        } catch (error) {
+          console.error("Failed to create profile in callback:", error);
+          // 프로필 생성 실패해도 로그인은 계속 진행
+        }
+
+        setTimeout(() => router.push("/"), 0);
+        return { success: true, redirectTo: "/" };
+      } catch (error) {
+        console.error("Auth callback error:", error);
+        setTimeout(() => router.push("/login"), 0);
+        return { success: false, redirectTo: "/login" };
+      }
     },
     staleTime: 0, // 항상 새로 실행
     gcTime: 0, // 캐시하지 않음
@@ -345,87 +253,85 @@ export function useAuthCallback() {
 export function useAuthStateListener() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const pathname = usePathname();
 
-  return useQuery({
-    queryKey: [...authKeys.all, "listener"],
-    queryFn: () => {
-      // 주기적으로 세션 확인 (간단한 구현)
-      let authStateListeners: Array<
-        (
-          event:
-            | "SIGNED_IN"
-            | "SIGNED_OUT"
-            | "TOKEN_REFRESHED"
-            | "USER_UPDATED",
-          session: Session | null
-        ) => void
-      > = [];
+  useEffect(() => {
+    // 공개 페이지 목록 (리다이렉트하지 않음)
+    const publicPages = ["/", "/login", "/auth/callback"];
+    const isPublicPage = publicPages.includes(pathname);
 
-      const callback = async (
-        event: "SIGNED_IN" | "SIGNED_OUT" | "TOKEN_REFRESHED" | "USER_UPDATED",
-        session: Session | null
-      ) => {
-        console.log("Auth state changed:", event, session);
+    const callback = async (
+      event: "SIGNED_IN" | "SIGNED_OUT" | "TOKEN_REFRESHED" | "USER_UPDATED",
+      session: Session | null
+    ) => {
+      console.log("Auth state changed:", event, session);
 
-        // 캐시 업데이트
-        queryClient.setQueryData(authKeys.session(), session);
-        queryClient.setQueryData(authKeys.user(), session?.user || null);
+      // 캐시 업데이트
+      queryClient.setQueryData(authKeys.session(), session);
+      queryClient.setQueryData(authKeys.user(), session?.user || null);
 
-        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-          console.log("User signed in:", session?.user);
-          // 사용자 관련 데이터 refetch
-          queryClient.invalidateQueries({ queryKey: authKeys.all });
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        console.log("User signed in:", session?.user);
+        // 사용자 관련 데이터 refetch
+        queryClient.invalidateQueries({ queryKey: authKeys.all });
 
-          // Google 로그인 시 프로필 자동 생성
-          if (session?.user) {
-            console.log("Calling createUserProfile for user:", session.user.id);
-            createUserProfile(session.user)
-              .then(result => {
-                console.log("Profile created successfully:", result);
-              })
-              .catch(error => {
-                console.error("Failed to create profile:", error);
-              });
-          }
-        } else if (event === "SIGNED_OUT") {
-          console.log("User signed out");
-          // 모든 auth 캐시 제거
-          queryClient.removeQueries({ queryKey: authKeys.all });
+        // Google 로그인 시 프로필 자동 생성
+        if (session?.user) {
+          console.log("Calling createUserProfile for user:", session.user.id);
+          createUserProfile(session.user)
+            .then(result => {
+              console.log("Profile created successfully:", result);
+            })
+            .catch(error => {
+              console.error("Failed to create profile:", error);
+            });
+        }
+      } else if (event === "SIGNED_OUT") {
+        console.log("User signed out");
+        // 모든 auth 캐시 제거
+        queryClient.removeQueries({ queryKey: authKeys.all });
+
+        // 공개 페이지가 아닐 때만 리다이렉트
+        if (!isPublicPage) {
           // setTimeout을 사용하여 렌더링 사이클 밖에서 라우팅 실행
           setTimeout(() => {
             router.push("/login");
           }, 0);
         }
-      };
+      }
+    };
 
-      authStateListeners.push(callback);
-
-      // 주기적으로 세션 확인
-      const checkInterval = setInterval(async () => {
-        try {
-          const session = await getSessionFromClient();
-          if (session) {
-            callback("TOKEN_REFRESHED", session);
-          } else {
+    // 주기적으로 세션 확인
+    const checkInterval = setInterval(async () => {
+      try {
+        const session = await getSessionInfo();
+        if (session) {
+          callback("TOKEN_REFRESHED", session);
+        } else {
+          // 공개 페이지가 아닐 때만 SIGNED_OUT 이벤트 발생 (리다이렉트 포함)
+          if (!isPublicPage) {
             callback("SIGNED_OUT", null);
+          } else {
+            // 공개 페이지에서는 캐시만 업데이트 (리다이렉트 없음)
+            queryClient.setQueryData(authKeys.session(), null);
+            queryClient.setQueryData(authKeys.user(), null);
           }
-        } catch {
-          callback("SIGNED_OUT", null);
         }
-      }, 30000); // 30초마다 확인
+      } catch {
+        // 에러 발생 시에도 공개 페이지가 아닐 때만 SIGNED_OUT 처리
+        if (!isPublicPage) {
+          callback("SIGNED_OUT", null);
+        } else {
+          // 공개 페이지에서는 캐시만 업데이트
+          queryClient.setQueryData(authKeys.session(), null);
+          queryClient.setQueryData(authKeys.user(), null);
+        }
+      }
+    }, 30000); // 30초마다 확인
 
-      // cleanup function 반환
-      return () => {
-        authStateListeners = authStateListeners.filter(
-          listener => listener !== callback
-        );
-        clearInterval(checkInterval);
-      };
-    },
-    staleTime: Infinity, // 한 번만 설정
-    gcTime: Infinity,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+    // cleanup function
+    return () => {
+      clearInterval(checkInterval);
+    };
+  }, [queryClient, router, pathname]);
 }

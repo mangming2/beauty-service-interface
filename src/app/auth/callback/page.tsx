@@ -14,22 +14,12 @@ export default function AuthCallbackPage() {
   // 실시간 인증 상태 감지 (프로필 생성용)
   useAuthStateListener();
 
-  // URL 파라미터에서 토큰 받아서 저장
+  // 에러 파라미터 확인
   useEffect(() => {
-    const token = searchParams.get("token");
     const errorParam = searchParams.get("error");
 
     if (errorParam) {
       console.error("OAuth error:", errorParam);
-      return;
-    }
-
-    if (token && typeof window !== "undefined") {
-      // 토큰을 로컬 스토리지에 저장
-      localStorage.setItem("auth_token", token);
-
-      // 쿠키에도 저장 (middleware에서 사용)
-      document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
     }
   }, [searchParams]);
 

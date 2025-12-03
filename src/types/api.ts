@@ -55,6 +55,12 @@ export interface BatchDeleteReviewsResponse {
 }
 
 // ========== Auth API Types ==========
+export interface LoginResponse {
+  grantType: string;
+  accessToken: string;
+  accessTokenExpireIn: number;
+}
+
 export interface LogoutResponse {
   success: boolean;
   message?: string;
