@@ -16,8 +16,6 @@ import {
 export default function LoginPage() {
   const [message, setMessage] = useState("");
   const router = useRouter();
-
-  // TanStack Query hooks 사용
   const { data: user, isLoading: userLoading } = useUser();
   const googleLoginMutation = useGoogleLogin();
 
@@ -39,14 +37,6 @@ export default function LoginPage() {
       setMessage((error as Error)?.message || "로그인 중 오류가 발생했습니다.");
     }
   };
-
-  // const handleXLogin = async () => {
-  //   alert("준비중입니다.");
-  // };
-
-  // const handleAppleLogin = async () => {
-  //   alert("준비중입니다.");
-  // };
 
   const handleGuestAccess = () => {
     router.push("/");
