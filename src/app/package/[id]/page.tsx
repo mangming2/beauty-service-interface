@@ -133,7 +133,6 @@ export default function PackageDetail() {
                     </div>
                   </CardContent>
                 </Card>
-                <Divider />
               </div>
             ))}
           </div>
