@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
-import { Divider } from "../../../components/ui/divider";
 import KakaoMap from "@/components/common/KakaoMap";
 import { usePackageDetail } from "@/hooks/usePackageQueries";
 import Link from "next/link";

@@ -8,7 +8,8 @@ import {
 } from "@/hooks/useReviewQueries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { Star } from "lucide-react";
+import { StarRating } from "@/components/ui/star-rating";
+import { GapY } from "../../../../components/ui/gap";
 
 export default function ReviewsPage() {
   const params = useParams();
@@ -52,40 +53,36 @@ export default function ReviewsPage() {
     return `${diffInDays}일 전`;
   };
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <Star
-        key={index}
-        className={`w-4 h-4 ${
-          index < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-600"
-        }`}
-      />
-    ));
-  };
-
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen text-white">
+      <div className="container mx-auto px-5">
+        <GapY size={20} />
         {/* Review Summary Section */}
         {summary && (
-          <Card className="bg-gray-800 border-gray-700 mb-8">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+          <Card className="bg-gray-outline border-none rounded-[4px]">
+            <CardContent className="py-5 px-3">
+              <div className="flex items-center justify-center gap-7">
                 {/* Overall Rating */}
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-white mb-2">
+                  <div className="title-lg text-white">
                     {summary.averageRating.toFixed(1)} / 5
                   </div>
-                  <div className="flex justify-center mb-2">
-                    {renderStars(Math.round(summary.averageRating))}
+                  <GapY size={4} />
+                  <div className="flex justify-center">
+                    <StarRating
+                      rating={Math.round(summary.averageRating)}
+                      readonly
+                      size="sm"
+                    />
                   </div>
-                  <div className="text-gray-400 text-sm">
+                  <GapY size={2} />
+                  <div className="text-gray-2 caption-sm">
                     {summary.totalReviews} reviews
                   </div>
                 </div>
 
                 {/* Rating Distribution */}
-                <div className="flex-1 max-w-xs ml-8">
+                <div className="flex flex-col">
                   {[5, 4, 3, 2, 1].map(star => {
                     const count = summary.ratingDistribution[star] || 0;
                     const percentage =
@@ -94,19 +91,19 @@ export default function ReviewsPage() {
                         : 0;
 
                     return (
-                      <div key={star} className="flex items-center mb-2">
-                        <span className="text-sm text-gray-400 w-4">
+                      <div key={star} className="flex items-center gap-1">
+                        <span className="caption-sm w-3 text-white">
                           {star}
                         </span>
-                        <div className="flex-1 mx-2">
-                          <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div className="flex w-30">
+                          <div className="w-full bg-[#D9D9D9] rounded-full h-0.5">
                             <div
-                              className="bg-pink-500 h-2 rounded-full transition-all duration-300"
+                              className="bg-pink-font h-0.5 rounded-full transition-all duration-300"
                               style={{ width: `${percentage}%` }}
                             />
                           </div>
                         </div>
-                        <span className="text-sm text-gray-400 w-8 text-right">
+                        <span className="caption-sm text-gray-2 w-7 text-center">
                           {percentage.toFixed(0)}%
                         </span>
                       </div>
@@ -117,45 +114,48 @@ export default function ReviewsPage() {
             </CardContent>
           </Card>
         )}
+        <GapY size={20} />
 
         {/* Individual Reviews */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {reviews && reviews.length > 0 ? (
             reviews.map(review => (
-              <Card key={review.id} className="bg-gray-800 border-gray-700">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden">
-                      {review.avatar_src ? (
-                        <Image
-                          src={review.avatar_src}
-                          alt={review.username}
-                          width={40}
-                          height={40}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                          <span className="text-white text-sm font-medium">
-                            {review.username.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Review Content */}
-                    <div className="flex-1">
+              <Card
+                key={review.id}
+                className="p-0 bg-transparent border-0 border-b-[1px] rounded-none border-gray"
+              >
+                <CardContent className="p-0 pb-3">
+                  <div className="flex flex-col  items-start space-x-4">
+                    <div className="flex items-start gap-2">
+                      {/* Avatar */}
+                      <div className="w-7 h-7 rounded-full flex-shrink-0 overflow-hidden">
+                        {review.avatar_src ? (
+                          <Image
+                            src={review.avatar_src}
+                            alt={review.username}
+                            width={28}
+                            height={28}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                            <span className="text-white text-sm font-medium">
+                              {review.username.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                       {/* Username */}
                       <div className="text-white font-medium mb-1">
                         {review.username}
                       </div>
-
+                    </div>
+                    <GapY size={8} />
+                    {/* Review Content */}
+                    <div className="flex flex-col gap-3">
                       {/* Rating and Time */}
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="flex items-center">
-                          {renderStars(review.rating)}
-                        </div>
+                      <div className="flex items-center space-x-2">
+                        <StarRating rating={review.rating} readonly size="sm" />
                         <div className="w-px h-4 bg-gray-600" />
                         <span className="text-gray-400 text-sm">
                           {formatTimeAgo(review.created_at || "")}
@@ -163,7 +163,7 @@ export default function ReviewsPage() {
                       </div>
 
                       {/* Comment */}
-                      <div className="text-white">{review.comment}</div>
+                      <div className="text-white text-md">{review.comment}</div>
                     </div>
                   </div>
                 </CardContent>
