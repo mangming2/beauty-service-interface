@@ -19,17 +19,20 @@ const NORMAL_PAGES = [
   "/package",
   "/my/reviews",
   "/booking",
-  "/form/step1",
-  "/form/step2",
-  "/form/step3",
-  "/form/step4",
-  "/form/step5",
   "/form/complete",
   "/my/edit",
 ];
 
 // Header만 필요한 페이지 목록
-const HEADER_ONLY_PAGES = ["/form/loading", "/my/reviews/[id]"];
+const HEADER_ONLY_PAGES = [
+  "/form/loading",
+  "/my/reviews/[id]",
+  "/form/step1",
+  "/form/step2",
+  "/form/step3",
+  "/form/step4",
+  "/form/step5",
+];
 
 // Header/Footer가 필요 없는 특수 페이지
 const SPECIAL_PAGES = ["/login", "/auth/callback"];

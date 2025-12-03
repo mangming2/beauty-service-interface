@@ -120,7 +120,7 @@ export default function FormPage1() {
                       className="object-contain"
                     />
                   </div>
-                  <div className="text-white text-sm font-medium w-full text-center whitespace-nowrap">
+                  <div className="text-white h-4 caption-md w-full text-center whitespace-nowrap">
                     {concept.name}
                   </div>
                 </CardContent>

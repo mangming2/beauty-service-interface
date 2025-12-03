@@ -36,7 +36,7 @@ export const SeoulMap = ({
   return (
     <div
       className={`relative ${className}`}
-      style={{ minWidth: "360px", minHeight: "293px" }}
+      style={{ minWidth: "360px", minHeight: "304px" }}
     >
       <Image
         src={"/Name.svg"}
