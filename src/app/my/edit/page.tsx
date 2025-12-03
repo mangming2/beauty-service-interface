@@ -78,8 +78,8 @@ export default function EditProfilePage() {
     <div className="text-white bg-transparent flex flex-col flex-1">
       <GapY size={100} />
       {/* Profile Image Section */}
-      <div className="flex flex-col items-center px-4">
-        <div className="relative w-32 h-32 rounded-full border border-gray-300 overflow-hidden">
+      <div className="flex flex-col items-center">
+        <div className="relative w-[125px] h-[125px] rounded-full border-solid border-[1.5px] border-gray overflow-hidden">
           {profile?.avatar_src || user?.user_metadata?.avatar_url ? (
             <Image
               src={profile?.avatar_src || user?.user_metadata?.avatar_url || ""}
@@ -106,18 +106,17 @@ export default function EditProfilePage() {
         </div>
       </div>
       <GapY size={62} />
-
       {/* Nickname Input Section */}
-      <div className="px-4 py-4">
+      <div className="px-3 py-2">
         <div className="max-w-sm mx-auto">
           <Input
             type="text"
             value={currentNickname}
             onChange={e => setNickname(e.target.value)}
             placeholder="Doki01"
-            className="w-full bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+            className="w-full h-13 text-white border-none placeholder-gray-400"
           />
-          <p className="text-gray-400 text-sm mt-2">
+          <p className="text-gray-400 text-sm mt-2 h-5">
             Please enter 2-10 letters or numbers.
           </p>
         </div>

@@ -20,7 +20,6 @@ const NORMAL_PAGES = [
   "/my/reviews",
   "/booking",
   "/form/complete",
-  "/my/edit",
 ];
 
 // Header만 필요한 페이지 목록
@@ -32,6 +31,7 @@ const HEADER_ONLY_PAGES = [
   "/form/step3",
   "/form/step4",
   "/form/step5",
+  "/my/edit",
 ];
 
 // Header/Footer가 필요 없는 특수 페이지
