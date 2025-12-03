@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useUser } from "@/hooks/useAuthQueries";
-import { useUserReviews } from "@/hooks/useReviewQueries";
+import { useUser } from "@/queries/useAuthQueries";
+import { useUserReviews } from "@/queries/useReviewQueries";
 import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
 import { PageLoading } from "@/components/common";

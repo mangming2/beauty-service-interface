@@ -10,7 +10,7 @@ import {
   updateProfile,
   createUserProfile,
 } from "@/api/auth";
-import type { User, Session, Profile } from "@/api/auth";
+import type { User, Session, Profile } from "@/types/api";
 import type { LogoutResponse, UpdateProfileRequest } from "@/types/api";
 
 // Query Keys
