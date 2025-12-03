@@ -3,7 +3,10 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LottieAnimation from "@/components/common/LottieAnimation";
-import { useAuthCallback, useAuthStateListener } from "@/hooks/useAuthQueries";
+import {
+  useAuthCallback,
+  useAuthStateListener,
+} from "@/queries/useAuthQueries";
 import { Button } from "@/components/ui/button";
 
 export default function AuthCallbackPage() {
