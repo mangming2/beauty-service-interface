@@ -6,7 +6,7 @@ import { ArrowRightIcon } from "@/components/common/Icons";
 import { ButtonLoading } from "@/components/common";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { useAuth } from "@/hooks/useAuth";
-import { useUserFormSubmission } from "@/hooks/useFormQueries";
+import { useUserFormSubmission } from "@/queries/useFormQueries";
 
 export function FormButton() {
   const { user, isAuthenticated } = useAuth();

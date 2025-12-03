@@ -9,7 +9,7 @@ import {
   useUser,
   useUpdateProfile,
   useUserProfile,
-} from "@/hooks/useAuthQueries";
+} from "@/queries/useAuthQueries";
 import { PageLoading } from "@/components/common";
 import { GapY } from "../../../components/ui/gap";
 
