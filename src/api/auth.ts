@@ -8,39 +8,11 @@ import type {
   LoginResponse,
   LogoutResponse,
   UpdateProfileRequest,
+  User,
+  Session,
+  Profile,
+  AuthChangeEvent,
 } from "@/types/api";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-
-// ========== 타입 정의 ==========
-export interface User {
-  id: string;
-  email?: string;
-  user_metadata?: Record<string, unknown>;
-}
-
-export interface Session {
-  user: User;
-  access_token?: string;
-  expires_at?: number;
-}
-
-export interface Profile {
-  id: string;
-  full_name?: string;
-  phone?: string;
-  birth_date?: string;
-  avatar_src?: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export type AuthChangeEvent =
-  | "SIGNED_IN"
-  | "SIGNED_OUT"
-  | "TOKEN_REFRESHED"
-  | "USER_UPDATED";
 
 // ========== 인증 API ==========
 
@@ -50,20 +22,10 @@ export type AuthChangeEvent =
  */
 export async function login(): Promise<LoginResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // 쿠키 포함
+    const response = await apiPost<LoginResponse>("/auth/login", undefined, {
+      requireAuth: false,
     });
-
-    if (!response.ok) {
-      throw new Error("Login request failed");
-    }
-
-    const data: LoginResponse = await response.json();
-    return data;
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     throw error;
@@ -78,23 +40,21 @@ export async function verifyToken(accessToken: string): Promise<{
   accessToken: string;
   [key: string]: unknown;
 }> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-
-  const response = await fetch(`${apiUrl}/auth/verify`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: "include", // Refresh Token 쿠키 받기
-  });
-
-  if (!response.ok) {
-    throw new Error("Token verification failed");
+  try {
+    const response = await apiPost<{
+      accessToken: string;
+      [key: string]: unknown;
+    }>("/auth/verify", undefined, {
+      requireAuth: false,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Token verification error:", error);
+    throw error;
   }
-
-  const data = await response.json();
-  return data;
 }
 
 /**

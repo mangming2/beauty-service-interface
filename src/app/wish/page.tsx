@@ -6,9 +6,9 @@ import { PageLoading } from "@/components/common";
 import { GapY } from "../../components/ui/gap";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
-import { useUser } from "@/hooks/useAuthQueries";
-import { useUserFormSubmission } from "@/hooks/useFormQueries";
-import { useAllPackages } from "@/hooks/usePackageQueries";
+import { useUser } from "@/queries/useAuthQueries";
+import { useUserFormSubmission } from "@/queries/useFormQueries";
+import { useAllPackages } from "@/queries/usePackageQueries";
 
 // TODO: 백엔드 연동 시 더미 데이터를 실제 API 응답으로 교체
 const DUMMY_RECOMMENDATION_GALLERIES = [

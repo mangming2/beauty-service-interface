@@ -2,9 +2,9 @@
 
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { usePackageDetail } from "@/hooks/usePackageQueries";
-import { useCreateReview } from "@/hooks/useReviewQueries";
-import { useUser } from "@/hooks/useAuthQueries";
+import { usePackageDetail } from "@/queries/usePackageQueries";
+import { useCreateReview } from "@/queries/useReviewQueries";
+import { useUser } from "@/queries/useAuthQueries";
 import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

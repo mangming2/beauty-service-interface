@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/apiClient";
-import type { Package, PackageDetail } from "@/lib/packageService";
+import {
+  getAllPackages,
+  getPackageDetail,
+  getPackagesByArtist,
+  getPackagesByTag,
+  searchPackages,
+} from "@/api/package";
+import type { Package, PackageDetail } from "@/api/package";
 
 // Query Keys
 export const packageKeys = {
@@ -20,8 +26,7 @@ export function useAllPackages() {
   return useQuery<Package[]>({
     queryKey: packageKeys.lists(),
     queryFn: async () => {
-      const data = await apiGet<Package[]>("/packages?is_active=true");
-      return data || [];
+      return await getAllPackages();
     },
     staleTime: 5 * 60 * 1000, // 5분
     retry: 2,
@@ -33,20 +38,7 @@ export function usePackageDetail(packageId: string) {
   return useQuery<PackageDetail | null>({
     queryKey: packageKeys.detail(packageId),
     queryFn: async () => {
-      try {
-        const data = await apiGet<PackageDetail>(`/packages/${packageId}`);
-        return data;
-      } catch (error: unknown) {
-        if (
-          error &&
-          typeof error === "object" &&
-          "status" in error &&
-          (error as { status: number }).status === 404
-        ) {
-          return null; // 패키지를 찾을 수 없음
-        }
-        throw error;
-      }
+      return await getPackageDetail(packageId);
     },
     enabled: !!packageId,
     staleTime: 5 * 60 * 1000, // 5분
@@ -59,10 +51,7 @@ export function usePackagesByArtist(artist: string) {
   return useQuery<Package[]>({
     queryKey: packageKeys.byArtist(artist),
     queryFn: async () => {
-      const data = await apiGet<Package[]>(
-        `/packages?artist=${encodeURIComponent(artist)}&is_active=true`
-      );
-      return data || [];
+      return await getPackagesByArtist(artist);
     },
     enabled: !!artist,
     staleTime: 5 * 60 * 1000, // 5분
@@ -75,10 +64,7 @@ export function usePackagesByTag(tag: string) {
   return useQuery<Package[]>({
     queryKey: packageKeys.byTag(tag),
     queryFn: async () => {
-      const data = await apiGet<Package[]>(
-        `/packages?tag=${encodeURIComponent(tag)}&is_active=true`
-      );
-      return data || [];
+      return await getPackagesByTag(tag);
     },
     enabled: !!tag,
     staleTime: 5 * 60 * 1000, // 5분
@@ -91,10 +77,7 @@ export function useSearchPackages(query: string) {
   return useQuery<Package[]>({
     queryKey: packageKeys.search(query),
     queryFn: async () => {
-      const data = await apiGet<Package[]>(
-        `/packages/search?q=${encodeURIComponent(query)}&is_active=true`
-      );
-      return data || [];
+      return await searchPackages(query);
     },
     enabled: !!query && query.length > 0,
     staleTime: 2 * 60 * 1000, // 2분 (검색 결과는 더 자주 업데이트)
@@ -109,7 +92,7 @@ export function useMultiplePackageDetails(packageIds: string[]) {
     queryFn: async () => {
       const promises = packageIds.map(async id => {
         try {
-          return await apiGet<PackageDetail>(`/packages/${id}`);
+          return await getPackageDetail(id);
         } catch {
           return null;
         }

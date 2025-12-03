@@ -11,7 +11,7 @@ import {
   useUser,
   useGoogleLogin,
   useAuthStateListener,
-} from "@/hooks/useAuthQueries";
+} from "@/queries/useAuthQueries";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
