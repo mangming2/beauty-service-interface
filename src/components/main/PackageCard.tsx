@@ -43,7 +43,7 @@ export default function PackageCard({
               </span>
             </p>
             <GapY size={4} />
-            <h3 className="font-medium text-white text-lg leading-[140%] overflow-hidden text-ellipsis whitespace-nowrap">
+            <h3 className="font-medium text-white text-lg h-7 overflow-hidden text-ellipsis whitespace-nowrap">
               {title}
             </h3>
           </div>
