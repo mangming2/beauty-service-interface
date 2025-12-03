@@ -6,7 +6,7 @@ import {
   getPackagesByTag,
   searchPackages,
 } from "@/api/package";
-import type { Package, PackageDetail } from "@/api/package";
+import type { Package, PackageDetail } from "@/types/api";
 
 // Query Keys
 export const packageKeys = {
