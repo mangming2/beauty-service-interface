@@ -10,14 +10,13 @@ import {
 import { Icons } from "@/components/common/Icons";
 
 interface BookingActionSheetProps {
-  bookingId: string;
+  bookingId?: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onDeleteClick: () => void;
 }
 
 export function BookingActionSheet({
-  bookingId,
   isOpen,
   onOpenChange,
   onDeleteClick,
