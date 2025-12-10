@@ -42,21 +42,37 @@ export function ConceptScrollContainer({
     scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (!scrollRef.current) return;
+    // Shift 키를 누르거나 수평 스크롤이 있을 때만 좌우 스크롤
+    if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      scrollRef.current.scrollLeft += e.deltaX || e.deltaY;
+    }
+  };
+
   return (
     <div
       ref={scrollRef}
-      className={`flex gap-[4px] overflow-x-auto pb-2 scrollbar-hide ${
+      className={`flex flex-nowrap gap-[4px] overflow-x-auto pb-2 scrollbar-hide ${
         isDragging ? "select-none" : ""
       }`}
       onMouseDown={handleMouseDown}
       onMouseLeave={handleMouseLeave}
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
+      onWheel={handleWheel}
       onDragStart={e => {
-        // 모든 드래그 시작을 차단
-        e.preventDefault();
+        // 이미지나 링크가 아닐 때만 드래그 차단
+        const target = e.target as HTMLElement;
+        if (target.tagName !== "IMG" && !target.closest("a")) {
+          e.preventDefault();
+        }
       }}
-      style={{ cursor: isDragging ? "grabbing" : "grab" }}
+      style={{
+        cursor: isDragging ? "grabbing" : "grab",
+        WebkitOverflowScrolling: "touch",
+        touchAction: "pan-x",
+      }}
     >
       {children}
     </div>
