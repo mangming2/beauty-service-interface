@@ -37,6 +37,11 @@ export default function Schedule() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<string>("");
 
+  // Fullscreen state for each sheet (keyed by booking id)
+  const [fullscreenSheets, setFullscreenSheets] = useState<
+    Record<string, boolean>
+  >({});
+
   useEffect(() => {
     const newBooking: BookingHistory = {
       id: "1",
@@ -90,6 +95,13 @@ export default function Schedule() {
     );
   };
 
+  const toggleFullscreen = (bookingId: string) => {
+    setFullscreenSheets(prev => ({
+      ...prev,
+      [bookingId]: !prev[bookingId],
+    }));
+  };
+
   return (
     <div className="flex flex-col w-full space-y-4">
       {/* Booking History List */}
@@ -136,7 +148,12 @@ export default function Schedule() {
                 </SheetTrigger>
                 <SheetContent
                   side="bottom"
-                  className="bg-background border-none text-white rounded-t-2xl h-[70vh]"
+                  showCloseButton={false}
+                  className={`bg-background border-none text-white rounded-t-2xl transition-all duration-300 ${
+                    fullscreenSheets[booking.id]
+                      ? "h-[calc(100vh-64px)]"
+                      : "h-[70vh]"
+                  }`}
                   onInteractOutside={e => {
                     // 모달이 열려있으면 바텀시트 닫기 방지
                     if (isScheduleModalOpen) {
@@ -144,6 +161,14 @@ export default function Schedule() {
                     }
                   }}
                 >
+                  {/* Drag Handle Bar */}
+                  <div
+                    onClick={() => toggleFullscreen(booking.id)}
+                    className="flex justify-center pt-2 pb-3 cursor-pointer touch-none"
+                  >
+                    <div className="w-13 h-1 bg-gray rounded-fulltransition-colors" />
+                  </div>
+
                   <SheetHeader className="pb-4">
                     <SheetTitle className="text-white text-lg font-bold">
                       Futuristic Chic Idol Debut
