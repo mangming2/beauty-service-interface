@@ -566,6 +566,36 @@ const StarIcon = ({ color, ...rest }: IconProps) => {
   );
 };
 
+const DeleteIcon = ({ color, ...rest }: IconProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <rect
+        x="0.5"
+        y="0.5"
+        width="23"
+        height="23"
+        rx="11.5"
+        stroke={color ?? "#FFFFFE"}
+      />
+      <rect
+        x="4"
+        y="11"
+        width="16"
+        height="2"
+        rx="1"
+        fill={color ?? "#FFFFFE"}
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -589,6 +619,7 @@ export {
   PlusIcon,
   EditIcon,
   StarIcon,
+  DeleteIcon,
 };
 
 export const Icons = {
@@ -611,4 +642,5 @@ export const Icons = {
   plus: PlusIcon,
   edit: EditIcon,
   star: StarIcon,
+  delete: DeleteIcon,
 };

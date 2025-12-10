@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { format, addDays, startOfWeek, addWeeks, subWeeks } from "date-fns";
 import { dummyLink } from "@/constants";
 import Image from "next/image";
+import { Divider } from "../../../../components/ui/divider";
 
 const timeSlots = [
   { time: "09:00", available: true },
@@ -56,28 +57,41 @@ export default function BookingLinkPage() {
     <div className=" text-white">
       {/* Header */}
 
-      <div className="py-6">
+      <div>
         {/*패키지 설명 */}
-        <div className="mb-8">
-          <Image
-            src="/dummy-profile.png"
-            alt="package"
-            width={0}
-            height={200}
-            sizes="100vw"
-            className="w-full h-[200px] object-cover"
-          />
-          <h2 className="title-lg font-semibold mb-4">Make Over</h2>
-          <p className="text-gray-400">Salon Doki</p>
-          <div className="flex justify-between items-center gap-2 text-lg text-white">
+
+        <Image
+          src="/dummy-profile.png"
+          alt="package"
+          width={0}
+          height={200}
+          sizes="100vw"
+          className="w-full h-[200px] object-cover"
+        />
+
+        <div className="flex flex-col gap-2 pt-5 px-5 pb-3">
+          <div>
+            <h2 className="title-lg">Make Over</h2>
+            <p className="flex items-center h-7 text-md text-gray-font">
+              Salon Doki
+            </p>
+          </div>
+          <div className="flex justify-between items-center text-lg text-white">
             <span>Make-ip & Hair</span>
             <span>₩ 70,000</span>
           </div>
+          <div className="flex items-center h-10 text-md text-white">
+            <span>설명란</span>
+          </div>
         </div>
+
+        <Divider height={8} className="bg-gray-container" />
+
         {/* Choose your date */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">Choose your date.</h2>
-          <div className=" rounded-lg p-4">
+        <div className="flex flex-col gap-4 py-3 px-5">
+          <h2 className="title-sm">Choose your date.</h2>
+
+          <div>
             {/* Year/Month display with navigation */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -140,20 +154,22 @@ export default function BookingLinkPage() {
           </div>
         </div>
 
+        <Divider height={8} className="bg-gray-container" />
+
         {/* Choose your time slot */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">Choose your time slot.</h2>
-          <div className="grid grid-cols-4 gap-3">
+        <div className="flex flex-col gap-4 py-3 px-5">
+          <h2 className="title-sm">Choose your time slot.</h2>
+          <div className="grid grid-cols-4 gap-x-3 gap-y-4">
             {timeSlots.map(slot => (
               <Button
                 key={slot.time}
                 variant="ghost"
-                className={`h-12 border rounded-lg ${
+                className={`text-lg h-10 text-white border-none rounded-1 ${
                   slot.available
                     ? selectedTime === slot.time
-                      ? "bg-pink-500 border-pink-500 text-white"
-                      : "border-gray-600 text-white hover:bg-gray-800"
-                    : "border-gray-700 text-gray-500 bg-gray-800 cursor-not-allowed"
+                      ? "bg-pink-font hover:text-white"
+                      : "bg-gray-container hover:text-white"
+                    : "bg-disabled cursor-not-allowed text-gray-500 hover:text-gray-500"
                 }`}
                 onClick={() => slot.available && handleTimeSelect(slot.time)}
                 disabled={!slot.available}
@@ -166,19 +182,22 @@ export default function BookingLinkPage() {
       </div>
 
       {/* Checkout Button */}
-      <div className="flex justify-center px-4 py-4 gap-2 border-gray-800">
+      <div
+        className="flex justify-between mt-auto p-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Button
           variant="gray"
-          className="w-[128px] h-[52px]"
+          className="text-lg w-[128px] h-[52px]"
           onClick={handleBookLink}
         >
-          <span className="font-medium">Book Link</span>
+          Complete
         </Button>
         <Button
-          className="w-[236px] bg-pink-500 hover:bg-pink-600 h-[52px]"
+          className="text-lg w-[236px] bg-pink-500 hover:bg-pink-600 h-[52px]"
           onClick={handleConfirm}
         >
-          <span className="font-medium">Complete</span>
+          Book Link
         </Button>
       </div>
     </div>

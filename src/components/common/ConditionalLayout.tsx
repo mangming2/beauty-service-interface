@@ -32,6 +32,7 @@ const HEADER_ONLY_PAGES = [
   "/form/step4",
   "/form/step5",
   "/my/edit",
+  "/booking/[id]/booking-link",
 ];
 
 // Header/Footer가 필요 없는 특수 페이지

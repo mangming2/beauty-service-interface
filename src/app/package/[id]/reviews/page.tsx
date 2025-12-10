@@ -65,7 +65,8 @@ export default function ReviewsPage() {
                 {/* Overall Rating */}
                 <div className="text-center">
                   <div className="title-lg text-white">
-                    {summary.averageRating.toFixed(1)} / 5
+                    {summary.averageRating.toFixed(1)}{" "}
+                    <span className="text-gray-2">/ 5</span>
                   </div>
                   <GapY size={4} />
                   <div className="flex justify-center">

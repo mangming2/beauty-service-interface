@@ -2,24 +2,25 @@
 
 import { useState } from "react";
 import { useUser } from "@/hooks/useAuthQueries";
-import { useUserReviews, useDeleteReviews } from "@/hooks/useReviewQueries";
+import { useUserReviews } from "@/hooks/useReviewQueries";
 import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
 import { PageLoading } from "@/components/common";
 import { format } from "date-fns";
 import { Check } from "lucide-react";
+import { Icons } from "@/components/common";
 
 export default function MyReviewsPage() {
   const { data: user, isLoading: userLoading } = useUser();
   const { data: reviews, isLoading: reviewsLoading } = useUserReviews(
     user?.id || ""
   );
-  const deleteReviewsMutation = useDeleteReviews();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedReviews, setSelectedReviews] = useState<Set<string>>(
     new Set()
   );
+  //const deleteReviewsMutation = useDeleteReviews();
 
   if (userLoading || reviewsLoading) {
     return <PageLoading message="리뷰를 불러오는 중..." />;
@@ -60,25 +61,6 @@ export default function MyReviewsPage() {
     setSelectedReviews(newSelected);
   };
 
-  const handleDeleteSelected = async () => {
-    if (selectedReviews.size === 0) return;
-
-    if (
-      !confirm(`선택한 ${selectedReviews.size}개의 리뷰를 삭제하시겠습니까?`)
-    ) {
-      return;
-    }
-
-    try {
-      await deleteReviewsMutation.mutateAsync(Array.from(selectedReviews));
-      setSelectedReviews(new Set());
-      setIsEditMode(false);
-    } catch (error) {
-      console.error("리뷰 삭제 실패:", error);
-      alert("리뷰 삭제에 실패했습니다. 다시 시도해주세요.");
-    }
-  };
-
   return (
     <div className="min-h-screen text-white bg-background">
       {/* Header */}
@@ -88,7 +70,7 @@ export default function MyReviewsPage() {
             variant="ghost"
             size="sm"
             onClick={() => setIsEditMode(true)}
-            className="text-disabled"
+            className="text-disabled text-lg p-0"
           >
             Edit
           </Button>
@@ -100,40 +82,21 @@ export default function MyReviewsPage() {
               setIsEditMode(false);
               setSelectedReviews(new Set());
             }}
-            className="text-disabled"
+            className="text-disabled text-lg p-0"
           >
             Cancel
           </Button>
         )}
       </div>
 
-      {/* Edit Mode Actions */}
-      {isEditMode && (
-        <div className="flex justify-end px-5">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDeleteSelected}
-            disabled={
-              selectedReviews.size === 0 || deleteReviewsMutation.isPending
-            }
-            className="text-white disabled:text-gray-500"
-          >
-            {`Delete Selected${selectedReviews.size > 0 ? ` · ${selectedReviews.size}` : ""}`}
-          </Button>
-        </div>
-      )}
-
       {/* Reviews List */}
-      <div className="px-4 py-4">
+      <div className="px-4">
         {reviews && reviews.length > 0 ? (
-          <div className="space-y-0">
+          <div className="space-y-4">
             {reviews.map((review, index) => (
               <div key={review.id}>
                 <div
-                  className={`py-4 flex gap-3 ${
-                    isEditMode ? "cursor-pointer" : ""
-                  }`}
+                  className={`flex pb-[14px] gap-3 ${isEditMode ? "cursor-pointer" : ""}`}
                   onClick={() => {
                     if (isEditMode) {
                       handleToggleSelect(review.id);
@@ -166,18 +129,15 @@ export default function MyReviewsPage() {
                   {isEditMode && (
                     <div className="flex self-center">
                       <div
-                        className={`w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${
-                          selectedReviews.has(review.id)
-                            ? "bg-white"
-                            : "bg-transparent"
-                        }`}
                         onClick={e => {
                           e.stopPropagation();
                           handleToggleSelect(review.id);
                         }}
                       >
-                        {selectedReviews.has(review.id) && (
-                          <Check className="w-3 h-3 text-black" />
+                        {selectedReviews.has(review.id) ? (
+                          <Check className="w-6 h-6 text-white" />
+                        ) : (
+                          <Icons.delete />
                         )}
                       </div>
                     </div>
