@@ -175,7 +175,7 @@ export default function BookingHistory() {
               {bookingHistory
                 .filter(booking => booking.status === "confirmed")
                 .map(booking => (
-                  <Link href={`/booking/${booking.id}/check`} key={booking.id}>
+                  <Link href={`/my/booking/${booking.id}`} key={booking.id}>
                     <Card
                       key={booking.id}
                       className="bg-gray-container border-none rounded-1 p-0"

@@ -58,18 +58,25 @@ const getBookingData = (packageId: string): BookingData => {
   };
 };
 
-export default function BookingCheckPage() {
+export default function MyBookingPage() {
   const params = useParams();
   const { t } = useTranslation();
   const router = useRouter();
   const packageId = params.id as string;
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
-  const [currentStep] = useState(1); // Sending, Processing, Accepted
+  const [currentStep, setCurrentStep] = useState(2); // Sending, Processing, Accepted
 
   useEffect(() => {
     const data = getBookingData(packageId);
     setBookingData(data);
+
+    // Simulate progress animation
+    const timer1 = setTimeout(() => setCurrentStep(3), 2000);
+
+    return () => {
+      clearTimeout(timer1);
+    };
   }, [packageId]);
 
   const handleSave = () => {
@@ -94,25 +101,21 @@ export default function BookingCheckPage() {
       {/* Main Content */}
       <div>
         {/* Reservation Status */}
-        <div className="flex flex-col p-5">
-          <div className="flex flex-col gap-1">
-            <div className="title-lg font-bold">Booking Status</div>
+        <div className="flex flex-col p-5 gap-4">
+          <div className="title-lg">예약 상세</div>
 
-            <div className="flex flex-col h-10">
-              <p className="text-gray-300 text-md">
-                {t("booking.delayNotice")}
-              </p>
-              <p className="text-gray-300 text-md">
-                {t("booking.realTimeUpdate")}
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="title-sm text-gray-font">
+              Package: Futuristic Chic Idol Debut
+            </div>
+            <div className="flex w-6 items-center justify-center">
+              <ArrowRightIcon color="white" width={7} height={16} />
             </div>
           </div>
 
-          <GapY size={16} />
-
           {/* Progress Bar */}
           <div>
-            <div className="flex px-9 justify-between caption-sm text-white">
+            <div className="flex justify-between text-xs text-gray-400">
               <span className={currentStep >= 1 ? "text-white" : ""}>
                 {t("booking.sending")}
               </span>
@@ -123,27 +126,29 @@ export default function BookingCheckPage() {
                 {t("booking.accepted")}
               </span>
             </div>
-            <div className="w-full bg-gray-font rounded-full my-1 h-[6px]">
+            <div className="w-full bg-gray-800 rounded-full h-1">
               <div
-                className="bg-gradient-to-r from-pink-500 to-pink-400 h-[6px] rounded-full transition-all duration-1000 ease-out"
+                className="bg-gradient-to-r from-pink-font to-pink-font h-[6px] rounded-full transition-all duration-1000 ease-out"
                 style={{ width: `${(currentStep / 3) * 100}%` }}
               ></div>
             </div>
           </div>
         </div>
 
+        <GapY size={16} />
+
         <Divider height={8} className="bg-gray-container" />
 
         {/* Order Status */}
         <div className="flex flex-col p-5">
           <div className="flex flex-col gap-1">
-            <div className="h-8 title-sm">Order Status</div>
+            <div className="h-8 title-lg font-bold">Order Status</div>
 
             <div className="flex flex-col h-10">
-              <p className="text-gray-font text-md">
+              <p className="text-gray-300 text-md">
                 Please proceed with reservations by vendor.
               </p>
-              <p className="text-gray-font text-md">You can modify later.</p>
+              <p className="text-gray-300 text-md">You can modify later.</p>
             </div>
           </div>
 
@@ -210,24 +215,15 @@ export default function BookingCheckPage() {
         {/* Package Details */}
         <div className="flex flex-col gap-3 p-5 bg-background">
           <div className="flex items-center justify-between cursor-pointer">
-            <h2 className="title-sm">{t("booking.packageDetails")}</h2>
+            <h2 className="text-xl font-bold">{t("booking.packageDetails")}</h2>
           </div>
 
           <div>
             <div className="flex justify-between items-center">
-              <h3 className="text-lg text-gray-font">
+              <h3 className="font-semibold">
                 {t("booking.package")}: {bookingData.packageTitle}
               </h3>
-              <div className="flex w-7 items-center justify-center">
-                <Link href={`/booking/${packageId}/package-details`}>
-                  <ArrowRightIcon
-                    className="cursor-pointer"
-                    width={7}
-                    height={16}
-                    color="#D2D3D3"
-                  />
-                </Link>
-              </div>
+              <ArrowRightIcon color="white" />
             </div>
 
             <GapY size={17} />
@@ -235,17 +231,17 @@ export default function BookingCheckPage() {
             <div className="space-y-3">
               {bookingData.components.map(component => (
                 <div key={component.id} className="flex justify-between">
-                  <span className="text-gray-font">{component.title}</span>
-                  <span className="text-gray-font font-medium">
+                  <span className="text-gray-300">{component.title}</span>
+                  <span className="text-white font-medium">
                     ₩{component.price.toLocaleString()}
                   </span>
                 </div>
               ))}
               <div className="flex justify-between">
-                <span className="text-gray-font">
+                <span className="text-gray-300">
                   {t("booking.platformFee")}
                 </span>
-                <span className="text-gray-font font-medium">
+                <span className="text-white font-medium">
                   ₩{platformFee.toLocaleString()}
                 </span>
               </div>
@@ -261,10 +257,13 @@ export default function BookingCheckPage() {
         </div>
       </div>
 
-      {/* Save Button */}
-      <div className="px-4 py-4 bg-transparent">
+      {/* Navigation */}
+      <div
+        className="mt-auto p-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Button className="w-full h-[52px] bg-primary" onClick={handleSave}>
-          <span className="text-lg">Save</span>
+          <span className="text-lg">Go to Review</span>
         </Button>
       </div>
     </div>

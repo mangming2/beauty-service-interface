@@ -136,7 +136,7 @@ export default function Schedule() {
                 </SheetTrigger>
                 <SheetContent
                   side="bottom"
-                  className="bg-black border-none text-white rounded-t-2xl h-[70vh]"
+                  className="bg-background border-none text-white rounded-t-2xl h-[70vh]"
                   onInteractOutside={e => {
                     // 모달이 열려있으면 바텀시트 닫기 방지
                     if (isScheduleModalOpen) {
