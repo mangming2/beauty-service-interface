@@ -32,7 +32,7 @@ export default function EditProfilePage() {
     );
   };
 
-  const [nickname, setNickname] = useState("");
+  const [nickname, setNickname] = useState<string | null>(null);
 
   // 닉네임 유효성 검사
   const validateNickname = (value: string) => {
@@ -68,8 +68,8 @@ export default function EditProfilePage() {
     return <PageLoading message="사용자 정보를 불러오는 중..." />;
   }
 
-  // user 데이터가 로드된 후 nickname이 비어있으면 초기값 설정
-  const currentNickname = nickname || getInitialNickname();
+  // user 데이터가 로드된 후 nickname이 null이면 초기값 설정, 그 외에는 nickname 사용
+  const currentNickname = nickname !== null ? nickname : getInitialNickname();
 
   const isNicknameValid = validateNickname(currentNickname);
   const isFormValid = isNicknameValid && !updateProfileMutation.isPending;
@@ -79,13 +79,14 @@ export default function EditProfilePage() {
       <GapY size={100} />
       {/* Profile Image Section */}
       <div className="flex flex-col items-center">
-        <div className="relative w-[125px] h-[125px] rounded-full border-solid border-[1.5px] border-gray overflow-hidden">
+        <div className="relative rounded-full border-solid border-[1.5px] border-gray overflow-hidden">
           {profile?.avatar_src || user?.user_metadata?.avatar_url ? (
             <Image
               src={profile?.avatar_src || user?.user_metadata?.avatar_url || ""}
               alt="Profile"
-              fill
-              className="object-cover"
+              width={120}
+              height={120}
+              className=" rounded-full"
             />
           ) : (
             <div className="w-full h-full bg-pink-500 flex items-center justify-center">
@@ -114,7 +115,7 @@ export default function EditProfilePage() {
             value={currentNickname}
             onChange={e => setNickname(e.target.value)}
             placeholder="Doki01"
-            className="w-full h-13 text-white border-none placeholder-gray-400"
+            className="w-full h-13 text-lg text-white border-none placeholder-gray-400"
           />
           <p className="text-gray-400 text-sm mt-2 h-5">
             Please enter 2-10 letters or numbers.
@@ -130,7 +131,7 @@ export default function EditProfilePage() {
         <Button
           onClick={handleComplete}
           disabled={!isFormValid}
-          className={`w-full h-12 rounded-lg font-medium transition-colors ${
+          className={`w-full h-12 rounded-lg text-lg transition-colors ${
             isFormValid
               ? "bg-pink-500 hover:bg-pink-600 text-white"
               : "bg-gray-600 text-gray-400 cursor-not-allowed"
