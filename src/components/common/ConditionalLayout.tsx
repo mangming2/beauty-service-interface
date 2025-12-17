@@ -17,7 +17,6 @@ const NORMAL_PAGES = [
   "/wish",
   "/recommend",
   "/package",
-  "/my/reviews",
   "/booking",
   "/form/complete",
 ];
@@ -35,6 +34,7 @@ const HEADER_ONLY_PAGES = [
   "/my/booking/[id]",
   "/booking/[id]/booking-link",
   "/booking/[id]/check",
+  "/my/reviews",
 ];
 
 // Header/Footer가 필요 없는 특수 페이지

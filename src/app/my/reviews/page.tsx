@@ -7,7 +7,6 @@ import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
 import { PageLoading } from "@/components/common";
 import { format } from "date-fns";
-import { Check } from "lucide-react";
 import { Icons } from "@/components/common";
 
 export default function MyReviewsPage() {
@@ -17,7 +16,7 @@ export default function MyReviewsPage() {
   );
 
   const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedReviews, setSelectedReviews] = useState<Set<string>>(
+  const [deletedReviewIds, setDeletedReviewIds] = useState<Set<string>>(
     new Set()
   );
   //const deleteReviewsMutation = useDeleteReviews();
@@ -51,18 +50,22 @@ export default function MyReviewsPage() {
     }
   };
 
-  const handleToggleSelect = (reviewId: string) => {
-    const newSelected = new Set(selectedReviews);
-    if (newSelected.has(reviewId)) {
-      newSelected.delete(reviewId);
-    } else {
-      newSelected.add(reviewId);
+  const handleDeleteReview = (reviewId: string) => {
+    setDeletedReviewIds(prev => new Set(prev).add(reviewId));
+  };
+
+  const handleSave = () => {
+    if (deletedReviewIds.size > 0) {
+      console.log("Deleting reviews:", Array.from(deletedReviewIds));
+      // TODO: 실제 삭제 로직 구현
+      // deleteReviewsMutation.mutate(Array.from(deletedReviewIds));
     }
-    setSelectedReviews(newSelected);
+    setDeletedReviewIds(new Set());
+    setIsEditMode(false);
   };
 
   return (
-    <div className="min-h-screen text-white bg-background">
+    <div className="text-white bg-transparent flex flex-col flex-1">
       {/* Header */}
       <div className="flex justify-end px-4 py-3">
         {!isEditMode ? (
@@ -80,7 +83,7 @@ export default function MyReviewsPage() {
             size="sm"
             onClick={() => {
               setIsEditMode(false);
-              setSelectedReviews(new Set());
+              setDeletedReviewIds(new Set());
             }}
             className="text-disabled text-lg p-0"
           >
@@ -93,61 +96,53 @@ export default function MyReviewsPage() {
       <div className="px-4">
         {reviews && reviews.length > 0 ? (
           <div className="space-y-4">
-            {reviews.map((review, index) => (
-              <div key={review.id}>
-                <div
-                  className={`flex pb-[14px] gap-3 ${isEditMode ? "cursor-pointer" : ""}`}
-                  onClick={() => {
-                    if (isEditMode) {
-                      handleToggleSelect(review.id);
-                    }
-                  }}
-                >
-                  {/* Review Content */}
-                  <div className="flex-1">
-                    {/* Title */}
-                    <div className="font-bold text-white mb-2">
-                      {review.package_title || "Unknown Package"}
-                    </div>
-
-                    {/* Rating and Date */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <StarRating rating={review.rating} readonly size="sm" />
-                      <div className="w-px h-4 bg-gray-600" />
-                      <span className="text-gray-400 text-sm">
-                        {isEditMode
-                          ? formatTimeAgo(review.created_at)
-                          : formatDate(review.created_at)}
-                      </span>
-                    </div>
-
-                    {/* Comment */}
-                    <div className="text-white text-md">{review.comment}</div>
-                  </div>
-
-                  {/* Selection Checkbox (Edit Mode) */}
-                  {isEditMode && (
-                    <div className="flex self-center">
-                      <div
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleToggleSelect(review.id);
-                        }}
-                      >
-                        {selectedReviews.has(review.id) ? (
-                          <Check className="w-6 h-6 text-white" />
-                        ) : (
-                          <Icons.delete />
-                        )}
+            {reviews
+              .filter(review => !deletedReviewIds.has(review.id))
+              .map((review, index, filteredReviews) => (
+                <div key={review.id}>
+                  <div className="flex pb-[14px] gap-3">
+                    {/* Review Content */}
+                    <div className="flex-1">
+                      {/* Title */}
+                      <div className="font-bold text-white mb-2">
+                        {review.package_title || "Unknown Package"}
                       </div>
+
+                      {/* Rating and Date */}
+                      <div className="flex items-center gap-2 mb-2">
+                        <StarRating rating={review.rating} readonly size="sm" />
+                        <div className="w-px h-4 bg-gray-600" />
+                        <span className="text-gray-400 text-sm">
+                          {isEditMode
+                            ? formatTimeAgo(review.created_at)
+                            : formatDate(review.created_at)}
+                        </span>
+                      </div>
+
+                      {/* Comment */}
+                      <div className="text-white text-md">{review.comment}</div>
                     </div>
+
+                    {/* Delete Button (Edit Mode) */}
+                    {isEditMode && (
+                      <div className="flex self-center">
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleDeleteReview(review.id);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          <Icons.delete />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  {index < filteredReviews.length - 1 && (
+                    <div className="h-px bg-gray-700" />
                   )}
                 </div>
-                {index < reviews.length - 1 && (
-                  <div className="h-px bg-gray-700" />
-                )}
-              </div>
-            ))}
+              ))}
           </div>
         ) : (
           <div className="text-center py-12">
@@ -155,6 +150,24 @@ export default function MyReviewsPage() {
           </div>
         )}
       </div>
+
+      {/* Navigation */}
+      {isEditMode && (
+        <div
+          className="mt-auto py-4 px-5"
+          style={{
+            boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)",
+          }}
+        >
+          <Button
+            className="w-full h-[52px] text-lg"
+            onClick={handleSave}
+            disabled={deletedReviewIds.size === 0}
+          >
+            Save
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
