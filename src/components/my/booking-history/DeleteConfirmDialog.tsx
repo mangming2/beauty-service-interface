@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { GapY } from "../../ui/gap";
 
 interface DeleteConfirmDialogProps {
   isOpen: boolean;
@@ -23,26 +24,31 @@ export function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-gray-container border-none rounded-lg p-6 max-w-[calc(100%-2rem)]">
-        <DialogHeader>
-          <DialogTitle className="text-white font-bold text-lg text-left">
+      <DialogContent
+        showCloseButton={false}
+        className="gap-0 px-5 pt-9 pb-6 bg-background border-none rounded-2 max-w-[380px] sm:max-w-[380px]"
+      >
+        <DialogHeader className="gap-0">
+          <DialogTitle className="text-white title-md text-[20px]">
             Delete this record now?
           </DialogTitle>
-          <DialogDescription className="text-white text-left mt-2">
+          <GapY size={20} />
+          <DialogDescription className="text-gray-font text-lg">
             Deleting this record will also remove all linked schedules
             you&apos;ve created, and this action cannot be undone.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex-row gap-3 justify-end mt-6 sm:justify-end">
+        <GapY size={36} />
+        <DialogFooter className="gap-3 w-full flex-row">
           <Button
             variant="gray"
+            className="h-13 text-lg flex-1"
             onClick={() => onOpenChange(false)}
-            className="flex-1 sm:flex-initial"
           >
             Cancel
           </Button>
           <Button
-            className="flex-1 sm:flex-initial bg-pink-500 hover:bg-pink-600 text-white"
+            className="h-13 text-lg bg-pink-500 hover:bg-pink-600 text-white flex-1"
             onClick={onConfirm}
           >
             Delete
