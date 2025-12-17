@@ -43,7 +43,7 @@ export default function MyPage() {
     <div className="min-h-screen text-white bg-background">
       {/* Header with Profile */}
       <div className="px-4 pt-6 pb-3">
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4">
           <div className="relative w-20 h-20 rounded-full overflow-hidden">
             <Image
               src={userProfile.avatar}

@@ -27,6 +27,14 @@ interface BookingHistory {
   guests?: number;
 }
 
+interface ScheduleItem {
+  id: string;
+  date: string;
+  title: string;
+  time: string;
+  color: string; // border color
+}
+
 // Schedule 컴포넌트는 props가 필요 없음
 
 export default function Schedule() {
@@ -41,6 +49,66 @@ export default function Schedule() {
   const [fullscreenSheets, setFullscreenSheets] = useState<
     Record<string, boolean>
   >({});
+
+  // Edit mode state for each booking (keyed by booking id)
+  const [editModes, setEditModes] = useState<Record<string, boolean>>({});
+
+  // Deleted schedule items (keyed by booking id, then schedule item id)
+  const [deletedScheduleItems, setDeletedScheduleItems] = useState<
+    Record<string, Set<string>>
+  >({});
+
+  // Schedule items for each booking (keyed by booking id)
+  const [scheduleItems, setScheduleItems] = useState<
+    Record<string, ScheduleItem[]>
+  >({
+    "1": [
+      {
+        id: "s1-1",
+        date: "07.15",
+        title: "Tri-bowl",
+        time: "2 p.m.",
+        color: "border-pink-500",
+      },
+      {
+        id: "s1-2",
+        date: "07.15",
+        title: "Incheon Bridge Observatory",
+        time: "4 p.m.",
+        color: "border-pink-500",
+      },
+      {
+        id: "s1-3",
+        date: "07.16",
+        title: "Studio HYPE",
+        time: "1 p.m.",
+        color: "border-gray-600",
+      },
+      {
+        id: "s1-4",
+        date: "07.16",
+        title: "Urban History Museum",
+        time: "5 p.m.",
+        color: "border-gray-600",
+      },
+    ],
+    "2": [
+      {
+        id: "s2-1",
+        date: "08.15",
+        title: "Tri-bowl",
+        time: "2 p.m.",
+        color: "border-pink-500",
+      },
+      {
+        id: "s2-2",
+        date: "08.15",
+        title: "Incheon Bridge Observatory",
+        time: "4 p.m.",
+        color: "border-pink-500",
+      },
+    ],
+  });
 
   useEffect(() => {
     const newBooking: BookingHistory = {
@@ -71,6 +139,7 @@ export default function Schedule() {
     ];
 
     setBookingHistory([newBooking, ...additionalBookings]);
+    // scheduleItems는 useState 초기값으로 이미 설정되어 있으므로 여기서는 제거
   }, []);
 
   const handleScheduleAdd = (bookingId: string) => {
@@ -99,6 +168,56 @@ export default function Schedule() {
     setFullscreenSheets(prev => ({
       ...prev,
       [bookingId]: !prev[bookingId],
+    }));
+  };
+
+  const toggleEditMode = (bookingId: string) => {
+    setEditModes(prev => ({
+      ...prev,
+      [bookingId]: !prev[bookingId],
+    }));
+    // Reset deleted items when canceling edit mode
+    if (editModes[bookingId]) {
+      setDeletedScheduleItems(prev => ({
+        ...prev,
+        [bookingId]: new Set(),
+      }));
+    }
+  };
+
+  const handleDeleteScheduleItem = (
+    bookingId: string,
+    scheduleItemId: string
+  ) => {
+    setDeletedScheduleItems(prev => ({
+      ...prev,
+      [bookingId]: new Set(prev[bookingId] || []).add(scheduleItemId),
+    }));
+  };
+
+  const handleSaveSchedule = (bookingId: string) => {
+    const deletedIds = deletedScheduleItems[bookingId];
+    if (deletedIds && deletedIds.size > 0) {
+      console.log("Deleting schedule items:", Array.from(deletedIds));
+      // TODO: 실제 삭제 API 호출
+
+      // Remove deleted items from scheduleItems
+      setScheduleItems(prev => ({
+        ...prev,
+        [bookingId]: (prev[bookingId] || []).filter(
+          item => !deletedIds.has(item.id)
+        ),
+      }));
+    }
+
+    // Reset edit mode and deleted items
+    setEditModes(prev => ({
+      ...prev,
+      [bookingId]: false,
+    }));
+    setDeletedScheduleItems(prev => ({
+      ...prev,
+      [bookingId]: new Set(),
     }));
   };
 
@@ -149,7 +268,7 @@ export default function Schedule() {
                 <SheetContent
                   side="bottom"
                   showCloseButton={false}
-                  className={`bg-background border-none text-white rounded-t-2xl transition-all duration-300 ${
+                  className={`bg-background border-none text-white rounded-t-2xl transition-all duration-300 flex flex-col ${
                     fullscreenSheets[booking.id]
                       ? "h-[calc(100vh-64px)]"
                       : "h-[70vh]"
@@ -164,59 +283,138 @@ export default function Schedule() {
                   {/* Drag Handle Bar */}
                   <div
                     onClick={() => toggleFullscreen(booking.id)}
-                    className="flex justify-center pt-2 pb-3 cursor-pointer touch-none"
+                    className="flex justify-center pt-2 pb-3 cursor-pointer touch-none flex-shrink-0"
                   >
                     <div className="w-13 h-1 bg-gray rounded-fulltransition-colors" />
                   </div>
 
-                  <SheetHeader className="pb-4">
+                  <SheetHeader className="pb-4 flex flex-row items-center justify-between flex-shrink-0">
                     <SheetTitle className="text-white text-lg font-bold">
-                      Futuristic Chic Idol Debut
+                      {booking.packageTitle}
                     </SheetTitle>
+                    {!editModes[booking.id] ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleEditMode(booking.id)}
+                        className="text-disabled text-lg p-0 h-auto"
+                      >
+                        Edit
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleEditMode(booking.id)}
+                        className="text-disabled text-lg p-0 h-auto"
+                      >
+                        Cancel
+                      </Button>
+                    )}
                   </SheetHeader>
 
-                  <div className="space-y-4 overflow-y-auto h-full px-5 pb-6 relative">
-                    <div className="text-gray-400 text-sm">07.15</div>
-                    <div className="border-l-4 border-pink-500 pl-4">
-                      <div className="text-white font-semibold">Tri-bowl</div>
-                      <div className="text-gray-400 text-sm">2 p.m.</div>
+                  <div className="flex-1 overflow-y-auto px-5 relative">
+                    <div className="space-y-4 pb-6">
+                      {(() => {
+                        const items = scheduleItems[booking.id] || [];
+                        const deletedIds =
+                          deletedScheduleItems[booking.id] || new Set();
+                        const visibleItems = items.filter(
+                          item => !deletedIds.has(item.id)
+                        );
+
+                        if (visibleItems.length === 0) {
+                          return (
+                            <div className="text-center py-12">
+                              <div className="text-gray-400">
+                                일정이 없습니다.
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Group items by date
+                        const groupedByDate: Record<string, ScheduleItem[]> =
+                          {};
+                        visibleItems.forEach(item => {
+                          if (!groupedByDate[item.date]) {
+                            groupedByDate[item.date] = [];
+                          }
+                          groupedByDate[item.date].push(item);
+                        });
+
+                        const dates = Object.keys(groupedByDate).sort();
+
+                        return dates.map(date => (
+                          <div key={date}>
+                            <div className="text-gray-400 text-sm mb-2">
+                              {date}
+                            </div>
+                            {groupedByDate[date].map(item => (
+                              <div
+                                key={item.id}
+                                className={`border-l-4 ${item.color} pl-4 flex items-start justify-between gap-3`}
+                              >
+                                <div className="flex-1">
+                                  <div className="text-white font-semibold">
+                                    {item.title}
+                                  </div>
+                                  <div className="text-gray-400 text-sm">
+                                    {item.time}
+                                  </div>
+                                </div>
+                                {editModes[booking.id] && (
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteScheduleItem(
+                                        booking.id,
+                                        item.id
+                                      )
+                                    }
+                                    className="cursor-pointer flex-shrink-0 mt-1"
+                                  >
+                                    <Icons.delete />
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ));
+                      })()}
                     </div>
 
-                    <div className="border-l-4 border-pink-500 pl-4">
-                      <div className="text-white font-semibold">
-                        Incheon Bridge Observatory
-                      </div>
-                      <div className="text-gray-400 text-sm">4 p.m.</div>
-                    </div>
-
-                    <div className="text-gray-400 text-sm">07.16</div>
-                    <div className="border-l-4 border-gray-600 pl-4">
-                      <div className="text-white font-semibold">Salon DOKI</div>
-                      <div className="text-gray-400 text-sm">10 a.m.</div>
-                    </div>
-
-                    <div className="border-l-4 border-gray-600 pl-4">
-                      <div className="text-white font-semibold">
-                        Studio HYPE
-                      </div>
-                      <div className="text-gray-400 text-sm">1 p.m.</div>
-                    </div>
-
-                    <div className="border-l-4 border-gray-600 pl-4">
-                      <div className="text-white font-semibold">
-                        Urban History Museum
-                      </div>
-                      <div className="text-gray-400 text-sm">5 p.m.</div>
-                    </div>
-
-                    {/* Plus Button - Fixed Position */}
-                    <Button
-                      onClick={() => handleScheduleAdd(booking.id)}
-                      className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600 p-0 shadow-lg"
-                    >
-                      <Icons.plus className="w-6 h-6 text-white" />
-                    </Button>
+                    {/* Plus Button - Fixed Position (only show when not in edit mode) */}
+                    {!editModes[booking.id] && (
+                      <Button
+                        onClick={() => handleScheduleAdd(booking.id)}
+                        className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600 p-0 shadow-lg z-10"
+                      >
+                        <Icons.plus className="w-6 h-6 text-white" />
+                      </Button>
+                    )}
                   </div>
+
+                  {/* Save Button (only show in edit mode) */}
+                  {editModes[booking.id] && (
+                    <div
+                      className="flex-shrink-0 py-4 px-5"
+                      style={{
+                        boxShadow:
+                          "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)",
+                      }}
+                    >
+                      <Button
+                        className="w-full h-[52px] text-lg bg-pink-500 hover:bg-pink-600"
+                        onClick={() => handleSaveSchedule(booking.id)}
+                        disabled={
+                          !deletedScheduleItems[booking.id] ||
+                          deletedScheduleItems[booking.id].size === 0
+                        }
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  )}
                 </SheetContent>
               </Sheet>
             ))}
