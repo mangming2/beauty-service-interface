@@ -82,7 +82,7 @@ export default function CreateReviewPage() {
         {/* Rating Section */}
         <div>
           <div className="flex flex-col p-5">
-            <h2 className="title-lg mb-4">How did you like the package?</h2>
+            <h2 className="title-lg">How did you like the package?</h2>
           </div>
           <GapY size={20} />
           <StarRating
@@ -99,7 +99,7 @@ export default function CreateReviewPage() {
         <div className="px-5">
           <h3 className="title-sm">Your Package</h3>
           <GapY size={12} />
-          <Card className="bg-transparent border-none">
+          <Card className="bg-transparent border-none px-0 pt-0 pb-3">
             <CardContent className="p-0">
               <div className="flex gap-2">
                 <div className="relative w-20 h-20 overflow-hidden flex-shrink-0">
@@ -136,16 +136,16 @@ export default function CreateReviewPage() {
           </div>
 
           {/* Comment Input */}
-          <div className="px-5">
+          <div className="flex flex-col px-5 gap-0">
             <textarea
               placeholder="Share your detailed review!"
               value={comment}
               onChange={e => setComment(e.target.value)}
-              className="h-[85px] w-full px-4 py-3 rounded-1 bg-gray-outline border-none text-white placeholder-gray-400 focus:outline-none focus:border-pink-500 resize-none"
+              className="h-[128px] w-full px-4 py-3 rounded-[2px] bg-gray-outline border-none text-white placeholder-white focus:outline-none focus:border-pink-500 resize-none"
               rows={6}
               maxLength={300}
             />
-            <div className="text-right text-gray-400 text-sm mt-2">
+            <div className="text-right text-gray-font text-sm mt-1">
               {comment.length}/300
             </div>
           </div>

@@ -80,7 +80,7 @@ export default function MyBookingPage() {
   }, [packageId]);
 
   const handleSave = () => {
-    router.push(`/booking/${packageId}/done`);
+    router.push(`/package/${packageId}/reviews`);
   };
 
   const platformFee = 20000;
