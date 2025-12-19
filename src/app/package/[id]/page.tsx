@@ -1,7 +1,6 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
@@ -51,7 +50,32 @@ export default function PackageDetail() {
 
   // 패키지를 찾을 수 없는 경우
   if (!packageDetail) {
-    notFound();
+    return (
+      <div className="bg-transparent flex flex-col flex-1">
+        <div className="flex-1 flex flex-col items-center justify-center gap-3">
+          <Image src={"/empty.png"} alt="Empty Logo" width={372} height={200} />
+          <h1 className="title-sm text-gray-2">The package is empty.</h1>
+          <span className="text-white text-sm">
+            This package was deleted or moved <br /> and can’t be found.
+          </span>
+        </div>
+        <div
+          className="w-full py-4 px-5"
+          style={{
+            boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)",
+          }}
+        >
+          <Link href="/">
+            <Button
+              variant="default"
+              className="w-full h-12 text-lg font-semibold"
+            >
+              Back to main page
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const handleBook = () => {
