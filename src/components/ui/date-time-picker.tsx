@@ -139,19 +139,67 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     onSelect: (value: string | number) => void;
     label: string;
   }) => {
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
     const itemHeight = 32;
     const visibleItems = 3;
     const containerHeight = itemHeight * visibleItems;
 
+    // 초기 스크롤 위치 계산
+    const getInitialScrollPosition = () => {
+      const selectedIndex = items.findIndex(item => item === selectedValue);
+      if (selectedIndex !== -1) {
+        return -(selectedIndex - 1) * itemHeight;
+      }
+      return 0;
+    };
+
+    const [scrollPosition, setScrollPosition] = useState(() =>
+      getInitialScrollPosition()
+    );
+    const [isDragging, setIsDragging] = useState(false);
+    const [isInteracting, setIsInteracting] = useState(false);
+    const [lastSelectedValue, setLastSelectedValue] = useState(selectedValue);
+    const interactionTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+    // 초기 마운트 시 스크롤 위치 설정
     useEffect(() => {
       const selectedIndex = items.findIndex(item => item === selectedValue);
       if (selectedIndex !== -1) {
-        // 중앙에 선택된 항목이 오도록 조정 (위아래로 2개씩 보이도록)
         setScrollPosition(-(selectedIndex - 1) * itemHeight);
       }
-    }, [selectedValue, items]);
+      setLastSelectedValue(selectedValue);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // cleanup 타이머
+    useEffect(() => {
+      return () => {
+        if (interactionTimerRef.current) {
+          clearTimeout(interactionTimerRef.current);
+        }
+      };
+    }, []);
+
+    useEffect(() => {
+      // 사용자가 직접 조작 중이 아니고, 실제로 값이 변경되었을 때만 재설정
+      if (
+        !isInteracting &&
+        !isDragging &&
+        selectedValue !== lastSelectedValue
+      ) {
+        const selectedIndex = items.findIndex(item => item === selectedValue);
+        if (selectedIndex !== -1) {
+          setScrollPosition(-(selectedIndex - 1) * itemHeight);
+        }
+        setLastSelectedValue(selectedValue);
+      }
+    }, [
+      selectedValue,
+      items,
+      isInteracting,
+      isDragging,
+      lastSelectedValue,
+      itemHeight,
+    ]);
 
     const handleWheel = (e: React.WheelEvent) => {
       e.preventDefault();
@@ -160,6 +208,13 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       e.nativeEvent.preventDefault();
 
       if (isDragging) return;
+
+      setIsInteracting(true);
+
+      // 기존 타이머 취소
+      if (interactionTimerRef.current) {
+        clearTimeout(interactionTimerRef.current);
+      }
 
       // 더 부드러운 스크롤을 위해 델타값을 조정
       const delta = e.deltaY > 0 ? itemHeight * 0.8 : -itemHeight * 0.8;
@@ -175,6 +230,12 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       if (selectedIndex >= 0 && selectedIndex < items.length) {
         onSelect(items[selectedIndex]);
       }
+
+      // 짧은 딜레이 후 상호작용 상태 해제
+      interactionTimerRef.current = setTimeout(() => {
+        setIsInteracting(false);
+        interactionTimerRef.current = null;
+      }, 150);
     };
 
     const handleMouseDown = (e: React.MouseEvent) => {
@@ -184,6 +245,13 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       e.nativeEvent.preventDefault();
 
       setIsDragging(true);
+      setIsInteracting(true);
+
+      // 기존 타이머 취소
+      if (interactionTimerRef.current) {
+        clearTimeout(interactionTimerRef.current);
+      }
+
       const startY = e.clientY;
       const startScroll = scrollPosition;
 
@@ -207,12 +275,33 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
       const handleMouseUp = () => {
         setIsDragging(false);
+        // 드래그 종료 후 짧은 딜레이를 두고 상호작용 상태 해제
+        interactionTimerRef.current = setTimeout(() => {
+          setIsInteracting(false);
+          interactionTimerRef.current = null;
+        }, 150);
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
       };
 
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleClick = (item: string | number) => {
+      setIsInteracting(true);
+
+      // 기존 타이머 취소
+      if (interactionTimerRef.current) {
+        clearTimeout(interactionTimerRef.current);
+      }
+
+      onSelect(item);
+      // 클릭 후 짧은 딜레이를 두고 상호작용 상태 해제
+      interactionTimerRef.current = setTimeout(() => {
+        setIsInteracting(false);
+        interactionTimerRef.current = null;
+      }, 150);
     };
 
     return (
@@ -260,7 +349,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                     : "text-white/30 text-sm scale-100"
                 )}
                 style={{ height: itemHeight }}
-                onClick={() => onSelect(item)}
+                onClick={() => handleClick(item)}
               >
                 {item}
               </div>
