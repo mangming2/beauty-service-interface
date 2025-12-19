@@ -37,11 +37,11 @@ export default function FormLoadingPage() {
                 Analyzing your input to recommend the most suitable package.
               </h2>
             </div>
-            <div className="self-center">
+            <div className="flex-1 flex flex-col items-center justify-center">
               <LottieAnimation
                 src="/logo-loading.lottie"
-                width={100}
-                height={100}
+                width={177}
+                height={177}
               />
             </div>
           </>
@@ -55,9 +55,10 @@ export default function FormLoadingPage() {
             </div>
             <div className="flex-1 flex flex-col items-center justify-center">
               <LottieAnimation
-                src="/logo-loading.lottie"
-                width={100}
-                height={100}
+                src="/check.lottie"
+                width={177}
+                height={177}
+                loop={false}
               />
             </div>
             <div
