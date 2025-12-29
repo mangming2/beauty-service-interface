@@ -59,8 +59,8 @@ export default function PackageDetail() {
       <div className="bg-transparent flex flex-col flex-1">
         <div className="flex-1 flex flex-col items-center justify-center gap-3">
           <Image src={"/empty.png"} alt="Empty Logo" width={372} height={200} />
-          <h1 className="title-sm text-gray-2">The package is empty.</h1>
-          <span className="text-white text-sm">
+          <h1 className="title-lg text-gray-2">The package is empty.</h1>
+          <span className="text-white text-lg text-center">
             This package was deleted or moved <br /> and can’t be found.
           </span>
         </div>
