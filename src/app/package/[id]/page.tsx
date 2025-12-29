@@ -12,8 +12,10 @@ import {
   BorderHeartIcon,
   LocationIcon,
   ShareIcon,
+  ArrowRightIcon,
 } from "../../../components/common/Icons";
 import { LanguageSelector } from "../../../components/common/LanguageSelector";
+import { TranslatedText } from "../../../components/main/TranslatedText";
 
 export default function PackageDetail() {
   const params = useParams();
@@ -183,9 +185,27 @@ export default function PackageDetail() {
             <GapY size={20} />
             {/* Customer Reviews */}
             <div className="pl-5">
-              <span className="flex items-center h-8 title-md font-bold">
-                Customers review
-              </span>
+              <div className="flex items-center justify-between pr-5">
+                <span className="flex items-center h-8 title-md font-bold">
+                  Customers review
+                </span>
+                <Link href={`/package/${packageDetail.id}/reviews`}>
+                  <div className="flex flex-col items-center h-7 justify-end">
+                    <div className="flex items-center gap-1">
+                      <span className="text-gray-font text-sm">
+                        <TranslatedText translationKey="more" />
+                      </span>
+                      <ArrowRightIcon
+                        color="#BCBCBC"
+                        width={3}
+                        height={7}
+                        className="size-auto"
+                      />
+                    </div>
+                  </div>
+                </Link>
+              </div>
+
               <GapY size={8} />
               <Link href={`/package/${packageDetail.id}/reviews`}>
                 <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">

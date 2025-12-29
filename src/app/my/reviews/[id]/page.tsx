@@ -21,6 +21,7 @@ export default function CreateReviewPage() {
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
 
   const { data: packageDetail, isLoading: packageLoading } =
     usePackageDetail(packageId);
@@ -101,7 +102,7 @@ export default function CreateReviewPage() {
           <GapY size={12} />
           <Card className="bg-transparent border-none px-0 pt-0 pb-3">
             <CardContent className="p-0">
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-2 pb-3">
                 <div className="relative w-20 h-20 overflow-hidden flex-shrink-0">
                   <Image
                     src={packageDetail.image_src[0] || "/dummy-profile.png"}
@@ -138,10 +139,12 @@ export default function CreateReviewPage() {
           {/* Comment Input */}
           <div className="flex flex-col px-5 gap-0">
             <textarea
-              placeholder="Share your detailed review!"
+              placeholder={isFocused ? "" : "Share your detailed review!"}
               value={comment}
               onChange={e => setComment(e.target.value)}
-              className="h-[128px] w-full px-4 py-3 rounded-[2px] bg-gray-outline border-none text-white placeholder-white focus:outline-none focus:border-pink-500 resize-none"
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              className="h-[128px] w-full px-4 py-3 rounded-[2px] bg-gray-outline border-none text-white placeholder:text-gray-font focus:outline-none focus:border-pink-500 resize-none"
               rows={6}
               maxLength={300}
             />
