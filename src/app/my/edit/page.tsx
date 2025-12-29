@@ -33,11 +33,31 @@ export default function EditProfilePage() {
   };
 
   const [nickname, setNickname] = useState<string | null>(null);
+  const [hasTouched, setHasTouched] = useState(false);
 
-  // 닉네임 유효성 검사
+  // 닉네임 유효성 검사 (영문과 숫자만 허용)
   const validateNickname = (value: string) => {
-    const regex = /^[a-zA-Z0-9가-힣]{2,10}$/;
+    const regex = /^[a-zA-Z0-9]{2,10}$/;
     return regex.test(value);
+  };
+
+  // 에러 메시지 생성
+  const getErrorMessage = (value: string) => {
+    if (!hasTouched || value === "") return null;
+
+    // 영문과 숫자가 아닌 문자가 있는지 확인
+    const hasInvalidChar = /[^a-zA-Z0-9]/.test(value);
+    // 글자수 확인
+    const length = value.length;
+
+    if (hasInvalidChar) {
+      return "Please enter English letters or numbers only.";
+    }
+    if (length < 2 || length > 10) {
+      return "Please enter 2-10 characters.";
+    }
+
+    return null;
   };
 
   // 완료 버튼 클릭
@@ -73,6 +93,8 @@ export default function EditProfilePage() {
 
   const isNicknameValid = validateNickname(currentNickname);
   const isFormValid = isNicknameValid && !updateProfileMutation.isPending;
+  const errorMessage = getErrorMessage(currentNickname);
+  const hasError = errorMessage !== null;
 
   return (
     <div className="text-white bg-transparent flex flex-col flex-1">
@@ -113,12 +135,29 @@ export default function EditProfilePage() {
           <Input
             type="text"
             value={currentNickname}
-            onChange={e => setNickname(e.target.value)}
+            onChange={e => {
+              setNickname(e.target.value);
+              if (!hasTouched) setHasTouched(true);
+            }}
+            onBlur={() => setHasTouched(true)}
             placeholder="Doki01"
-            className="w-full h-13 text-lg text-white border-none placeholder-gray-400"
+            className={`w-full h-13 text-lg text-white border-none placeholder-gray-400 ${
+              hasError
+                ? "border-pink-dark focus-visible:ring-0 focus-visible:border-pink-dark"
+                : ""
+            }`}
+            style={{
+              border: hasError ? "1px solid #ec4899" : "none",
+            }}
           />
-          <p className="text-gray-400 text-sm mt-2 h-5">
-            Please enter 2-10 letters or numbers.
+          <p
+            className={`text-sm mt-2 h-5 ${
+              hasError ? "text-pink-dark" : "text-gray-400"
+            }`}
+          >
+            {hasError
+              ? errorMessage
+              : "Please enter 2-10 English letters or numbers only."}
           </p>
         </div>
       </div>
