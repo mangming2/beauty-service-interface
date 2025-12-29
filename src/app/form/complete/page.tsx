@@ -149,13 +149,13 @@ export default function FormComplete() {
   };
 
   return (
-    <div className="min-h-screen text-white relative">
+    <div className="min-h-screen text-white">
       <GapY size={8} />
 
       {/* Main Content */}
       <div>
         {/* Tags Section */}
-        <div className="flex flex-col px-5 py-1 gap-2">
+        <div className="flex flex-col pl-5 py-1 gap-2">
           <div className="flex items-center title-md h-11">
             All summed up in tags
           </div>
@@ -222,6 +222,7 @@ export default function FormComplete() {
               {isSecondGallery && (
                 <>
                   <GapY size={20} />
+
                   <PackageSection
                     title={DUMMY_PACKAGE_SECTIONS[0].title}
                     packages={
@@ -240,6 +241,7 @@ export default function FormComplete() {
                     }
                     onPackageClick={handlePackageClick}
                   />
+
                   <GapY size={20} />
                 </>
               )}
@@ -248,6 +250,7 @@ export default function FormComplete() {
               {isFourthGallery && (
                 <>
                   <GapY size={20} />
+
                   <PackageSection
                     title={DUMMY_PACKAGE_SECTIONS[1].title}
                     packages={

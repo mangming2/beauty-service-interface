@@ -23,7 +23,7 @@ export default function RecommendationGallery({
 }: RecommendationGalleryProps) {
   return (
     <div className="flex flex-col py-4 cursor-pointer" onClick={onClick}>
-      <div className="flex gap-3 flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex gap-3 flex-nowrap overflow-x-auto scrollbar-hide">
         {images.map((imageSrc, index) => (
           <div
             key={index}

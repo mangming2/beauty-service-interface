@@ -179,7 +179,7 @@ function RecommendContent() {
       {/* Main Content */}
       <div>
         {/* Tags Section */}
-        <div className="px-5">
+        <div className="pl-5">
           <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
             {availableTags.map((tag, index) => (
               <Badge
@@ -208,7 +208,7 @@ function RecommendContent() {
 
           return (
             <div key={gallery.id}>
-              <div className="px-5">
+              <div className="pl-5">
                 <RecommendationGallery
                   images={gallery.images}
                   salonInfo={gallery.salonInfo}
