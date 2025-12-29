@@ -203,6 +203,26 @@ const HeartIcon = ({ color = "white", ...rest }: IconProps) => {
   );
 };
 
+const BorderHeartIcon = ({ color, ...rest }: IconProps) => {
+  return (
+    <svg
+      width="19"
+      height="17"
+      viewBox="0 0 19 17"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M2.15021 9.35081L6.99482 14.4565C8.1778 15.7032 10.1643 15.7032 11.3473 14.4565L16.1919 9.35081C18.0588 7.38326 18.0588 4.19322 16.1919 2.22567C14.3249 0.258111 11.298 0.258112 9.43108 2.22567C9.28973 2.37463 9.05237 2.37463 8.91102 2.22567C7.04407 0.258112 4.01716 0.258111 2.15021 2.22567C0.283263 4.19322 0.283264 7.38326 2.15021 9.35081Z"
+        fill={color ?? "#4A4B52"}
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+};
+
 const HighHeelIcon = ({ color = "white", ...rest }: IconProps) => {
   return (
     <svg
@@ -653,6 +673,58 @@ const TrashcanIcon = ({ color, ...rest }: IconProps) => {
   );
 };
 
+const ShareIcon = ({ color, ...rest }: IconProps) => {
+  return (
+    <svg
+      width="16"
+      height="18"
+      viewBox="0 0 16 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <ellipse
+        cx="12.3496"
+        cy="2.74999"
+        rx="2"
+        ry="1.99999"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+      />
+      <ellipse
+        cx="2.75"
+        cy="8.3496"
+        rx="2"
+        ry="1.99999"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+      />
+      <path
+        d="M10.3492 3.94963L4.74922 7.14962"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M4.35038 9.95002L10.3504 13.55"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <ellipse
+        cx="12.3496"
+        cy="14.75"
+        rx="2"
+        ry="1.99999"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -663,6 +735,7 @@ export {
   ArrowLeftIcon,
   GirlCrushIcon,
   HeartIcon,
+  BorderHeartIcon,
   HighHeelIcon,
   MoonIcon,
   GlobalIcon,
@@ -679,6 +752,7 @@ export {
   DeleteIcon,
   DotsIcon,
   TrashcanIcon,
+  ShareIcon,
 };
 
 export const Icons = {
@@ -691,6 +765,7 @@ export const Icons = {
   arrowLeft: ArrowLeftIcon,
   girlCrush: GirlCrushIcon,
   heart: HeartIcon,
+  borderHeart: BorderHeartIcon,
   highHeel: HighHeelIcon,
   moon: MoonIcon,
   global: GlobalIcon,
@@ -704,4 +779,5 @@ export const Icons = {
   delete: DeleteIcon,
   dots: DotsIcon,
   trashcan: TrashcanIcon,
+  share: ShareIcon,
 };
