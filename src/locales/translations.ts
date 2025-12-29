@@ -7,6 +7,7 @@ export const translations = {
     latestTrends: "한국의 최신 트렌드",
     more: "더보기",
     concepts: {
+      all: "전체",
       girlCrush: "걸크러시",
       lovelyFresh: "러블리 & 프레시",
       elegantGlam: "엘레간트 & 글램",
@@ -71,6 +72,7 @@ export const translations = {
     latestTrends: "Latest Trends in Korea",
     more: "more",
     concepts: {
+      all: "All Concept",
       girlCrush: "Girl Crush",
       lovelyFresh: "Lovely & Fresh",
       elegantGlam: "Elegant & Glam",
@@ -134,6 +136,7 @@ export const translations = {
     latestTrends: "韓国の最新トレンド",
     more: "もっと見る",
     concepts: {
+      all: "All",
       girlCrush: "ガールクラッシュ",
       lovelyFresh: "ラブリー＆フレッシュ",
       elegantGlam: "エレガント＆グラム",

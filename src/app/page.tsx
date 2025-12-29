@@ -11,6 +11,7 @@ import ElegantGlam from "@/assets/3d-images/elegant-glam.png";
 import Dreamy from "@/assets/3d-images/dreamy.png";
 import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
+import All from "@/assets/3d-images/doki-all.png";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
 import { PopularCarousel } from "@/components/main/PopularCarousel";
@@ -87,6 +88,12 @@ export default function Home() {
           </h2>
           <ConceptScrollContainer>
             {[
+              {
+                src: All,
+                alt: "All",
+                labelKey: "concepts.all",
+                tags: ["All"],
+              },
               {
                 src: GirlCrush,
                 alt: "Girl Crush",
