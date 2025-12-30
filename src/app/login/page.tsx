@@ -1,42 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import MainLogo from "../../../public/main-logo.png";
 import { GoogleIcon } from "@/components/common/Icons";
 import { AuthLoading } from "@/components/common";
 import Image from "next/image";
 import { GapY } from "../../components/ui/gap";
-import {
-  useUser,
-  useGoogleLogin,
-  useAuthStateListener,
-} from "@/hooks/useAuthQueries";
+import { useLogin } from "@/queries/useAuth";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
   const router = useRouter();
-
-  // TanStack Query hooks 사용
-  const { data: user, isLoading: userLoading } = useUser();
-  const googleLoginMutation = useGoogleLogin();
-
-  // 실시간 인증 상태 감지
-  useAuthStateListener();
-
-  // 이미 로그인된 사용자라면 리다이렉트 (useEffect로 처리)
-  useEffect(() => {
-    if (user && !userLoading) {
-      router.push("/my");
-    }
-  }, [user, userLoading, router]);
+  const loginMutation = useLogin();
 
   const handleGoogleLogin = async () => {
     try {
       setMessage("");
-      await googleLoginMutation.mutateAsync();
+      // /auth/login 호출 시 refreshToken 발급 + /auth/callback으로 콜백
+      await loginMutation.mutateAsync();
+      // 서버에서 /auth/callback으로 리다이렉트 처리됨
     } catch (error: unknown) {
-      setMessage((error as Error)?.message || "로그인 중 오류가 발생했습니다.");
+      // AxiosError의 userMessage가 있으면 사용, 없으면 기본 메시지
+      const axiosError = error as Error & { userMessage?: string };
+      setMessage(
+        axiosError.userMessage ||
+          axiosError.message ||
+          "로그인 중 오류가 발생했습니다."
+      );
     }
   };
 
@@ -52,8 +43,8 @@ export default function LoginPage() {
     router.push("/");
   };
 
-  // 사용자 정보 로딩 중일 때 로딩 표시
-  if (userLoading) {
+  // 로그인 처리 중일 때 로딩 표시
+  if (loginMutation.isPending) {
     return <AuthLoading />;
   }
 
@@ -85,10 +76,10 @@ export default function LoginPage() {
           </button> */}
           <button
             onClick={handleGoogleLogin}
-            disabled={googleLoginMutation.isPending || userLoading}
+            disabled={loginMutation.isPending}
             className="w-[40px] h-[40px] bg-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {googleLoginMutation.isPending ? (
+            {loginMutation.isPending ? (
               <div className="w-[24px] h-[24px] border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <GoogleIcon width={24} height={24} />

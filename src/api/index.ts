@@ -4,8 +4,12 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://localhost:8080";
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+
+// 개발 환경에서 baseURL 로깅
+if (process.env.NODE_ENV === "development") {
+  console.log("API Base URL:", baseURL);
+}
 
 // axios 인스턴스 생성
 export const apiClient = axios.create({
@@ -43,7 +47,14 @@ apiClient.interceptors.response.use(
       console.error("API Error:", error.response.data);
     } else if (error.request) {
       // 요청은 보냈지만 응답을 받지 못함
-      console.error("Network Error:", error.request);
+      const errorMessage =
+        error.code === "ERR_NETWORK"
+          ? `네트워크 오류: API 서버(${baseURL})에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.`
+          : "네트워크 오류가 발생했습니다.";
+      console.error("Network Error:", errorMessage);
+      // 에러 객체에 사용자 친화적인 메시지 추가
+      (error as AxiosError & { userMessage?: string }).userMessage =
+        errorMessage;
     } else {
       // 요청 설정 중 에러 발생
       console.error("Error:", error.message);
