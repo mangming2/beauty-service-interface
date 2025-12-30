@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,6 +57,13 @@ export default function Schedule() {
   const [deletedScheduleItems, setDeletedScheduleItems] = useState<
     Record<string, Set<string>>
   >({});
+
+  // Drag state for each sheet (keyed by booking id)
+  const dragStartY = useRef<Record<string, number>>({});
+  const isDragging = useRef<Record<string, boolean>>({});
+  const dragStartHeight = useRef<Record<string, number>>({});
+  const hasDragged = useRef<Record<string, boolean>>({});
+  const [dragHeights, setDragHeights] = useState<Record<string, number>>({});
 
   // Schedule items for each booking (keyed by booking id)
   const [scheduleItems, setScheduleItems] = useState<
@@ -142,6 +149,80 @@ export default function Schedule() {
     // scheduleItems는 useState 초기값으로 이미 설정되어 있으므로 여기서는 제거
   }, []);
 
+  // 드래그 핸들러 함수들
+  const handleDragMove = (bookingId: string, clientY: number) => {
+    if (!isDragging.current[bookingId]) return;
+
+    const startY = dragStartY.current[bookingId];
+    const startHeight = dragStartHeight.current[bookingId];
+    const deltaY = startY - clientY; // 위로 드래그하면 양수
+
+    // 드래그가 발생했는지 추적 (5px 이상 움직이면 드래그로 간주)
+    if (Math.abs(deltaY) > 5) {
+      hasDragged.current[bookingId] = true;
+    }
+
+    const viewportHeight = window.innerHeight;
+    const minHeight = viewportHeight * 0.7; // 70vh
+    const maxHeight = viewportHeight - 64; // 100vh - 64px
+
+    // 드래그 거리에 따라 높이 계산 (위로 드래그하면 높이 증가)
+    const newHeight = Math.max(
+      minHeight,
+      Math.min(maxHeight, startHeight + deltaY)
+    );
+
+    setDragHeights(prev => ({
+      ...prev,
+      [bookingId]: newHeight,
+    }));
+  };
+
+  const handleDragEnd = (bookingId: string, lastClientY?: number) => {
+    if (!isDragging.current[bookingId]) return;
+
+    const viewportHeight = window.innerHeight;
+    const minHeight = viewportHeight * 0.7;
+    const maxHeight = viewportHeight - 64;
+
+    // 마지막 위치를 기반으로 최종 높이 계산
+    let finalHeight: number;
+    if (lastClientY !== undefined) {
+      const startY = dragStartY.current[bookingId];
+      const startHeight = dragStartHeight.current[bookingId];
+      const deltaY = startY - lastClientY;
+      finalHeight = Math.max(
+        minHeight,
+        Math.min(maxHeight, startHeight + deltaY)
+      );
+    } else {
+      // fallback: state에서 가져오기
+      finalHeight =
+        dragHeights[bookingId] || dragStartHeight.current[bookingId];
+    }
+
+    // 중간 지점을 기준으로 전체 화면 또는 원래 크기 결정
+    const threshold = (minHeight + maxHeight) / 2;
+    const shouldBeFullscreen = finalHeight > threshold;
+
+    setFullscreenSheets(prev => ({
+      ...prev,
+      [bookingId]: shouldBeFullscreen,
+    }));
+
+    // 드래그 높이 초기화
+    setDragHeights(prev => {
+      const next = { ...prev };
+      delete next[bookingId];
+      return next;
+    });
+
+    isDragging.current[bookingId] = false;
+    dragStartY.current[bookingId] = 0;
+    dragStartHeight.current[bookingId] = 0;
+    hasDragged.current[bookingId] = false;
+  };
+
   const handleScheduleAdd = (bookingId: string) => {
     setSelectedBookingId(bookingId);
     setIsScheduleModalOpen(true);
@@ -169,6 +250,56 @@ export default function Schedule() {
       ...prev,
       [bookingId]: !prev[bookingId],
     }));
+  };
+
+  const handleDragStart = (bookingId: string, clientY: number) => {
+    dragStartY.current[bookingId] = clientY;
+    isDragging.current[bookingId] = true;
+    hasDragged.current[bookingId] = false;
+
+    // 현재 시트 높이 저장 (70vh 또는 100vh-64px)
+    const viewportHeight = window.innerHeight;
+    const currentHeight = fullscreenSheets[bookingId]
+      ? viewportHeight - 64
+      : viewportHeight * 0.7;
+    dragStartHeight.current[bookingId] = currentHeight;
+
+    // 전역 이벤트 리스너 추가 (드래그 시작 시에만)
+    let lastClientY = clientY;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      lastClientY = e.clientY;
+      handleDragMove(bookingId, e.clientY);
+    };
+
+    const handleMouseUp = () => {
+      handleDragEnd(bookingId, lastClientY);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        lastClientY = e.touches[0].clientY;
+        handleDragMove(bookingId, e.touches[0].clientY);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      handleDragEnd(bookingId, lastClientY);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd);
   };
 
   const toggleEditMode = (bookingId: string) => {
@@ -268,11 +399,18 @@ export default function Schedule() {
                 <SheetContent
                   side="bottom"
                   showCloseButton={false}
-                  className={`bg-background border-none text-white rounded-t-2xl transition-all duration-300 flex flex-col ${
-                    fullscreenSheets[booking.id]
-                      ? "h-[calc(100vh-64px)]"
-                      : "h-[70vh]"
-                  }`}
+                  className="bg-background border-none text-white rounded-t-2xl flex flex-col"
+                  style={{
+                    height:
+                      isDragging.current[booking.id] && dragHeights[booking.id]
+                        ? `${dragHeights[booking.id]}px`
+                        : fullscreenSheets[booking.id]
+                          ? "calc(100vh - 64px)"
+                          : "70vh",
+                    transition: isDragging.current[booking.id]
+                      ? "none"
+                      : "all 0.3s",
+                  }}
                   onInteractOutside={e => {
                     // 모달이 열려있으면 바텀시트 닫기 방지
                     if (isScheduleModalOpen) {
@@ -282,10 +420,26 @@ export default function Schedule() {
                 >
                   {/* Drag Handle Bar */}
                   <div
-                    onClick={() => toggleFullscreen(booking.id)}
-                    className="flex justify-center pt-2 pb-3 cursor-pointer touch-none flex-shrink-0"
+                    onTouchStart={e => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDragStart(booking.id, e.touches[0].clientY);
+                    }}
+                    onMouseDown={e => {
+                      e.stopPropagation();
+                      handleDragStart(booking.id, e.clientY);
+                    }}
+                    onClick={() => {
+                      // 드래그가 발생하지 않은 경우에만 토글
+                      if (!hasDragged.current[booking.id]) {
+                        toggleFullscreen(booking.id);
+                      }
+                      // 클릭 후 초기화
+                      hasDragged.current[booking.id] = false;
+                    }}
+                    className="flex justify-center pt-2 pb-3 cursor-grab active:cursor-grabbing touch-none flex-shrink-0 select-none"
                   >
-                    <div className="w-13 h-1 bg-gray rounded-fulltransition-colors" />
+                    <div className="w-13 h-1 bg-gray rounded-full transition-colors" />
                   </div>
 
                   <SheetHeader className="pb-4 flex flex-row items-center justify-between flex-shrink-0">
