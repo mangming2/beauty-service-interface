@@ -18,6 +18,7 @@ const NORMAL_PAGES = [
   "/recommend",
   "/booking",
   "/form/complete",
+  "/package/[id]/reviews",
 ];
 
 // Header만 필요한 페이지 목록
@@ -43,8 +44,12 @@ function isNormalPage(pathname: string): boolean {
   // 정확히 일치하는 페이지
   if (NORMAL_PAGES.includes(pathname)) return true;
 
-  // 동적 라우트 체크 (예: /package/[id], /booking/[id] 등)
-  return NORMAL_PAGES.some(page => pathname.startsWith(page + "/"));
+  // 동적 라우트 체크 (예: /package/[id]/reviews)
+  return NORMAL_PAGES.some(page => {
+    const pattern = page.replace(/\[.*?\]/g, "[^/]+");
+    const regex = new RegExp(`^${pattern}$`);
+    return regex.test(pathname);
+  });
 }
 
 function isHeaderOnlyPage(pathname: string): boolean {
