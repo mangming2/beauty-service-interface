@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
 
 import { useUser, useSignOut, useUserProfile } from "@/queries/useAuthQueries";
-import BookingHistory from "@/components/my/BookingHistory";
+import BookingHistory from "@/components/my/booking-history";
 import Schedule from "@/components/my/Schedule";
 import { PageLoading } from "@/components/common";
 import { EditIcon } from "@/components/common/Icons";
