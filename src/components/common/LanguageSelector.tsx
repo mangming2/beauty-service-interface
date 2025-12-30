@@ -12,11 +12,16 @@ import { useLanguageStore, languageLabels, type Language } from "@/lib/store";
 export const LanguageSelector = () => {
   const { currentLanguage, setLanguage } = useLanguageStore();
   const [isOpen, setIsOpen] = useState(false);
+  // lazy initialization으로 클라이언트 환경인지 확인 (useEffect 없이)
+  const [mounted] = useState(() => typeof window !== "undefined");
 
   const handleLanguageChange = (language: Language) => {
     setLanguage(language);
     setIsOpen(false);
   };
+
+  // 서버와 클라이언트 렌더링을 일치시키기 위해 마운트 전에는 기본값 표시
+  const displayLanguage = mounted ? currentLanguage : "Ko";
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -24,7 +29,7 @@ export const LanguageSelector = () => {
         <button className="flex items-center justify-center h-6 p-[5px] gap-[5px] bg-gray text-white rounded-full border border-gray-600">
           <div className="flex items-center gap-0.5">
             <Globe width={14} height={14} />
-            <span className="text-sm font-medium">{currentLanguage}</span>
+            <span className="text-sm font-medium">{displayLanguage}</span>
           </div>
           <ChevronDown width={14} height={14} />
         </button>
