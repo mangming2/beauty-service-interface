@@ -164,33 +164,19 @@ export default function FormPage4() {
                       month={currentMonth}
                       onMonthChange={setCurrentMonth}
                       todayClassName="text-pink-font"
-                      className={`rounded-md bg-transparent w-full h-full flex flex-col ${field.value?.from ? "date-selected" : ""}`}
+                      className="rounded-md bg-transparent w-full"
                       classNames={{
-                        months: "flex flex-col w-full h-full flex-1",
-                        month: "space-y-4 w-full h-full flex flex-col flex-1",
-                        caption: "hidden !hidden", // Completely hide default caption
-                        caption_label: "hidden !hidden", // Hide caption label
-                        month_caption: "hidden !hidden", // Hide month caption completely
-                        nav: "hidden !hidden", // Completely hide default navigation
-                        nav_button: "hidden !hidden", // Hide nav buttons
-                        nav_button_previous: "hidden !hidden",
-                        nav_button_next: "hidden !hidden",
-                        table: "w-full border-collapse space-y-1 flex-1",
-                        head_row: "flex w-full",
-                        head_cell:
-                          "text-gray-400 rounded-md w-8 font-normal text-[0.8rem] text-white flex-1",
-                        row: "flex w-full mt-2 flex-1",
-                        cell: "text-center text-sm p-0 relative first:[&:has([aria-selected])]:rounded-l-[999px] last:[&:has([aria-selected])]:rounded-r-[999px] focus-within:relative focus-within:z-20 flex-1 bg-transparent",
-                        day: "h-full w-full p-0 font-normal aria-selected:opacity-100 hover:bg-secondary/20 text-white flex items-center justify-center bg-transparent",
+                        month_caption: "hidden !hidden",
+                        nav: "hidden !hidden",
+                        cell: "text-center text-sm p-0 relative focus-within:relative focus-within:z-20 flex-1 bg-transparent",
+                        day: "h-full w-full p-0 font-normal aria-selected:opacity-100 hover:bg-secondary/20 data-[selected=true]:hover:bg-transparent text-white flex items-center justify-center bg-transparent rounded-full data-[selected-single=true]:rounded-full data-[selected-single=true]:bg-pink-500 data-[selected-single=true]:text-white",
                         day_selected:
-                          "bg-secondary text-white hover:bg-secondary/80 hover:text-white focus:bg-secondary focus:text-white",
+                          "bg-pink-500 text-white hover:bg-pink-600 hover:text-white focus:bg-pink-500 focus:text-white rounded-full !rounded-full",
                         today: field.value?.from
                           ? "bg-transparent text-white"
                           : "bg-secondary text-pink-font rounded-md",
-                        day_outside: "text-gray-500 opacity-50",
                         day_disabled: "text-gray-500 opacity-50 line-through",
                         day_range_middle: "bg-secondary text-white",
-                        day_hidden: "invisible",
                       }}
                     />
                   )}

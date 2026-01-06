@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { format, addDays, startOfWeek, addWeeks, subWeeks } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { dummyLink } from "@/constants";
 import Image from "next/image";
 import { Divider } from "../../../../components/ui/divider";
@@ -26,23 +28,27 @@ export default function BookingLinkPage() {
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const [currentWeek, setCurrentWeek] = useState<Date>(new Date(2025, 6, 20)); // July 21, 2025 (Monday)
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
   };
 
-  const goToPreviousWeek = () => {
-    setCurrentWeek(subWeeks(currentWeek, 1));
+  const goToPreviousMonth = () => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() - 1);
+      return newDate;
+    });
   };
 
-  const goToNextWeek = () => {
-    setCurrentWeek(addWeeks(currentWeek, 1));
+  const goToNextMonth = () => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + 1);
+      return newDate;
+    });
   };
-
-  // Generate the week's dates
-  const weekStart = startOfWeek(currentWeek, { weekStartsOn: 0 }); // Sunday start
-  const weekDates = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   const handleBookLink = () => {
     window.open(dummyLink, "_blank");
@@ -92,65 +98,51 @@ export default function BookingLinkPage() {
           <h2 className="title-sm">Choose your date.</h2>
 
           <div>
-            {/* Year/Month display with navigation */}
-            <div className="flex items-center justify-between mb-4">
+            {/* Custom Calendar Header */}
+            <div className="flex items-center justify-center gap-[120px] mb-4 px-2">
               <button
-                onClick={goToPreviousWeek}
-                className="text-gray-400 hover:text-white"
+                onClick={goToPreviousMonth}
+                className="text-gray-300 hover:text-white transition-colors"
               >
-                ‹
+                <ChevronLeftIcon className="h-5 w-5" />
               </button>
-              <span className="text-gray-400 text-sm">
-                {format(currentWeek, "yyyy.MM")}
+              <span className="text-[20px] font-normal leading-[125%]">
+                {format(currentMonth, "yyyy.MM")}
               </span>
               <button
-                onClick={goToNextWeek}
-                className="text-gray-400 hover:text-white"
+                onClick={goToNextMonth}
+                className="text-gray-300 hover:text-white transition-colors"
               >
-                ›
+                <ChevronRightIcon className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Day headers */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
-              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
-                <div
-                  key={day}
-                  className="text-center text-xs text-gray-400 py-2"
-                >
-                  {day}
-                </div>
-              ))}
-            </div>
-
-            {/* Weekly Calendar grid */}
-            <div className="grid grid-cols-7 gap-1">
-              {weekDates.map((date, index) => {
-                const dayNumber = format(date, "d");
-                const isSelected =
-                  selectedDate &&
-                  format(selectedDate, "yyyy-MM-dd") ===
-                    format(date, "yyyy-MM-dd");
-                const isDisabled = dayNumber === "19"; // Keep the 19th disabled as in original
-
-                return (
-                  <button
-                    key={index}
-                    className={`h-10 w-10 flex items-center justify-center rounded-full text-sm ${
-                      isDisabled
-                        ? "text-gray-500 cursor-not-allowed"
-                        : isSelected
-                          ? "bg-pink-500 text-white"
-                          : "text-white hover:bg-gray-700"
-                    }`}
-                    onClick={() => !isDisabled && setSelectedDate(date)}
-                    disabled={isDisabled}
-                  >
-                    {dayNumber}
-                  </button>
-                );
-              })}
-            </div>
+            {/* Monthly Calendar */}
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              month={currentMonth}
+              onMonthChange={setCurrentMonth}
+              todayClassName="text-pink-font"
+              disabled={date => {
+                // Disable the 19th of any month
+                return format(date, "d") === "19";
+              }}
+              className="rounded-md bg-transparent w-full"
+              classNames={{
+                month_caption: "hidden !hidden",
+                nav: "hidden !hidden",
+                cell: "text-center text-sm p-0 relative focus-within:relative focus-within:z-20 flex-1 bg-transparent",
+                day: "h-full w-full p-0 font-normal aria-selected:opacity-100 hover:bg-secondary/20 text-white flex items-center justify-center bg-transparent rounded-full data-[selected-single=true]:rounded-full data-[selected-single=true]:bg-pink-500 data-[selected-single=true]:text-white",
+                day_selected:
+                  "bg-pink-500 text-white hover:bg-pink-600 hover:text-white focus:bg-pink-500 focus:text-white rounded-full !rounded-full",
+                today: selectedDate
+                  ? "bg-transparent text-white"
+                  : "bg-secondary text-pink-font rounded-md",
+                day_disabled: "text-gray-500 opacity-50 line-through",
+              }}
+            />
           </div>
         </div>
 
