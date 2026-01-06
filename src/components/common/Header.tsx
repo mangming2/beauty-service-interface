@@ -10,6 +10,7 @@ export const Header = () => {
   const isMyPage = pathname === "/my";
   const isMyEditPage = pathname === "/my/edit";
   const isPackageReviewsPage = /^\/package\/[^/]+\/reviews$/.test(pathname);
+  const isMyReviewsPage = /^\/my\/reviews(\/[^/]+)?$/.test(pathname);
   return (
     <header>
       <div
@@ -28,11 +29,15 @@ export const Header = () => {
         {isPackageReviewsPage && (
           <h1 className="text-white h-6 title-md">Package Reviews</h1>
         )}
+        {isMyReviewsPage && (
+          <h1 className="text-white h-6 title-md">My Reviews</h1>
+        )}
         {!isFormPage &&
           !isWishPage &&
           !isMyEditPage &&
           !isMyPage &&
-          !isPackageReviewsPage && (
+          !isPackageReviewsPage &&
+          !isMyReviewsPage && (
             <Image
               src="/main-logo.png"
               alt="Main Logo"
