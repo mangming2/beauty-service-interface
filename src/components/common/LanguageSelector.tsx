@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Globe } from "lucide-react";
 import {
   Popover,
@@ -12,8 +12,12 @@ import { useLanguageStore, languageLabels, type Language } from "@/lib/store";
 export const LanguageSelector = () => {
   const { currentLanguage, setLanguage } = useLanguageStore();
   const [isOpen, setIsOpen] = useState(false);
-  // lazy initialization으로 클라이언트 환경인지 확인 (useEffect 없이)
-  const [mounted] = useState(() => typeof window !== "undefined");
+  // SSR과 클라이언트 최초 렌더를 일치시키기 위해 최초값을 false로 두고 마운트 후 true로 전환
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLanguageChange = (language: Language) => {
     setLanguage(language);
