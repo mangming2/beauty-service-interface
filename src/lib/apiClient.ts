@@ -1,3 +1,22 @@
+import { useAuthStore } from "@/store/useAuthStore";
+
+// 토큰 재발급
+async function reissueToken(): Promise<string | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/reissue`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    return data.accessToken;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * 일반 백엔드 API 클라이언트
  * 인증 토큰을 자동으로 포함하여 API 요청을 처리합니다.
@@ -97,31 +116,62 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const { requireAuth = true, headers = {}, ...fetchOptions } = options;
 
+  // ⭐ Zustand에서 토큰 & 액션 가져오기
+  const { accessToken, setAccessToken, logout } = useAuthStore.getState();
+
   const requestHeaders: Record<string, string> = {
     "Content-Type": "application/json",
     ...(headers as Record<string, string>),
   };
 
   // 인증이 필요한 경우 토큰 추가
-  if (requireAuth) {
-    const token = getAuthToken();
-    if (token) {
-      requestHeaders.Authorization = `Bearer ${token}`;
-    }
+  if (requireAuth && accessToken) {
+    requestHeaders.Authorization = `Bearer ${accessToken}`;
   }
 
   const url = endpoint.startsWith("http")
     ? endpoint
     : `${API_BASE_URL}${endpoint}`;
 
-  try {
-    const response = await fetch(url, {
+  const fetchWithToken = async (token?: string): Promise<Response> => {
+    if (token) {
+      requestHeaders.Authorization = `Bearer ${token}`;
+    }
+
+    return fetch(url, {
       ...fetchOptions,
       headers: requestHeaders,
       credentials: "include",
     });
+  };
 
-    // 응답이 JSON이 아닌 경우 처리
+  try {
+    let response = await fetchWithToken();
+
+    // ⭐ 401 에러 → 토큰 재발급 시도
+    if (response.status === 401 && requireAuth) {
+      const newToken = await reissueToken();
+
+      if (newToken) {
+        // 새 토큰 저장 & 재요청
+        setAccessToken(newToken);
+        response = await fetchWithToken(newToken);
+      } else {
+        // 재발급 실패 → 로그아웃
+        logout();
+
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+
+        throw {
+          message: "세션이 만료되었습니다.",
+          status: 401,
+        } as ApiError;
+      }
+    }
+
+    // 응답 처리
     const contentType = response.headers.get("content-type");
     const isJson = contentType?.includes("application/json");
 
@@ -137,20 +187,11 @@ export async function apiRequest<T>(
         errorMessage = (await response.text()) || errorMessage;
       }
 
-      const error: ApiError = {
+      throw {
         message: errorMessage,
         status: response.status,
         code: errorCode,
-      };
-
-      // 401 에러인 경우 토큰 제거
-      if (response.status === 401) {
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("auth_token");
-        }
-      }
-
-      throw error;
+      } as ApiError;
     }
 
     if (isJson) {

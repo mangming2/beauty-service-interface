@@ -6,9 +6,8 @@ import {
   useHealthCheck,
   useTestSignup,
   useTestLogin,
-  getStoredToken,
-  clearStoredToken,
 } from "@/queries/useTestQueries";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface LogEntry {
   id: number;
@@ -21,6 +20,9 @@ export default function TestPage() {
   const [seed, setSeed] = useState("qa01");
   const [email, setEmail] = useState("test-qa01@google.com");
   const [logs, setLogs] = useState<LogEntry[]>([]);
+
+  // ⭐ Zustand
+  const { accessToken, isAuthenticated, user, logout } = useAuthStore();
 
   // React Query Hooks
   const healthQuery = useHealthCheck();
@@ -82,20 +84,23 @@ export default function TestPage() {
     });
   };
 
-  // 토큰 확인
+  // ⭐ 토큰 확인 (Zustand 사용)
   const handleCheckToken = () => {
-    const token = getStoredToken();
-    if (token) {
-      addLog("info", `저장된 토큰: ${token.slice(0, 30)}...`);
+    if (accessToken) {
+      addLog("info", `저장된 토큰: ${accessToken.slice(0, 30)}...`);
+      addLog("info", `인증 상태: ${isAuthenticated ? "로그인됨" : "로그아웃"}`);
+      if (user) {
+        addLog("info", `유저: ${user.email}`);
+      }
     } else {
       addLog("info", "저장된 토큰 없음");
     }
   };
 
-  // 토큰 삭제
+  // ⭐ 토큰 삭제 (Zustand 사용)
   const handleClearToken = () => {
-    clearStoredToken();
-    addLog("info", "토큰 삭제 완료");
+    logout();
+    addLog("info", "토큰 삭제 완료 (로그아웃)");
   };
 
   // 로그 초기화
@@ -114,6 +119,14 @@ export default function TestPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold">🧪 개발 테스트 페이지</h1>
         <p className="text-gray_1 mt-2">API 연동 테스트용 페이지입니다.</p>
+        {/* ⭐ 현재 인증 상태 표시 */}
+        <div className="mt-2 text-sm">
+          {isAuthenticated ? (
+            <span className="text-green-400">✅ 로그인됨: {user?.email}</span>
+          ) : (
+            <span className="text-gray-400">❌ 로그아웃 상태</span>
+          )}
+        </div>
       </div>
 
       {/* Health Check Section */}
