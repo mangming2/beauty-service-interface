@@ -7,9 +7,16 @@ interface ProtectedLayoutProps {
   children: React.ReactNode;
 }
 
+const isDev = process.env.NODE_ENV === "development";
+
+// 공개 경로 목록
+const PUBLIC_PATHS = ["/", "/login"];
+
 export function ProtectedLayout({ children }: ProtectedLayoutProps) {
   const pathname = usePathname();
-  const isPublicPage = pathname === "/" || pathname === "/login";
+
+  const isPublicPage =
+    PUBLIC_PATHS.includes(pathname) || (isDev && pathname.startsWith("/dev/"));
 
   if (isPublicPage) {
     return <>{children}</>;

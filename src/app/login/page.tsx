@@ -13,6 +13,9 @@ import {
   useAuthStateListener,
 } from "@/queries/useAuthQueries";
 
+// 개발 모드 체크
+const isDev = process.env.NODE_ENV === "development";
+
 export default function LoginPage() {
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -22,7 +25,7 @@ export default function LoginPage() {
   // 실시간 인증 상태 감지
   useAuthStateListener();
 
-  // 이미 로그인된 사용자라면 리다이렉트 (useEffect로 처리)
+  // 이미 로그인된 사용자라면 리다이렉트
   useEffect(() => {
     if (user && !userLoading) {
       router.push("/my");
@@ -42,7 +45,10 @@ export default function LoginPage() {
     router.push("/");
   };
 
-  // 사용자 정보 로딩 중일 때 로딩 표시
+  const handleTestLogin = () => {
+    router.push("/dev/test");
+  };
+
   if (userLoading) {
     return <AuthLoading />;
   }
@@ -59,20 +65,6 @@ export default function LoginPage() {
         <p className="h-[24px] text-disabled text-md">소셜 로그인</p>
         <GapY size={8} />
         <div className="flex justify-center gap-x-[14px]">
-          {/* <button
-            onClick={handleXLogin}
-            disabled={googleLoginMutation.isPending || userLoading}
-            className="w-[40px] h-[40px] bg-gray-container rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <XIcon width={25} height={23} />
-          </button>
-          <button
-            onClick={handleAppleLogin}
-            disabled={googleLoginMutation.isPending || userLoading}
-            className="w-[40px] h-[40px] bg-gray-container rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <AppleIcon width={23} height={28} />
-          </button> */}
           <button
             onClick={handleGoogleLogin}
             disabled={googleLoginMutation.isPending || userLoading}
@@ -86,14 +78,27 @@ export default function LoginPage() {
           </button>
         </div>
       </div>
+
       <GapY size={17} />
-      <div className="text-center p-[12px]">
+
+      {/* Guest & Test Login */}
+      <div className="text-center p-[12px] flex gap-4">
         <button
           onClick={handleGuestAccess}
           className="text-white text-md underline hover:text-gray-300 transition-colors duration-200"
         >
           비회원으로 이용
         </button>
+
+        {/* 🔧 개발 모드에서만 표시 */}
+        {isDev && (
+          <button
+            onClick={handleTestLogin}
+            className="text-yellow-400 text-md underline hover:text-yellow-300 transition-colors duration-200"
+          >
+            🧪 테스트 로그인
+          </button>
+        )}
       </div>
 
       {/* Error Message */}
