@@ -52,7 +52,7 @@ export default function CreateReviewPage() {
       await createReviewMutation.mutateAsync({
         package_id: packageId,
         user_id: user.id,
-        username,
+        username: username as string,
         rating,
         comment: comment.trim(),
       });

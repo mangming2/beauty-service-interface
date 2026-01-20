@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
+import { ApiError } from "@/lib/apiClient";
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -15,7 +16,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
             // 캐시된 데이터가 30분간 메모리에 유지
             gcTime: 30 * 60 * 1000, // 30분 (구 cacheTime)
             // 에러 발생 시 재시도 설정
-            retry: (failureCount, error: any) => {
+            retry: (failureCount, error: ApiError) => {
               // 401, 403 등 인증 관련 에러는 재시도하지 않음
               if (error?.status === 401 || error?.status === 403) {
                 return false;

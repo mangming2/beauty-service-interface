@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, signOut, updateProfile } from "@/api/auth";
-import type { User, Session } from "@/types/api";
+import type { User, Session, UpdateProfileRequest } from "@/types/api";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -63,7 +63,7 @@ export function useAuth() {
     }
   };
 
-  const handleUpdateProfile = async (updates: any) => {
+  const handleUpdateProfile = async (updates: UpdateProfileRequest) => {
     try {
       if (!user) throw new Error("No user logged in");
 
