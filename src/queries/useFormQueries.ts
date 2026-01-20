@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { submitBeautyForm, getUserFormSubmission } from "@/api/form";
 import { FormData } from "@/types/form";
+import { submitBeautyForm, getUserFormSubmission } from "@/api/beauty-form";
+import type {
+  FormSubmissionResponse,
+  FormSubmissionSuccessResponse,
+} from "@/types/api";
 
 // Query Keys
 export const formKeys = {
@@ -12,9 +16,15 @@ export const formKeys = {
 
 // 사용자의 폼 제출 데이터 조회
 export function useUserFormSubmission(userId?: string) {
-  return useQuery({
+  return useQuery<FormSubmissionResponse | null>({
     queryKey: formKeys.userSubmission(userId || ""),
-    queryFn: getUserFormSubmission,
+    queryFn: async () => {
+      if (!userId) {
+        throw new Error("User ID is required");
+      }
+
+      return await getUserFormSubmission(userId);
+    },
     enabled: !!userId, // userId가 있을 때만 실행
     staleTime: 10 * 60 * 1000, // 10분
     retry: (failureCount, error: unknown) => {
@@ -22,7 +32,11 @@ export function useUserFormSubmission(userId?: string) {
       if (
         (error as { message?: string })?.message?.includes(
           "로그인되지 않았습니다"
-        )
+        ) ||
+        (error &&
+          typeof error === "object" &&
+          "status" in error &&
+          (error as { status: number }).status === 401)
       ) {
         return false;
       }
@@ -35,8 +49,10 @@ export function useUserFormSubmission(userId?: string) {
 export function useSubmitBeautyForm() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (formData: Partial<FormData>) => submitBeautyForm(formData),
+  return useMutation<FormSubmissionSuccessResponse, Error, Partial<FormData>>({
+    mutationFn: async (formData: Partial<FormData>) => {
+      return await submitBeautyForm(formData);
+    },
     onSuccess: data => {
       console.log("Form submitted successfully:", data);
 

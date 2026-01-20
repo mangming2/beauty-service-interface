@@ -6,10 +6,13 @@ import {
   getUserReviews,
   deleteReview,
   deleteReviews,
-  PackageReview,
+} from "@/api/review";
+import type {
+  ReviewDetail,
   ReviewSummary,
   CreateReviewData,
-} from "@/lib/reviewService";
+} from "@/types/api";
+import type { BatchDeleteReviewsResponse } from "@/types/api";
 
 // Query Keys
 export const reviewKeys = {
@@ -26,9 +29,11 @@ export const reviewKeys = {
 
 // 특정 패키지의 리뷰 목록 조회
 export function usePackageReviews(packageId: string) {
-  return useQuery<PackageReview[]>({
+  return useQuery<ReviewDetail[]>({
     queryKey: reviewKeys.list(packageId),
-    queryFn: () => getPackageReviews(packageId),
+    queryFn: async () => {
+      return await getPackageReviews(packageId);
+    },
     enabled: !!packageId,
     staleTime: 5 * 60 * 1000, // 5분
     retry: 2,
@@ -39,7 +44,9 @@ export function usePackageReviews(packageId: string) {
 export function usePackageReviewSummary(packageId: string) {
   return useQuery<ReviewSummary>({
     queryKey: reviewKeys.summary(packageId),
-    queryFn: () => getPackageReviewSummary(packageId),
+    queryFn: async () => {
+      return await getPackageReviewSummary(packageId);
+    },
     enabled: !!packageId,
     staleTime: 5 * 60 * 1000, // 5분
     retry: 2,
@@ -51,7 +58,9 @@ export function useCreateReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (reviewData: CreateReviewData) => createReview(reviewData),
+    mutationFn: async (reviewData: CreateReviewData) => {
+      return await createReview(reviewData);
+    },
     onSuccess: newReview => {
       // 해당 패키지의 리뷰 목록과 요약 정보를 무효화하여 다시 가져오도록 함
       queryClient.invalidateQueries({
@@ -70,9 +79,11 @@ export function useCreateReview() {
 
 // 사용자의 리뷰 목록 조회
 export function useUserReviews(userId: string) {
-  return useQuery<PackageReview[]>({
+  return useQuery<ReviewDetail[]>({
     queryKey: reviewKeys.userReviewList(userId),
-    queryFn: () => getUserReviews(userId),
+    queryFn: async () => {
+      return await getUserReviews(userId);
+    },
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5분
     retry: 2,
@@ -83,8 +94,10 @@ export function useUserReviews(userId: string) {
 export function useDeleteReview() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (reviewId: string) => deleteReview(reviewId),
+  return useMutation<void, Error, string>({
+    mutationFn: async (reviewId: string) => {
+      return await deleteReview(reviewId);
+    },
     onSuccess: () => {
       // 모든 리뷰 관련 쿼리 무효화
       queryClient.invalidateQueries({
@@ -98,8 +111,15 @@ export function useDeleteReview() {
 export function useDeleteReviews() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (reviewIds: string[]) => deleteReviews(reviewIds),
+  return useMutation<BatchDeleteReviewsResponse, Error, string[]>({
+    mutationFn: async (reviewIds: string[]) => {
+      if (reviewIds.length === 0) {
+        return { success: true, deleted_count: 0 };
+      }
+
+      await deleteReviews(reviewIds);
+      return { success: true, deleted_count: reviewIds.length };
+    },
     onSuccess: () => {
       // 모든 리뷰 관련 쿼리 무효화
       queryClient.invalidateQueries({

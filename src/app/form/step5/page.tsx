@@ -12,7 +12,7 @@ import { FormLoading } from "@/components/common";
 import { Step5Schema, Step5Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubmitBeautyForm } from "@/hooks/useFormQueries";
+import { useSubmitBeautyForm } from "@/queries/useFormQueries";
 
 export default function FormPage5() {
   const router = useRouter();

@@ -1,31 +1,51 @@
+// app/auth/callback/page.tsx
+
 "use client";
 
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import LottieAnimation from "@/components/common/LottieAnimation";
-import { useAuthCallback, useAuthStateListener } from "@/hooks/useAuthQueries";
+import {
+  useAuthCallback,
+  useAuthStateListener,
+} from "@/queries/useAuthQueries";
 import { Button } from "@/components/ui/button";
 
-export default function AuthCallbackPage() {
+// 로딩 컴포넌트
+function LoadingUI() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <LottieAnimation
+          src="/logo-loading.lottie"
+          width={120}
+          height={120}
+          className="mx-auto"
+        />
+        <p className="mt-4 text-lg text-gray-600">로딩중입니다.</p>
+      </div>
+    </div>
+  );
+}
+
+function CallbackContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: callbackResult, isLoading, error } = useAuthCallback();
 
   // 실시간 인증 상태 감지 (프로필 생성용)
   useAuthStateListener();
 
+  // 에러 파라미터 확인
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      console.error("OAuth error:", errorParam);
+    }
+  }, [searchParams]);
+
   if (isLoading || callbackResult?.success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <LottieAnimation
-            src="/logo-loading.lottie"
-            width={120}
-            height={120}
-            className="mx-auto"
-          />
-          <p className="mt-4 text-lg text-gray-600">로딩중입니다.</p>
-        </div>
-      </div>
-    );
+    return <LoadingUI />;
   }
 
   if (error) {
@@ -49,4 +69,12 @@ export default function AuthCallbackPage() {
   }
 
   return null;
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<LoadingUI />}>
+      <CallbackContent />
+    </Suspense>
+  );
 }

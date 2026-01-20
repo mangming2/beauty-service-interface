@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import KakaoMap from "@/components/common/KakaoMap";
-import { usePackageDetail } from "@/hooks/usePackageQueries";
+import { usePackageDetail } from "@/queries/usePackageQueries";
 import Link from "next/link";
 import {
   BorderHeartIcon,

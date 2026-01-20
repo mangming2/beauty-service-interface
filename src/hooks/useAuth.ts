@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { getSession, signOut, updateProfile } from "@/api/auth";
+import type { User, Session, UpdateProfileRequest } from "@/types/api";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -11,64 +11,74 @@ export function useAuth() {
 
   useEffect(() => {
     // 현재 세션 가져오기
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+    const loadSession = async () => {
+      try {
+        const sessionData = await getSession();
+        setSession(sessionData);
+        setUser(sessionData?.user ?? null);
+      } catch (error) {
+        console.error("Failed to load session:", error);
+        setSession(null);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    getSession();
+    loadSession();
 
-    // 인증 상태 변경 감지
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-
-      if (event === "SIGNED_IN") {
-        // 로그인 성공 시 처리
-        console.log("User signed in:", session?.user);
-      } else if (event === "SIGNED_OUT") {
-        // 로그아웃 시 처리
-        console.log("User signed out");
-        router.push("/login");
+    // 주기적으로 세션 확인 (간단한 구현)
+    const checkInterval = setInterval(async () => {
+      try {
+        const sessionData = await getSession();
+        if (sessionData) {
+          setSession(sessionData);
+          setUser(sessionData.user);
+        } else {
+          setSession(null);
+          setUser(null);
+          router.push("/login");
+        }
+      } catch {
+        setSession(null);
+        setUser(null);
       }
-    });
+    }, 60000); // 1분마다 확인
 
-    return () => subscription.unsubscribe();
+    return () => clearInterval(checkInterval);
   }, [router]);
 
-  const signOut = async () => {
+  const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("Sign out error:", error);
-        throw error;
-      }
+      await signOut();
+      setSession(null);
+      setUser(null);
       router.push("/login");
     } catch (error) {
       console.error("Sign out error:", error);
-      throw error;
+      // 에러가 발생해도 로컬 상태는 초기화
+      setSession(null);
+      setUser(null);
+      router.push("/login");
     }
   };
 
-  const updateProfile = async (updates: any) => {
+  const handleUpdateProfile = async (updates: UpdateProfileRequest) => {
     try {
       if (!user) throw new Error("No user logged in");
 
-      const { error } = await supabase.from("profiles").upsert({
-        id: user.id,
-        ...updates,
-        updated_at: new Date().toISOString(),
+      const updatedProfile = await updateProfile(user.id, updates);
+
+      // 사용자 정보 업데이트
+      setUser({
+        ...user,
+        user_metadata: {
+          ...user.user_metadata,
+          ...updates,
+        },
       });
 
-      if (error) throw error;
-      return { data: null, error: null };
+      return { data: updatedProfile, error: null };
     } catch (error) {
       console.error("Update profile error:", error);
       return { data: null, error };
@@ -79,8 +89,8 @@ export function useAuth() {
     user,
     session,
     loading,
-    signOut,
-    updateProfile,
+    signOut: handleSignOut,
+    updateProfile: handleUpdateProfile,
     isAuthenticated: !!user,
   };
 }

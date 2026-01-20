@@ -9,9 +9,10 @@ import {
   useUser,
   useUpdateProfile,
   useUserProfile,
-} from "@/hooks/useAuthQueries";
+} from "@/queries/useAuthQueries";
 import { PageLoading } from "@/components/common";
 import { GapY } from "../../../components/ui/gap";
+import { UpdateProfileRequest } from "@/types/api";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -62,7 +63,7 @@ export default function EditProfilePage() {
 
   // 완료 버튼 클릭
   const handleComplete = async () => {
-    if (!user || !validateNickname(currentNickname)) {
+    if (!user || !validateNickname(currentNickname as string)) {
       return;
     }
 
@@ -73,7 +74,7 @@ export default function EditProfilePage() {
 
       await updateProfileMutation.mutateAsync({
         userId: user.id,
-        profileData,
+        profileData: profileData as UpdateProfileRequest,
       });
 
       // 성공 시 My Page로 이동
@@ -91,9 +92,9 @@ export default function EditProfilePage() {
   // user 데이터가 로드된 후 nickname이 null이면 초기값 설정, 그 외에는 nickname 사용
   const currentNickname = nickname !== null ? nickname : getInitialNickname();
 
-  const isNicknameValid = validateNickname(currentNickname);
+  const isNicknameValid = validateNickname(currentNickname as string);
   const isFormValid = isNicknameValid && !updateProfileMutation.isPending;
-  const errorMessage = getErrorMessage(currentNickname);
+  const errorMessage = getErrorMessage(currentNickname as string);
   const hasError = errorMessage !== null;
 
   return (
@@ -104,7 +105,11 @@ export default function EditProfilePage() {
         <div className="relative rounded-full border-solid border-[1.5px] border-gray overflow-hidden">
           {profile?.avatar_src || user?.user_metadata?.avatar_url ? (
             <Image
-              src={profile?.avatar_src || user?.user_metadata?.avatar_url || ""}
+              src={
+                (profile?.avatar_src as string) ||
+                (user?.user_metadata?.avatar_url as string) ||
+                ""
+              }
               alt="Profile"
               width={120}
               height={120}
@@ -134,7 +139,7 @@ export default function EditProfilePage() {
         <div className="max-w-sm mx-auto">
           <Input
             type="text"
-            value={currentNickname}
+            value={currentNickname as string}
             onChange={e => {
               setNickname(e.target.value);
               if (!hasTouched) setHasTouched(true);

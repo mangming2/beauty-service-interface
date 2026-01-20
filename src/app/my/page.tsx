@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
 
-import { useUser, useSignOut, useUserProfile } from "@/hooks/useAuthQueries";
+import { useUser, useSignOut, useUserProfile } from "@/queries/useAuthQueries";
 import BookingHistory from "@/components/my/booking-history";
 import Schedule from "@/components/my/Schedule";
 import { PageLoading } from "@/components/common";
@@ -24,13 +24,17 @@ export default function MyPage() {
   const userProfile = {
     name:
       profile?.full_name ||
-      user?.user_metadata?.full_name ||
+      (typeof user?.user_metadata?.full_name === "string"
+        ? user.user_metadata.full_name
+        : undefined) ||
       user?.email?.split("@")[0] ||
       "K-pop Fan",
     email: user?.email || "fan@example.com",
     avatar:
       profile?.avatar_src ||
-      user?.user_metadata?.avatar_url ||
+      (typeof user?.user_metadata?.avatar_url === "string"
+        ? user.user_metadata.avatar_url
+        : undefined) ||
       "/dummy-profile.png",
   };
 
