@@ -39,32 +39,13 @@ interface RequestOptions extends RequestInit {
 }
 
 /**
- * 인증 토큰 가져오기 (쿠키 또는 로컬 스토리지에서)
+ * 인증 토큰 가져오기
  */
-function getAuthToken(): string | null {
+export function getAuthToken(): string | null {
   if (typeof window === "undefined") {
-    // 서버 사이드에서는 쿠키에서 가져오기 (middleware에서 사용)
     return null;
   }
-
-  // 먼저 로컬 스토리지에서 토큰 가져오기
-  const token = localStorage.getItem("auth_token");
-  if (token) {
-    return token;
-  }
-
-  // 로컬 스토리지에 없으면 쿠키에서 가져오기
-  const cookies = document.cookie.split(";");
-  for (const cookie of cookies) {
-    const [name, value] = cookie.trim().split("=");
-    if (name === "auth_token" && value) {
-      // 쿠키에서 찾은 토큰을 로컬 스토리지에도 저장
-      localStorage.setItem("auth_token", value);
-      return value;
-    }
-  }
-
-  return null;
+  return useAuthStore.getState().accessToken;
 }
 
 /**
@@ -75,7 +56,8 @@ export async function getSession(): Promise<{
   access_token?: string;
   expires_at?: number;
 } | null> {
-  const token = getAuthToken();
+  const token = useAuthStore.getState().accessToken;
+
   if (!token) {
     return null;
   }
@@ -92,15 +74,13 @@ export async function getSession(): Promise<{
 
     if (!response.ok) {
       if (response.status === 401) {
-        // 토큰이 유효하지 않으면 제거
-        localStorage.removeItem("auth_token");
+        useAuthStore.getState().logout();
         return null;
       }
       throw new Error("Failed to get session");
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Get session error:", error);
     return null;
@@ -116,7 +96,6 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const { requireAuth = true, headers = {}, ...fetchOptions } = options;
 
-  // ⭐ Zustand에서 토큰 & 액션 가져오기
   const { accessToken, setAccessToken, logout } = useAuthStore.getState();
 
   const requestHeaders: Record<string, string> = {
