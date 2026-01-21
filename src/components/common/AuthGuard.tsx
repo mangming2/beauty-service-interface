@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthStore } from "@/store/useAuthStore";
 import { PageLoading } from "@/components/common";
 
 interface AuthGuardProps {
@@ -11,21 +11,28 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const [isHydrated, setIsHydrated] = useState(false);
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const router = useRouter();
 
+  // hydration 완료 체크
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    setIsHydrated(true);
+  }, []);
+
+  // 비로그인 시 리다이렉트
+  useEffect(() => {
+    if (isHydrated && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, loading, router]);
+  }, [isHydrated, isAuthenticated, router]);
 
-  if (loading) {
+  if (!isHydrated) {
     return <PageLoading message="인증 확인 중..." />;
   }
 
   if (!isAuthenticated) {
-    return fallback || null;
+    return fallback || <PageLoading message="로그인 페이지로 이동 중..." />;
   }
 
   return <>{children}</>;

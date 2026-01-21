@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { GapY } from "@/components/ui/gap";
 import { Badge } from "@/components/ui/badge";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
+import { usePackages } from "@/queries/usePackageQueries"; // ✏️ 추가
+import { PageLoading } from "@/components/common"; // ✏️ 추가
 
 // 기본 태그 목록
 const BASE_TAGS = [
@@ -65,65 +67,26 @@ const GALLERIES_DATA = [
   },
 ];
 
-// 패키지 섹션 데이터
-const PACKAGE_SECTIONS_DATA = {
+// ✏️ 패키지 섹션 더미 데이터 삭제 (API 사용)
+const PACKAGE_SECTIONS_CONFIG = {
   middle: {
     title: "How about this package?",
-    packages: [
-      {
-        id: "triples-dreamy",
-        title: "Dreamy & Mystic Idol...",
-        artist: "tripleS",
-        location: "Gapyeong",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "blackpink-romantic-1",
-        title: "Romantic & Elegant i...",
-        artist: "Blackpink",
-        location: "Yongin",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "blackpink-romantic-2",
-        title: "Romantic & Elegant i...",
-        artist: "Blackpink",
-        location: "Yongin",
-        imageSrc: "/dummy-profile.png",
-      },
-    ],
+    indices: [0, 2], // 0~2번 패키지 (3개)
   },
   last: {
     title: "Looking for another Date?",
-    packages: [
-      {
-        id: "hitst-special-1",
-        title: "HITST Special Package",
-        artist: "HITST",
-        location: "Seoul",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "summer-vibes",
-        title: "Summer Vibes Package",
-        artist: "Various",
-        location: "Busan",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "hitst-special-2",
-        title: "HITST Special Package",
-        artist: "HITST",
-        location: "Seoul",
-        imageSrc: "/dummy-profile.png",
-      },
-    ],
+    indices: [3, 5], // 3~5번 패키지 (3개)
   },
 };
 
 function RecommendContent() {
   const searchParams = useSearchParams();
+  const router = useRouter(); // ✏️ 추가
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // ✏️ 패키지 데이터 가져오기
+  const { data: packages, isLoading: packagesLoading } = usePackages();
+  console.log(packages);
 
   // URL 쿼리 파라미터에서 태그 읽기
   useEffect(() => {
@@ -164,13 +127,20 @@ function RecommendContent() {
       : GALLERIES_DATA;
 
   const handleTagClick = (tag: string) => {
-    setSelectedTags(
-      prev =>
-        prev.includes(tag)
-          ? prev.filter(t => t !== tag) // 이미 선택된 태그면 제거
-          : [...prev, tag] // 선택되지 않은 태그면 추가
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
+
+  // ✏️ 패키지 클릭 핸들러 (number 타입)
+  const handlePackageClick = (packageId: number) => {
+    router.push(`/package/${packageId}`);
+  };
+
+  // ✏️ 로딩 상태
+  if (packagesLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <div className="min-h-screen text-white">
@@ -220,10 +190,16 @@ function RecommendContent() {
               {isLastInPair && (
                 <>
                   <GapY size={20} />
+                  {/* ✏️ API 데이터 사용 */}
                   <PackageSection
-                    title={PACKAGE_SECTIONS_DATA.middle.title}
-                    packages={PACKAGE_SECTIONS_DATA.middle.packages}
-                    onPackageClick={() => {}}
+                    title={PACKAGE_SECTIONS_CONFIG.middle.title}
+                    packages={
+                      packages?.slice(
+                        PACKAGE_SECTIONS_CONFIG.middle.indices[0],
+                        PACKAGE_SECTIONS_CONFIG.middle.indices[1] + 1
+                      ) || []
+                    }
+                    onPackageClick={handlePackageClick}
                   />
                   <GapY size={20} />
                 </>
@@ -233,10 +209,16 @@ function RecommendContent() {
               {isLastGallery && isEvenIndex && (
                 <>
                   <GapY size={20} />
+                  {/* ✏️ API 데이터 사용 */}
                   <PackageSection
-                    title={PACKAGE_SECTIONS_DATA.last.title}
-                    packages={PACKAGE_SECTIONS_DATA.last.packages}
-                    onPackageClick={() => {}}
+                    title={PACKAGE_SECTIONS_CONFIG.last.title}
+                    packages={
+                      packages?.slice(
+                        PACKAGE_SECTIONS_CONFIG.last.indices[0],
+                        PACKAGE_SECTIONS_CONFIG.last.indices[1] + 1
+                      ) || []
+                    }
+                    onPackageClick={handlePackageClick}
                   />
                 </>
               )}

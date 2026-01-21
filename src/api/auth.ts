@@ -1,105 +1,77 @@
-import {
-  apiGet,
-  apiPost,
-  apiPut,
-  getSession as getSessionFromClient,
-} from "@/lib/apiClient";
+import { apiGet, apiPost, apiPut, getSession } from "@/lib/apiClient";
+import { useAuthStore } from "@/store/useAuthStore";
 import type {
-  LoginResponse,
   LogoutResponse,
   UpdateProfileRequest,
   User,
-  Session,
   Profile,
-  AuthChangeEvent,
 } from "@/types/api";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // ========== 인증 API ==========
 
 /**
- * Google 로그인 시작
- * POST /auth/login 호출하여 accessToken 받기
+ * 소셜 로그인 시작
+ * 백엔드 GET /auth/login/{provider}로 리다이렉트
  */
-export async function login(): Promise<LoginResponse> {
-  try {
-    const response = await apiPost<LoginResponse>("/auth/login", undefined, {
-      requireAuth: false,
-    });
-    return response;
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error;
+export function loginWithProvider(provider: "google" | "kakao" | "naver") {
+  if (typeof window !== "undefined") {
+    window.location.href = `${API_BASE_URL}/auth/login/${provider}`;
   }
 }
 
 /**
- * 토큰 검증 및 최종 토큰 발급
- * POST /auth/verify 호출하여 최종 accessToken 받기
+ * Google 로그인 (기존 호환용)
  */
-export async function verifyToken(accessToken: string): Promise<{
-  accessToken: string;
-  [key: string]: unknown;
-}> {
-  try {
-    const response = await apiPost<{
-      accessToken: string;
-      [key: string]: unknown;
-    }>("/auth/verify", undefined, {
-      requireAuth: false,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response;
-  } catch (error) {
-    console.error("Token verification error:", error);
-    throw error;
-  }
+export function login() {
+  loginWithProvider("google");
 }
 
 /**
  * 로그아웃
- * POST /auth/logout 호출
+ * POST /auth/logout 호출 + store 초기화
  */
 export async function logout(): Promise<LogoutResponse> {
   try {
-    const response = await apiPost<LogoutResponse>("/auth/logout");
+    const response = await apiPost<LogoutResponse>("/auth/logout", undefined, {
+      requireAuth: false,
+    });
 
-    // 로컬 스토리지에서 토큰 제거
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("auth_token");
-    }
+    // store 초기화
+    useAuthStore.getState().logout();
 
     return response;
   } catch (error) {
     console.error("Sign out error:", error);
-    // 에러가 발생해도 토큰은 제거
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("auth_token");
-    }
+    // 에러가 발생해도 store는 초기화
+    useAuthStore.getState().logout();
     throw error;
   }
 }
 
 /**
- * 세션 정보 조회
- * GET /auth/session 호출
+ * 사용자 정보 조회 (store에서 가져옴)
  */
-export async function getSession(): Promise<Session | null> {
-  return await getSessionFromClient();
+export function getUser(): User | null {
+  const session = getSession();
+  return session?.user as User | null;
 }
 
 /**
- * 사용자 정보 조회
+ * 현재 사용자 정보 조회 (store에서)
  */
-export async function getUser(): Promise<User | null> {
-  try {
-    const session = await getSession();
-    return session?.user || null;
-  } catch (error) {
-    console.error("Get user error:", error);
-    return null;
-  }
+export function getCurrentUser(): User | null {
+  const { user } = useAuthStore.getState();
+  return user;
+}
+
+/**
+ * 인증 상태 확인
+ */
+export function isAuthenticated(): boolean {
+  const { isAuthenticated, accessToken } = useAuthStore.getState();
+  return isAuthenticated && !!accessToken;
 }
 
 // ========== 프로필 API ==========
@@ -171,8 +143,7 @@ export async function updateProfile(
 }
 
 /**
- * Google 로그인 후 프로필 자동 생성/업데이트
- * 기존 프로필이 있으면 업데이트, 없으면 생성
+ * 소셜 로그인 후 프로필 자동 생성/업데이트
  */
 export async function createUserProfile(user: {
   id: string;
@@ -182,10 +153,6 @@ export async function createUserProfile(user: {
   if (!user) {
     throw new Error("User is required");
   }
-
-  // 디버깅: Google에서 받아온 데이터 확인
-  console.log("User metadata during profile creation:", user.user_metadata);
-  console.log("User object:", user);
 
   // 기존 프로필이 있는지 확인
   try {
@@ -218,7 +185,6 @@ export async function createUserProfile(user: {
       return existingProfile;
     }
   } catch (error: unknown) {
-    // 프로필이 없는 경우 (404 에러)
     if (
       error &&
       typeof error === "object" &&
@@ -249,64 +215,7 @@ export async function createUserProfile(user: {
   return await createProfile(profileData);
 }
 
-// ========== 기타 유틸리티 ==========
-
-/**
- * 기존 사용자들의 avatar_src 업데이트 (관리자용)
- */
-export async function updateExistingUserAvatars() {
-  try {
-    // 백엔드 API로 대체 필요 (현재는 클라이언트에서 직접 처리 불가)
-    console.log(
-      "updateExistingUserAvatars: This function needs backend implementation"
-    );
-    return {
-      updated: 0,
-      message: "This function needs backend implementation",
-    };
-  } catch (error) {
-    console.error("Error updating existing user avatars:", error);
-    throw error;
-  }
-}
-
-/**
- * 인증 상태 변경 리스너 설정 (일반 백엔드에서는 폴링 또는 WebSocket 사용)
- */
-let authStateListeners: Array<
-  (event: AuthChangeEvent, session: Session | null) => void
-> = [];
-
-export function onAuthStateChange(
-  callback: (event: AuthChangeEvent, session: Session | null) => void
-) {
-  authStateListeners.push(callback);
-
-  // 주기적으로 세션 확인 (간단한 구현)
-  const checkInterval = setInterval(async () => {
-    try {
-      const session = await getSessionFromClient();
-      if (session) {
-        callback("TOKEN_REFRESHED", session);
-      } else {
-        callback("SIGNED_OUT", null);
-      }
-    } catch {
-      callback("SIGNED_OUT", null);
-    }
-  }, 30000); // 30초마다 확인
-
-  return {
-    unsubscribe: () => {
-      authStateListeners = authStateListeners.filter(
-        listener => listener !== callback
-      );
-      clearInterval(checkInterval);
-    },
-  };
-}
-
 // ========== 하위 호환성을 위한 별칭 ==========
-// 기존 코드와의 호환성을 위해 유지
 export const signOut = logout;
 export const getSessionInfo = getSession;
+export { getSession };

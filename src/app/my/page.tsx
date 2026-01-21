@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
 
-import { useUser, useSignOut, useUserProfile } from "@/queries/useAuthQueries";
+import { useUser, useUserProfile } from "@/queries/useAuthQueries";
+import { useSignOut } from "@/hooks/useAuth";
 import BookingHistory from "@/components/my/booking-history";
 import Schedule from "@/components/my/Schedule";
 import { PageLoading } from "@/components/common";

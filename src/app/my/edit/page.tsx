@@ -24,13 +24,7 @@ export default function EditProfilePage() {
   // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
   const getInitialNickname = () => {
     if (!user) return "";
-    return (
-      profile?.full_name ||
-      user.user_metadata?.full_name ||
-      user.user_metadata?.username ||
-      user.email?.split("@")[0] ||
-      "Doki01"
-    );
+    return profile?.full_name || user?.email?.split("@")[0] || "Doki01";
   };
 
   const [nickname, setNickname] = useState<string | null>(null);

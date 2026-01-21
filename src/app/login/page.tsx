@@ -7,30 +7,34 @@ import { GoogleIcon } from "@/components/common/Icons";
 import { AuthLoading } from "@/components/common";
 import Image from "next/image";
 import { GapY } from "../../components/ui/gap";
-import {
-  useUser,
-  useGoogleLogin,
-  useAuthStateListener,
-} from "@/queries/useAuthQueries";
+import { useGoogleLogin } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useAuth";
 
-// 개발 모드 체크
 const isDev = process.env.NODE_ENV === "development";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
+  const [isHydrated, setIsHydrated] = useState(false); // ✅ hydration 체크
   const router = useRouter();
-  const { data: user, isLoading: userLoading } = useUser();
+  const { data: user, isAuthenticated } = useUser();
   const googleLoginMutation = useGoogleLogin();
 
-  // 실시간 인증 상태 감지
-  useAuthStateListener();
+  // ✅ hydration 완료 체크
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // 이미 로그인된 사용자라면 리다이렉트
   useEffect(() => {
-    if (user && !userLoading) {
+    if (isHydrated && isAuthenticated && user) {
       router.push("/my");
     }
-  }, [user, userLoading, router]);
+  }, [isHydrated, isAuthenticated, user, router]);
+
+  // ✅ hydration 전에는 로딩 표시
+  if (!isHydrated) {
+    return <AuthLoading />;
+  }
 
   const handleGoogleLogin = async () => {
     try {
@@ -49,10 +53,6 @@ export default function LoginPage() {
     router.push("/dev/test");
   };
 
-  if (userLoading) {
-    return <AuthLoading />;
-  }
-
   return (
     <div className="flex flex-col flex-1 items-center justify-center">
       {/* DOKI Logo */}
@@ -67,7 +67,7 @@ export default function LoginPage() {
         <div className="flex justify-center gap-x-[14px]">
           <button
             onClick={handleGoogleLogin}
-            disabled={googleLoginMutation.isPending || userLoading}
+            disabled={googleLoginMutation.isPending}
             className="w-[40px] h-[40px] bg-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {googleLoginMutation.isPending ? (
@@ -90,7 +90,6 @@ export default function LoginPage() {
           비회원으로 이용
         </button>
 
-        {/* 🔧 개발 모드에서만 표시 */}
         {isDev && (
           <button
             onClick={handleTestLogin}

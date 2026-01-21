@@ -23,8 +23,9 @@ export default function CreateReviewPage() {
   const [comment, setComment] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
-  const { data: packageDetail, isLoading: packageLoading } =
-    usePackageDetail(packageId);
+  const { data: packageDetail, isLoading: packageLoading } = usePackageDetail(
+    Number(packageId)
+  );
   const { data: user, isLoading: userLoading } = useUser();
   const createReviewMutation = useCreateReview();
 
@@ -105,18 +106,18 @@ export default function CreateReviewPage() {
               <div className="flex gap-2 pt-2 pb-3">
                 <div className="relative w-20 h-20 overflow-hidden flex-shrink-0">
                   <Image
-                    src={packageDetail.image_src[0] || "/dummy-profile.png"}
-                    alt={packageDetail.title}
+                    src={"/dummy-profile.png"}
+                    alt={packageDetail.name}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-lg text-white truncate">
-                    {packageDetail.title}
+                    {packageDetail.name}
                   </h4>
                   <p className="text-sm text-gray-font">
-                    {packageDetail.location}
+                    {packageDetail.products[0].location}
                   </p>
                   <GapY size={20} />
                   <p className="caption-md text-gray-400">

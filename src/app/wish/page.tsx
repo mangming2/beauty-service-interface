@@ -8,7 +8,7 @@ import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
 import { useUser } from "@/queries/useAuthQueries";
 import { useUserFormSubmission } from "@/queries/useFormQueries";
-import { useAllPackages } from "@/queries/usePackageQueries";
+import { usePackages } from "@/queries/usePackageQueries"; // ✏️ 변경
 
 // TODO: 백엔드 연동 시 더미 데이터를 실제 API 응답으로 교체
 const DUMMY_RECOMMENDATION_GALLERIES = [
@@ -58,7 +58,7 @@ const DUMMY_RECOMMENDATION_GALLERIES = [
 
 const DUMMY_PACKAGE_SECTION = {
   title: "How about this package?",
-  packageIndices: [0, 2], // packages 배열에서 가져올 인덱스
+  packageIndices: [0, 2],
 };
 
 export default function Wish() {
@@ -70,8 +70,8 @@ export default function Wish() {
     error: formError,
   } = useUserFormSubmission(user?.id);
 
-  // 패키지 데이터 가져오기
-  const { data: packages, isLoading: packagesLoading } = useAllPackages();
+  // ✏️ useAllPackages → usePackages
+  const { data: packages, isLoading: packagesLoading } = usePackages();
 
   useEffect(() => {
     if (!userLoading && !user) {
@@ -121,8 +121,8 @@ export default function Wish() {
     );
   }
 
-  const handlePackageClick = (packageId: string) => {
-    // 패키지 상세 페이지로 이동
+  // ✏️ packageId 타입: string → number
+  const handlePackageClick = (packageId: number) => {
     router.push(`/package/${packageId}`);
   };
 
@@ -150,22 +150,14 @@ export default function Wish() {
 
         <GapY size={20} />
 
-        {/* PackageSection */}
+        {/* ✏️ PackageSection - 매핑 제거 */}
         <PackageSection
           title={DUMMY_PACKAGE_SECTION.title}
           packages={
-            packages
-              ?.slice(
-                DUMMY_PACKAGE_SECTION.packageIndices[0],
-                DUMMY_PACKAGE_SECTION.packageIndices[1] + 1
-              )
-              .map(pkg => ({
-                id: pkg.id,
-                title: pkg.title,
-                artist: pkg.artist,
-                location: pkg.location,
-                imageSrc: pkg.image_src[0] || "/dummy-profile.png",
-              })) || []
+            packages?.slice(
+              DUMMY_PACKAGE_SECTION.packageIndices[0],
+              DUMMY_PACKAGE_SECTION.packageIndices[1] + 1
+            ) || []
           }
           onPackageClick={handlePackageClick}
         />

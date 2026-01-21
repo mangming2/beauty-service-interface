@@ -3,24 +3,27 @@ import { GapY } from "@/components/ui/gap";
 import Image from "next/image";
 
 interface PackageCardProps {
-  packageId: string;
+  packageId: number; // ✏️ string → number
   imageSrc: string;
   imageAlt: string;
-  artist: string;
-  location: string;
-  title: string;
-  onClick: (packageId: string) => void;
+  title: string; // name을 받아서 title로 표시
+  tags: string[]; // ✏️ artist → tags (tagNames)
+  minPrice: number; // ✏️ location → minPrice
+  onClick: (packageId: number) => void; // ✏️ string → number
 }
 
 export default function PackageCard({
   packageId,
   imageSrc,
   imageAlt,
-  artist,
-  location,
   title,
+  tags,
+  minPrice,
   onClick,
 }: PackageCardProps) {
+  // 가격 포맷팅 (예: 100000 → ₩100,000)
+  const formattedPrice = `₩${minPrice.toLocaleString()}~`;
+
   return (
     <Card
       className="bg-transparent border-0 cursor-pointer w-[168px] pt-0 pb-2"
@@ -39,13 +42,16 @@ export default function PackageCard({
           <div className="px-2 py-1">
             <p className="text-xs gap-1 flex items-center text-gray-400">
               <span className="max-w-[121px] overflow-hidden text-ellipsis whitespace-nowrap">
-                🎵 {artist} · {location}
+                🏷️ {tags.slice(0, 2).join(" · ") || "No tags"}
               </span>
             </p>
             <GapY size={4} />
             <h3 className="font-medium text-white text-lg h-7 overflow-hidden text-ellipsis whitespace-nowrap">
               {title}
             </h3>
+            <p className="text-sm text-pink-400 font-medium">
+              {formattedPrice}
+            </p>
           </div>
         </div>
       </CardContent>

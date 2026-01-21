@@ -5,11 +5,11 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { ButtonLoading } from "@/components/common";
 import { TranslatedText } from "@/components/main/TranslatedText";
-import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useAuth";
 import { useUserFormSubmission } from "@/queries/useFormQueries";
 
 export function FormButton() {
-  const { user, isAuthenticated } = useAuth();
+  const { data: user, isAuthenticated } = useUser(); // ✅ user도 가져오기
   const { data: formSubmission, isLoading } = useUserFormSubmission(user?.id);
 
   // 로딩 중인 경우 로딩 표시
@@ -47,7 +47,7 @@ export function FormButton() {
 
   return (
     <Link href={targetUrl}>
-      <Button className="w-full  h-[52px] flex justify-between items-center">
+      <Button className="w-full h-[52px] flex justify-between items-center">
         <div className="text-lg">Your K-pop style is Ready</div>
         <div className="flex w-[28px] items-center justify-center py-[6px]">
           <ArrowRightIcon

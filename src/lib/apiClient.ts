@@ -1,7 +1,24 @@
 import { useAuthStore } from "@/store/useAuthStore";
 
-// 토큰 재발급
-async function reissueToken(): Promise<string | null> {
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"; // ✏️ 마지막 슬래시 제거
+
+export interface ApiError {
+  message: string;
+  status?: number;
+  code?: string;
+}
+
+/**
+ * API 요청 옵션
+ */
+interface RequestOptions extends RequestInit {
+  requireAuth?: boolean;
+}
+
+/**
+ * 토큰 재발급
+ */
+export async function reissueToken(): Promise<string | null> {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/reissue`, {
       method: "POST",
@@ -18,27 +35,6 @@ async function reissueToken(): Promise<string | null> {
 }
 
 /**
- * 일반 백엔드 API 클라이언트
- * 인증 토큰을 자동으로 포함하여 API 요청을 처리합니다.
- */
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/";
-
-export interface ApiError {
-  message: string;
-  status?: number;
-  code?: string;
-}
-
-/**
- * API 요청 옵션
- */
-interface RequestOptions extends RequestInit {
-  requireAuth?: boolean;
-}
-
-/**
  * 인증 토큰 가져오기
  */
 export function getAuthToken(): string | null {
@@ -49,42 +45,30 @@ export function getAuthToken(): string | null {
 }
 
 /**
- * 세션 정보 가져오기
+ * 세션 정보 가져오기 - store에서 직접 가져옴 (API 호출 X)
  */
-export async function getSession(): Promise<{
-  user: { id: string; email?: string; user_metadata?: Record<string, unknown> };
-  access_token?: string;
-  expires_at?: number;
-} | null> {
-  const token = useAuthStore.getState().accessToken;
-
-  if (!token) {
+export function getSession() {
+  if (typeof window === "undefined") {
     return null;
   }
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/session`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: "include",
-    });
+  const { accessToken, user, isAuthenticated } = useAuthStore.getState();
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        useAuthStore.getState().logout();
-        return null;
-      }
-      throw new Error("Failed to get session");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Get session error:", error);
+  if (!accessToken || !isAuthenticated) {
     return null;
   }
+
+  return {
+    user: user
+      ? {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          user_metadata: { profileImage: user.profileImage },
+        }
+      : null,
+    access_token: accessToken,
+  };
 }
 
 /**
