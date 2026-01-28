@@ -11,20 +11,21 @@ import { Spinner } from "@/components/ui/spinner";
 import { StarRating } from "@/components/ui/star-rating";
 import { GapY } from "../../../../components/ui/gap";
 import { Divider } from "@/components/ui/divider";
-import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/queries/useAuthQueries";
 
 export default function ReviewsPage() {
   const params = useParams();
-  const packageId = params.id as string;
-  const { user } = useAuth();
+  const packageId = params.id;
+  const { user } = useUser();
 
   const {
     data: reviews,
     isLoading: reviewsLoading,
     error: reviewsError,
-  } = usePackageReviews(packageId);
-  const { data: summary, isLoading: summaryLoading } =
-    usePackageReviewSummary(packageId);
+  } = usePackageReviews(Number(packageId));
+  const { data: summary, isLoading: summaryLoading } = usePackageReviewSummary(
+    Number(packageId)
+  );
   console.log(reviews);
 
   if (reviewsLoading || summaryLoading) {
@@ -58,9 +59,9 @@ export default function ReviewsPage() {
 
   // 내 리뷰와 다른 사람들의 리뷰 분리
   const myReviews =
-    reviews?.filter(review => user && review.user_id === user.id) || [];
+    reviews?.filter(review => user && review.userId === user.userId) || [];
   const otherReviews =
-    reviews?.filter(review => !user || review.user_id !== user.id) || [];
+    reviews?.filter(review => !user || review.userId !== user.userId) || [];
 
   return (
     <div className="min-h-screen text-white">
@@ -136,7 +137,7 @@ export default function ReviewsPage() {
                 const isLastMyReview = index === myReviews.length - 1;
                 return (
                   <Card
-                    key={review.id}
+                    key={review.content}
                     className={`p-0 bg-transparent border-0 rounded-none ${
                       !isLastMyReview ? "border-b-[1px] border-gray" : ""
                     }`}
@@ -149,7 +150,7 @@ export default function ReviewsPage() {
                             {review.avatar_src ? (
                               <Image
                                 src={review.avatar_src}
-                                alt={review.username}
+                                alt={review.content}
                                 width={28}
                                 height={28}
                                 className="w-full h-full object-cover"
@@ -157,14 +158,14 @@ export default function ReviewsPage() {
                             ) : (
                               <div className="w-full h-full bg-gray-600 flex items-center justify-center">
                                 <span className="text-white text-sm font-medium">
-                                  {review.username.charAt(0).toUpperCase()}
+                                  {review.content.charAt(0).toUpperCase()}
                                 </span>
                               </div>
                             )}
                           </div>
                           {/* Username */}
                           <div className="text-white font-medium mb-1">
-                            {review.username}
+                            {review.content}
                           </div>
                         </div>
                         <GapY size={8} />
@@ -179,13 +180,13 @@ export default function ReviewsPage() {
                             />
                             <div className="w-px h-4 bg-gray-600" />
                             <span className="text-gray-400 text-sm">
-                              {formatTimeAgo(review.created_at || "")}
+                              {formatTimeAgo(review.createdAt || "")}
                             </span>
                           </div>
 
                           {/* Comment */}
                           <div className="text-white text-md">
-                            {review.comment}
+                            {review.content}
                           </div>
                         </div>
                       </div>
@@ -202,7 +203,7 @@ export default function ReviewsPage() {
               {/* 다른 사람들의 리뷰들 */}
               {otherReviews.map(review => (
                 <Card
-                  key={review.id}
+                  key={review.reviewId}
                   className="p-0 bg-transparent border-0 border-b-[1px] rounded-none border-gray"
                 >
                   <CardContent className="p-0 pb-3">
@@ -213,7 +214,7 @@ export default function ReviewsPage() {
                           {review.avatar_src ? (
                             <Image
                               src={review.avatar_src}
-                              alt={review.username}
+                              alt={review.content}
                               width={28}
                               height={28}
                               className="w-full h-full object-cover"
@@ -221,14 +222,14 @@ export default function ReviewsPage() {
                           ) : (
                             <div className="w-full h-full bg-gray-600 flex items-center justify-center">
                               <span className="text-white text-sm font-medium">
-                                {review.username.charAt(0).toUpperCase()}
+                                {review.content.charAt(0).toUpperCase()}
                               </span>
                             </div>
                           )}
                         </div>
                         {/* Username */}
                         <div className="text-white font-medium mb-1">
-                          {review.username}
+                          {review.content}
                         </div>
                       </div>
                       <GapY size={8} />
@@ -243,13 +244,13 @@ export default function ReviewsPage() {
                           />
                           <div className="w-px h-4 bg-gray-600" />
                           <span className="text-gray-400 text-sm">
-                            {formatTimeAgo(review.created_at || "")}
+                            {formatTimeAgo(review.createdAt || "")}
                           </span>
                         </div>
 
                         {/* Comment */}
                         <div className="text-white text-md">
-                          {review.comment}
+                          {review.content}
                         </div>
                       </div>
                     </div>

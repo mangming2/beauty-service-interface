@@ -5,11 +5,11 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { ButtonLoading } from "@/components/common";
 import { TranslatedText } from "@/components/main/TranslatedText";
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/useAuthQueries";
 import { useUserFormSubmission } from "@/queries/useFormQueries";
 
 export function FormButton() {
-  const { data: user, isAuthenticated } = useUser(); // ✅ user도 가져오기
+  const { user, isAuthenticated } = useUser(); // ✅ user도 가져오기
   const { data: formSubmission, isLoading } = useUserFormSubmission(user?.id);
 
   // 로딩 중인 경우 로딩 표시

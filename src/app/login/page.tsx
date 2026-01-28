@@ -7,8 +7,8 @@ import { GoogleIcon } from "@/components/common/Icons";
 import { AuthLoading } from "@/components/common";
 import Image from "next/image";
 import { GapY } from "../../components/ui/gap";
-import { useGoogleLogin } from "@/hooks/useAuth";
-import { useUser } from "@/hooks/useAuth";
+import { useGoogleLogin } from "@/queries/useAuthQueries";
+import { useUser } from "@/queries/useAuthQueries";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [isHydrated, setIsHydrated] = useState(false); // ✅ hydration 체크
   const router = useRouter();
-  const { data: user, isAuthenticated } = useUser();
+  const { user, isAuthenticated } = useUser();
   const googleLoginMutation = useGoogleLogin();
 
   // ✅ hydration 완료 체크

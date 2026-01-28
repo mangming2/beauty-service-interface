@@ -4,45 +4,30 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
 
-import { useUser, useUserProfile } from "@/queries/useAuthQueries";
-import { useSignOut } from "@/hooks/useAuth";
+import { useUser, useLogout } from "@/queries/useAuthQueries";
 import BookingHistory from "@/components/my/booking-history";
 import Schedule from "@/components/my/Schedule";
-import { PageLoading } from "@/components/common";
 import { EditIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GapY } from "../../components/ui/gap";
 
 export default function MyPage() {
-  // React Query hooks 사용
-  const { data: user, isLoading: userLoading } = useUser();
-  const { data: profile, isLoading: profileLoading } = useUserProfile(user?.id);
-  const signOutMutation = useSignOut();
+  const { user } = useUser();
+  const signOutMutation = useLogout();
   const router = useRouter();
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
   const userProfile = {
-    name:
-      profile?.full_name ||
-      (typeof user?.user_metadata?.full_name === "string"
-        ? user.user_metadata.full_name
-        : undefined) ||
-      user?.email?.split("@")[0] ||
-      "K-pop Fan",
+    name: user?.name || user?.email?.split("@")[0] || "K-pop Fan",
     email: user?.email || "fan@example.com",
-    avatar:
-      profile?.avatar_src ||
-      (typeof user?.user_metadata?.avatar_url === "string"
-        ? user.user_metadata.avatar_url
-        : undefined) ||
-      "/dummy-profile.png",
+    avatar: user?.profileImage || "/dummy-profile.png",
   };
 
   // 사용자 정보 로딩 중일 때
-  if (userLoading || profileLoading) {
-    return <PageLoading message="사용자 정보를 불러오는 중..." />;
-  }
+  // if (isLoading) {
+  //   return <PageLoading message="사용자 정보를 불러오는 중..." />;
+  // }
 
   return (
     <div className="min-h-screen text-white bg-background">

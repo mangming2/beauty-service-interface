@@ -1,6 +1,6 @@
 import { apiGet, apiPost, apiDelete } from "@/lib/apiClient";
 import { FormData } from "@/types/form";
-import { getUser } from "./auth";
+import { getMyPageUser } from "./my-page";
 import type {
   FormSubmissionRequest,
   FormSubmissionResponse,
@@ -18,7 +18,7 @@ export async function submitBeautyForm(
 ): Promise<FormSubmissionSuccessResponse> {
   try {
     // 현재 로그인된 사용자 정보 가져오기
-    const user = await getUser();
+    const user = await getMyPageUser();
 
     if (!user) {
       throw new Error("사용자가 로그인되지 않았습니다.");
@@ -35,7 +35,7 @@ export async function submitBeautyForm(
 
     // 2. 새 데이터 삽입
     const requestData: FormSubmissionRequest = {
-      user_id: user.id,
+      user_id: user.id.toString(),
       selected_concepts: formData.selectedConcepts || [],
       favorite_idol: formData.favoriteIdol || "",
       idol_option: formData.idolOption || "",
@@ -69,7 +69,7 @@ export async function getUserFormSubmission(
   userId?: string
 ): Promise<FormSubmissionResponse | null> {
   try {
-    const user = userId ? { id: userId } : await getUser();
+    const user = userId ? { id: userId } : await getMyPageUser();
 
     if (!user) {
       throw new Error("사용자가 로그인되지 않았습니다.");
@@ -104,7 +104,7 @@ export async function getUserFormSubmission(
  */
 export async function deleteUserFormSubmission(userId?: string): Promise<void> {
   try {
-    const user = userId ? { id: userId } : await getUser();
+    const user = userId ? { id: userId } : await getMyPageUser();
 
     if (!user) {
       throw new Error("사용자가 로그인되지 않았습니다.");

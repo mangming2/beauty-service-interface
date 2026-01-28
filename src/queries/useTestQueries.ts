@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { healthCheck, testSignup, testLogin } from "@/api/test";
 import { useAuthStore } from "@/store/useAuthStore";
-import { authKeys } from "@/hooks/useAuth";
+import { authKeys } from "@/queries/useAuthQueries";
 
 // ========== Query Keys ==========
 
