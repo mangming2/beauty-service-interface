@@ -119,28 +119,3 @@ export function useInfinitePackagesByTag(
     retry: 2,
   });
 }
-
-// ========== 여러 패키지 조회 ==========
-
-/**
- * 여러 패키지 ID로 패키지 정보를 가져오는 훅
- */
-export function useMultiplePackageDetails(packageIds: number[]) {
-  return useQuery<PackageDetail[]>({
-    queryKey: [...packageKeys.all, "multiple", [...packageIds].sort()],
-    queryFn: async () => {
-      const promises = packageIds.map(async id => {
-        try {
-          return await getPackageDetail(id);
-        } catch {
-          return null;
-        }
-      });
-      const results = await Promise.all(promises);
-      return results.filter((pkg): pkg is PackageDetail => pkg !== null);
-    },
-    enabled: packageIds.length > 0,
-    staleTime: 5 * 60 * 1000,
-    retry: 2,
-  });
-}

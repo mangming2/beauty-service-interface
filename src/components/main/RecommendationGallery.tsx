@@ -6,7 +6,8 @@ interface RecommendationGalleryProps {
   salonInfo: {
     tags: string[];
     name: string;
-    price: string;
+    minPrice: number;
+    totalPrice: number;
     rating: number;
     reviewCount: number;
     distance: string;
@@ -58,7 +59,7 @@ export default function RecommendationGallery({
                 {salonInfo.name}
               </h3>
               <span className="text-pink-400 title-sm font-semibold">
-                {salonInfo.price}
+                ₩ {salonInfo.minPrice} ~
               </span>
             </div>
 

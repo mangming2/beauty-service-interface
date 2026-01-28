@@ -134,39 +134,30 @@ export interface Package {
   checklist?: string[];
   reviews?: PackageReview[];
 }
-
-export interface PackageDetail extends Package {
-  components: PackageComponent[];
-  included: string[];
-  not_included: string[];
-  checklist: string[];
-  reviews: PackageReview[];
-}
-
 // ========== Review API Types ==========
-export interface CreateReviewRequest {
-  package_id: string;
-  user_id: string;
-  username: string;
+
+export interface ReviewImage {
+  id: number;
+  originalFilename: string;
+  url: string;
+  sortOrder: number;
+}
+
+export interface ReviewDetail {
+  reviewId: number;
+  packageId: number;
+  userId: number;
   rating: number;
-  comment: string;
+  content: string;
+  createdAt: string;
+  images: ReviewImage[];
 }
 
-export interface CreateReviewData {
-  package_id: string;
-  user_id: string;
-  username: string;
+// 리뷰 생성/수정 요청 데이터 (FormData로 변환해서 사용)
+export interface ReviewFormData {
   rating: number;
-  comment: string;
-}
-
-export interface BatchDeleteReviewsRequest {
-  review_ids: string[];
-}
-
-export interface BatchDeleteReviewsResponse {
-  success: boolean;
-  deleted_count: number;
+  content: string;
+  images?: File[];
 }
 
 export interface ReviewSummary {
@@ -175,17 +166,4 @@ export interface ReviewSummary {
   ratingDistribution: {
     [key: number]: number;
   };
-}
-
-// Review API에서 사용하는 상세 리뷰 타입 (Package의 reviews와는 다름)
-export interface ReviewDetail {
-  id: string;
-  package_id: string;
-  user_id: string;
-  username: string;
-  rating: number;
-  comment: string;
-  avatar_src?: string;
-  created_at?: string;
-  package_title?: string; // 패키지 제목 (사용자 리뷰 목록용)
 }

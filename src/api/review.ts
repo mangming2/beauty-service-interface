@@ -1,165 +1,160 @@
-import { apiGet, apiPost, apiDelete } from "@/lib/apiClient";
-import type {
-  CreateReviewRequest,
-  CreateReviewData,
-  ReviewDetail,
-  ReviewSummary,
-} from "@/types/api";
+import { apiGet, apiDelete } from "@/lib/apiClient";
+import type { ReviewDetail, ReviewFormData, ReviewSummary } from "@/types/api";
 
-// ========== 리뷰 API ==========
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 /**
- * 특정 패키지의 리뷰 목록 조회 (사용자 프로필 정보 포함)
- * GET /packages/:packageId/reviews 호출
+ * 패키지 리뷰 목록 조회
+ * GET /packages/:packageId/reviews
  */
 export async function getPackageReviews(
-  packageId: string
+  packageId: number
 ): Promise<ReviewDetail[]> {
   try {
-    console.log("Fetching reviews for package ID:", packageId);
-
     const reviews = await apiGet<ReviewDetail[]>(
       `/packages/${packageId}/reviews`
     );
-
-    if (!reviews || reviews.length === 0) {
-      console.log("No reviews found for package");
-      return [];
-    }
-
-    console.log(`Found ${reviews.length} reviews for package`);
-    console.log("Reviews with profiles processed successfully");
-    return reviews;
-  } catch (error: unknown) {
+    return reviews ?? [];
+  } catch (error) {
     console.error("Get package reviews error:", error);
-    if (
-      error &&
-      typeof error === "object" &&
-      "status" in error &&
-      (error as { status: number }).status === 404
-    ) {
-      return [];
-    }
-    throw error;
-  }
-}
-
-/**
- * 특정 패키지의 리뷰 요약 정보 조회
- * GET /packages/:packageId/reviews/summary 호출
- */
-export async function getPackageReviewSummary(
-  packageId: string
-): Promise<ReviewSummary> {
-  try {
-    const summary = await apiGet<ReviewSummary>(
-      `/packages/${packageId}/reviews/summary`
-    );
-    return summary;
-  } catch (error: unknown) {
-    // 요약 정보가 없으면 빈 요약 반환
-    if (
-      error &&
-      typeof error === "object" &&
-      "status" in error &&
-      (error as { status: number }).status === 404
-    ) {
-      return {
-        averageRating: 0,
-        totalReviews: 0,
-        ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
-      };
-    }
-    console.error("Get package review summary error:", error);
+    if (isNotFoundError(error)) return [];
     throw error;
   }
 }
 
 /**
  * 리뷰 생성
- * POST /reviews 호출
+ * POST /packages/:packageId/reviews (multipart/form-data)
  */
 export async function createReview(
-  reviewData: CreateReviewData
+  packageId: number,
+  data: ReviewFormData,
+  accessToken: string
 ): Promise<ReviewDetail> {
-  try {
-    const requestData: CreateReviewRequest = {
-      package_id: reviewData.package_id,
-      user_id: reviewData.user_id,
-      username: reviewData.username,
-      rating: reviewData.rating,
-      comment: reviewData.comment,
-    };
+  const formData = new FormData();
 
-    const data = await apiPost<ReviewDetail>("/reviews", requestData);
-    return data;
-  } catch (error) {
-    console.error("Create review error:", error);
+  // request 객체를 JSON Blob으로 추가
+  const requestBlob = new Blob(
+    [JSON.stringify({ rating: data.rating, content: data.content })],
+    { type: "application/json" }
+  );
+  formData.append("request", requestBlob);
+
+  // 이미지 파일 추가
+  if (data.images?.length) {
+    data.images.forEach(file => {
+      formData.append("images", file);
+    });
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/packages/${packageId}/reviews`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
     throw new Error("Failed to create review");
+  }
+
+  return response.json();
+}
+
+/**
+ * 리뷰 수정
+ * PUT /packages/:packageId/reviews/:reviewId (multipart/form-data)
+ */
+export async function updateReview(
+  packageId: number,
+  reviewId: number,
+  data: ReviewFormData,
+  accessToken: string
+): Promise<ReviewDetail> {
+  const formData = new FormData();
+
+  const requestBlob = new Blob(
+    [JSON.stringify({ rating: data.rating, content: data.content })],
+    { type: "application/json" }
+  );
+  formData.append("request", requestBlob);
+
+  if (data.images?.length) {
+    data.images.forEach(file => {
+      formData.append("images", file);
+    });
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/packages/${packageId}/reviews/${reviewId}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update review");
+  }
+
+  return response.json();
+}
+
+/**
+ * 리뷰 삭제
+ * DELETE /packages/:packageId/reviews/:reviewId?userId=
+ */
+export async function deleteReview(
+  packageId: number,
+  reviewId: number,
+  userId: number
+): Promise<void> {
+  try {
+    await apiDelete<void>(
+      `/packages/${packageId}/reviews/${reviewId}?userId=${userId}`
+    );
+  } catch (error) {
+    console.error("Delete review error:", error);
+    throw new Error("Failed to delete review");
   }
 }
 
 /**
- * 특정 사용자의 리뷰 목록 조회 (패키지 정보 포함)
- * GET /users/:userId/reviews 호출
+ * 패키지 리뷰 요약 조회 (백엔드에 있는지 확인 필요!)
+ * GET /packages/:packageId/reviews/summary
  */
-export async function getUserReviews(userId: string): Promise<ReviewDetail[]> {
+export async function getPackageReviewSummary(
+  packageId: number
+): Promise<ReviewSummary> {
   try {
-    const reviews = await apiGet<ReviewDetail[]>(`/users/${userId}/reviews`);
-
-    if (!reviews || reviews.length === 0) {
-      return [];
-    }
-
-    return reviews;
-  } catch (error: unknown) {
-    console.error("Get user reviews error:", error);
-    if (
-      error &&
-      typeof error === "object" &&
-      "status" in error &&
-      (error as { status: number }).status === 404
-    ) {
-      return [];
+    return await apiGet<ReviewSummary>(
+      `/packages/${packageId}/reviews/summary`
+    );
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      return {
+        averageRating: 0,
+        totalReviews: 0,
+        ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      };
     }
     throw error;
   }
 }
 
-/**
- * 리뷰 삭제
- * DELETE /reviews/:reviewId 호출
- */
-export async function deleteReview(reviewId: string): Promise<void> {
-  try {
-    await apiDelete<void>(`/reviews/${reviewId}`);
-  } catch (error: unknown) {
-    const message =
-      error && typeof error === "object" && "message" in error
-        ? (error as { message: string }).message
-        : "Unknown error";
-    console.error("Delete review error:", error);
-    throw new Error(`Failed to delete review: ${message}`);
-  }
-}
-
-/**
- * 여러 리뷰 삭제
- * POST /reviews/batch-delete 호출
- */
-export async function deleteReviews(reviewIds: string[]): Promise<void> {
-  if (reviewIds.length === 0) {
-    return;
-  }
-
-  try {
-    await apiPost("/reviews/batch-delete", { review_ids: reviewIds });
-  } catch (error: unknown) {
-    const message =
-      error && typeof error === "object" && "message" in error
-        ? (error as { message: string }).message
-        : "Unknown error";
-    console.error("Delete reviews error:", error);
-    throw new Error(`Failed to delete reviews: ${message}`);
-  }
+// 헬퍼
+function isNotFoundError(error: unknown): boolean {
+  return (
+    error !== null &&
+    typeof error === "object" &&
+    "status" in error &&
+    (error as { status: number }).status === 404
+  );
 }

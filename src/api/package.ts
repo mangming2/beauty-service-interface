@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "@/lib/apiClient";
+import { apiGet } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
@@ -128,22 +128,6 @@ export async function getPackageDetail(
       return null;
     }
     console.error("Get package detail error:", error);
-    throw error;
-  }
-}
-
-/**
- * 패키지 생성
- *
- * POST /packages
- */
-export async function createPackage(
-  data: CreatePackageRequest
-): Promise<{ id: number }> {
-  try {
-    return await apiPost<{ id: number }>("/packages", data);
-  } catch (error) {
-    console.error("Create package error:", error);
     throw error;
   }
 }
