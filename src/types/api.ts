@@ -146,7 +146,7 @@ export interface ReviewImage {
 export interface ReviewDetail {
   avatar_src?: string;
   reviewId: number;
-  packageId: number;
+  productId: number;
   userId: number;
   rating: number;
   content: string;

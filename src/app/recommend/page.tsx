@@ -5,7 +5,8 @@ import { GapY } from "@/components/ui/gap";
 import { Badge } from "@/components/ui/badge";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
-import { usePackages } from "@/queries/usePackageQueries";
+import { useProducts } from "@/queries/useProductQueries";
+import type { Product } from "@/api/product";
 import { PageLoading } from "@/components/common";
 
 const BASE_TAGS = [
@@ -34,18 +35,18 @@ function Content() {
   const availableTags = Array.from(new Set([...BASE_TAGS, ...urlTags]));
   const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>(urlTags);
-  const { data: packages, isLoading } = usePackages();
+  const { data: products, isLoading } = useProducts();
 
-  // 패키지 섹션 데이터
-  const middlePackages = packages?.slice(
+  // 상품 섹션 데이터
+  const middlePackages = products?.slice(
     ...PACKAGE_SECTIONS_CONFIG.middle.indices
   );
-  const lastPackages = packages?.slice(...PACKAGE_SECTIONS_CONFIG.last.indices);
+  const lastPackages = products?.slice(...PACKAGE_SECTIONS_CONFIG.last.indices);
 
-  // 필터링된 패키지
+  // 필터링된 상품
   const filteredPackages =
     selectedTags.length > 0
-      ? packages?.filter(pkg =>
+      ? products?.filter(pkg =>
           selectedTags.some(tag =>
             pkg.tagNames.some(
               t =>
@@ -54,7 +55,7 @@ function Content() {
             )
           )
         )
-      : packages;
+      : products;
 
   const handleTagClick = (tag: string) => {
     setSelectedTags(prev =>
@@ -93,7 +94,7 @@ function Content() {
       <GapY size={20} />
 
       {/* Galleries */}
-      {filteredPackages?.map((pkg, index) => (
+      {filteredPackages?.map((pkg: Product, index: number) => (
         <div key={pkg.id}>
           <div className="pl-5">
             <RecommendationGallery

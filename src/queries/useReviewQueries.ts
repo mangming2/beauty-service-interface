@@ -1,47 +1,30 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getPackageReviews,
-  getPackageReviewSummary,
+  getProductReviews,
   createReview,
   updateReview,
   deleteReview,
 } from "@/api/review";
-import type { ReviewDetail, ReviewSummary, ReviewFormData } from "@/types/api";
+import type { ReviewDetail, ReviewFormData } from "@/types/api";
 
 // ========== Query Keys ==========
 
 export const reviewKeys = {
   all: ["reviews"] as const,
   lists: () => [...reviewKeys.all, "list"] as const,
-  list: (packageId: number) => [...reviewKeys.lists(), packageId] as const,
-  summaries: () => [...reviewKeys.all, "summary"] as const,
-  summary: (packageId: number) =>
-    [...reviewKeys.summaries(), packageId] as const,
+  list: (productId: number) => [...reviewKeys.lists(), productId] as const,
 } as const;
 
 // ========== Queries ==========
 
 /**
- * 특정 패키지의 리뷰 목록 조회
+ * 특정 상품의 리뷰 목록 조회
  */
-export function usePackageReviews(packageId: number | undefined) {
+export function useProductReviews(productId: number | undefined) {
   return useQuery<ReviewDetail[]>({
-    queryKey: reviewKeys.list(packageId!),
-    queryFn: () => getPackageReviews(packageId!),
-    enabled: packageId !== undefined,
-    staleTime: 5 * 60 * 1000,
-    retry: 2,
-  });
-}
-
-/**
- * 특정 패키지의 리뷰 요약 정보 조회
- */
-export function usePackageReviewSummary(packageId: number | undefined) {
-  return useQuery<ReviewSummary>({
-    queryKey: reviewKeys.summary(packageId!),
-    queryFn: () => getPackageReviewSummary(packageId!),
-    enabled: packageId !== undefined,
+    queryKey: reviewKeys.list(productId!),
+    queryFn: () => getProductReviews(productId!),
+    enabled: productId !== undefined,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });
@@ -50,7 +33,7 @@ export function usePackageReviewSummary(packageId: number | undefined) {
 // ========== Mutations ==========
 
 interface CreateReviewParams {
-  packageId: number;
+  productId: number;
   data: ReviewFormData;
   accessToken: string;
 }
@@ -62,21 +45,18 @@ export function useCreateReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ packageId, data, accessToken }: CreateReviewParams) =>
-      createReview(packageId, data, accessToken),
+    mutationFn: ({ productId, data, accessToken }: CreateReviewParams) =>
+      createReview(productId, data, accessToken),
     onSuccess: newReview => {
       queryClient.invalidateQueries({
-        queryKey: reviewKeys.list(newReview.packageId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: reviewKeys.summary(newReview.packageId),
+        queryKey: reviewKeys.list(newReview.productId),
       });
     },
   });
 }
 
 interface UpdateReviewParams {
-  packageId: number;
+  productId: number;
   reviewId: number;
   data: ReviewFormData;
   accessToken: string;
@@ -90,25 +70,22 @@ export function useUpdateReview() {
 
   return useMutation({
     mutationFn: ({
-      packageId,
+      productId,
       reviewId,
       data,
       accessToken,
     }: UpdateReviewParams) =>
-      updateReview(packageId, reviewId, data, accessToken),
+      updateReview(productId, reviewId, data, accessToken),
     onSuccess: updatedReview => {
       queryClient.invalidateQueries({
-        queryKey: reviewKeys.list(updatedReview.packageId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: reviewKeys.summary(updatedReview.packageId),
+        queryKey: reviewKeys.list(updatedReview.productId),
       });
     },
   });
 }
 
 interface DeleteReviewParams {
-  packageId: number;
+  productId: number;
   reviewId: number;
   userId: number;
 }
@@ -120,14 +97,11 @@ export function useDeleteReview() {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, DeleteReviewParams>({
-    mutationFn: ({ packageId, reviewId, userId }) =>
-      deleteReview(packageId, reviewId, userId),
-    onSuccess: (_, { packageId }) => {
+    mutationFn: ({ productId, reviewId, userId }) =>
+      deleteReview(productId, reviewId, userId),
+    onSuccess: (_, { productId }) => {
       queryClient.invalidateQueries({
-        queryKey: reviewKeys.list(packageId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: reviewKeys.summary(packageId),
+        queryKey: reviewKeys.list(productId),
       });
     },
   });

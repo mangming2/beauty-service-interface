@@ -8,9 +8,10 @@ import { PageLoading } from "@/components/common";
 import { GapY } from "../../../components/ui/gap";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
-import { useUser } from "@/queries/useAuthQueries";
-import { useUserFormSubmission } from "@/queries/useFormQueries";
-import { usePackages } from "@/queries/usePackageQueries";
+import { useMyPageUser } from "@/queries/useMyPageQueries";
+import { useSurveyForCurrentUser } from "@/queries/useSurveyQueries";
+import { useProducts } from "@/queries/useProductQueries";
+import { surveyToDisplayData } from "@/lib/surveyUtils";
 
 // TODO: 백엔드 연동 시 더미 데이터를 실제 API 응답으로 교체
 const DUMMY_RECOMMENDATION_GALLERIES = [
@@ -85,34 +86,34 @@ const DUMMY_PACKAGE_SECTIONS = [
 
 export default function FormComplete() {
   const router = useRouter();
-  const { data: user, isLoading: userLoading } = useUser();
+  const { data: myPageUser, isLoading: userLoading } = useMyPageUser();
   const {
-    data: formSubmission,
-    isLoading: formLoading,
-    error: formError,
-  } = useUserFormSubmission(user?.id);
+    data: survey,
+    isLoading: surveyLoading,
+    error: surveyError,
+  } = useSurveyForCurrentUser();
 
-  // 패키지 데이터 가져오기
-  const { data: packages, isLoading: packagesLoading } = usePackages();
+  // 상품 데이터 가져오기
+  const { data: products, isLoading: productsLoading } = useProducts();
 
   useEffect(() => {
-    if (!userLoading && !user) {
+    if (!userLoading && !myPageUser) {
       router.push("/login");
     }
-  }, [user, userLoading, router]);
+  }, [myPageUser, userLoading, router]);
 
   // 로딩 상태
-  if (userLoading || formLoading || packagesLoading) {
+  if (userLoading || surveyLoading || productsLoading) {
     return <PageLoading />;
   }
 
   // 에러 상태
-  if (formError) {
+  if (surveyError) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
           <div className="text-lg text-red-400 mb-4">
-            {(formError as Error)?.message ||
+            {(surveyError as Error)?.message ||
               "데이터를 불러오는 중 오류가 발생했습니다."}
           </div>
           <button
@@ -127,7 +128,7 @@ export default function FormComplete() {
   }
 
   // 데이터가 없는 경우
-  if (!formSubmission) {
+  if (!survey) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
@@ -159,44 +160,39 @@ export default function FormComplete() {
             All summed up in tags
           </div>
           <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
-            {formSubmission.selected_concepts?.map(
-              (concept: string, index: number) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-                >
-                  {concept}
-                </Badge>
-              )
-            )}
-            {formSubmission.favorite_idol && (
-              <Badge
-                variant="secondary"
-                className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-              >
-                {formSubmission.favorite_idol}
-              </Badge>
-            )}
-            {formSubmission.idol_option && (
-              <Badge
-                variant="secondary"
-                className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-              >
-                {formSubmission.idol_option}
-              </Badge>
-            )}
-            {formSubmission.selected_regions?.map(
-              (region: string, index: number) => (
-                <Badge
-                  key={`region-${index}`}
-                  variant="secondary"
-                  className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
-                >
-                  {region}
-                </Badge>
-              )
-            )}
+            {(() => {
+              const display = surveyToDisplayData(survey);
+              return (
+                <>
+                  {display.concepts.map((concept, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+                    >
+                      {concept}
+                    </Badge>
+                  ))}
+                  {display.idolName && (
+                    <Badge
+                      variant="secondary"
+                      className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+                    >
+                      {display.idolName}
+                    </Badge>
+                  )}
+                  {display.regions.map((region, index) => (
+                    <Badge
+                      key={`region-${index}`}
+                      variant="secondary"
+                      className="text-lg h-[40px] p-[12px] rounded-[32px] bg-gray text-gray-300 hover:bg-gray-600"
+                    >
+                      {region}
+                    </Badge>
+                  ))}
+                </>
+              );
+            })()}
           </div>
         </div>
 
@@ -225,7 +221,7 @@ export default function FormComplete() {
                   <PackageSection
                     title={DUMMY_PACKAGE_SECTIONS[0].title}
                     packages={
-                      packages?.slice(
+                      products?.slice(
                         DUMMY_PACKAGE_SECTIONS[0].packageIndices[0],
                         DUMMY_PACKAGE_SECTIONS[0].packageIndices[1] + 1
                       ) || []
@@ -245,7 +241,7 @@ export default function FormComplete() {
                   <PackageSection
                     title={DUMMY_PACKAGE_SECTIONS[1].title}
                     packages={
-                      packages?.slice(
+                      products?.slice(
                         DUMMY_PACKAGE_SECTIONS[1].packageIndices[0],
                         DUMMY_PACKAGE_SECTIONS[1].packageIndices[1] + 1
                       ) || []

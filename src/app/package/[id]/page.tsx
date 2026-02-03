@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
 import KakaoMap from "@/components/common/KakaoMap";
-import { usePackageDetail } from "@/queries/usePackageQueries";
-import { usePackageReviews } from "@/queries/useReviewQueries";
+import { useProductDetail } from "@/queries/useProductQueries";
+import { useProductReviews } from "@/queries/useReviewQueries";
 import Link from "next/link";
 import {
   BorderHeartIcon,
@@ -24,14 +24,13 @@ export default function PackageDetail() {
   const router = useRouter();
   const packageId = Number(params.id);
 
-  const { data: packageDetail, isLoading, error } = usePackageDetail(packageId);
-  console.log(packageDetail);
+  const { data: productDetail, isLoading, error } = useProductDetail(packageId);
 
   const {
     data: reviews,
     isLoading: reviewsLoading,
     error: reviewsError,
-  } = usePackageReviews(packageId);
+  } = useProductReviews(packageId);
   // 로딩 상태
   if (isLoading) {
     return (
@@ -60,7 +59,7 @@ export default function PackageDetail() {
   }
 
   // 패키지를 찾을 수 없는 경우
-  if (!packageDetail) {
+  if (!productDetail) {
     return (
       <div className="bg-transparent flex flex-col flex-1">
         <div className="flex-1 flex flex-col items-center justify-center gap-3">
@@ -90,7 +89,7 @@ export default function PackageDetail() {
   }
 
   const handleBook = () => {
-    router.push(`/booking/${packageDetail.id}/check`);
+    router.push(`/booking/${productDetail.id}/check`);
   };
 
   const renderStars = (rating: number) => {
@@ -125,7 +124,7 @@ export default function PackageDetail() {
         <div className="relative w-full h-[412px]">
           <Image
             src={"/dummy-profile.png"}
-            alt={packageDetail.name}
+            alt={productDetail.name}
             fill
             className="object-cover"
           />
@@ -135,8 +134,8 @@ export default function PackageDetail() {
         <div className="flex flex-col py-4">
           {/* Package Title and Location */}
           <div className="px-5">
-            <h1 className="title-md">{packageDetail.name}</h1>
-            <p className="text-gray_1 text-md">{packageDetail.description}</p>
+            <h1 className="title-md">{productDetail.name}</h1>
+            <p className="text-gray_1 text-md">{productDetail.description}</p>
           </div>
 
           <GapY size={20} />
@@ -147,7 +146,7 @@ export default function PackageDetail() {
             <GapY size={12} />
             {/* Package Components */}
             <div className="flex flex-col w-full gap-3 px-5">
-              {packageDetail.products.map(product => (
+              {productDetail.options.map(product => (
                 <div key={product.id}>
                   <Card className="bg-gray-container border-solid border-[1px] border-[#2E3033] rounded-[4px] p-3">
                     <CardContent className="p-0">
@@ -193,7 +192,7 @@ export default function PackageDetail() {
                 <span className="flex items-center h-8 title-md font-bold">
                   Customers review
                 </span>
-                <Link href={`/package/${packageDetail.id}/reviews`}>
+                <Link href={`/package/${productDetail.id}/reviews`}>
                   <div className="flex flex-col items-center h-7 justify-end">
                     <div className="flex items-center gap-1">
                       <span className="text-gray-font text-sm">
@@ -211,7 +210,7 @@ export default function PackageDetail() {
               </div>
 
               <GapY size={8} />
-              <Link href={`/package/${packageDetail.id}/reviews`}>
+              <Link href={`/package/${productDetail.id}/reviews`}>
                 <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
                   {reviewsLoading ? (
                     <div className="flex items-center justify-center w-[250px] h-[132px]">
@@ -305,14 +304,14 @@ export default function PackageDetail() {
           <div className="flex justify-between items-center">
             <div className="flex flex-col gap-1">
               <p className="title-md text-white font-semibold">
-                ₩ {packageDetail.minPrice.toLocaleString()}{" "}
+                ₩ {productDetail.minPrice.toLocaleString()}{" "}
                 <span className="text-lg">/person</span>
               </p>
               <div
                 className="flex items-center justify-center rounded-[32px] py-1 px-4 text-white caption-sm"
                 style={{ background: "rgba(255, 255, 255, 0.16)" }}
               >
-                {packageDetail.minPrice} - {packageDetail.totalPrice}
+                {productDetail.minPrice} - {productDetail.totalPrice}
               </div>
             </div>
             <Button

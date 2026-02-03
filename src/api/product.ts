@@ -2,8 +2,18 @@ import { apiGet, apiPost } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
-/** 상품 */
+/** 상품 목록 아이템 */
 export interface Product {
+  id: number;
+  name: string;
+  description: string;
+  minPrice: number;
+  totalPrice: number;
+  tagNames: string[];
+}
+
+/** 상품 상세 - 옵션 정보 */
+export interface ProductOption {
   id: number;
   name: string;
   description: string;
@@ -11,24 +21,76 @@ export interface Product {
   location: string;
 }
 
+/** 상품 상세 */
+export interface ProductDetail {
+  id: number;
+  name: string;
+  description: string;
+  options: ProductOption[];
+  tagNames: string[];
+  slotStartDate: string;
+  slotEndDate: string;
+  slotStartTime: string;
+  slotEndTime: string;
+  reservationSlotCount: number;
+  minPrice: number;
+  totalPrice: number;
+}
+
 /** 상품 생성 요청 */
 export interface CreateProductRequest {
   name: string;
   description: string;
-  price: number;
-  location: string;
+  slotStartDate: string;
+  slotEndDate: string;
+  slotStartHour: number;
+  slotEndHour: number;
+  optionIds: number[];
+  tagNames: string[];
+}
+
+/** 상품 목록 조회 파라미터 */
+export interface GetProductsParams {
+  lastId?: number;
+  size?: number;
+  tag?: string;
+}
+
+/** 상품 생성 응답 */
+export interface CreateProductResponse {
+  id: number;
 }
 
 // ========== 상품 API ==========
 
 /**
  * 상품 목록 조회
+ * - no-offset 기반 커서 페이지네이션
+ * - tag 미지정 시 태그 없는 상품만 조회
+ *
  * GET /products
  */
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(
+  params: GetProductsParams = {}
+): Promise<Product[]> {
   try {
-    const data = await apiGet<Product[]>("/products");
-    return data ?? [];
+    const queryParams = new URLSearchParams();
+
+    if (params.lastId !== undefined) {
+      queryParams.append("lastId", String(params.lastId));
+    }
+    if (params.size !== undefined) {
+      queryParams.append("size", String(params.size));
+    }
+    if (params.tag !== undefined) {
+      queryParams.append("tag", params.tag);
+    }
+
+    const queryString = queryParams.toString();
+    const url = `/products${queryString ? `?${queryString}` : ""}`;
+
+    const data = await apiGet<Product[]>(url);
+    return data || [];
   } catch (error) {
     console.error("Get products error:", error);
     throw error;
@@ -36,14 +98,30 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 /**
+ * 태그별 상품 목록 조회 (편의 함수)
+ */
+export async function getProductsByTag(
+  tag: string,
+  params: Omit<GetProductsParams, "tag"> = {}
+): Promise<Product[]> {
+  return getProducts({ ...params, tag });
+}
+
+/**
  * 상품 상세 조회
+ *
  * GET /products/:productId
  */
 export async function getProductDetail(
   productId: number
-): Promise<Product | null> {
+): Promise<ProductDetail | null> {
   try {
-    const data = await apiGet<Product>(`/products/${productId}`);
+    const data = await apiGet<ProductDetail>(`/products/${productId}`);
+
+    if (!data) {
+      return null;
+    }
+
     return data;
   } catch (error: unknown) {
     if (
@@ -60,35 +138,14 @@ export async function getProductDetail(
 }
 
 /**
- * 상품 생성 (multipart/form-data)
+ * 상품 생성 (application/json)
  * POST /products
  */
 export async function createProduct(
-  request: CreateProductRequest,
-  images?: File[]
-): Promise<Product> {
+  request: CreateProductRequest
+): Promise<CreateProductResponse> {
   try {
-    const formData = new FormData();
-
-    // request 객체를 JSON Blob으로 추가
-    formData.append(
-      "request",
-      new Blob([JSON.stringify(request)], { type: "application/json" })
-    );
-
-    // 이미지 파일들 추가
-    if (images && images.length > 0) {
-      images.forEach(image => {
-        formData.append("images", image);
-      });
-    }
-
-    const data = await apiPost<Product>("/products", formData, {
-      headers: {
-        // Content-Type은 브라우저가 자동으로 설정 (boundary 포함)
-      },
-    });
-
+    const data = await apiPost<CreateProductResponse>("/products", request);
     return data;
   } catch (error) {
     console.error("Create product error:", error);

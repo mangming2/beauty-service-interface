@@ -2,9 +2,10 @@
 
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { usePackageDetail } from "@/queries/usePackageQueries";
+import { useProductDetail } from "@/queries/useProductQueries";
 import { useCreateReview } from "@/queries/useReviewQueries";
 import { useUser } from "@/queries/useAuthQueries";
+import { getAuthToken } from "@/lib/apiClient";
 import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,10 +24,10 @@ export default function CreateReviewPage() {
   const [comment, setComment] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
-  const { data: packageDetail, isLoading: packageLoading } = usePackageDetail(
+  const { data: productDetail, isLoading: productLoading } = useProductDetail(
     Number(packageId)
   );
-  const { data: user, isLoading: userLoading } = useUser();
+  const { user } = useUser();
   const createReviewMutation = useCreateReview();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,20 +43,17 @@ export default function CreateReviewPage() {
       return;
     }
 
-    // 사용자 이름 자동 생성
-    const username =
-      user.user_metadata?.full_name ||
-      user.user_metadata?.name ||
-      user.email?.split("@")[0] ||
-      "Anonymous";
+    const accessToken = getAuthToken();
+    if (!accessToken) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
 
     try {
       await createReviewMutation.mutateAsync({
-        package_id: packageId,
-        user_id: user.id,
-        username: username as string,
-        rating,
-        comment: comment.trim(),
+        productId: Number(packageId),
+        data: { rating, content: comment.trim() },
+        accessToken,
       });
 
       // 성공 후 패키지 페이지로 이동
@@ -66,7 +64,7 @@ export default function CreateReviewPage() {
     }
   };
 
-  if (packageLoading || userLoading) {
+  if (productLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <Spinner className="w-8 h-8 text-white" />
@@ -74,7 +72,7 @@ export default function CreateReviewPage() {
     );
   }
 
-  if (!packageDetail) {
+  if (!productDetail) {
     notFound();
   }
 
@@ -107,17 +105,17 @@ export default function CreateReviewPage() {
                 <div className="relative w-20 h-20 overflow-hidden flex-shrink-0">
                   <Image
                     src={"/dummy-profile.png"}
-                    alt={packageDetail.name}
+                    alt={productDetail.name}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-lg text-white truncate">
-                    {packageDetail.name}
+                    {productDetail.name}
                   </h4>
                   <p className="text-sm text-gray-font">
-                    {packageDetail.products[0].location}
+                    {productDetail.options[0]?.location ?? ""}
                   </p>
                   <GapY size={20} />
                   <p className="caption-md text-gray-400">

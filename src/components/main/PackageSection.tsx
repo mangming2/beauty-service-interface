@@ -1,17 +1,9 @@
 import PackageCard from "@/components/main/PackageCard";
-
-interface Package {
-  id: number;
-  name: string;
-  description: string;
-  minPrice: number;
-  totalPrice: number;
-  tagNames: string[];
-}
+import type { Product } from "@/api/product";
 
 interface PackageSectionProps {
   title: string;
-  packages: Package[];
+  packages: Product[];
   onPackageClick?: (packageId: number) => void;
 }
 

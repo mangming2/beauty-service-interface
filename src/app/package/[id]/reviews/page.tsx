@@ -2,10 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import {
-  usePackageReviews,
-  usePackageReviewSummary,
-} from "@/queries/useReviewQueries";
+import { useProductReviews } from "@/queries/useReviewQueries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { StarRating } from "@/components/ui/star-rating";
@@ -22,13 +19,26 @@ export default function ReviewsPage() {
     data: reviews,
     isLoading: reviewsLoading,
     error: reviewsError,
-  } = usePackageReviews(Number(packageId));
-  const { data: summary, isLoading: summaryLoading } = usePackageReviewSummary(
-    Number(packageId)
-  );
-  console.log(reviews);
+  } = useProductReviews(Number(packageId));
 
-  if (reviewsLoading || summaryLoading) {
+  // 리뷰 목록에서 요약 계산 (클라이언트)
+  const summary =
+    reviews && reviews.length > 0
+      ? {
+          averageRating:
+            reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length,
+          totalReviews: reviews.length,
+          ratingDistribution: [1, 2, 3, 4, 5].reduce(
+            (acc, star) => ({
+              ...acc,
+              [star]: reviews.filter(r => r.rating === star).length,
+            }),
+            {} as { [key: number]: number }
+          ),
+        }
+      : null;
+
+  if (reviewsLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <Spinner className="w-8 h-8 text-white" />
@@ -59,9 +69,9 @@ export default function ReviewsPage() {
 
   // 내 리뷰와 다른 사람들의 리뷰 분리
   const myReviews =
-    reviews?.filter(review => user && review.userId === user.userId) || [];
+    reviews?.filter(review => user && String(review.userId) === user.id) || [];
   const otherReviews =
-    reviews?.filter(review => !user || review.userId !== user.userId) || [];
+    reviews?.filter(review => !user || String(review.userId) !== user.id) || [];
 
   return (
     <div className="min-h-screen text-white">

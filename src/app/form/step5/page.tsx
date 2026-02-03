@@ -11,14 +11,14 @@ import { SeoulMap } from "@/components/common/SeoulMap";
 import { FormLoading } from "@/components/common";
 import { Step5Schema, Step5Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
-import { useAuth } from "@/hooks/useAuth";
-import { useSubmitBeautyForm } from "@/queries/useFormQueries";
+import { useUser } from "@/queries/useAuthQueries";
+import { useSubmitSurveyForm } from "@/queries/useSurveyQueries";
 
 export default function FormPage5() {
   const router = useRouter();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isLoggedIn } = useUser();
   const { formData, updateStep5, setCurrentStep } = useFormStore();
-  const submitFormMutation = useSubmitBeautyForm();
+  const submitFormMutation = useSubmitSurveyForm();
 
   const form = useForm<Step5Data>({
     resolver: zodResolver(Step5Schema),
@@ -40,13 +40,13 @@ export default function FormPage5() {
     setCurrentStep(5);
 
     // 로그인 확인 (loading이 완료된 후에만)
-    if (!loading && !isAuthenticated) {
+    if (!isLoggedIn && !isAuthenticated) {
       router.push("/login");
     }
-  }, [setCurrentStep, isAuthenticated, loading, router]);
+  }, [setCurrentStep, isAuthenticated, isLoggedIn, router]);
 
-  // 로딩 중일 때는 로딩 화면 표시
-  if (loading) {
+  // 비로그인 시 로그인 페이지로 리다이렉트 중일 때 로딩 표시
+  if (!isLoggedIn && !isAuthenticated) {
     return <FormLoading />;
   }
 
@@ -73,12 +73,12 @@ export default function FormPage5() {
     const completeFormData = { ...formData, ...data };
 
     // React Query mutation 실행
-    submitFormMutation.mutate(completeFormData, {
-      onSuccess: () => {
-        // 성공 시 로딩 페이지로 이동
-        router.push("/form/loading");
-      },
-    });
+    submitFormMutation
+      .mutateAsync(completeFormData)
+      .then(() => router.push("/form/loading"))
+      .catch(() => {
+        // 에러는 mutation의 isError로 표시됨
+      });
   };
 
   return (

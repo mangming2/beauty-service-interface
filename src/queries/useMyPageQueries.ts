@@ -25,11 +25,13 @@ export const myPageKeys = {
 
 /**
  * 내 정보 조회
+ * @param enabled - false면 API 호출 안 함 (비로그인 시 불필요한 401 방지)
  */
-export function useMyPageUser() {
+export function useMyPageUser(enabled = true) {
   return useQuery<MyPageUser>({
     queryKey: myPageKeys.user(),
     queryFn: getMyPageUser,
+    enabled,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

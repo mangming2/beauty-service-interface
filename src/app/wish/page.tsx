@@ -6,9 +6,9 @@ import { PageLoading } from "@/components/common";
 import { GapY } from "../../components/ui/gap";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
-import { useUser } from "@/queries/useAuthQueries";
-import { useUserFormSubmission } from "@/queries/useFormQueries";
-import { usePackages } from "@/queries/usePackageQueries"; // ✏️ 변경
+import { useMyPageUser } from "@/queries/useMyPageQueries";
+import { useSurveyForCurrentUser } from "@/queries/useSurveyQueries";
+import { useProducts } from "@/queries/useProductQueries";
 
 // TODO: 백엔드 연동 시 더미 데이터를 실제 API 응답으로 교체
 const DUMMY_RECOMMENDATION_GALLERIES = [
@@ -63,34 +63,33 @@ const DUMMY_PACKAGE_SECTION = {
 
 export default function Wish() {
   const router = useRouter();
-  const { data: user, isLoading: userLoading } = useUser();
+  const { data: myPageUser, isLoading: userLoading } = useMyPageUser();
   const {
-    data: formSubmission,
-    isLoading: formLoading,
-    error: formError,
-  } = useUserFormSubmission(user?.id);
+    data: survey,
+    isLoading: surveyLoading,
+    error: surveyError,
+  } = useSurveyForCurrentUser();
 
-  // ✏️ useAllPackages → usePackages
-  const { data: packages, isLoading: packagesLoading } = usePackages();
+  const { data: products, isLoading: productsLoading } = useProducts();
 
   useEffect(() => {
-    if (!userLoading && !user) {
+    if (!userLoading && !myPageUser) {
       router.push("/login");
     }
-  }, [user, userLoading, router]);
+  }, [myPageUser, userLoading, router]);
 
   // 로딩 상태
-  if (userLoading || formLoading || packagesLoading) {
+  if (userLoading || surveyLoading || productsLoading) {
     return <PageLoading />;
   }
 
   // 에러 상태
-  if (formError) {
+  if (surveyError) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
           <div className="text-lg text-red-400 mb-4">
-            {(formError as Error)?.message ||
+            {(surveyError as Error)?.message ||
               "데이터를 불러오는 중 오류가 발생했습니다."}
           </div>
           <button
@@ -105,7 +104,7 @@ export default function Wish() {
   }
 
   // 데이터가 없는 경우
-  if (!formSubmission) {
+  if (!survey) {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
@@ -154,7 +153,7 @@ export default function Wish() {
         <PackageSection
           title={DUMMY_PACKAGE_SECTION.title}
           packages={
-            packages?.slice(
+            products?.slice(
               DUMMY_PACKAGE_SECTION.packageIndices[0],
               DUMMY_PACKAGE_SECTION.packageIndices[1] + 1
             ) || []

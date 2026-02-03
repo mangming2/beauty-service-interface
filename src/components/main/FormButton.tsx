@@ -6,11 +6,11 @@ import { ArrowRightIcon } from "@/components/common/Icons";
 import { ButtonLoading } from "@/components/common";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { useUser } from "@/queries/useAuthQueries";
-import { useUserFormSubmission } from "@/queries/useFormQueries";
+import { useSurveyForCurrentUser } from "@/queries/useSurveyQueries";
 
 export function FormButton() {
-  const { user, isAuthenticated } = useUser(); // ✅ user도 가져오기
-  const { data: formSubmission, isLoading } = useUserFormSubmission(user?.id);
+  const { isAuthenticated } = useUser();
+  const { data: survey, isLoading } = useSurveyForCurrentUser(isAuthenticated);
 
   // 로딩 중인 경우 로딩 표시
   if (isLoading) {
@@ -43,7 +43,7 @@ export function FormButton() {
   }
 
   // 폼을 이미 작성한 경우 complete 페이지로 이동
-  const targetUrl = formSubmission ? "/form/complete" : "/form/step1";
+  const targetUrl = survey ? "/form/complete" : "/form/step1";
 
   return (
     <Link href={targetUrl}>
