@@ -8,89 +8,25 @@ import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { useProductDetail } from "@/queries/useProductQueries";
 
-interface BookingPackage {
-  id: string;
-  title: string;
-  imageSrc: string;
-  components: BookingComponent[];
-  totalPrice: number;
-}
-
-interface BookingComponent {
-  id: string;
-  title: string;
-  price: number;
-  location: string;
-  description: string;
-  imageSrc: string;
-}
-
-const bookingPackages: Record<string, BookingPackage> = {
-  "aespa-futuristic": {
-    id: "aespa-futuristic",
-    title: "Futuristic & Cyber Chic Idol Debut",
-    imageSrc: "/dummy-profile.png",
-    components: [
-      {
-        id: "makeup",
-        title: "Make-up & Hair",
-        price: 70000,
-        location: "Salon DOKI (Songdo, Incheon)",
-        description:
-          "Styled by artists with real K-pop idol experience! Includes full base makeup, eye detail, and volumized",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "studio",
-        title: "Studio Session",
-        price: 80000,
-        location: "Studio HYPE (Songdo, Incheon)",
-        description:
-          "A private studio designed for K-pop fans, complete with spotlight and stage-style lighting.",
-        imageSrc: "/dummy-profile.png",
-      },
-    ],
-    totalPrice: 170000,
-  },
-  "aespa-savage": {
-    id: "aespa-savage",
-    title: "Girl Crush Idol Debut",
-    imageSrc: "/dummy-profile.png",
-    components: [
-      {
-        id: "makeup",
-        title: "Make-up & Hair",
-        price: 70000,
-        location: "Salon DOKI (Songdo, Incheon)",
-        description:
-          "Styled by artists with real K-pop idol experience! Includes full base makeup, eye detail, and volumized",
-        imageSrc: "/dummy-profile.png",
-      },
-      {
-        id: "studio",
-        title: "Studio Session",
-        price: 80000,
-        location: "Studio HYPE (Songdo, Incheon)",
-        description:
-          "A private studio designed for K-pop fans, complete with spotlight and stage-style lighting.",
-        imageSrc: "/dummy-profile.png",
-      },
-    ],
-    totalPrice: 170000,
-  },
-};
+const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+const platformFee = 20000;
 
 export default function BookingPage() {
   const params = useParams();
   const router = useRouter();
-  const packageId = params.id as string;
-  const bookingPackage = bookingPackages[packageId];
+  const packageId = Number(params.id);
+  const isValidId = !isNaN(packageId) && packageId > 0;
+
+  const { data: productDetail, isLoading: productLoading } = useProductDetail(
+    isValidId ? packageId : undefined
+  );
+
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
 
   useEffect(() => {
-    // localStorage에서 선택된 날짜와 시간 가져오기
     const savedDate = localStorage.getItem("selectedBookingDate");
     const savedTime = localStorage.getItem("selectedBookingTime");
 
@@ -102,9 +38,30 @@ export default function BookingPage() {
     }
   }, []);
 
-  if (!bookingPackage) {
+  if (!isValidId) {
     notFound();
   }
+
+  if (productLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500" />
+      </div>
+    );
+  }
+
+  if (!productDetail) {
+    notFound();
+  }
+
+  const components = productDetail.options.map(opt => ({
+    id: String(opt.id),
+    title: opt.name,
+    price: opt.price,
+    location: opt.location,
+    description: opt.description,
+    imageSrc: PLACEHOLDER_IMAGE,
+  }));
 
   const handleBack = () => {
     router.push(`/package/${packageId}`);
@@ -118,11 +75,8 @@ export default function BookingPage() {
     router.push(`/booking/${packageId}/date`);
   };
 
-  const platformFee = 20000;
-
   return (
     <div className="min-h-screen text-white bg-black">
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-gray-900">
         <Button
           variant="ghost"
@@ -147,29 +101,26 @@ export default function BookingPage() {
           </svg>
         </Button>
         <h1 className="text-lg font-semibold">Checkout</h1>
-        <div className="w-6"></div>
+        <div className="w-6" />
       </div>
 
-      {/* Hero Image */}
       <div className="relative w-full h-80">
         <Image
-          src={bookingPackage.imageSrc}
-          alt={bookingPackage.title}
+          src={PLACEHOLDER_IMAGE}
+          alt={productDetail.name}
           fill
           className="object-cover"
         />
       </div>
 
-      {/* Package Title */}
       <div className="px-4 py-4">
-        <h1 className="text-xl font-bold">{bookingPackage.title}</h1>
+        <h1 className="text-xl font-bold">{productDetail.name}</h1>
       </div>
 
-      {/* Package Details Summary */}
       <div className="px-4 mb-6">
         <h2 className="text-lg font-bold mb-3">Package Details</h2>
         <div className="space-y-2">
-          {bookingPackage.components.map(component => (
+          {components.map(component => (
             <div key={component.id} className="flex justify-between">
               <span className="text-gray-300">{component.title}</span>
               <span className="text-white">
@@ -184,13 +135,12 @@ export default function BookingPage() {
           <div className="border-t border-gray-700 pt-2 mt-2">
             <div className="flex justify-between font-bold">
               <span>Total</span>
-              <span>₩{bookingPackage.totalPrice.toLocaleString()}</span>
+              <span>₩{productDetail.totalPrice.toLocaleString()}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Booking Date */}
       <div className="px-4 mb-6">
         <h2 className="text-lg font-bold mb-3">Booking Date</h2>
         <Button
@@ -212,11 +162,10 @@ export default function BookingPage() {
         </Button>
       </div>
 
-      {/* Package Details */}
       <div className="px-4 mb-6">
         <h2 className="text-lg font-bold mb-3">Package Details</h2>
         <div className="space-y-4">
-          {bookingPackage.components.map(component => (
+          {components.map(component => (
             <Card key={component.id} className="bg-gray-900 border-gray-700">
               <CardContent className="p-4">
                 <div className="flex gap-3">
@@ -246,7 +195,6 @@ export default function BookingPage() {
         </div>
       </div>
 
-      {/* Included & Not Included */}
       <div className="px-4 mb-6">
         <div className="bg-gray-900 rounded-lg p-4">
           <div className="flex justify-between items-center cursor-pointer">
@@ -270,7 +218,6 @@ export default function BookingPage() {
         </div>
       </div>
 
-      {/* Checkout Button */}
       <div className="px-4 py-4 bg-black border-t border-gray-800">
         <Button
           className="w-full bg-pink-500 hover:bg-pink-600 h-[52px]"

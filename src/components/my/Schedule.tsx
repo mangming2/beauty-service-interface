@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +14,18 @@ import { Icons } from "@/components/common/Icons";
 import ScheduleModal from "@/components/common/ScheduleModal";
 import Image from "next/image";
 import { format } from "date-fns";
+import { useMyBookings } from "@/queries/useMyPageQueries";
+import {
+  useSchedules,
+  useCreateSchedule,
+  useDeleteSchedule,
+} from "@/queries/useScheduleQueries";
+import type { Booking } from "@/api/my-page";
+import type { Schedule as ApiSchedule } from "@/api/schedule";
 
-interface BookingHistory {
+interface BookingDisplay {
   id: string;
+  packageId: number;
   packageTitle: string;
   date: string;
   time: string;
@@ -29,125 +38,120 @@ interface BookingHistory {
 
 interface ScheduleItem {
   id: string;
+  scheduleId: number;
   date: string;
   title: string;
   time: string;
-  color: string; // border color
+  color: string;
 }
 
-// Schedule 컴포넌트는 props가 필요 없음
+const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+
+function formatVisitDate(dateStr: string): string {
+  try {
+    return format(new Date(dateStr), "yyyy.MM.dd");
+  } catch {
+    return dateStr;
+  }
+}
+
+function mapApiStatusToUi(
+  status: Booking["status"]
+): "confirmed" | "completed" | "cancelled" {
+  switch (status) {
+    case "PREBOOK":
+    case "CONFIRMED":
+      return "confirmed";
+    case "COMPLETED":
+      return "completed";
+    case "CANCELLED":
+      return "cancelled";
+    default:
+      return "confirmed";
+  }
+}
+
+function scheduleToItem(s: ApiSchedule, index: number): ScheduleItem {
+  const start = new Date(s.startAt);
+  return {
+    id: String(s.scheduleId),
+    scheduleId: s.scheduleId,
+    date: format(start, "MM.dd"),
+    title: s.title,
+    time: format(start, "h a"),
+    color: index % 2 === 0 ? "border-pink-500" : "border-gray-600",
+  };
+}
 
 export default function Schedule() {
-  const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
-
-  // Schedule Modal state
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<string>("");
 
-  // Fullscreen state for each sheet (keyed by booking id)
   const [fullscreenSheets, setFullscreenSheets] = useState<
     Record<string, boolean>
   >({});
-
-  // Edit mode state for each booking (keyed by booking id)
   const [editModes, setEditModes] = useState<Record<string, boolean>>({});
-
-  // Deleted schedule items (keyed by booking id, then schedule item id)
   const [deletedScheduleItems, setDeletedScheduleItems] = useState<
     Record<string, Set<string>>
   >({});
 
-  // Drag state for each sheet (keyed by booking id)
   const dragStartY = useRef<Record<string, number>>({});
   const isDragging = useRef<Record<string, boolean>>({});
   const dragStartHeight = useRef<Record<string, number>>({});
   const hasDragged = useRef<Record<string, boolean>>({});
   const [dragHeights, setDragHeights] = useState<Record<string, number>>({});
 
-  // Schedule items for each booking (keyed by booking id)
-  const [scheduleItems, setScheduleItems] = useState<
-    Record<string, ScheduleItem[]>
-  >({
-    "1": [
-      {
-        id: "s1-1",
-        date: "07.15",
-        title: "Tri-bowl",
-        time: "2 p.m.",
-        color: "border-pink-500",
-      },
-      {
-        id: "s1-2",
-        date: "07.15",
-        title: "Incheon Bridge Observatory",
-        time: "4 p.m.",
-        color: "border-pink-500",
-      },
-      {
-        id: "s1-3",
-        date: "07.16",
-        title: "Studio HYPE",
-        time: "1 p.m.",
-        color: "border-gray-600",
-      },
-      {
-        id: "s1-4",
-        date: "07.16",
-        title: "Urban History Museum",
-        time: "5 p.m.",
-        color: "border-gray-600",
-      },
-    ],
-    "2": [
-      {
-        id: "s2-1",
-        date: "08.15",
-        title: "Tri-bowl",
-        time: "2 p.m.",
-        color: "border-pink-500",
-      },
-      {
-        id: "s2-2",
-        date: "08.15",
-        title: "Incheon Bridge Observatory",
-        time: "4 p.m.",
-        color: "border-pink-500",
-      },
-    ],
-  });
+  const { data: bookings = [] } = useMyBookings();
+  const { data: schedulesData } = useSchedules(50);
+  const createScheduleMutation = useCreateSchedule();
+  const deleteScheduleMutation = useDeleteSchedule();
 
-  useEffect(() => {
-    const newBooking: BookingHistory = {
-      id: "1",
-      packageTitle: "Futuristic Chic Idol Debut",
-      date: format(new Date(), "yyyy.MM.dd"),
-      time: format(new Date(), "HH:mm"),
-      status: "confirmed",
-      imageSrc: "/dummy-profile.png",
-      price: 170000,
-      location: "Songdo, Incheon",
-      guests: 2,
-    };
+  const bookingHistory: BookingDisplay[] = useMemo(
+    () =>
+      bookings.map(b => ({
+        id: String(b.reservationId),
+        packageId: b.packageId,
+        packageTitle: b.packageName,
+        date: formatVisitDate(b.visitDate),
+        time: b.visitStartTime,
+        status: mapApiStatusToUi(b.status),
+        imageSrc: PLACEHOLDER_IMAGE,
+        price: b.totalPrice,
+        location: b.attractions?.[0],
+        guests: 1,
+      })),
+    [bookings]
+  );
 
-    // Add multiple booking history entries for demonstration
-    const additionalBookings: BookingHistory[] = [
-      {
-        id: "2",
-        packageTitle: "Futuristic Chic Idol Debut",
-        date: "2026.08.15",
-        time: "14:00",
-        status: "confirmed",
-        imageSrc: "/dummy-profile.png",
-        price: 170000,
-        location: "Songdo, Incheon",
-        guests: 2,
-      },
-    ];
+  const allSchedules = useMemo(
+    () => schedulesData?.pages.flatMap(p => p.schedules) ?? [],
+    [schedulesData]
+  );
 
-    setBookingHistory([newBooking, ...additionalBookings]);
-    // scheduleItems는 useState 초기값으로 이미 설정되어 있으므로 여기서는 제거
-  }, []);
+  const scheduleItems: Record<string, ScheduleItem[]> = useMemo(() => {
+    const result: Record<string, ScheduleItem[]> = {};
+    bookingHistory.forEach(booking => {
+      const items = allSchedules
+        .filter(s => s.packageId === booking.packageId)
+        .map((s, i) => scheduleToItem(s, i));
+      result[booking.id] = items;
+    });
+    return result;
+  }, [bookingHistory, allSchedules]);
+
+  const bookingIdToPackageId = useMemo(
+    () => Object.fromEntries(bookingHistory.map(b => [b.id, b.packageId])),
+    [bookingHistory]
+  );
+
+  const years = useMemo(
+    () =>
+      Array.from(new Set(bookingHistory.map(b => b.date.split(".")[0]))).sort(
+        (a, b) => b.localeCompare(a)
+      ),
+    [bookingHistory]
+  );
 
   // 드래그 핸들러 함수들
   const handleDragMove = (bookingId: string, clientY: number) => {
@@ -228,21 +232,25 @@ export default function Schedule() {
     setIsScheduleModalOpen(true);
   };
 
-  const handleScheduleSave = (
+  const handleScheduleSave = async (
     title: string,
     startDate: Date,
     endDate: Date
   ) => {
-    console.log("새 일정 저장:", {
-      bookingId: selectedBookingId,
-      title,
-      startDate,
-      endDate,
-    });
-    // TODO: 실제 API 호출로 일정 저장
-    alert(
-      `일정이 저장되었습니다: ${title} - ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}`
-    );
+    const packageId = bookingIdToPackageId[selectedBookingId];
+    if (packageId == null) return;
+
+    try {
+      await createScheduleMutation.mutateAsync({
+        packageId,
+        title,
+        startAt: startDate.toISOString(),
+        endAt: endDate.toISOString(),
+      });
+    } catch (error) {
+      console.error("일정 저장 실패:", error);
+      alert("일정 저장에 실패했습니다.");
+    }
   };
 
   const toggleFullscreen = (bookingId: string) => {
@@ -326,36 +334,38 @@ export default function Schedule() {
     }));
   };
 
-  const handleSaveSchedule = (bookingId: string) => {
+  const handleSaveSchedule = async (bookingId: string) => {
     const deletedIds = deletedScheduleItems[bookingId];
     if (deletedIds && deletedIds.size > 0) {
-      console.log("Deleting schedule items:", Array.from(deletedIds));
-      // TODO: 실제 삭제 API 호출
-
-      // Remove deleted items from scheduleItems
-      setScheduleItems(prev => ({
-        ...prev,
-        [bookingId]: (prev[bookingId] || []).filter(
-          item => !deletedIds.has(item.id)
-        ),
-      }));
+      try {
+        await Promise.all(
+          Array.from(deletedIds).map(id =>
+            deleteScheduleMutation.mutateAsync(Number(id))
+          )
+        );
+      } catch (error) {
+        console.error("일정 삭제 실패:", error);
+        alert("일정 삭제에 실패했습니다.");
+        return;
+      }
     }
 
-    // Reset edit mode and deleted items
-    setEditModes(prev => ({
-      ...prev,
-      [bookingId]: false,
-    }));
-    setDeletedScheduleItems(prev => ({
-      ...prev,
-      [bookingId]: new Set(),
-    }));
+    setEditModes(prev => ({ ...prev, [bookingId]: false }));
+    setDeletedScheduleItems(prev => ({ ...prev, [bookingId]: new Set() }));
   };
+
+  if (years.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        예약 내역이 없습니다.
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full space-y-4">
       {/* Booking History List */}
-      {["2026", "2025"].map(year => (
+      {years.map(year => (
         <div key={year} className="mb-6">
           <h3 className="text-white font-bold mb-3">{year}</h3>
           {bookingHistory

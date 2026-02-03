@@ -1,141 +1,120 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { UpcomingBookings } from "./UpcomingBookings";
 import { CompletedBookings } from "./CompletedBookings";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { useMyBookings } from "@/queries/useMyPageQueries";
+import { useMyReviews } from "@/queries/useMyPageQueries";
+import type { Booking } from "@/api/my-page";
 import type { BookingHistory, CompletedBooking } from "./types";
 
+const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+
+function formatVisitDate(dateStr: string): string {
+  try {
+    return format(new Date(dateStr), "yyyy.MM.dd");
+  } catch {
+    return dateStr;
+  }
+}
+
+function mapApiStatusToUi(
+  status: Booking["status"]
+): "confirmed" | "completed" | "cancelled" {
+  switch (status) {
+    case "PREBOOK":
+    case "CONFIRMED":
+      return "confirmed";
+    case "COMPLETED":
+      return "completed";
+    case "CANCELLED":
+      return "cancelled";
+    default:
+      return "confirmed";
+  }
+}
+
+function bookingToHistory(b: Booking): BookingHistory {
+  return {
+    id: String(b.reservationId),
+    packageTitle: b.packageName,
+    date: formatVisitDate(b.visitDate),
+    time: b.visitStartTime,
+    status: mapApiStatusToUi(b.status),
+    imageSrc: PLACEHOLDER_IMAGE,
+    price: b.totalPrice,
+    location: b.attractions?.[0] ?? "",
+    guests: 1,
+  };
+}
+
+function bookingToCompleted(
+  b: Booking,
+  reviewedProductIds: Set<number>,
+  reviewByProductId: Map<number, { rating: number; content: string }>
+): CompletedBooking {
+  const review = reviewByProductId.get(b.packageId);
+  return {
+    id: String(b.reservationId),
+    packageId: String(b.packageId),
+    packageTitle: b.packageName,
+    date: formatVisitDate(b.visitDate),
+    rating: review?.rating ?? 0,
+    comment: review?.content ?? "",
+    imageSrc: PLACEHOLDER_IMAGE,
+    location: b.attractions?.[0] ?? "",
+    reviewed: reviewedProductIds.has(b.packageId),
+  };
+}
+
 export default function BookingHistory() {
-  const [bookingHistory, setBookingHistory] = useState<BookingHistory[]>([]);
-  const [completedBookings, setCompletedBookings] = useState<
-    CompletedBooking[]
-  >([]);
   const [openSheetId, setOpenSheetId] = useState<string | null>(null);
   const [deleteDialogOpenId, setDeleteDialogOpenId] = useState<string | null>(
     null
   );
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    const newBooking: BookingHistory = {
-      id: "1",
-      packageTitle: "Futuristic Chic Idol Debut",
-      date: format(new Date(), "yyyy.MM.dd"),
-      time: format(new Date(), "HH:mm"),
-      status: "confirmed",
-      imageSrc: "/dummy-profile.png",
-      price: 170000,
-      location: "Songdo, Incheon",
-      guests: 2,
-    };
+  const { data: bookings = [], isLoading: bookingsLoading } = useMyBookings();
+  const { data: reviews = [] } = useMyReviews();
 
-    // Add multiple booking history entries for demonstration
-    const additionalBookings: BookingHistory[] = [
-      {
-        id: "2",
-        packageTitle: "Futuristic Chic Idol Debut",
-        date: "2026.08.15",
-        time: "14:00",
-        status: "confirmed",
-        imageSrc: "/dummy-profile.png",
-        price: 170000,
-        location: "Songdo, Incheon",
-        guests: 2,
-      },
-      {
-        id: "3",
-        packageTitle: "Elegant Glam Photo Shoot",
-        date: "2026.09.20",
-        time: "16:00",
-        status: "confirmed",
-        imageSrc: "/dummy-profile.png",
-        price: 150000,
-        location: "Gangnam, Seoul",
-        guests: 1,
-      },
-      {
-        id: "4",
-        packageTitle: "Girl Crush Concept",
-        date: "2026.10.05",
-        time: "13:00",
-        status: "confirmed",
-        imageSrc: "/dummy-profile.png",
-        price: 180000,
-        location: "Hongdae, Seoul",
-        guests: 3,
-      },
-      {
-        id: "5",
-        packageTitle: "Futuristic Chic Idol Debut",
-        date: "2025.07.14",
-        time: "14:00",
-        status: "completed",
-        imageSrc: "/dummy-profile.png",
-        price: 170000,
-        location: "Songdo, Incheon",
-        guests: 2,
-      },
-      {
-        id: "6",
-        packageTitle: "Lovely Fresh Style",
-        date: "2025.05.22",
-        time: "11:00",
-        status: "completed",
-        imageSrc: "/dummy-profile.png",
-        price: 140000,
-        location: "Myeongdong, Seoul",
-        guests: 2,
-      },
-      {
-        id: "7",
-        packageTitle: "Highteen Concept",
-        date: "2025.03.10",
-        time: "15:30",
-        status: "completed",
-        imageSrc: "/dummy-profile.png",
-        price: 160000,
-        location: "Itaewon, Seoul",
-        guests: 1,
-      },
-    ];
-
-    setBookingHistory([newBooking, ...additionalBookings]);
-
-    // Add reviews
-    const completedBookingData: CompletedBooking[] = [
-      {
-        id: "1",
-        packageId: "aespa-futuristic",
-        packageTitle: "Futuristic Chic Idol Debut",
-        date: "2025.07.14",
-        rating: 5,
-        comment: "Amazing experience! The styling was perfect.",
-        imageSrc: "/dummy-profile.png",
-        location: "Songdo, Incheon",
-        reviewed: true,
-      },
-      {
-        id: "2",
-        packageId: "aespa-futuristic",
-        packageTitle: "Futuristic Chic Idol Debut",
-        date: "2024.07.14",
-        rating: 5,
-        comment: "Loved the futuristic concept!",
-        imageSrc: "/dummy-profile.png",
-        location: "Songdo, Incheon",
-        reviewed: false,
-      },
-    ];
-
-    setCompletedBookings(completedBookingData);
-  }, []);
-
-  const upcomingBookings = bookingHistory.filter(
-    booking => booking.status === "confirmed"
+  const reviewedProductIds = useMemo(
+    () => new Set(reviews.map(r => r.productId)),
+    [reviews]
   );
+
+  const reviewByProductId = useMemo(() => {
+    const map = new Map<number, { rating: number; content: string }>();
+    reviews.forEach(r =>
+      map.set(r.productId, { rating: r.rating, content: r.content })
+    );
+    return map;
+  }, [reviews]);
+
+  const { upcomingBookings, completedBookings, years } = useMemo(() => {
+    const history = bookings.map(bookingToHistory);
+    const upcoming = history.filter(b => b.status === "confirmed");
+    const completed = bookings
+      .filter(b => b.status === "COMPLETED")
+      .map(b => bookingToCompleted(b, reviewedProductIds, reviewByProductId))
+      .filter(b => !deletedIds.has(b.id));
+
+    const yrs = Array.from(
+      new Set(completed.map(b => b.date.split(".")[0]))
+    ).sort((a, b) => b.localeCompare(a));
+
+    return {
+      upcomingBookings: upcoming,
+      completedBookings: completed,
+      years: yrs,
+    };
+  }, [bookings, reviewedProductIds, reviewByProductId, deletedIds]);
+
+  const hasAnyBookings =
+    upcomingBookings.length > 0 || completedBookings.length > 0;
 
   const handleDeleteClick = (bookingId: string) => {
     setOpenSheetId(null);
@@ -144,22 +123,22 @@ export default function BookingHistory() {
 
   const handleDeleteConfirm = () => {
     if (deleteDialogOpenId) {
-      console.log("Delete booking:", deleteDialogOpenId);
-      setCompletedBookings(prev =>
-        prev.filter(b => b.id !== deleteDialogOpenId)
-      );
+      setDeletedIds(prev => new Set(prev).add(deleteDialogOpenId));
       setDeleteDialogOpenId(null);
     }
   };
 
-  // Extract unique years from completed bookings
-  const years = Array.from(
-    new Set(completedBookings.map(b => b.date.split(".")[0]))
-  ).sort((a, b) => b.localeCompare(a));
+  if (bookingsLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      {bookingHistory.length > 0 ? (
+      {hasAnyBookings ? (
         <>
           <UpcomingBookings bookings={upcomingBookings} />
           <CompletedBookings
@@ -173,7 +152,7 @@ export default function BookingHistory() {
       ) : (
         <Card className="bg-gray-900 border-gray-700">
           <CardContent className="p-6 text-center">
-            <p className="text-gray-400 mb-2">No reviews yet</p>
+            <p className="text-gray-400 mb-2">No bookings yet</p>
             <Button className="bg-pink-500 hover:bg-pink-600">
               Book Your First Package
             </Button>

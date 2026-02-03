@@ -23,7 +23,7 @@ export function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
                   <div className="flex justify-between w-full">
                     <div className="flex flex-col items-start justify-between">
                       <h3 className="font-bold text-white text-lg">
-                        DOKI MAKE SALON
+                        {booking.packageTitle}
                       </h3>
                       <p className="text-sm text-gray-400">
                         <span>

@@ -53,10 +53,12 @@ export function surveyToDisplayData(survey: Survey): SurveyDisplayData {
 
   let regions: string[] = [];
   try {
-    regions =
-      typeof survey.places === "string"
-        ? (JSON.parse(survey.places) as string[])
-        : [];
+    const places = (survey as { places?: string | string[] }).places;
+    if (Array.isArray(places)) {
+      regions = places;
+    } else if (typeof places === "string") {
+      regions = JSON.parse(places) as string[];
+    }
   } catch {
     regions = [];
   }

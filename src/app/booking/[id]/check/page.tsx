@@ -3,101 +3,67 @@
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { GapY } from "../../../../components/ui/gap";
 import { ArrowRightIcon, LocationIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { Divider } from "@/components/ui/divider";
+import { useProductDetail } from "@/queries/useProductQueries";
+import { notFound } from "next/navigation";
 
-interface BookingData {
-  packageId: string;
-  packageTitle: string;
-  components: {
-    id: string;
-    title: string;
-    location: string;
-    price: number;
-    status: "pending" | "accepted";
-  }[];
-  totalPrice: number;
-  selectedDate: string;
-  selectedTime: string;
-  makeOverDateTime: Date;
-  dokiDebutDateTime: Date;
-}
-
-const getBookingData = (packageId: string): BookingData => {
-  const makeOverDate = new Date(2025, 6, 21, 10, 0); // July 21, 2025, 10:00 AM
-  const dokiDebutDate = new Date(2025, 6, 21, 14, 0); // July 21, 2025, 2:00 PM
-
-  return {
-    packageId,
-    packageTitle: "Futuristic Chic Idol Debut",
-    components: [
-      {
-        id: "makeover",
-        title: "Make Over",
-        location: "Salon DOKI (Songdo, Incheon)",
-        price: 70000,
-        status: "pending",
-      },
-      {
-        id: "debut",
-        title: "Doki Debut",
-        location: "Studio HYPE (Songdo, Incheon)",
-        price: 80000,
-        status: "accepted",
-      },
-    ],
-    totalPrice: 170000,
-    selectedDate: "2025.07.21",
-    selectedTime: "10:00",
-    makeOverDateTime: makeOverDate,
-    dokiDebutDateTime: dokiDebutDate,
-  };
-};
+const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+const platformFee = 20000;
 
 export default function BookingCheckPage() {
   const params = useParams();
   const { t } = useTranslation();
   const router = useRouter();
-  const packageId = params.id as string;
+  const packageId = Number(params.id);
+  const isValidId = !isNaN(packageId) && packageId > 0;
 
-  const [bookingData, setBookingData] = useState<BookingData | null>(null);
-  const [currentStep] = useState(1); // Sending, Processing, Accepted
+  const { data: productDetail, isLoading: productLoading } = useProductDetail(
+    isValidId ? packageId : undefined
+  );
 
-  useEffect(() => {
-    const data = getBookingData(packageId);
-    setBookingData(data);
-  }, [packageId]);
+  const currentStep = 1;
+
+  const components =
+    productDetail?.options.map(opt => ({
+      id: String(opt.id),
+      title: opt.name,
+      location: opt.location,
+      price: opt.price,
+    })) ?? [];
 
   const handleSave = () => {
     router.push(`/booking/${packageId}/done`);
   };
 
-  const platformFee = 20000;
+  if (!isValidId) {
+    notFound();
+  }
 
-  if (!bookingData) {
+  if (productLoading) {
     return (
-      <div className="bg-black text-white flex items-center justify-center">
+      <div className="bg-black text-white flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-500 mx-auto mb-4" />
           <p className="text-gray-300">Loading...</p>
         </div>
       </div>
     );
   }
 
+  if (!productDetail) {
+    notFound();
+  }
+
   return (
     <div className="min-h-screen bg-background text-white">
-      {/* Main Content */}
       <div>
-        {/* Reservation Status */}
         <div className="flex flex-col p-5">
           <div className="flex flex-col gap-1">
             <div className="title-lg font-bold">Booking Status</div>
-
             <div className="flex flex-col h-10">
               <p className="text-gray-300 text-md">
                 {t("booking.delayNotice")}
@@ -110,7 +76,6 @@ export default function BookingCheckPage() {
 
           <GapY size={16} />
 
-          {/* Progress Bar */}
           <div>
             <div className="flex px-9 justify-between caption-sm text-white">
               <span className={currentStep >= 1 ? "text-white" : ""}>
@@ -125,20 +90,18 @@ export default function BookingCheckPage() {
             </div>
             <div className="w-full bg-gray-font rounded-full my-1 h-[6px]">
               <div
-                className="bg-gradient-to-r from-pink-500 to-pink-400 h-[6px] rounded-full transition-all duration-1000 ease-out"
+                className="bg-gradient-to-r from-pink-500 to-pink-400 h-[6px] rounded-full"
                 style={{ width: `${(currentStep / 3) * 100}%` }}
-              ></div>
+              />
             </div>
           </div>
         </div>
 
         <Divider height={8} className="bg-gray-container" />
 
-        {/* Order Status */}
         <div className="flex flex-col p-5">
           <div className="flex flex-col gap-1">
             <div className="h-8 title-sm">Order Status</div>
-
             <div className="flex flex-col h-10">
               <p className="text-gray-font text-md">
                 Please proceed with reservations by vendor.
@@ -150,29 +113,18 @@ export default function BookingCheckPage() {
           <GapY size={12} />
 
           <div className="flex flex-col gap-3">
-            {bookingData.components.map(component => {
-              const imageSrc =
-                component.id === "debut"
-                  ? "/dummy-profile.png"
-                  : "/dummy-profile.png";
-              const guideTitle = "Booking Guide";
-              const guideDetail =
-                component.id === "debut"
-                  ? "· Reserve through the official website"
-                  : "· 1:1 Inquiry via WeChat";
-              const vendor = component.location.split(" (")[0];
+            {components.map(component => {
+              const vendor =
+                component.location.split(" (")[0] || component.location;
               return (
                 <Link
                   href={`/booking/${packageId}/booking-link`}
                   key={component.id}
                 >
-                  <div
-                    key={component.id}
-                    className="flex items-center gap-3 bg-gray-container rounded-[4px] p-3 cursor-pointer"
-                  >
+                  <div className="flex items-center gap-3 bg-gray-container rounded-[4px] p-3 cursor-pointer">
                     <div className="relative w-24 h-24 overflow-hidden rounded-md flex-shrink-0">
                       <Image
-                        src={imageSrc}
+                        src={PLACEHOLDER_IMAGE}
                         alt={component.title}
                         fill
                         className="object-cover"
@@ -195,8 +147,10 @@ export default function BookingCheckPage() {
                         <span className="text-pink-font">PreBook</span>
                       </div>
                       <div className="mt-3">
-                        <p className="text-white text-sm">{guideTitle}</p>
-                        <p className="text-white text-sm">{guideDetail}</p>
+                        <p className="text-white text-sm">Booking Guide</p>
+                        <p className="text-white text-sm">
+                          · Reserve through the official website
+                        </p>
                       </div>
                     </div>
                     <ArrowRightIcon width={7} height={16} color="white" />
@@ -206,17 +160,18 @@ export default function BookingCheckPage() {
             })}
           </div>
         </div>
+
         <Divider height={8} className="bg-gray-container" />
-        {/* Package Details */}
+
         <div className="flex flex-col gap-3 p-5 bg-background">
-          <div className="flex items-center justify-between cursor-pointer">
+          <div className="flex justify-between items-center cursor-pointer">
             <h2 className="title-sm">{t("booking.packageDetails")}</h2>
           </div>
 
           <div>
             <div className="flex justify-between items-center">
               <h3 className="text-lg text-gray-font">
-                {t("booking.package")}: {bookingData.packageTitle}
+                {t("booking.package")}: {productDetail.name}
               </h3>
               <div className="flex w-7 items-center justify-center">
                 <Link href={`/booking/${packageId}/package-details`}>
@@ -233,7 +188,7 @@ export default function BookingCheckPage() {
             <GapY size={17} />
 
             <div className="space-y-3">
-              {bookingData.components.map(component => (
+              {components.map(component => (
                 <div key={component.id} className="flex justify-between">
                   <span className="text-gray-font">{component.title}</span>
                   <span className="text-gray-font font-medium">
@@ -253,7 +208,7 @@ export default function BookingCheckPage() {
               <div className="border-t border-gray-700 pt-3">
                 <div className="flex justify-between font-bold text-lg">
                   <span>{t("booking.total")}</span>
-                  <span>₩{bookingData.totalPrice.toLocaleString()}</span>
+                  <span>₩{productDetail.totalPrice.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -261,7 +216,6 @@ export default function BookingCheckPage() {
         </div>
       </div>
 
-      {/* Save Button */}
       <div className="px-4 py-4 bg-transparent">
         <Button className="w-full h-[52px] bg-primary" onClick={handleSave}>
           <span className="text-lg">Save</span>
