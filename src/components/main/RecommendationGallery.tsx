@@ -3,6 +3,8 @@ import { GapY } from "@/components/ui/gap";
 
 interface RecommendationGalleryProps {
   images: string[];
+  /** 첫 이미지가 LCP일 때 true (above the fold) */
+  priority?: boolean;
   salonInfo: {
     tags: string[];
     name: string;
@@ -19,6 +21,7 @@ interface RecommendationGalleryProps {
 
 export default function RecommendationGallery({
   images,
+  priority = false,
   salonInfo,
   onClick,
 }: RecommendationGalleryProps) {
@@ -34,6 +37,8 @@ export default function RecommendationGallery({
               src={imageSrc}
               alt="recommendation gallery"
               fill
+              sizes="(max-width: 412px) 348px, 348px"
+              priority={priority && index === 0}
               className="object-cover"
             />
           </div>

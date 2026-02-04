@@ -105,11 +105,31 @@ export async function apiRequest<T>(
       ...fetchOptions,
       headers: requestHeaders,
       credentials: "include",
+      redirect: "manual", // 302 OAuth 리다이렉트 시 CORS 에러 방지
     });
   };
 
   try {
     let response = await fetchWithToken();
+
+    // ⭐ 리다이렉트 응답 (백엔드가 OAuth로 보냄) → 세션 만료로 간주
+    const isRedirect =
+      response.type === "opaqueredirect" ||
+      response.status === 301 ||
+      response.status === 302 ||
+      response.status === 303 ||
+      response.status === 307 ||
+      response.status === 308;
+    if (isRedirect && requireAuth) {
+      logout();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+      throw {
+        message: "세션이 만료되었습니다.",
+        status: 401,
+      } as ApiError;
+    }
 
     // ⭐ 401 에러 → 토큰 재발급 시도
     if (response.status === 401 && requireAuth) {

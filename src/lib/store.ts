@@ -54,74 +54,46 @@ const initialFormData: Partial<FormData> = {
   selectedRegions: [],
 };
 
-export const useFormStore = create<FormState>()(
-  persist(
-    set => ({
+// 폼 데이터는 메모리에서만 관리, 제출 시 백엔드로 전송 (localStorage 사용 안 함)
+export const useFormStore = create<FormState>()(set => ({
+  formData: initialFormData,
+  currentStep: 1,
+
+  updateFormData: data =>
+    set(state => ({
+      formData: { ...state.formData, ...data },
+    })),
+
+  setCurrentStep: step => set({ currentStep: step }),
+
+  resetForm: () =>
+    set({
       formData: initialFormData,
       currentStep: 1,
-
-      updateFormData: data =>
-        set(state => ({
-          formData: { ...state.formData, ...data },
-        })),
-
-      setCurrentStep: step => set({ currentStep: step }),
-
-      resetForm: () =>
-        set({
-          formData: initialFormData,
-          currentStep: 1,
-        }),
-
-      updateStep1: data =>
-        set(state => ({
-          formData: { ...state.formData, ...data },
-        })),
-
-      updateStep2: data =>
-        set(state => ({
-          formData: { ...state.formData, ...data },
-        })),
-
-      updateStep3: data =>
-        set(state => ({
-          formData: { ...state.formData, ...data },
-        })),
-
-      updateStep4: data =>
-        set(state => ({
-          formData: { ...state.formData, ...data },
-        })),
-
-      updateStep5: data =>
-        set(state => ({
-          formData: { ...state.formData, ...data },
-        })),
     }),
-    {
-      name: "beauty-form-storage",
-      storage: {
-        getItem: (name: string) => {
-          const item = localStorage.getItem(name);
-          if (!item) return null;
-          return JSON.parse(item, (key, value) => {
-            if (value && typeof value === "object" && value.__type === "Date") {
-              return new Date(value.value);
-            }
-            return value;
-          });
-        },
-        setItem: (name: string, value: unknown) => {
-          const serialized = JSON.stringify(value, (key, val) => {
-            if (val instanceof Date) {
-              return { __type: "Date", value: val.toISOString() };
-            }
-            return val;
-          });
-          localStorage.setItem(name, serialized);
-        },
-        removeItem: (name: string) => localStorage.removeItem(name),
-      },
-    }
-  )
-);
+
+  updateStep1: data =>
+    set(state => ({
+      formData: { ...state.formData, ...data },
+    })),
+
+  updateStep2: data =>
+    set(state => ({
+      formData: { ...state.formData, ...data },
+    })),
+
+  updateStep3: data =>
+    set(state => ({
+      formData: { ...state.formData, ...data },
+    })),
+
+  updateStep4: data =>
+    set(state => ({
+      formData: { ...state.formData, ...data },
+    })),
+
+  updateStep5: data =>
+    set(state => ({
+      formData: { ...state.formData, ...data },
+    })),
+}));

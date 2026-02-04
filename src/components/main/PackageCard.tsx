@@ -10,6 +10,8 @@ interface PackageCardProps {
   tags: string[]; // ✏️ artist → tags (tagNames)
   minPrice: number; // ✏️ location → minPrice
   onClick: (packageId: number) => void; // ✏️ string → number
+  /** LCP 이미지일 때 true */
+  priority?: boolean;
 }
 
 export default function PackageCard({
@@ -20,6 +22,7 @@ export default function PackageCard({
   tags,
   minPrice,
   onClick,
+  priority = false,
 }: PackageCardProps) {
   // 가격 포맷팅 (예: 100000 → ₩100,000)
   const formattedPrice = `₩${minPrice.toLocaleString()}~`;
@@ -36,6 +39,8 @@ export default function PackageCard({
               src={imageSrc}
               alt={imageAlt}
               fill
+              sizes="168px"
+              priority={priority}
               className="object-cover rounded-t-lg"
             />
           </div>

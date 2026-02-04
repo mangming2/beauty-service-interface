@@ -44,12 +44,16 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         }),
 
-      logout: () =>
+      logout: () => {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("auth_token"); // 테스트 로그인용 키 정리
+        }
         set({
           accessToken: null,
           user: null,
           isAuthenticated: false,
-        }),
+        });
+      },
     }),
     {
       name: "auth-storage", // localStorage 키

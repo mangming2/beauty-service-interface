@@ -1,6 +1,7 @@
 export { Header } from "./Header";
 export { Footer } from "./Footer";
 export { AuthGuard } from "./AuthGuard";
+export { AuthValidator } from "./AuthValidator";
 export { ProtectedLayout } from "./ProtectedLayout";
 export { ConditionalLayout } from "./ConditionalLayout";
 export { PageLayout } from "./PageLayout";

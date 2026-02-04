@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ConditionalLayout } from "@/components/common";
+import { AuthValidator, ConditionalLayout } from "@/components/common";
 import { QueryProvider } from "@/providers";
 
 const geistSans = Geist({
@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  ),
   title: "DOKI",
   description: "A modern beauty service interface built with Next.js",
   icons: {
@@ -65,7 +68,9 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <QueryProvider>
-          <ConditionalLayout>{children}</ConditionalLayout>
+          <AuthValidator>
+            <ConditionalLayout>{children}</ConditionalLayout>
+          </AuthValidator>
         </QueryProvider>
       </body>
     </html>

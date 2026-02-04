@@ -144,6 +144,7 @@ export default function FormComplete() {
         <div className="pl-5">
           <RecommendationGallery
             images={PLACEHOLDER_RECOMMENDATION.images}
+            priority
             salonInfo={PLACEHOLDER_RECOMMENDATION.salonInfo}
             onClick={() => router.push(PLACEHOLDER_RECOMMENDATION.packagePath)}
           />
@@ -158,6 +159,7 @@ export default function FormComplete() {
               title={title}
               packages={packageChunks[index]}
               onPackageClick={handlePackageClick}
+              firstCardPriority={index === 0}
             />
             <GapY size={20} />
           </div>

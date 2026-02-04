@@ -5,12 +5,15 @@ interface PackageSectionProps {
   title: string;
   packages: Product[];
   onPackageClick?: (packageId: number) => void;
+  /** 첫 번째 카드가 LCP일 때 true */
+  firstCardPriority?: boolean;
 }
 
 export default function PackageSection({
   title,
   packages,
   onPackageClick,
+  firstCardPriority = false,
 }: PackageSectionProps) {
   return (
     <div className="flex flex-col gap-2 pl-5 bg-gray-container">
@@ -23,7 +26,7 @@ export default function PackageSection({
         </div>
       </div>
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pr-5">
-        {packages.map(pkg => (
+        {packages.map((pkg, index) => (
           <PackageCard
             key={pkg.id}
             packageId={pkg.id}
@@ -33,6 +36,7 @@ export default function PackageSection({
             tags={pkg.tagNames}
             minPrice={pkg.minPrice}
             onClick={id => onPackageClick?.(id)}
+            priority={firstCardPriority && index === 0}
           />
         ))}
       </div>
