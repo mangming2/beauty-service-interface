@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useUser, useLogout } from "@/queries/useAuthQueries";
 import BookingHistory from "@/components/my/booking-history";
 import Schedule from "@/components/my/Schedule";
-import { EditIcon } from "@/components/common/Icons";
+import { EditIcon, SettingIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GapY } from "../../components/ui/gap";
@@ -51,6 +51,7 @@ export default function MyPage() {
             </div>
             <p className="text-gray-400 text-sm">{userProfile.email}</p>
           </div>
+          <SettingIcon className="cursor-pointer" width={16} height={16} />
         </div>
       </div>
 

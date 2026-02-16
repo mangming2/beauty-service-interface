@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
-import KakaoMap from "@/components/common/KakaoMap";
 import { useProductDetail } from "@/queries/useProductQueries";
 import { useProductReviews } from "@/queries/useReviewQueries";
 import Link from "next/link";
@@ -273,31 +272,8 @@ export default function PackageDetail() {
             </div>
 
             <GapY size={20} />
-
-            {/* Map Section */}
-            <div className="px-5">
-              <KakaoMap
-                address={"사당동 142-38"}
-                height="372px"
-                className="mb-3"
-              />
-
-              {/* Distance Info */}
-              <div className="flex items-center justify-center w-full h-[28px] bg-white/10 rounded-[32px]">
-                <span className="text-gray-300 text-sm">
-                  {/* {packageDetail.travel_time}{" "} */}
-                  거리 정보
-                  <span className="text-primary font-medium">
-                    {/* {packageDetail.map_location} */}
-                    지도 위치
-                  </span>{" "}
-                </span>
-              </div>
-            </div>
           </div>
         </div>
-
-        <GapY size={61} />
 
         {/* Booking Footer */}
         <div className="bg-transparent px-5 pt-4 pb-5 border-t border-gray-container">

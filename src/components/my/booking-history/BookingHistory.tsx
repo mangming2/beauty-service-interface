@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { UpcomingBookings } from "./UpcomingBookings";
 import { CompletedBookings } from "./CompletedBookings";
@@ -150,12 +149,12 @@ export default function BookingHistory() {
           />
         </>
       ) : (
-        <Card className="bg-gray-900 border-gray-700">
-          <CardContent className="p-6 text-center">
-            <p className="text-gray-400 mb-2">No bookings yet</p>
-            <Button className="bg-pink-500 hover:bg-pink-600">
-              Book Your First Package
-            </Button>
+        <Card className="bg-gray-container rounded-1 border-none p-0">
+          <CardContent className="p-3 gap-[10px] text-center h-[71px] flex flex-col items-center justify-center">
+            <p className="text-white title-sm">No bookings yet</p>
+            <p className="text-gray-font caption-sm">
+              Book your first package to get started
+            </p>
           </CardContent>
         </Card>
       )}
