@@ -13,6 +13,7 @@ interface ConditionalLayoutProps {
 // Header/Footer가 필요한 일반 페이지 목록
 const NORMAL_PAGES = [
   "/",
+  "/board",
   "/my",
   "/wish",
   "/recommend",

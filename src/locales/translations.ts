@@ -6,6 +6,10 @@ export const translations = {
     chooseConcept: "컨셉을 선택하세요",
     latestTrends: "한국의 최신 트렌드",
     more: "더보기",
+    board: "게시판",
+    boardView: "게시판 보기",
+    community: "Community",
+    events: "Events",
     concepts: {
       all: "전체",
       girlCrush: "걸크러시",
@@ -71,6 +75,10 @@ export const translations = {
     chooseConcept: "Choose Your Concept",
     latestTrends: "Latest Trends in Korea",
     more: "more",
+    board: "Board",
+    boardView: "View Board",
+    community: "Community",
+    events: "Events",
     concepts: {
       all: "All Concept",
       girlCrush: "Girl Crush",
@@ -135,6 +143,10 @@ export const translations = {
     chooseConcept: "コンセプトを選択",
     latestTrends: "韓国の最新トレンド",
     more: "もっと見る",
+    board: "掲示板",
+    boardView: "掲示板を見る",
+    community: "Community",
+    events: "Events",
     concepts: {
       all: "All",
       girlCrush: "ガールクラッシュ",
@@ -200,6 +212,10 @@ export const translations = {
     chooseConcept: "选择你的概念",
     latestTrends: "韩国最新趋势",
     more: "更多",
+    board: "公告栏",
+    boardView: "查看公告栏",
+    community: "Community",
+    events: "Events",
     concepts: {
       girlCrush: "Girl Crush",
       lovelyFresh: "可爱清新",

@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Search } from "lucide-react";
 import { LanguageSelector } from "./LanguageSelector";
 
 export const Header = () => {
@@ -8,6 +9,7 @@ export const Header = () => {
   const isFormPage = pathname.startsWith("/form");
   const isWishPage = pathname === "/wish";
   const isMyPage = pathname === "/my";
+  const isBoardPage = pathname === "/board";
   const isMyEditPage = pathname === "/my/edit";
   const isPackageReviewsPage = /^\/package\/[^/]+\/reviews$/.test(pathname);
   const isMyReviewsPage = /^\/my\/reviews(\/[^/]+)?$/.test(pathname);
@@ -26,6 +28,7 @@ export const Header = () => {
         {(isMyEditPage || isMyPage) && (
           <h1 className="text-white h-6 title-md">My Page</h1>
         )}
+        {isBoardPage && <h1 className="text-white h-6 title-md">게시판</h1>}
         {isPackageReviewsPage && (
           <h1 className="text-white h-6 title-md">Package Reviews</h1>
         )}
@@ -36,6 +39,7 @@ export const Header = () => {
           !isWishPage &&
           !isMyEditPage &&
           !isMyPage &&
+          !isBoardPage &&
           !isPackageReviewsPage &&
           !isMyReviewsPage && (
             <Image
@@ -45,7 +49,14 @@ export const Header = () => {
               height={18}
             />
           )}
-        <LanguageSelector />
+        <div className="flex items-center gap-3">
+          {isBoardPage && (
+            <button type="button" aria-label="검색" className="text-gray-font">
+              <Search className="w-5 h-5" />
+            </button>
+          )}
+          <LanguageSelector />
+        </div>
       </div>
     </header>
   );

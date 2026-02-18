@@ -150,6 +150,58 @@ export default function Home() {
 
         <GapY size={20} />
 
+        {/* Board Section - 최근 게시물 3개 */}
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="title-md">DOKI Now</h2>
+            <Link
+              href="/board"
+              className="text-gray_1 caption-md flex items-center gap-[4px]"
+            >
+              <TranslatedText translationKey="more" />
+              <ArrowRightIcon
+                color="#BCBCBC"
+                width={3}
+                height={7}
+                className="size-auto"
+              />
+            </Link>
+          </div>
+          <GapY size={8} />
+          {[
+            { id: "1", title: "커버 댄스 인원 구합니다.", date: "202.01.06" },
+            {
+              id: "2",
+              title: "2026년 도키 가맹 업체 안내",
+              date: "25.12.21",
+            },
+            {
+              id: "3",
+              title: "2026년 도키 가맹 업체 안내",
+              date: "25.12.21",
+            },
+          ].map(post => (
+            <Link
+              key={post.id}
+              href={`/board/${post.id}`}
+              className="flex items-center justify-between py-3 border-b border-gray-outline"
+            >
+              <div>
+                <p className="text-md text-white">{post.title}</p>
+                <p className="caption-md text-gray_1 mt-0.5">{post.date}</p>
+              </div>
+              <ArrowRightIcon
+                color="#FFFFFE"
+                width={6}
+                height={16}
+                className="size-auto shrink-0"
+              />
+            </Link>
+          ))}
+        </div>
+
+        <GapY size={20} />
+
         {/* Latest Trends Section */}
         <div>
           <div className="flex justify-between items-center mb-4">
