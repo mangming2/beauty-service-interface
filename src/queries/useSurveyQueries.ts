@@ -14,19 +14,20 @@ import type { FormData } from "@/types/form";
 
 export const surveyKeys = {
   all: ["surveys"] as const,
+  current: ["surveys", "current"] as const,
   detail: (userId: number) => [...surveyKeys.all, userId] as const,
 } as const;
 
 // ========== Queries ==========
 
 /**
- * 설문 조회
+ * 설문 조회 (GET /surveys — 현재 로그인 사용자)
  */
-export function useSurvey(userId: number | undefined) {
+export function useSurvey(enabled: boolean) {
   return useQuery<Survey | null>({
-    queryKey: surveyKeys.detail(userId!),
-    queryFn: () => getSurvey(userId!),
-    enabled: userId !== undefined,
+    queryKey: surveyKeys.current,
+    queryFn: () => getSurvey(),
+    enabled,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });
@@ -34,13 +35,15 @@ export function useSurvey(userId: number | undefined) {
 
 /**
  * 현재 로그인 사용자의 설문 조회
- * - useMyPageUser로 userId 획득
+ * - useMyPageUser로 로그인 여부 확인 후 GET /surveys 호출
  * @param enabled - false면 API 호출 안 함 (비로그인 시 getMyPageUser 401 방지)
  */
 export function useSurveyForCurrentUser(enabled = true) {
   const { data: myPageUser, isLoading: isMyPageUserLoading } =
     useMyPageUser(enabled);
-  const surveyQuery = useSurvey(enabled ? myPageUser?.id : undefined);
+  const surveyQuery = useSurvey(
+    enabled && !isMyPageUserLoading && myPageUser != null
+  );
 
   return {
     ...surveyQuery,
@@ -50,22 +53,15 @@ export function useSurveyForCurrentUser(enabled = true) {
 
 // ========== Mutations ==========
 
-interface CreateSurveyParams {
-  userId: number;
-  request: CreateSurveyRequest;
-}
-
 /**
- * 설문 저장
+ * 설문 저장 (POST /surveys — body만, 201 생성 성공)
  */
 export function useCreateSurvey() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, request }: CreateSurveyParams) =>
-      createSurvey(userId, request),
-    onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: surveyKeys.detail(userId) });
+    mutationFn: (request: CreateSurveyRequest) => createSurvey(request),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: surveyKeys.all });
     },
   });
@@ -73,7 +69,7 @@ export function useCreateSurvey() {
 
 /**
  * 폼 데이터로 설문 저장 (폼 제출용)
- * - getMyPageUser로 userId 획득 후 createSurvey 호출
+ * - 로그인 여부 확인 후 POST /surveys 호출
  */
 export function useSubmitSurveyForm() {
   const queryClient = useQueryClient();
@@ -84,7 +80,7 @@ export function useSubmitSurveyForm() {
       if (!user) throw new Error("사용자가 로그인되지 않았습니다.");
 
       const request = formDataToSurveyRequest(formData);
-      return createSurvey(user.id, request);
+      return createSurvey(request);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: surveyKeys.all });

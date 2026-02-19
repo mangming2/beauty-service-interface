@@ -45,7 +45,9 @@ function CallbackContent() {
         const accessToken = await reissueToken();
 
         if (!accessToken) {
-          setError("토큰 발급에 실패했습니다.");
+          setError(
+            "로그인 세션이 유지되지 않았습니다. 시크릿/프라이빗 모드에서는 쿠키가 저장되지 않아 로그인이 실패할 수 있습니다. 일반 창에서 다시 시도해 주세요."
+          );
           return;
         }
 
@@ -73,10 +75,10 @@ function CallbackContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h2 className="mt-4 text-lg font-medium text-gray-900">인증 오류</h2>
-          <p className="mt-2 text-sm text-gray-600">{error}</p>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center max-w-sm">
+          <h2 className="mt-4 text-lg font-medium text-white">인증 오류</h2>
+          <p className="mt-2 text-sm text-gray-300 leading-relaxed">{error}</p>
           <Button className="mt-4" onClick={() => router.push("/login")}>
             로그인 페이지로 돌아가기
           </Button>

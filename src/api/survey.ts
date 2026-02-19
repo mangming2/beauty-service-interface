@@ -29,16 +29,16 @@ export interface CreateSurveyResponse {
 // ========== 설문 API ==========
 
 /**
- * 설문 조회
- * GET /surveys/:userId
+ * 설문 조회 (현재 로그인 사용자)
+ * GET /surveys — No parameters
  */
-export async function getSurvey(userId: number): Promise<Survey | null> {
+export async function getSurvey(): Promise<Survey | null> {
   try {
-    const data = await apiGet<Survey>(`/surveys/${userId}`);
+    const data = await apiGet<Survey>("/surveys");
     return data;
   } catch (error: unknown) {
     const err = error as { status?: number; message?: string };
-    // 404 또는 "설문 없음" 케이스 → null 반환 (폼 미작성 사용자)
+    // 404 → 설문 없음 (폼 미작성 사용자)
     if (err?.status === 404) return null;
     if (
       err?.status === 500 &&
@@ -52,18 +52,14 @@ export async function getSurvey(userId: number): Promise<Survey | null> {
 }
 
 /**
- * 설문 저장
- * POST /surveys/:userId
+ * 설문 저장 (현재 로그인 사용자)
+ * POST /surveys — No parameters, request body only. 201 생성 성공.
  */
 export async function createSurvey(
-  userId: number,
   request: CreateSurveyRequest
 ): Promise<CreateSurveyResponse> {
   try {
-    const data = await apiPost<CreateSurveyResponse>(
-      `/surveys/${userId}`,
-      request
-    );
+    const data = await apiPost<CreateSurveyResponse>("/surveys", request);
     return data;
   } catch (error) {
     console.error("Create survey error:", error);

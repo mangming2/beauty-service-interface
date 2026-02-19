@@ -226,7 +226,7 @@ export default function Home() {
           <div className="flex flex-col">
             {[
               {
-                id: "aespa-futuristic",
+                id: "1",
                 titleKey: "trends.romanticSchool.title",
                 artistKey: "trends.romanticSchool.artist",
                 locationKey: "trends.romanticSchool.location",
@@ -234,7 +234,7 @@ export default function Home() {
                 imageSrc: "/dummy-profile.png",
               },
               {
-                id: "y2k-highteen",
+                id: "2",
                 titleKey: "trends.y2kHighteen.title",
                 artistKey: "trends.y2kHighteen.artist",
                 locationKey: "trends.y2kHighteen.location",
@@ -242,7 +242,7 @@ export default function Home() {
                 imageSrc: "/dummy-profile.png",
               },
               {
-                id: "k-traditional",
+                id: "3",
                 titleKey: "trends.kTraditional.title",
                 artistKey: "trends.kTraditional.artist",
                 locationKey: "trends.kTraditional.location",

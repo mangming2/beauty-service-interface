@@ -124,12 +124,17 @@ export async function getProductDetail(
 
     return data;
   } catch (error: unknown) {
-    if (
-      error &&
-      typeof error === "object" &&
-      "status" in error &&
-      (error as { status: number }).status === 404
-    ) {
+    const err = error as { status?: number; message?: string } | null;
+    const status = err?.status;
+    const message = typeof err?.message === "string" ? err.message : "";
+
+    // 404 또는 백엔드가 500으로 보내는 "상품 없음" 응답 → null 처리
+    const isNotFound =
+      status === 404 ||
+      (status === 500 &&
+        (message.includes("does not exist") || message.includes("찾을 수 없")));
+
+    if (isNotFound) {
       return null;
     }
     console.error("Get product detail error:", error);
