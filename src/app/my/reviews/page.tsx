@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/queries/useAuthQueries";
-import { useUserReviews } from "@/queries/useReviewQueries";
+import { useMyReviews, myPageKeys } from "@/queries/useMyPageQueries";
+import { useDeleteReview } from "@/queries/useReviewQueries";
 import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
 import { PageLoading } from "@/components/common";
@@ -10,18 +12,21 @@ import { format } from "date-fns";
 import { Icons } from "@/components/common";
 
 export default function MyReviewsPage() {
-  const { data: user, isLoading: userLoading } = useUser();
-  const { data: reviews, isLoading: reviewsLoading } = useUserReviews(
-    user?.id || ""
-  );
+  const queryClient = useQueryClient();
+  const { user } = useUser();
+  const { data: reviews, isLoading: reviewsLoading } = useMyReviews();
+  const deleteReviewMutation = useDeleteReview();
 
   const [isEditMode, setIsEditMode] = useState(false);
-  const [deletedReviewIds, setDeletedReviewIds] = useState<Set<string>>(
+  const [deletedReviewIds, setDeletedReviewIds] = useState<Set<number>>(
     new Set()
   );
-  //const deleteReviewsMutation = useDeleteReviews();
 
-  if (userLoading || reviewsLoading) {
+  if (!user) {
+    return <PageLoading message="사용자 정보를 불러오는 중..." />;
+  }
+
+  if (reviewsLoading) {
     return <PageLoading message="리뷰를 불러오는 중..." />;
   }
 
@@ -50,18 +55,37 @@ export default function MyReviewsPage() {
     }
   };
 
-  const handleDeleteReview = (reviewId: string) => {
+  const handleDeleteReview = (reviewId: number) => {
     setDeletedReviewIds(prev => new Set(prev).add(reviewId));
   };
 
-  const handleSave = () => {
-    if (deletedReviewIds.size > 0) {
-      console.log("Deleting reviews:", Array.from(deletedReviewIds));
-      // TODO: 실제 삭제 로직 구현
-      // deleteReviewsMutation.mutate(Array.from(deletedReviewIds));
+  const handleSave = async () => {
+    if (deletedReviewIds.size === 0 || !reviews) {
+      setIsEditMode(false);
+      return;
     }
-    setDeletedReviewIds(new Set());
-    setIsEditMode(false);
+    const userId = Number(user.id);
+    if (Number.isNaN(userId)) {
+      setIsEditMode(false);
+      return;
+    }
+    try {
+      for (const reviewId of deletedReviewIds) {
+        const review = reviews.find(r => r.reviewId === reviewId);
+        if (review) {
+          await deleteReviewMutation.mutateAsync({
+            productId: review.productId,
+            reviewId: review.reviewId,
+            userId,
+          });
+        }
+      }
+      setDeletedReviewIds(new Set());
+      setIsEditMode(false);
+      await queryClient.invalidateQueries({ queryKey: myPageKeys.reviews() });
+    } catch (error) {
+      console.error("Delete reviews error:", error);
+    }
   };
 
   return (
@@ -97,15 +121,15 @@ export default function MyReviewsPage() {
         {reviews && reviews.length > 0 ? (
           <div className="space-y-4">
             {reviews
-              .filter(review => !deletedReviewIds.has(review.id))
+              .filter(review => !deletedReviewIds.has(review.reviewId))
               .map((review, index, filteredReviews) => (
-                <div key={review.id}>
+                <div key={review.reviewId}>
                   <div className="flex pb-[14px] gap-3">
                     {/* Review Content */}
                     <div className="flex-1">
                       {/* Title */}
                       <div className="font-bold text-white mb-2">
-                        {review.package_title || "Unknown Package"}
+                        Package #{review.productId}
                       </div>
 
                       {/* Rating and Date */}
@@ -114,13 +138,13 @@ export default function MyReviewsPage() {
                         <div className="w-px h-4 bg-gray-600" />
                         <span className="text-gray-400 text-sm">
                           {isEditMode
-                            ? formatTimeAgo(review.created_at)
-                            : formatDate(review.created_at)}
+                            ? formatTimeAgo(review.createdAt)
+                            : formatDate(review.createdAt)}
                         </span>
                       </div>
 
                       {/* Comment */}
-                      <div className="text-white text-md">{review.comment}</div>
+                      <div className="text-white text-md">{review.content}</div>
                     </div>
 
                     {/* Delete Button (Edit Mode) */}
@@ -129,7 +153,7 @@ export default function MyReviewsPage() {
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            handleDeleteReview(review.id);
+                            handleDeleteReview(review.reviewId);
                           }}
                           className="cursor-pointer"
                         >
@@ -162,9 +186,11 @@ export default function MyReviewsPage() {
           <Button
             className="w-full h-[52px] text-lg"
             onClick={handleSave}
-            disabled={deletedReviewIds.size === 0}
+            disabled={
+              deletedReviewIds.size === 0 || deleteReviewMutation.isPending
+            }
           >
-            Save
+            {deleteReviewMutation.isPending ? "저장 중..." : "Save"}
           </Button>
         </div>
       )}

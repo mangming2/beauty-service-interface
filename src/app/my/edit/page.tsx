@@ -5,26 +5,20 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  useUser,
-  useUpdateProfile,
-  useUserProfile,
-} from "@/queries/useAuthQueries";
+import { useUser } from "@/queries/useAuthQueries";
+import { useUpdateNickname } from "@/queries/useUserQueries";
 import { PageLoading } from "@/components/common";
 import { GapY } from "../../../components/ui/gap";
-import { UpdateProfileRequest } from "@/types/api";
 
 export default function EditProfilePage() {
   const router = useRouter();
-  const { data: user, isLoading: userLoading } = useUser();
-  const { data: profile, isLoading: profileLoading } = useUserProfile(user?.id);
-  const updateProfileMutation = useUpdateProfile();
+  const { user } = useUser();
+  const updateNicknameMutation = useUpdateNickname();
 
-  // 사용자 정보에서 닉네임 초기값 계산
-  // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
+  // 사용자 정보에서 닉네임 초기값 (store의 name 또는 이메일 아이디)
   const getInitialNickname = () => {
     if (!user) return "";
-    return profile?.full_name || user?.email?.split("@")[0] || "Doki01";
+    return user.name || user.email?.split("@")[0] || "Doki01";
   };
 
   const [nickname, setNickname] = useState<string | null>(null);
@@ -57,29 +51,24 @@ export default function EditProfilePage() {
 
   // 완료 버튼 클릭
   const handleComplete = async () => {
-    if (!user || !validateNickname(currentNickname as string)) {
+    if (!validateNickname(currentNickname as string)) {
       return;
     }
 
     try {
-      const profileData: Record<string, unknown> = {
-        full_name: currentNickname,
-      };
-
-      await updateProfileMutation.mutateAsync({
-        userId: user.id,
-        profileData: profileData as UpdateProfileRequest,
+      await updateNicknameMutation.mutateAsync({
+        nickname: currentNickname as string,
       });
 
       // 성공 시 My Page로 이동
       router.push("/my");
     } catch (error) {
-      console.error("Profile update error:", error);
+      console.error("Nickname update error:", error);
     }
   };
 
-  // 사용자 정보 로딩 중일 때
-  if (userLoading || profileLoading) {
+  // 사용자 정보 없을 때 (미로그인 등)
+  if (!user) {
     return <PageLoading message="사용자 정보를 불러오는 중..." />;
   }
 
@@ -87,7 +76,7 @@ export default function EditProfilePage() {
   const currentNickname = nickname !== null ? nickname : getInitialNickname();
 
   const isNicknameValid = validateNickname(currentNickname as string);
-  const isFormValid = isNicknameValid && !updateProfileMutation.isPending;
+  const isFormValid = isNicknameValid && !updateNicknameMutation.isPending;
   const errorMessage = getErrorMessage(currentNickname as string);
   const hasError = errorMessage !== null;
 
@@ -96,18 +85,14 @@ export default function EditProfilePage() {
       <GapY size={100} />
       {/* Profile Image Section */}
       <div className="flex flex-col items-center">
-        <div className="relative rounded-full border-solid border-[1.5px] border-gray overflow-hidden">
-          {profile?.avatar_src || user?.user_metadata?.avatar_url ? (
+        <div className="relative rounded-full border-solid border-[1.5px] border-gray overflow-hidden w-[120px] h-[120px]">
+          {user?.profileImage ? (
             <Image
-              src={
-                (profile?.avatar_src as string) ||
-                (user?.user_metadata?.avatar_url as string) ||
-                ""
-              }
+              src={user.profileImage}
               alt="Profile"
               width={120}
               height={120}
-              className=" rounded-full"
+              className="rounded-full"
             />
           ) : (
             <div className="w-full h-full bg-pink-500 flex items-center justify-center">
@@ -175,7 +160,7 @@ export default function EditProfilePage() {
               : "bg-gray-600 text-gray-400 cursor-not-allowed"
           }`}
         >
-          {updateProfileMutation.isPending ? "Updating..." : "Complete"}
+          {updateNicknameMutation.isPending ? "Updating..." : "Complete"}
         </Button>
       </div>
     </div>

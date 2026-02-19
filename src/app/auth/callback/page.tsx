@@ -4,7 +4,8 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LottieAnimation from "@/components/common/LottieAnimation";
 import { useAuthStore } from "@/store/useAuthStore";
-import { reissueToken } from "@/lib/apiClient"; // ✅ import
+import { reissueToken } from "@/lib/apiClient";
+import { getMyPageUser } from "@/api/my-page";
 import { Button } from "@/components/ui/button";
 
 // 로딩 컴포넌트
@@ -27,7 +28,7 @@ function LoadingUI() {
 function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setAccessToken } = useAuthStore();
+  const { setAccessToken, setUser } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -48,10 +49,18 @@ function CallbackContent() {
           return;
         }
 
-        // 3. store에 저장
+        // 3. store에 토큰 저장
         setAccessToken(accessToken);
 
-        // 4. 마이페이지로 이동
+        // 4. 사용자 정보 조회 후 store에 저장 (my 이동 전 pause)
+        const me = await getMyPageUser();
+        setUser({
+          id: String(me.id),
+          email: me.email,
+          name: me.nickname,
+        });
+
+        // 5. 마이페이지로 이동
         router.replace("/my");
       } catch (err) {
         console.error("Auth callback error:", err);
@@ -60,7 +69,7 @@ function CallbackContent() {
     };
 
     handleCallback();
-  }, [searchParams, setAccessToken, router]);
+  }, [searchParams, setAccessToken, setUser, router]);
 
   if (error) {
     return (

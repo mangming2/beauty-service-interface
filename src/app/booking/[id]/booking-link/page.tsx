@@ -55,7 +55,6 @@ export default function BookingLinkPage() {
   };
 
   const handleConfirm = () => {
-    console.log("handleConfirm");
     router.push(`/booking/${packageId}/check`);
   };
 

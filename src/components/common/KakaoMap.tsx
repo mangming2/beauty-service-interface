@@ -80,7 +80,6 @@ export default function KakaoMap({
         console.error("Kakao Maps API is not loaded");
         return;
       }
-      console.log(window.kakao.maps);
 
       if (!mapContainer.current) return;
 

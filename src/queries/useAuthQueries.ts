@@ -21,7 +21,6 @@ export const authKeys = {
  */
 export function useUser() {
   const { user, isAuthenticated, accessToken } = useAuthStore();
-
   return {
     user,
     isAuthenticated,
@@ -51,6 +50,12 @@ export function useGoogleLogin() {
     mutationFn: () => {
       loginWithProvider("google");
       return Promise.resolve();
+    },
+    onSuccess: () => {
+      console.log("[Google 로그인] 리다이렉트 진행됨 (OAuth 페이지로 이동)");
+    },
+    onError: error => {
+      console.error("[Google 로그인] 에러:", error);
     },
   });
 }
