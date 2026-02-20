@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { GapY } from "../../../components/ui/gap";
 import { useProductDetail } from "@/queries/useProductQueries";
 import { useProductReviews } from "@/queries/useReviewQueries";
 import Link from "next/link";
+import { PageError, PageLoading } from "@/components/common";
 import {
   BorderHeartIcon,
   LocationIcon,
@@ -22,6 +24,7 @@ export default function PackageDetail() {
   const params = useParams();
   const router = useRouter();
   const packageId = Number(params.id);
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
   const { data: productDetail, isLoading, error } = useProductDetail(packageId);
 
@@ -32,28 +35,18 @@ export default function PackageDetail() {
   } = useProductReviews(packageId);
   // 로딩 상태
   if (isLoading) {
-    return (
-      <div className="min-h-screen text-white bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-lg">패키지 정보를 불러오는 중...</div>
-        </div>
-      </div>
-    );
+    return <PageLoading message="패키지 정보를 불러오는 중..." />;
   }
 
   // 에러 상태
   if (error) {
     return (
-      <div className="min-h-screen text-white bg-black flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold mb-4">
-            패키지를 불러오는 중 오류가 발생했습니다
-          </h1>
-          <Button onClick={() => router.push("/form/complete")}>
-            Go back to packages
-          </Button>
-        </div>
-      </div>
+      <PageError
+        title="Oops!"
+        description="An unexpected error occurred. Please try again later."
+        buttonText="Back to main page"
+        buttonHref="/"
+      />
     );
   }
 
@@ -87,8 +80,10 @@ export default function PackageDetail() {
     );
   }
 
-  const handleBook = () => {
-    router.push(`/booking/${productDetail.id}/check`);
+  const handleOptionBook = (optionId: number) => {
+    router.push(
+      `/booking/${productDetail.id}/booking-link?optionId=${optionId}`
+    );
   };
 
   const renderStars = (rating: number) => {
@@ -134,7 +129,39 @@ export default function PackageDetail() {
           {/* Package Title and Location */}
           <div className="px-5">
             <h1 className="title-md">{productDetail.name}</h1>
-            <p className="text-gray_1 text-md">{productDetail.description}</p>
+            <div className="mt-4 rounded-[12px] bg-gray-container border border-[#2E3033]">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-6 py-5 text-left"
+                onClick={() => setIsDescriptionOpen(prev => !prev)}
+                aria-expanded={isDescriptionOpen}
+              >
+                <span className="text-white text-[24px] font-semibold leading-none">
+                  Description
+                </span>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`transition-transform ${isDescriptionOpen ? "rotate-180" : ""}`}
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="#E5E7EB"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              {isDescriptionOpen && (
+                <p className="px-6 pb-5 text-sm text-gray-300 leading-relaxed">
+                  {productDetail.description}
+                </p>
+              )}
+            </div>
           </div>
 
           <GapY size={20} />
@@ -147,35 +174,46 @@ export default function PackageDetail() {
             <div className="flex flex-col w-full gap-3 px-5">
               {productDetail.options.map(product => (
                 <div key={product.id}>
-                  <Card className="bg-gray-container border-solid border-[1px] border-[#2E3033] rounded-[4px] p-3">
+                  <Card
+                    className="bg-gray-container border-solid border-[1px] border-[#2E3033] rounded-[8px] p-3 cursor-pointer"
+                    onClick={() => handleOptionBook(product.id)}
+                  >
                     <CardContent className="p-0">
-                      <div className="flex gap-1 items-center">
-                        <div className="relative w-[96px] h-[96px] overflow-hidden flex-shrink-0">
+                      <div className="flex gap-3 items-start">
+                        <div className="flex-1 min-w-0">
+                          {productDetail.tagNames.length > 0 && (
+                            <p className="text-pink-font text-[14px] leading-[18px] mb-1 truncate">
+                              {productDetail.tagNames
+                                .slice(0, 2)
+                                .map(tag => `#${tag}`)
+                                .join(" ")}
+                            </p>
+                          )}
+                          <p className="text-[24px] text-white mb-1 font-semibold leading-tight truncate">
+                            {product.name}
+                          </p>
+                          <div className="flex items-center gap-1">
+                            <LocationIcon
+                              width={14}
+                              height={14}
+                              color="#ABA9A9"
+                            />
+                            <p className="text-[#A9A9AA] text-[12px] truncate">
+                              {product.location}
+                            </p>
+                          </div>
+                          <GapY size={8} />
+                          <p className="text-pink-font text-[16px] font-semibold">
+                            ₩ {product.price.toLocaleString()}
+                          </p>
+                        </div>
+                        <div className="relative w-[108px] h-[108px] overflow-hidden flex-shrink-0 rounded-[2px]">
                           <Image
                             src={"/dummy-profile.png"}
                             alt={product.name}
                             fill
                             className="object-cover"
                           />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-lg text-white mb-1">
-                            {product.name}
-                          </p>
-                          <div className="flex items-center gap-1">
-                            <LocationIcon
-                              width={11}
-                              height={13}
-                              color="#ABA9A9"
-                            />
-                            <p className="text-gray-400 text-sm">
-                              {product.location}
-                            </p>
-                          </div>
-                          <GapY size={12} />
-                          <p className="text-gray-300 text-sm line-clamp-2">
-                            {product.description}
-                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -272,30 +310,6 @@ export default function PackageDetail() {
             </div>
 
             <GapY size={20} />
-          </div>
-        </div>
-
-        {/* Booking Footer */}
-        <div className="bg-transparent px-5 pt-4 pb-5 border-t border-gray-container">
-          <div className="flex justify-between items-center">
-            <div className="flex flex-col gap-1">
-              <p className="title-md text-white font-semibold">
-                ₩ {productDetail.minPrice.toLocaleString()}{" "}
-                <span className="text-lg">/person</span>
-              </p>
-              <div
-                className="flex items-center justify-center rounded-[32px] py-1 px-4 text-white caption-sm"
-                style={{ background: "rgba(255, 255, 255, 0.16)" }}
-              >
-                {productDetail.minPrice} - {productDetail.totalPrice}
-              </div>
-            </div>
-            <Button
-              className="text-lg w-[188px] h-[52px] rounded-lg"
-              onClick={handleBook}
-            >
-              Book Now
-            </Button>
           </div>
         </div>
       </div>

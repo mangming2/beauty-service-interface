@@ -2,9 +2,18 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+
   // 인증이 필요하지 않은 페이지들 (공개 페이지)
-  const publicPages = ["/", "/login", "/auth/callback"];
-  const isPublicPage = publicPages.some(page => req.nextUrl.pathname === page);
+  const publicExactPages = ["/", "/login", "/auth/callback", "/recommend"];
+  const isBoardPath = pathname === "/board" || pathname.startsWith("/board/");
+  const isPackageDetailPath = /^\/package\/[^/]+$/.test(pathname);
+  const isPackageReviewsPath = /^\/package\/[^/]+\/reviews$/.test(pathname);
+  const isPublicPage =
+    publicExactPages.includes(pathname) ||
+    isBoardPath ||
+    isPackageDetailPath ||
+    isPackageReviewsPath;
 
   // 쿠키에서 refreshToken 확인 (httpOnly 쿠키)
   const refreshToken = req.cookies.get("refreshToken")?.value;
@@ -20,7 +29,7 @@ export function middleware(req: NextRequest) {
   }
 
   // 로그인 페이지 접근 시 - 이미 토큰이 있으면 마이페이지로
-  if (req.nextUrl.pathname === "/login" && refreshToken) {
+  if (pathname === "/login" && refreshToken) {
     const redirectUrl = req.nextUrl.clone();
     redirectUrl.pathname = "/my";
     return NextResponse.redirect(redirectUrl);

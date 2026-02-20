@@ -10,6 +10,7 @@ export { Icons } from "./Icons";
 export { LanguageSelector } from "./LanguageSelector";
 export { SeoulMap } from "./SeoulMap";
 export { default as KakaoMap } from "./KakaoMap";
+export { PageError } from "./PageError";
 export {
   Loading,
   PageLoading,

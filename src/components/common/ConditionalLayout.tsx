@@ -34,7 +34,6 @@ const HEADER_ONLY_PAGES = [
   "/my/edit",
   "/my/booking/[id]",
   "/booking/[id]/booking-link",
-  "/booking/[id]/check",
   "/my/reviews",
 ];
 

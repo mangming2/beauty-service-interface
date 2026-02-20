@@ -83,9 +83,20 @@ export async function apiRequest<T>(
   const { accessToken, setAccessToken, logout } = useAuthStore.getState();
 
   const requestHeaders: Record<string, string> = {
-    "Content-Type": "application/json",
     ...(headers as Record<string, string>),
   };
+
+  // body가 있을 때만 JSON Content-Type을 기본으로 설정한다.
+  // GET 요청까지 Content-Type을 강제로 넣으면 preflight가 발생해 CORS 실패 가능성이 커진다.
+  const hasBody = fetchOptions.body !== undefined && fetchOptions.body !== null;
+  const isFormData =
+    typeof FormData !== "undefined" && fetchOptions.body instanceof FormData;
+  const hasContentTypeHeader = Object.keys(requestHeaders).some(
+    key => key.toLowerCase() === "content-type"
+  );
+  if (hasBody && !isFormData && !hasContentTypeHeader) {
+    requestHeaders["Content-Type"] = "application/json";
+  }
 
   // 인증이 필요한 경우 토큰 추가
   if (requireAuth && accessToken) {
@@ -104,7 +115,7 @@ export async function apiRequest<T>(
     return fetch(url, {
       ...fetchOptions,
       headers: requestHeaders,
-      credentials: "include",
+      credentials: requireAuth ? "include" : "omit",
       redirect: "manual", // 302 OAuth 리다이렉트 시 CORS 에러 방지
     });
   };

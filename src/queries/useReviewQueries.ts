@@ -21,10 +21,13 @@ export const reviewKeys = {
  * 특정 상품의 리뷰 목록 조회
  */
 export function useProductReviews(productId: number | undefined) {
+  const isValidProductId =
+    typeof productId === "number" && Number.isFinite(productId);
+
   return useQuery<ReviewDetail[]>({
     queryKey: reviewKeys.list(productId!),
     queryFn: () => getProductReviews(productId!),
-    enabled: productId !== undefined,
+    enabled: isValidProductId,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

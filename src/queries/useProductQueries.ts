@@ -65,10 +65,13 @@ export function useInfiniteProducts(
  * 특정 상품 상세 정보 조회
  */
 export function useProductDetail(productId: number | undefined) {
+  const isValidProductId =
+    typeof productId === "number" && Number.isFinite(productId);
+
   return useQuery<ProductDetail | null>({
     queryKey: productKeys.detail(productId!),
     queryFn: () => getProductDetail(productId!),
-    enabled: productId !== undefined,
+    enabled: isValidProductId,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

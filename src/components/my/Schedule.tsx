@@ -129,28 +129,61 @@ export default function Schedule() {
     [schedulesData]
   );
 
+  const displayBookings: BookingDisplay[] = useMemo(() => {
+    const existingProductIds = new Set(bookingHistory.map(b => b.packageId));
+    const scheduleOnlyMap = new Map<number, ApiSchedule>();
+
+    allSchedules.forEach(schedule => {
+      const productId = schedule.productId ?? schedule.packageId;
+      if (productId == null || existingProductIds.has(productId)) return;
+      if (!scheduleOnlyMap.has(productId)) {
+        scheduleOnlyMap.set(productId, schedule);
+      }
+    });
+
+    const scheduleOnlyBookings: BookingDisplay[] = Array.from(
+      scheduleOnlyMap.entries()
+    ).map(([productId, schedule]) => {
+      const start = new Date(schedule.startAt);
+      return {
+        id: `schedule-product-${productId}`,
+        packageId: productId,
+        packageTitle: schedule.title || `Package ${productId}`,
+        date: format(start, "yyyy.MM.dd"),
+        time: format(start, "HH:mm"),
+        status: "confirmed",
+        imageSrc: PLACEHOLDER_IMAGE,
+        price: 0,
+        location: "",
+        guests: 1,
+      };
+    });
+
+    return [...bookingHistory, ...scheduleOnlyBookings];
+  }, [bookingHistory, allSchedules]);
+
   const scheduleItems: Record<string, ScheduleItem[]> = useMemo(() => {
     const result: Record<string, ScheduleItem[]> = {};
-    bookingHistory.forEach(booking => {
+    displayBookings.forEach(booking => {
       const items = allSchedules
-        .filter(s => s.packageId === booking.packageId)
+        .filter(s => (s.productId ?? s.packageId) === booking.packageId)
         .map((s, i) => scheduleToItem(s, i));
       result[booking.id] = items;
     });
     return result;
-  }, [bookingHistory, allSchedules]);
+  }, [displayBookings, allSchedules]);
 
   const bookingIdToPackageId = useMemo(
-    () => Object.fromEntries(bookingHistory.map(b => [b.id, b.packageId])),
-    [bookingHistory]
+    () => Object.fromEntries(displayBookings.map(b => [b.id, b.packageId])),
+    [displayBookings]
   );
 
   const years = useMemo(
     () =>
-      Array.from(new Set(bookingHistory.map(b => b.date.split(".")[0]))).sort(
+      Array.from(new Set(displayBookings.map(b => b.date.split(".")[0]))).sort(
         (a, b) => b.localeCompare(a)
       ),
-    [bookingHistory]
+    [displayBookings]
   );
 
   // 드래그 핸들러 함수들
@@ -242,7 +275,7 @@ export default function Schedule() {
 
     try {
       await createScheduleMutation.mutateAsync({
-        packageId,
+        productId: packageId,
         title,
         startAt: startDate.toISOString(),
         endAt: endDate.toISOString(),
@@ -368,7 +401,7 @@ export default function Schedule() {
       {years.map(year => (
         <div key={year} className="mb-6">
           <h3 className="text-white font-bold mb-3">{year}</h3>
-          {bookingHistory
+          {displayBookings
             .filter(booking => booking.date.includes(year))
             .map(booking => (
               <Sheet key={booking.id}>

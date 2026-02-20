@@ -5,7 +5,9 @@ import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/apiClient";
 /** 일정 */
 export interface Schedule {
   scheduleId: number;
-  packageId: number;
+  productId: number;
+  // Legacy field compatibility for older backend responses.
+  packageId?: number;
   title: string;
   startAt: string;
   endAt: string;
@@ -26,7 +28,7 @@ export interface GetSchedulesParams {
 
 /** 일정 생성 요청 */
 export interface CreateScheduleRequest {
-  packageId: number;
+  productId: number;
   title: string;
   startAt: string;
   endAt: string;

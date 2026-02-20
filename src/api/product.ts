@@ -89,7 +89,7 @@ export async function getProducts(
     const queryString = queryParams.toString();
     const url = `/products${queryString ? `?${queryString}` : ""}`;
 
-    const data = await apiGet<Product[]>(url);
+    const data = await apiGet<Product[]>(url, { requireAuth: false });
     return data || [];
   } catch (error) {
     console.error("Get products error:", error);
