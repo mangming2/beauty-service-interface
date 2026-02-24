@@ -52,7 +52,9 @@ export function PageError({
             ))}
           </p>
           {process.env.NODE_ENV === "development" && errorDigest && (
-            <p className="text-sm text-gray-400 mt-2">Error ID: {errorDigest}</p>
+            <p className="text-sm text-gray-400 mt-2">
+              Error ID: {errorDigest}
+            </p>
           )}
         </div>
       </div>
@@ -64,7 +66,10 @@ export function PageError({
         }}
       >
         <Link href={buttonHref}>
-          <Button variant="default" className="w-full h-12 text-lg font-semibold">
+          <Button
+            variant="default"
+            className="w-full h-12 text-lg font-semibold"
+          >
             {buttonText}
           </Button>
         </Link>

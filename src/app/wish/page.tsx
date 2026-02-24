@@ -17,7 +17,8 @@ const DUMMY_RECOMMENDATION_GALLERIES = [
     salonInfo: {
       tags: ["aespa", "metallic", "sm"],
       name: "DOKI MAKE SALON",
-      price: "₩ 50,000 ~",
+      minPrice: 50000,
+      totalPrice: 50000,
       rating: 4.8,
       reviewCount: 15,
       distance: "2.3km (Yongsan)",
@@ -31,7 +32,8 @@ const DUMMY_RECOMMENDATION_GALLERIES = [
     salonInfo: {
       tags: ["girl crush", "metallic", "sm"],
       name: "STYLE STUDIO",
-      price: "₩ 45,000 ~",
+      minPrice: 45000,
+      totalPrice: 45000,
       rating: 4.6,
       reviewCount: 23,
       distance: "1.8km (Gangnam)",
@@ -45,7 +47,8 @@ const DUMMY_RECOMMENDATION_GALLERIES = [
     salonInfo: {
       tags: ["metallic", "girl crush"],
       name: "GLAM BEAUTY",
-      price: "₩ 60,000 ~",
+      minPrice: 60000,
+      totalPrice: 60000,
       rating: 4.9,
       reviewCount: 8,
       distance: "3.2km (Hongdae)",
