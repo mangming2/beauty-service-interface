@@ -5,13 +5,17 @@ export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // 인증이 필요하지 않은 페이지들 (공개 페이지)
-  const publicExactPages = ["/", "/login", "/auth/callback", "/recommend"];
-  const isBoardPath = pathname === "/board" || pathname.startsWith("/board/");
+  const publicExactPages = [
+    "/",
+    "/login",
+    "/auth/callback",
+    "/recommend",
+    "/board",
+  ];
   const isPackageDetailPath = /^\/package\/[^/]+$/.test(pathname);
   const isPackageReviewsPath = /^\/package\/[^/]+\/reviews$/.test(pathname);
   const isPublicPage =
     publicExactPages.includes(pathname) ||
-    isBoardPath ||
     isPackageDetailPath ||
     isPackageReviewsPath;
 

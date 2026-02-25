@@ -26,7 +26,7 @@ export default function BookingDonePage() {
         />
       </div>
 
-      <div className="px-4 py-5 rounded-[4px] bg-white/5 text-center">
+      <div className="w-[364px] px-4 py-5 rounded-[4px] bg-white/5 text-center">
         <p className="text-lg ">Is there an issue with your booking?</p>
         <p className="mt-2 text-sm ">
           No local phone number or unsure what to choose? We can help.
