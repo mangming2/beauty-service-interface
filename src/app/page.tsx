@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { ConceptCard } from "@/components/main/ConceptCard";
-import { TrendCard } from "@/components/main/TrendCard";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { FormButton } from "@/components/main/FormButton";
 import GirlCrush from "@/assets/3d-images/girl-crush.png";
@@ -13,9 +12,9 @@ import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
 import All from "@/assets/3d-images/doki-all.png";
 import { GapY } from "@/components/ui/gap";
-import { Divider } from "@/components/ui/divider";
 import { PopularCarousel } from "@/components/main/PopularCarousel";
 import { ConceptScrollContainer } from "@/components/main/ConceptScrollContainer";
+import { LatestTrendsSection } from "@/components/main/LatestTrendsSection";
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -203,72 +202,7 @@ export default function Home() {
         <GapY size={20} />
 
         {/* Latest Trends Section */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="title-md">
-              <TranslatedText translationKey="latestTrends" />
-            </h2>
-            <div className="flex items-baseline gap-[4px]">
-              <Link href="/recommend" className="text-gray_1 caption-md">
-                <TranslatedText translationKey="more" />
-              </Link>
-              <ArrowRightIcon
-                color="#BCBCBC"
-                width={3}
-                height={7}
-                className="size-auto"
-              />
-            </div>
-          </div>
-
-          <GapY size={8} />
-
-          <div className="flex flex-col">
-            {[
-              {
-                id: "1",
-                titleKey: "trends.romanticSchool.title",
-                artistKey: "trends.romanticSchool.artist",
-                locationKey: "trends.romanticSchool.location",
-                descriptionKey: "trends.romanticSchool.description",
-                imageSrc: "/dummy-profile.png",
-              },
-              {
-                id: "2",
-                titleKey: "trends.y2kHighteen.title",
-                artistKey: "trends.y2kHighteen.artist",
-                locationKey: "trends.y2kHighteen.location",
-                descriptionKey: "trends.y2kHighteen.description",
-                imageSrc: "/dummy-profile.png",
-              },
-              {
-                id: "3",
-                titleKey: "trends.kTraditional.title",
-                artistKey: "trends.kTraditional.artist",
-                locationKey: "trends.kTraditional.location",
-                descriptionKey: "trends.kTraditional.description",
-                imageSrc: "/dummy-profile.png",
-              },
-            ].map((trend, index, array) => (
-              <div key={index}>
-                <TrendCard
-                  id={trend.id}
-                  title={<TranslatedText translationKey={trend.titleKey} />}
-                  artist={<TranslatedText translationKey={trend.artistKey} />}
-                  location={
-                    <TranslatedText translationKey={trend.locationKey} />
-                  }
-                  description={
-                    <TranslatedText translationKey={trend.descriptionKey} />
-                  }
-                  imageSrc={trend.imageSrc}
-                />
-                {index < array.length - 1 && <Divider />}
-              </div>
-            ))}
-          </div>
-          <GapY size={44} />
-        </div>
+        <LatestTrendsSection />
       </div>
     </div>
   );

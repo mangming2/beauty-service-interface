@@ -2,14 +2,14 @@ import { apiGet, apiPost } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
-/** 상품 목록 아이템 */
+/** 상품 목록 아이템 (목록 API 응답; tagNames는 상세 등에서만 올 수 있음) */
 export interface Product {
   id: number;
   name: string;
   description: string;
   minPrice: number;
   totalPrice: number;
-  tagNames: string[];
+  tagNames?: string[];
 }
 
 /** 상품 상세 - 옵션 정보 */
@@ -89,7 +89,7 @@ export async function getProducts(
     const queryString = queryParams.toString();
     const url = `/products${queryString ? `?${queryString}` : ""}`;
 
-    const data = await apiGet<Product[]>(url, { requireAuth: false });
+    const data = await apiGet<Product[]>(url, { requireAuth: true });
     return data || [];
   } catch (error) {
     console.error("Get products error:", error);
