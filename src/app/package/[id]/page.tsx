@@ -129,16 +129,17 @@ export default function PackageDetail() {
           {/* Package Title and Location */}
           <div className="px-5">
             <h1 className="title-md">{productDetail.name}</h1>
+            <span className="text-gray-font text-md">
+              Gangnam, 위치정보 받아와야함
+            </span>
             <div className="mt-4 rounded-[12px] bg-gray-container border border-[#2E3033]">
               <button
                 type="button"
-                className="w-full flex items-center justify-between px-6 py-5 text-left"
+                className="w-full flex items-center justify-between px-3 py-2 text-left"
                 onClick={() => setIsDescriptionOpen(prev => !prev)}
                 aria-expanded={isDescriptionOpen}
               >
-                <span className="text-white text-[24px] font-semibold leading-none">
-                  Description
-                </span>
+                <span className="text-white text-lg">Description</span>
                 <svg
                   width="24"
                   height="24"
@@ -157,7 +158,7 @@ export default function PackageDetail() {
                 </svg>
               </button>
               {isDescriptionOpen && (
-                <p className="px-6 pb-5 text-sm text-gray-300 leading-relaxed">
+                <p className="px-3 py-2 text-md text-white leading-relaxed">
                   {productDetail.description}
                 </p>
               )}
@@ -181,9 +182,9 @@ export default function PackageDetail() {
                     <CardContent className="p-0">
                       <div className="flex gap-3 items-start">
                         <div className="flex-1 min-w-0">
-                          {productDetail.tagNames.length > 0 && (
+                          {productDetail.tagNames?.length > 0 && (
                             <p className="text-pink-font text-[14px] leading-[18px] mb-1 truncate">
-                              {productDetail.tagNames
+                              {(productDetail.tagNames ?? [])
                                 .slice(0, 2)
                                 .map(tag => `#${tag}`)
                                 .join(" ")}
