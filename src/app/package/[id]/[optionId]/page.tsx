@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { dummyLink } from "@/constants";
 import Image from "next/image";
-import { Divider } from "../../../../components/ui/divider";
+import { Divider } from "@/components/ui/divider";
 import { useProductDetail } from "@/queries/useProductQueries";
 import { useOptionDetail } from "@/queries/useOptionQueries";
 import { useCreateSchedule } from "@/queries/useScheduleQueries";
@@ -20,24 +20,24 @@ function toDateOnly(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-export default function BookingLinkPage() {
+export default function PackageOptionBookingPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const packageId = Number(params.id);
-  const isValidId = !isNaN(packageId) && packageId > 0;
+  const optionIdParam = params.optionId;
+  const optionId = Number(optionIdParam);
+  const isValidPackageId = !isNaN(packageId) && packageId > 0;
+  const isValidOptionId = !isNaN(optionId) && optionId > 0;
 
   const { data: productDetail, isLoading } = useProductDetail(
-    isValidId ? packageId : undefined
+    isValidPackageId ? packageId : undefined
   );
 
-  const optionIdFromQuery = Number(searchParams.get("optionId"));
-  const optionId =
-    Number.isFinite(optionIdFromQuery) && optionIdFromQuery > 0
-      ? optionIdFromQuery
-      : (productDetail?.options[0]?.id ?? undefined);
+  const resolvedOptionId = isValidOptionId
+    ? optionId
+    : (productDetail?.options[0]?.id ?? undefined);
 
-  const { data: optionDetail } = useOptionDetail(optionId);
+  const { data: optionDetail } = useOptionDetail(resolvedOptionId);
   const createScheduleMutation = useCreateSchedule();
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -73,7 +73,7 @@ export default function BookingLinkPage() {
     });
   }, [productDetail?.slotStartDate, productDetail?.slotEndDate]);
 
-  if (!isValidId) {
+  if (!isValidPackageId) {
     notFound();
   }
 
@@ -167,7 +167,7 @@ export default function BookingLinkPage() {
     if (selectedTime) {
       localStorage.setItem("selectedBookingTime", selectedTime);
     }
-    router.push(`/booking/${packageId}/done`);
+    router.push(`/booking/${packageId}/done?optionId=${resolvedOptionId}`);
   };
 
   const renderAccordion = (

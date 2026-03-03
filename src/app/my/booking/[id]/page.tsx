@@ -118,7 +118,7 @@ export default function MyBookingPage() {
                 component.location.split(" (")[0] || component.location;
               return (
                 <Link
-                  href={`/booking/${booking.packageId}/booking-link`}
+                  href={`/package/${booking.packageId}/${component.id}`}
                   key={component.id}
                 >
                   <div className="flex items-center gap-3 bg-gray-container rounded-[4px] p-3 cursor-pointer">

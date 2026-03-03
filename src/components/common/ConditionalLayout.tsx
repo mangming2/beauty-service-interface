@@ -33,7 +33,9 @@ const HEADER_ONLY_PAGES = [
   "/form/step5",
   "/my/edit",
   "/my/booking/[id]",
-  "/booking/[id]/booking-link",
+  "/package/[id]/[optionId]",
+  "/booking/[id]/done",
+  "/booking/[id]/confirm",
   "/my/reviews",
 ];
 

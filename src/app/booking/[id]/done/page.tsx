@@ -1,9 +1,21 @@
-import { Button } from "../../../../components/ui/button";
+"use client";
+
+import { useParams, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { GapY } from "../../../../components/ui/gap";
+import { GapY } from "@/components/ui/gap";
 import LottieAnimation from "@/components/common/LottieAnimation";
 
 export default function BookingDonePage() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const packageId = params.id as string;
+  const optionId = searchParams.get("optionId");
+  const confirmHref =
+    optionId && packageId
+      ? `/booking/${packageId}/confirm?optionId=${optionId}`
+      : "/my";
+
   return (
     <div className="px-5 text-white bg-transparent flex flex-col flex-1 ">
       <GapY size={40} />
@@ -34,7 +46,7 @@ export default function BookingDonePage() {
       </div>
 
       <div className="mt-[33px] py-4">
-        <Link href="/my">
+        <Link href={confirmHref}>
           <Button className="w-full h-[52px]">
             <span className="font-medium">Next</span>
           </Button>

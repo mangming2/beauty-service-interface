@@ -81,9 +81,7 @@ export default function PackageDetail() {
   }
 
   const handleOptionBook = (optionId: number) => {
-    router.push(
-      `/booking/${productDetail.id}/booking-link?optionId=${optionId}`
-    );
+    router.push(`/package/${productDetail.id}/${optionId}`);
   };
 
   const renderStars = (rating: number) => {
