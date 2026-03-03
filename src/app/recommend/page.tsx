@@ -48,7 +48,7 @@ function Content() {
     selectedTags.length > 0
       ? products?.filter(pkg =>
           selectedTags.some(tag =>
-            pkg.tagNames.some(
+            (pkg.tagNames ?? []).some(
               t =>
                 t.toLowerCase().includes(tag.toLowerCase()) ||
                 tag.toLowerCase().includes(t.toLowerCase())
@@ -104,7 +104,7 @@ function Content() {
                 "/dummy-package.png",
               ]}
               salonInfo={{
-                tags: pkg.tagNames,
+                tags: pkg.tagNames ?? [],
                 name: pkg.name,
                 minPrice: pkg.minPrice,
                 totalPrice: pkg.totalPrice,

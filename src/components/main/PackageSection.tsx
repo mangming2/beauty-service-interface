@@ -33,7 +33,7 @@ export default function PackageSection({
             imageSrc="/dummy-profile.png" // TODO: API에 이미지 필드 추가 시 교체
             imageAlt={pkg.name}
             title={pkg.name}
-            tags={pkg.tagNames}
+            tags={pkg.tagNames ?? []}
             minPrice={pkg.minPrice}
             onClick={id => onPackageClick?.(id)}
             priority={firstCardPriority && index === 0}
