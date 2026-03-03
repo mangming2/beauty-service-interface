@@ -37,19 +37,35 @@ interface RequestOptions extends RequestInit {
 
 /**
  * 토큰 재발급
+ * refreshToken 쿠키(credentials: 'include')로 POST /auth/reissue 호출 후 새 accessToken 반환
  */
 export async function reissueToken(): Promise<string | null> {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/reissue`, {
       method: "POST",
-      credentials: "include",
+      credentials: "include", // refreshToken 쿠키 전송
     });
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      if (process.env.NODE_ENV === "development") {
+        const text = await response.text();
+        console.warn(
+          "[reissue] 재발급 실패:",
+          response.status,
+          text || response.statusText
+        );
+      }
+      return null;
+    }
 
     const data = await response.json();
-    return data.accessToken;
-  } catch {
+    // 백엔드 스펙: accessToken 또는 access_token
+    const token = data.accessToken ?? data.access_token ?? null;
+    return token;
+  } catch (e) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[reissue] 요청 실패:", e);
+    }
     return null;
   }
 }

@@ -10,6 +10,7 @@ import {
 } from "@/api/my-page";
 import type { ReviewDetail } from "@/types/api";
 import { useAuthStore } from "@/store/useAuthStore";
+import type { ApiError } from "@/lib/apiClient";
 
 // ========== Query Keys ==========
 
@@ -21,6 +22,13 @@ export const myPageKeys = {
   bookingDetail: (id: number) => [...myPageKeys.all, "bookings", id] as const,
   upcomingBookings: () => [...myPageKeys.all, "bookings", "upcoming"] as const,
 } as const;
+
+/** 401(세션 만료) 시 재시도하지 않음 — apiClient에서 이미 reissue 시도함 */
+function retryUnless401(failureCount: number, error: unknown): boolean {
+  const err = error as ApiError | undefined;
+  if (err?.status === 401) return false;
+  return failureCount < 2;
+}
 
 // ========== Queries ==========
 
@@ -37,7 +45,7 @@ export function useMyPageUser(enabled = true) {
     queryFn: getMyPageUser,
     enabled: enabled && isAuthenticated,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -53,7 +61,7 @@ export function useMyReviews() {
     queryFn: getMyReviews,
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -69,7 +77,7 @@ export function useMyBookings() {
     queryFn: getMyBookings,
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -85,7 +93,7 @@ export function useBookingDetail(reservationId: number | undefined) {
     queryFn: () => getBookingDetail(reservationId!),
     enabled: isAuthenticated && reservationId !== undefined,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -101,6 +109,6 @@ export function useUpcomingBookings() {
     queryFn: getUpcomingBookings,
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }

@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search } from "lucide-react";
 import { LanguageSelector } from "./LanguageSelector";
+import { SearchIcon } from "./Icons";
 
 export const Header = () => {
   const pathname = usePathname();
+  const isMainPage = pathname === "/";
   const isFormPage = pathname.startsWith("/form");
   const isWishPage = pathname === "/wish";
   const isMyPage = pathname === "/my";
@@ -50,11 +51,16 @@ export const Header = () => {
             />
           )}
         <div className="flex items-center gap-3">
-          {isBoardPage && (
-            <button type="button" aria-label="검색" className="text-gray-font">
-              <Search className="w-5 h-5" />
-            </button>
-          )}
+          {isMainPage ||
+            (isBoardPage && (
+              <button
+                type="button"
+                aria-label="검색"
+                className="text-gray-font"
+              >
+                <SearchIcon />
+              </button>
+            ))}
           <LanguageSelector />
         </div>
       </div>

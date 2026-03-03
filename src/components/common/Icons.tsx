@@ -750,6 +750,36 @@ const SettingIcon = ({ color, ...rest }: IconProps) => {
   );
 };
 
+const SearchIcon = ({ color, ...rest }: IconProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <ellipse
+        cx="11.2162"
+        cy="11.0181"
+        rx="8.21622"
+        ry="8.01813"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16.8652 16.9882L22.0004 21.9996"
+        stroke={color ?? "#FFFFFE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
 export {
   WishIcon,
   HomeIcon,
@@ -779,6 +809,7 @@ export {
   TrashcanIcon,
   ShareIcon,
   SettingIcon,
+  SearchIcon,
 };
 
 export const Icons = {
@@ -807,4 +838,5 @@ export const Icons = {
   trashcan: TrashcanIcon,
   share: ShareIcon,
   setting: SettingIcon,
+  search: SearchIcon,
 };

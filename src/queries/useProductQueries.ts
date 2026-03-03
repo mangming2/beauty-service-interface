@@ -7,6 +7,7 @@ import {
   type ProductDetail,
   type GetProductsParams,
 } from "@/api/product";
+import type { ApiError } from "@/lib/apiClient";
 
 // ========== Query Keys ==========
 
@@ -20,6 +21,13 @@ export const productKeys = {
   byTag: (tag: string) => [...productKeys.all, "tag", tag] as const,
 } as const;
 
+/** 401(세션 만료) 시 재시도하지 않음 — apiClient에서 이미 reissue 시도함 */
+function retryUnless401(failureCount: number, error: unknown): boolean {
+  const err = error as ApiError | undefined;
+  if (err?.status === 401) return false;
+  return failureCount < 2;
+}
+
 // ========== 상품 목록 조회 ==========
 
 /**
@@ -30,7 +38,7 @@ export function useProducts(params: GetProductsParams = {}) {
     queryKey: productKeys.list(params),
     queryFn: () => getProducts(params),
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -55,7 +63,7 @@ export function useInfiniteProducts(
       return lastPage[lastPage.length - 1].id;
     },
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -73,7 +81,7 @@ export function useProductDetail(productId: number | undefined) {
     queryFn: () => getProductDetail(productId!),
     enabled: isValidProductId,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -91,7 +99,7 @@ export function useProductsByTag(
     queryFn: () => getProductsByTag(tag, params),
     enabled: !!tag,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -118,6 +126,6 @@ export function useInfiniteProductsByTag(
     },
     enabled: !!tag,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
