@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ProtectedLayout } from "./ProtectedLayout";
 import { PageLayout } from "./PageLayout";
 import { Header } from "./Header";
+import { Footer } from "./Footer";
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,9 @@ const NORMAL_PAGES = [
   "/form/complete",
   "/package/[id]/reviews",
 ];
+
+// Footer만 필요한 페이지 목록
+const FOOTER_ONLY_PAGES = ["/search"];
 
 // Header만 필요한 페이지 목록
 const HEADER_ONLY_PAGES = [
@@ -54,6 +58,10 @@ function isNormalPage(pathname: string): boolean {
   });
 }
 
+function isFooterOnlyPage(pathname: string): boolean {
+  return FOOTER_ONLY_PAGES.includes(pathname);
+}
+
 function isHeaderOnlyPage(pathname: string): boolean {
   // 정확히 일치하는 페이지
   if (HEADER_ONLY_PAGES.includes(pathname)) return true;
@@ -76,6 +84,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const [isNotFoundPage, setIsNotFoundPage] = useState(false);
   const isLoginPage = pathname === "/login";
   const isNormal = isNormalPage(pathname);
+  const isFooterOnly = isFooterOnlyPage(pathname);
   const isHeaderOnly = isHeaderOnlyPage(pathname);
   const isSpecial = isSpecialPage(pathname);
 
@@ -111,6 +120,22 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
         <div className="flex-1 flex flex-col">
           <Header />
           {content}
+        </div>
+      </div>
+    );
+  }
+
+  // Footer만 필요한 페이지 처리 (검색 등)
+  if (isFooterOnly) {
+    const content = <ProtectedLayout>{children}</ProtectedLayout>;
+    return (
+      <div
+        className={`max-w-[412px] mx-auto pb-[64px] min-h-screen relative flex flex-col`}
+        ref={containerRef}
+      >
+        <div className="flex-1 flex flex-col">
+          {content}
+          <Footer />
         </div>
       </div>
     );

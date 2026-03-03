@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageSelector } from "./LanguageSelector";
 import { SearchIcon } from "./Icons";
@@ -11,6 +12,7 @@ export const Header = () => {
   const isWishPage = pathname === "/wish";
   const isMyPage = pathname === "/my";
   const isBoardPage = pathname === "/board";
+  const isSearchPage = pathname === "/search";
   const isMyEditPage = pathname === "/my/edit";
   const isPackageReviewsPage = /^\/package\/[^/]+\/reviews$/.test(pathname);
   const isMyReviewsPage = /^\/my\/reviews(\/[^/]+)?$/.test(pathname);
@@ -36,13 +38,15 @@ export const Header = () => {
         {isMyReviewsPage && (
           <h1 className="text-white h-6 title-md">My Reviews</h1>
         )}
+        {isSearchPage && <h1 className="text-white h-6 title-md">검색</h1>}
         {!isFormPage &&
           !isWishPage &&
           !isMyEditPage &&
           !isMyPage &&
           !isBoardPage &&
           !isPackageReviewsPage &&
-          !isMyReviewsPage && (
+          !isMyReviewsPage &&
+          !isSearchPage && (
             <Image
               src="/main-logo.png"
               alt="Main Logo"
@@ -51,16 +55,15 @@ export const Header = () => {
             />
           )}
         <div className="flex items-center gap-3">
-          {isMainPage ||
-            (isBoardPage && (
-              <button
-                type="button"
-                aria-label="검색"
-                className="text-gray-font"
-              >
-                <SearchIcon />
-              </button>
-            ))}
+          {(isMainPage || isBoardPage || isSearchPage) && (
+            <Link
+              href="/search"
+              aria-label="검색"
+              className="cursor-pointer inline-flex"
+            >
+              <SearchIcon color="white" />
+            </Link>
+          )}
           <LanguageSelector />
         </div>
       </div>
