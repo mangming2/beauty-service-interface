@@ -40,8 +40,7 @@ export const communityKeys = {
   comments: (postId: number) =>
     [...communityKeys.detail(postId), "comments"] as const,
   tags: () => [...communityKeys.all, "tags"] as const,
-  popular: (size?: number) =>
-    [...communityKeys.all, "popular", size] as const,
+  popular: (size?: number) => [...communityKeys.all, "popular", size] as const,
 } as const;
 
 function retryUnless401(failureCount: number, error: unknown): boolean {
@@ -55,9 +54,7 @@ function retryUnless401(failureCount: number, error: unknown): boolean {
 /**
  * 커뮤니티 게시글 목록 조회 (단일 페이지)
  */
-export function useCommunityPosts(
-  params: GetCommunityPostsParams = {}
-) {
+export function useCommunityPosts(params: GetCommunityPostsParams = {}) {
   return useQuery<CommunityListResponse>({
     queryKey: communityKeys.list(params),
     queryFn: () => getCommunityPosts(params),
@@ -103,8 +100,7 @@ export function usePopularPosts(size: number = 20) {
  * 커뮤니티 게시글 상세 조회
  */
 export function useCommunityPostDetail(postId: number | undefined) {
-  const isValid =
-    typeof postId === "number" && Number.isFinite(postId);
+  const isValid = typeof postId === "number" && Number.isFinite(postId);
 
   return useQuery<CommunityPostDetail | null>({
     queryKey: communityKeys.detail(postId!),
@@ -133,8 +129,7 @@ export function useCommunityTags() {
  * 댓글 목록 조회
  */
 export function usePostComments(postId: number | undefined) {
-  const isValid =
-    typeof postId === "number" && Number.isFinite(postId);
+  const isValid = typeof postId === "number" && Number.isFinite(postId);
 
   return useQuery<CommunityComment[]>({
     queryKey: communityKeys.comments(postId!),
