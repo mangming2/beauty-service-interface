@@ -48,7 +48,7 @@ export default function BookingDonePage() {
       <div className="mt-[33px] py-4">
         <Link href={confirmHref}>
           <Button className="w-full h-[52px]">
-            <span className="font-medium">Next</span>
+            <span className="text-lg">Next</span>
           </Button>
         </Link>
       </div>

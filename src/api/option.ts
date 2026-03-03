@@ -4,13 +4,17 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // ========== 타입 정의 ==========
 
-/** 옵션 */
+/** 옵션 (상세 API 응답) */
 export interface Option {
   id: number;
   name: string;
   description: string;
+  discountRate: number;
   price: number;
-  location: string;
+  address: string;
+  bookingGuide: string;
+  regularClosingDay: string | null;
+  imageUrls: string[];
 }
 
 /** 옵션 생성 요청 */

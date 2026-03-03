@@ -115,7 +115,9 @@ export default function CreateReviewPage() {
                     {productDetail.name}
                   </h4>
                   <p className="text-sm text-gray-font">
-                    {productDetail.options[0]?.location ?? ""}
+                    {productDetail.options[0]?.address ??
+                      productDetail.options[0]?.location ??
+                      ""}
                   </p>
                   <GapY size={20} />
                   <p className="caption-md text-gray-400">

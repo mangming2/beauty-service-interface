@@ -12,13 +12,19 @@ export interface Product {
   tagNames?: string[];
 }
 
-/** 상품 상세 - 옵션 정보 */
+/** 상품 상세 - 옵션 정보 (목록/요약; 상세는 Option 타입 참고) */
 export interface ProductOption {
   id: number;
   name: string;
   description: string;
   price: number;
   location: string;
+  /** 옵션 상세 API와 동일 필드 (있을 경우 사용) */
+  address?: string;
+  discountRate?: number;
+  bookingGuide?: string;
+  regularClosingDay?: string | null;
+  imageUrls?: string[];
 }
 
 /** 상품 상세 */

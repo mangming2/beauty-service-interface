@@ -95,8 +95,14 @@ export default function PackageOptionBookingPage() {
     description:
       productDetail.options[0]?.description ?? productDetail.description,
     price: productDetail.options[0]?.price ?? productDetail.minPrice,
-    location: productDetail.options[0]?.location ?? "",
+    address: productDetail.options[0]?.address ?? "",
+    discountRate: productDetail.options[0]?.discountRate ?? 0,
+    bookingGuide: productDetail.options[0]?.bookingGuide ?? "",
+    regularClosingDay: productDetail.options[0]?.regularClosingDay ?? null,
+    imageUrls: productDetail.options[0]?.imageUrls ?? [],
   };
+
+  const optionImageUrl = currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
 
   const slotStartDate = productDetail.slotStartDate
     ? toDateOnly(new Date(productDetail.slotStartDate))
@@ -182,7 +188,7 @@ export default function PackageOptionBookingPage() {
         className="w-full px-3 py-[10px] flex items-center justify-between text-left"
         onClick={onToggle}
       >
-        <span className="text-white text-sm font-medium">{label}</span>
+        <span className="text-white text-lg font-medium">{label}</span>
         <svg
           width="14"
           height="14"
@@ -200,24 +206,25 @@ export default function PackageOptionBookingPage() {
           />
         </svg>
       </button>
-      {isOpen && <p className="px-3 pb-3 text-xs text-gray-300">{content}</p>}
+      {isOpen && <p className="px-3 pb-3 text-md text-white">{content}</p>}
     </div>
   );
 
   return (
     <div className="min-h-screen bg-background text-white">
       <div className="px-4">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col  items-center gap-4">
           <div className="relative w-[412px] h-[412px]">
             <Image
-              src={PLACEHOLDER_IMAGE}
+              src={optionImageUrl}
               alt={currentOption.name}
               fill
               className="object-cover"
+              unoptimized={optionImageUrl.startsWith("http")}
             />
           </div>
 
-          <div className="px-3 py-3">
+          <div className="flex w-full flex-col px-3 py-3">
             <h2 className="text-[34px] leading-tight font-semibold">
               {currentOption.name}
             </h2>
@@ -226,16 +233,18 @@ export default function PackageOptionBookingPage() {
             </p>
 
             <div className="flex items-center justify-between mt-3">
-              <p className="text-sm text-white">Make-up & Hair</p>
-              <p className="text-sm text-white">
-                20%{" "}
+              <p className="text-lg text-white">이거 제목인가요?</p>
+              <p className="text-lg text-white">
+                {currentOption.discountRate > 0
+                  ? `${currentOption.discountRate}% `
+                  : ""}
                 <span className="text-pink-font">
                   ₩{currentOption.price.toLocaleString()}
                 </span>
               </p>
             </div>
 
-            <div className="mt-3 space-y-2">
+            <div className="mt-3 space-y-5">
               {renderAccordion(
                 "Description",
                 isDescriptionOpen,
@@ -246,37 +255,23 @@ export default function PackageOptionBookingPage() {
                 "Full Address",
                 isAddressOpen,
                 () => setIsAddressOpen(prev => !prev),
-                currentOption.location
+                currentOption.address
               )}
               {renderAccordion(
                 "Booking Guide",
                 isGuideOpen,
                 () => setIsGuideOpen(prev => !prev),
-                "Reserve through the official website and complete payment to confirm your booking."
+                currentOption.bookingGuide ||
+                  "Reserve through the official website and complete payment to confirm your booking."
               )}
-            </div>
-
-            <div className="px-4">
-              <Divider height={8} className="bg-gray-container" />
-
-              <div className="rounded-[4px] bg-[#1E2024] p-3">
-                <p className="text-sm text-gray-200 font-medium mb-1">
-                  Before you continue.
-                </p>
-                <p className="text-sm text-gray-200">External Booking Notice</p>
-                <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  I understand that my reservation is not completed here and
-                  must be finalized on the booking page.
-                </p>
-              </div>
             </div>
           </div>
         </div>
 
-        <Divider height={1} className="bg-[#2E3033] mt-4 mb-4" />
+        <Divider height={8} className="bg-[#2E3033] mt-4 mb-4" />
 
-        <div className="py-4">
-          <h3 className="text-lg font-semibold mb-3">Choose your date.</h3>
+        <div className="py-3">
+          <h3 className="title-sm mb-4">Choose your date.</h3>
 
           <div className="flex items-center justify-between mb-3 px-2">
             <button
