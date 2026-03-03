@@ -8,6 +8,26 @@ export interface ApiError {
   code?: string;
 }
 
+/** 로그인 없이 접근 가능한 경로 (middleware / ProtectedLayout과 동기화) */
+const PUBLIC_PATHS = ["/", "/login", "/auth/callback", "/recommend", "/board"];
+const isPackageDetailPath = (path: string) => /^\/package\/[^/]+$/.test(path);
+const isPackageReviewsPath = (path: string) =>
+  /^\/package\/[^/]+\/reviews$/.test(path);
+
+function isPublicPath(pathname: string): boolean {
+  return (
+    PUBLIC_PATHS.includes(pathname) ||
+    isPackageDetailPath(pathname) ||
+    isPackageReviewsPath(pathname)
+  );
+}
+
+/** 세션 만료 시 로그인으로 보낼지 여부. 공개 페이지면 리다이렉트하지 않음 */
+function shouldRedirectToLogin(): boolean {
+  if (typeof window === "undefined") return false;
+  return !isPublicPath(window.location.pathname);
+}
+
 /**
  * API 요청 옵션
  */
@@ -133,7 +153,7 @@ export async function apiRequest<T>(
       response.status === 308;
     if (isRedirect && requireAuth) {
       logout();
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && shouldRedirectToLogin()) {
         window.location.href = "/login";
       }
       throw {
@@ -154,7 +174,7 @@ export async function apiRequest<T>(
         // 재발급 실패 → 로그아웃
         logout();
 
-        if (typeof window !== "undefined") {
+        if (typeof window !== "undefined" && shouldRedirectToLogin()) {
           window.location.href = "/login";
         }
 
