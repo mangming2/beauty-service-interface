@@ -9,11 +9,13 @@ import { StarRating } from "@/components/ui/star-rating";
 import { GapY } from "../../../../components/ui/gap";
 import { Divider } from "@/components/ui/divider";
 import { useUser } from "@/queries/useAuthQueries";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function ReviewsPage() {
   const params = useParams();
   const packageId = params.id;
   const { user } = useUser();
+  const { t } = useTranslation();
 
   const {
     data: reviews,
@@ -50,7 +52,7 @@ export default function ReviewsPage() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white text-center">
-          <p className="text-lg">리뷰를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-lg">{t("package.errorLoadingReviews")}</p>
         </div>
       </div>
     );
@@ -62,9 +64,9 @@ export default function ReviewsPage() {
     const diffInMs = now.getTime() - date.getTime();
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-    if (diffInDays === 0) return "오늘";
-    if (diffInDays === 1) return "1일 전";
-    return `${diffInDays}일 전`;
+    if (diffInDays === 0) return t("reviews.today");
+    if (diffInDays === 1) return t("reviews.daysAgoOne");
+    return `${diffInDays}${t("reviews.daysAgo")}`;
   };
 
   // 내 리뷰와 다른 사람들의 리뷰 분리
@@ -98,7 +100,7 @@ export default function ReviewsPage() {
                   </div>
                   <GapY size={2} />
                   <div className="text-gray-2 caption-sm">
-                    {summary.totalReviews} reviews
+                    {summary.totalReviews} {t("reviews.reviewsCount")}
                   </div>
                 </div>
 
@@ -271,7 +273,7 @@ export default function ReviewsPage() {
           ) : (
             <Card className="bg-gray-800 border-gray-700">
               <CardContent className="p-6 text-center">
-                <div className="text-gray-400">아직 리뷰가 없습니다.</div>
+                <div className="text-gray-400">{t("package.noReviewsYet")}</div>
               </CardContent>
             </Card>
           )}

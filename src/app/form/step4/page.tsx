@@ -12,10 +12,12 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Step4Schema, Step4Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function FormPage4() {
   const router = useRouter();
   const { formData, updateStep4, setCurrentStep } = useFormStore();
+  const { t } = useTranslation();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const form = useForm<Step4Data>({
@@ -115,9 +117,7 @@ export default function FormPage4() {
 
         {/* Header */}
         <div className="px-5">
-          <h1 className="text-xl font-semibold mb-6">
-            When would you like to join the tour?
-          </h1>
+          <h1 className="text-xl font-semibold mb-6">{t("form.step4Title")}</h1>
         </div>
 
         {/* Calendar - Centered */}
@@ -187,7 +187,7 @@ export default function FormPage4() {
                   <div className="mt-4 text-red-400 text-sm text-center">
                     {errors.dateRange.message ||
                       errors.dateRange.root?.message ||
-                      "시작 날짜와 종료 날짜를 모두 선택해주세요"}
+                      t("form.step4Error")}
                   </div>
                 )}
               </div>
@@ -206,7 +206,7 @@ export default function FormPage4() {
           onClick={handleSubmit(onSubmit)}
           disabled={!dateRange?.from || !dateRange?.to}
         >
-          Next
+          {t("form.next")}
         </Button>
       </div>
     </div>

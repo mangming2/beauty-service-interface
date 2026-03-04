@@ -50,7 +50,7 @@ export default function MyBookingPage() {
       <div className="bg-black text-white flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-500 mx-auto mb-4" />
-          <p className="text-gray-300">Loading...</p>
+          <p className="text-gray-300">{t("bookingPage.loading")}</p>
         </div>
       </div>
     );
@@ -64,7 +64,7 @@ export default function MyBookingPage() {
     <div className="min-h-screen bg-background text-white">
       <div>
         <div className="flex flex-col p-5 gap-4">
-          <div className="title-lg">예약 상세</div>
+          <div className="title-lg">{t("bookingPage.bookingDetail")}</div>
 
           <div className="flex justify-between items-center">
             <div className="title-sm text-gray-font">
@@ -101,12 +101,16 @@ export default function MyBookingPage() {
 
         <div className="flex flex-col p-5">
           <div className="flex flex-col gap-1">
-            <div className="h-8 title-lg font-bold">Order Status</div>
+            <div className="h-8 title-lg font-bold">
+              {t("bookingPage.orderStatus")}
+            </div>
             <div className="flex flex-col h-10">
               <p className="text-gray-300 text-md">
-                Please proceed with reservations by vendor.
+                {t("bookingPage.proceedByVendor")}
               </p>
-              <p className="text-gray-300 text-md">You can modify later.</p>
+              <p className="text-gray-300 text-md">
+                {t("bookingPage.modifyLater")}
+              </p>
             </div>
           </div>
 
@@ -144,12 +148,16 @@ export default function MyBookingPage() {
                           <p className="text-gray-400 text-sm">{vendor}</p>
                         </span>
                         <span className="opacity-60">·</span>
-                        <span className="text-pink-font">PreBook</span>
+                        <span className="text-pink-font">
+                          {t("bookingPage.preBook")}
+                        </span>
                       </div>
                       <div className="mt-3">
-                        <p className="text-white text-sm">Booking Guide</p>
                         <p className="text-white text-sm">
-                          · Reserve through the official website
+                          {t("bookingPage.bookingGuide")}
+                        </p>
+                        <p className="text-white text-sm">
+                          · {t("bookingPage.reserveThroughWebsite")}
                         </p>
                       </div>
                     </div>
@@ -212,7 +220,7 @@ export default function MyBookingPage() {
         style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
       >
         <Button className="w-full h-[52px] bg-primary" onClick={handleSave}>
-          <span className="text-lg">Go to Review</span>
+          <span className="text-lg">{t("bookingPage.goToReview")}</span>
         </Button>
       </div>
     </div>

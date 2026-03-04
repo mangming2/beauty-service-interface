@@ -3,9 +3,11 @@
 import { usePathname } from "next/navigation";
 import { HomeIcon, WishIcon, MyIcon } from "./Icons";
 import { IconButton } from "./IconButton";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export const Footer = () => {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <footer
@@ -16,7 +18,7 @@ export const Footer = () => {
         <div className="flex items-center justify-center w-[129px] p-[4px]">
           <IconButton
             icon={<HomeIcon color={pathname === "/" ? "#f92595" : "white"} />}
-            text="Home"
+            text={t("footer.home")}
             href="/"
             isActive={pathname === "/"}
           />
@@ -26,7 +28,7 @@ export const Footer = () => {
             icon={
               <WishIcon color={pathname === "/wish" ? "#f92595" : "white"} />
             }
-            text="Wish"
+            text={t("footer.wish")}
             href="/wish"
             isActive={pathname === "/wish"}
           />
@@ -34,7 +36,7 @@ export const Footer = () => {
         <div className="flex items-center justify-center w-[129px] p-[4px]">
           <IconButton
             icon={<MyIcon color={pathname === "/my" ? "#f92595" : "white"} />}
-            text="My"
+            text={t("footer.my")}
             href="/my"
             isActive={pathname === "/my"}
           />

@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageSelector } from "./LanguageSelector";
 import { SearchIcon } from "./Icons";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export const Header = () => {
   const pathname = usePathname();
+  const { t } = useTranslation();
   const isMainPage = pathname === "/";
   const isFormPage = pathname.startsWith("/form");
   const isWishPage = pathname === "/wish";
@@ -25,20 +27,28 @@ export const Header = () => {
         }}
       >
         {isFormPage && (
-          <h1 className="text-white h-6 title-md">My Idol Form</h1>
+          <h1 className="text-white h-6 title-md">{t("header.myIdolForm")}</h1>
         )}
-        {isWishPage && <h1 className="text-white h-6 title-md">Wish list</h1>}
+        {isWishPage && (
+          <h1 className="text-white h-6 title-md">{t("header.wishList")}</h1>
+        )}
         {(isMyEditPage || isMyPage) && (
-          <h1 className="text-white h-6 title-md">My Page</h1>
+          <h1 className="text-white h-6 title-md">{t("header.myPage")}</h1>
         )}
-        {isBoardPage && <h1 className="text-white h-6 title-md">게시판</h1>}
+        {isBoardPage && (
+          <h1 className="text-white h-6 title-md">{t("header.boardTitle")}</h1>
+        )}
         {isPackageReviewsPage && (
-          <h1 className="text-white h-6 title-md">Package Reviews</h1>
+          <h1 className="text-white h-6 title-md">
+            {t("header.packageReviews")}
+          </h1>
         )}
         {isMyReviewsPage && (
-          <h1 className="text-white h-6 title-md">My Reviews</h1>
+          <h1 className="text-white h-6 title-md">{t("header.myReviews")}</h1>
         )}
-        {isSearchPage && <h1 className="text-white h-6 title-md">검색</h1>}
+        {isSearchPage && (
+          <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
+        )}
         {!isFormPage &&
           !isWishPage &&
           !isMyEditPage &&
@@ -49,7 +59,7 @@ export const Header = () => {
           !isSearchPage && (
             <Image
               src="/main-logo.png"
-              alt="Main Logo"
+              alt={t("common.mainLogo")}
               width={66}
               height={18}
             />
@@ -58,7 +68,7 @@ export const Header = () => {
           {(isMainPage || isBoardPage || isSearchPage) && (
             <Link
               href="/search"
-              aria-label="검색"
+              aria-label={t("common.search")}
               className="cursor-pointer inline-flex"
             >
               <SearchIcon color="white" />

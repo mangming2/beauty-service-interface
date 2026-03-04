@@ -16,7 +16,7 @@ export function LatestTrendsSection() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <h2 className="title-md">
           <TranslatedText translationKey="latestTrends" />
         </h2>
@@ -33,7 +33,7 @@ export function LatestTrendsSection() {
         </div>
       </div>
 
-      <GapY size={8} />
+      <GapY size={12} />
 
       <div className="flex flex-col">
         {trends.map((product, index, array) => (

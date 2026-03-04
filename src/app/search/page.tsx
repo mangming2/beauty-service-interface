@@ -7,6 +7,7 @@ import { TrendCard } from "@/components/main/TrendCard";
 import { Divider } from "@/components/ui/divider";
 import { PageLoading } from "@/components/common";
 import type { Product } from "@/api/product";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const PAGE_SIZE = 50;
 
@@ -22,6 +23,7 @@ function filterProductsByQuery(products: Product[], query: string): Product[] {
 
 export default function SearchPage() {
   const [searchText, setSearchText] = useState("");
+  const { t } = useTranslation();
   const {
     data,
     isLoading,
@@ -44,13 +46,13 @@ export default function SearchPage() {
   );
 
   if (isLoading) {
-    return <PageLoading message="상품 목록을 불러오는 중..." />;
+    return <PageLoading message={t("search.loadingProducts")} />;
   }
 
   if (error) {
     return (
       <div className="min-h-screen text-white flex flex-col items-center justify-center px-5">
-        <p className="text-gray-400">상품 목록을 불러오지 못했습니다.</p>
+        <p className="text-gray-400">{t("search.errorLoadingProducts")}</p>
       </div>
     );
   }
@@ -62,11 +64,11 @@ export default function SearchPage() {
         <div className="flex items-center gap-2 rounded-xl bg-[#2E3033] border border-[#3E4043] px-3 py-2.5">
           <input
             type="search"
-            placeholder="검색어를 입력하세요"
+            placeholder={t("search.searchPlaceholder")}
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
             className="flex-1 bg-transparent text-white placeholder:text-gray-400 text-md outline-none min-w-0"
-            aria-label="검색"
+            aria-label={t("common.search")}
           />
           <SearchIcon color="#9CA3AF" />
         </div>
@@ -75,9 +77,9 @@ export default function SearchPage() {
           {filteredProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-gray-400">
               {allProducts.length === 0 ? (
-                <p>등록된 상품이 없습니다.</p>
+                <p>{t("search.noProducts")}</p>
               ) : (
-                <p>검색 결과가 없습니다.</p>
+                <p>{t("search.noSearchResults")}</p>
               )}
             </div>
           ) : (

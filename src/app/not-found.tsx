@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import NotFoundLogo from "../../public/404-logo.png";
 import { GapY } from "../components/ui/gap";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
+
 export default function NotFound() {
+  const { t } = useTranslation();
   return (
     <div
       className="text-white bg-transparent flex flex-col flex-1 items-center"
@@ -27,12 +30,12 @@ export default function NotFound() {
 
         {/* Error Messages */}
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-gray-2">Page Not Found</h1>
+          <h1 className="text-2xl font-semibold text-gray-2">
+            {t("notFound.pageNotFound")}
+          </h1>
           <GapY size={24} />
-          <p className="text-lg text-white">This page has drifted away.</p>
-          <p className="text-lg text-white">
-            Let&apos;s get you back on track!
-          </p>
+          <p className="text-lg text-white">{t("notFound.pageDriftedAway")}</p>
+          <p className="text-lg text-white">{t("notFound.backOnTrack")}</p>
         </div>
       </div>
 
@@ -48,7 +51,7 @@ export default function NotFound() {
             variant="default"
             className="w-full h-12 text-lg font-semibold"
           >
-            Back to main page
+            {t("notFound.backToMain")}
           </Button>
         </Link>
       </div>

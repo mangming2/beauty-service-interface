@@ -8,11 +8,13 @@ import { AuthLoading } from "@/components/common";
 import Image from "next/image";
 import { GapY } from "../../components/ui/gap";
 import { useGoogleLogin, useUser } from "@/queries/useAuthQueries";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [isHydrated, setIsHydrated] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useUser();
   const googleLoginMutation = useGoogleLogin();
 
@@ -35,7 +37,7 @@ export default function LoginPage() {
       setMessage("");
       await googleLoginMutation.mutateAsync();
     } catch (error: unknown) {
-      setMessage((error as Error)?.message || "로그인 중 오류가 발생했습니다.");
+      setMessage((error as Error)?.message || t("login.loginError"));
     }
   };
 
@@ -46,12 +48,19 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col flex-1 items-center pt-[360px]">
       <div className="text-center">
-        <Image src={MainLogo} alt="Main Logo" width={196} height={54} />
+        <Image
+          src={MainLogo}
+          alt={t("common.mainLogo")}
+          width={196}
+          height={54}
+        />
       </div>
 
       <div className="mt-[200px] text-center p-[12px]">
         <div className="text-center">
-          <p className="h-[24px] text-disabled text-md">소셜 로그인</p>
+          <p className="h-[24px] text-disabled text-md">
+            {t("login.socialLogin")}
+          </p>
           <GapY size={8} />
           <div className="flex justify-center gap-x-[14px]">
             <button
@@ -75,7 +84,7 @@ export default function LoginPage() {
             onClick={handleGuestAccess}
             className="text-white text-md underline hover:text-gray-300 transition-colors duration-200 cursor-pointer"
           >
-            비회원으로 이용
+            {t("login.guestAccess")}
           </button>
         </div>
       </div>

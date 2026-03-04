@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GapY } from "@/components/ui/gap";
 import LottieAnimation from "../../../components/common/LottieAnimation";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function FormLoadingPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [showComplete, setShowComplete] = useState(false);
 
@@ -32,10 +34,8 @@ export default function FormLoadingPage() {
         {isAnalyzing ? (
           <>
             <div className="flex flex-col text-white items-start px-5">
-              <h1 className="title-lg ">Just a moment, please.</h1>
-              <h2 className="title-sm ">
-                Analyzing your input to recommend the most suitable package.
-              </h2>
+              <h1 className="title-lg ">{t("form.formLoadingJustAMoment")}</h1>
+              <h2 className="title-sm ">{t("form.formLoadingAnalyzing")}</h2>
             </div>
             <div className="flex-1 flex flex-col items-center justify-center">
               <LottieAnimation
@@ -48,9 +48,11 @@ export default function FormLoadingPage() {
         ) : showComplete ? (
           <div className="flex flex-col flex-1">
             <div className="flex flex-col items-start px-5">
-              <h1 className="title-lg text-white">All done!</h1>
               <h1 className="title-lg text-white">
-                Here&apos;s your style result
+                {t("form.formLoadingAllDone")}
+              </h1>
+              <h1 className="title-lg text-white">
+                {t("form.formLoadingStyleResult")}
               </h1>
             </div>
             <div className="flex-1 flex flex-col items-center justify-center">
@@ -71,7 +73,7 @@ export default function FormLoadingPage() {
                 onClick={handleNext}
                 className="w-full h-[52px] bg-pink-500 hover:bg-pink-600"
               >
-                <span className="text-white font-medium">Next</span>
+                <span className="text-white font-medium">{t("form.next")}</span>
               </Button>
             </div>
           </div>

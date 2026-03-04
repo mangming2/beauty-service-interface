@@ -10,10 +10,12 @@ import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { Step2Schema, Step2Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function FormPage2() {
   const router = useRouter();
   const { formData, updateStep2, setCurrentStep } = useFormStore();
+  const { t } = useTranslation();
 
   const form = useForm<Step2Data>({
     resolver: zodResolver(Step2Schema),
@@ -51,7 +53,7 @@ export default function FormPage2() {
           {/* Header */}
           <div>
             <h1 className="h-[68px] text-xl font-semibold">
-              Which idol do you want to be?
+              {t("form.step2Title")}
             </h1>
           </div>
 
@@ -62,7 +64,7 @@ export default function FormPage2() {
             <div>
               <Input
                 type="text"
-                placeholder="Enter the name of the group or idol"
+                placeholder={t("form.step2Placeholder")}
                 {...register("favoriteIdol")}
                 className="w-full h-[52px] py-[8px] px-[12px] text-white border-none placeholder:text-gray-400 focus:border-pink-500 focus:ring-pink-500"
               />
@@ -87,7 +89,7 @@ export default function FormPage2() {
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid}
         >
-          Next
+          {t("form.next")}
         </Button>
       </div>
     </div>

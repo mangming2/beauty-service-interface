@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { GapY } from "../../ui/gap";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface DeleteConfirmDialogProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export function DeleteConfirmDialog({
   onOpenChange,
   onConfirm,
 }: DeleteConfirmDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
@@ -30,12 +32,11 @@ export function DeleteConfirmDialog({
       >
         <DialogHeader className="gap-0">
           <DialogTitle className="text-white title-md text-[20px]">
-            Delete this record now?
+            {t("deleteConfirm.deleteRecordTitle")}
           </DialogTitle>
           <GapY size={20} />
           <DialogDescription className="text-gray-font text-lg">
-            Deleting this record will also remove all linked schedules
-            you&apos;ve created, and this action cannot be undone.
+            {t("deleteConfirm.deleteRecordDescription")}
           </DialogDescription>
         </DialogHeader>
         <GapY size={36} />
@@ -45,13 +46,13 @@ export function DeleteConfirmDialog({
             className="h-13 text-lg flex-1"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t("deleteConfirm.cancel")}
           </Button>
           <Button
             className="h-13 text-lg bg-pink-500 hover:bg-pink-600 text-white flex-1"
             onClick={onConfirm}
           >
-            Delete
+            {t("deleteConfirm.delete")}
           </Button>
         </DialogFooter>
       </DialogContent>

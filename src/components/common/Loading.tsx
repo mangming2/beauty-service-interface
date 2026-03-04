@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import LottieAnimation from "@/components/common/LottieAnimation";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface LoadingProps {
   /** 로딩 메시지 */
@@ -40,7 +43,7 @@ const backgroundClasses = {
 };
 
 export function Loading({
-  message = "로딩 중...",
+  message,
   size = "md",
   fullScreen = false,
   background = "transparent",
@@ -51,6 +54,8 @@ export function Loading({
   lottieSrc = "/logo-loading.lottie",
   lottieSize,
 }: LoadingProps) {
+  const { t } = useTranslation();
+  const displayMessage = message ?? t("common.loading");
   const containerClasses = cn(
     "flex flex-col items-center justify-center text-white",
     fullScreen && "min-h-screen",
@@ -79,7 +84,7 @@ export function Loading({
         height={finalLottieSize.height}
         className="mx-auto"
       />
-      {message && (
+      {displayMessage && (
         <div
           className={cn(
             "mt-4 text-center",
@@ -89,7 +94,7 @@ export function Loading({
             size === "xl" && "text-xl"
           )}
         >
-          {message}
+          {displayMessage}
         </div>
       )}
     </div>
@@ -97,20 +102,23 @@ export function Loading({
 }
 
 // 특정 상황에 맞는 프리셋 컴포넌트들
-export function PageLoading({
-  message = "데이터를 불러오는 중...",
-}: {
-  message?: string;
-}) {
+export function PageLoading({ message }: { message?: string }) {
+  const { t } = useTranslation();
   return (
-    <Loading message={message} size="lg" fullScreen background="transparent" />
+    <Loading
+      message={message ?? t("common.loadingData")}
+      size="lg"
+      fullScreen
+      background="transparent"
+    />
   );
 }
 
 export function AuthLoading() {
+  const { t } = useTranslation();
   return (
     <Loading
-      message="로딩 중..."
+      message={t("common.loading")}
       size="lg"
       fullScreen
       background="transparent"
@@ -119,9 +127,15 @@ export function AuthLoading() {
   );
 }
 
-export function FormLoading({ message = "로딩 중..." }: { message?: string }) {
+export function FormLoading({ message }: { message?: string }) {
+  const { t } = useTranslation();
   return (
-    <Loading message={message} size="md" fullScreen background="transparent" />
+    <Loading
+      message={message ?? t("common.loading")}
+      size="md"
+      fullScreen
+      background="transparent"
+    />
   );
 }
 
@@ -136,15 +150,12 @@ export function ButtonLoading({ size = "sm" }: { size?: "sm" | "md" }) {
   );
 }
 
-export function InlineLoading({
-  message = "로딩 중...",
-}: {
-  message?: string;
-}) {
+export function InlineLoading({ message }: { message?: string }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-center gap-2 text-white">
       <LottieAnimation src="/logo-loading.lottie" width={16} height={16} />
-      <span className="text-sm">{message}</span>
+      <span className="text-sm">{message ?? t("common.loading")}</span>
     </div>
   );
 }

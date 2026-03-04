@@ -780,6 +780,58 @@ const SearchIcon = ({ color, ...rest }: IconProps) => {
     </svg>
   );
 };
+
+const MusicIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <circle
+        cx="1.66667"
+        cy="1.66667"
+        r="1.66667"
+        transform="matrix(-1 0 0 1 5.99976 10.333)"
+        stroke={color ?? "#ABA9A9"}
+      />
+      <path
+        d="M5.99976 3.33333L5.99976 12"
+        stroke={color ?? "#ABA9A9"}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.3333 1.99984V10.6665"
+        stroke={color ?? "#ABA9A9"}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.3331 1.99967L5.99976 3.33301"
+        stroke={color ?? "#ABA9A9"}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.3331 4.66667L5.99976 6"
+        stroke={color ?? "#ABA9A9"}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="1.66667"
+        cy="1.66667"
+        r="1.66667"
+        transform="matrix(-1 0 0 1 13.3333 9.33301)"
+        stroke={color ?? "#ABA9A9"}
+      />
+    </svg>
+  );
+};
 export {
   WishIcon,
   HomeIcon,
@@ -810,6 +862,7 @@ export {
   ShareIcon,
   SettingIcon,
   SearchIcon,
+  MusicIcon,
 };
 
 export const Icons = {
@@ -839,4 +892,5 @@ export const Icons = {
   share: ShareIcon,
   setting: SettingIcon,
   search: SearchIcon,
+  music: MusicIcon,
 };

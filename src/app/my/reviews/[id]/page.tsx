@@ -14,10 +14,12 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function CreateReviewPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const packageId = params.id as string;
 
   const [rating, setRating] = useState(0);
@@ -34,18 +36,18 @@ export default function CreateReviewPage() {
     e.preventDefault();
 
     if (!rating || !comment.trim()) {
-      alert("별점과 리뷰를 입력해주세요.");
+      alert(t("reviews.enterRatingAndReview"));
       return;
     }
 
     if (!user) {
-      alert("로그인이 필요합니다.");
+      alert(t("reviews.loginRequired"));
       return;
     }
 
     const accessToken = getAuthToken();
     if (!accessToken) {
-      alert("로그인이 필요합니다.");
+      alert(t("reviews.loginRequired"));
       return;
     }
 
@@ -60,7 +62,7 @@ export default function CreateReviewPage() {
       router.push(`/package/${packageId}`);
     } catch (error) {
       console.error("리뷰 작성 실패:", error);
-      alert("리뷰 작성에 실패했습니다. 다시 시도해주세요.");
+      alert(t("reviews.reviewSubmitFailed"));
     }
   };
 
@@ -82,7 +84,7 @@ export default function CreateReviewPage() {
         {/* Rating Section */}
         <div>
           <div className="flex flex-col p-5">
-            <h2 className="title-lg">How did you like the package?</h2>
+            <h2 className="title-lg">{t("reviews.howDidYouLike")}</h2>
           </div>
           <GapY size={20} />
           <StarRating
@@ -97,7 +99,7 @@ export default function CreateReviewPage() {
 
         {/* Package Details */}
         <div className="px-5">
-          <h3 className="title-sm">Your Package</h3>
+          <h3 className="title-sm">{t("reviews.yourPackage")}</h3>
           <GapY size={12} />
           <Card className="bg-transparent border-none px-0 pt-0 pb-3">
             <CardContent className="p-0">
@@ -134,13 +136,13 @@ export default function CreateReviewPage() {
         {/* Review Input Section */}
         <div>
           <div className="flex py-3 px-5">
-            <h3 className="title-sm">Your Review</h3>
+            <h3 className="title-sm">{t("reviews.yourReview")}</h3>
           </div>
 
           {/* Comment Input */}
           <div className="flex flex-col px-5 gap-0">
             <textarea
-              placeholder={isFocused ? "" : "Share your detailed review!"}
+              placeholder={isFocused ? "" : t("reviews.shareReview")}
               value={comment}
               onChange={e => setComment(e.target.value)}
               onFocus={() => setIsFocused(true)}
@@ -170,10 +172,10 @@ export default function CreateReviewPage() {
             {createReviewMutation.isPending ? (
               <div className="flex items-center gap-2">
                 <Spinner className="w-4 h-4" />
-                저장 중...
+                {t("reviews.saving")}
               </div>
             ) : (
-              "Save"
+              t("reviews.save")
             )}
           </Button>
         </div>

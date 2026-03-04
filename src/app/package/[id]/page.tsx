@@ -19,10 +19,12 @@ import {
 import { LanguageSelector } from "../../../components/common/LanguageSelector";
 import { TranslatedText } from "../../../components/main/TranslatedText";
 import { ReviewDetail } from "@/types/api";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function PackageDetail() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const packageId = Number(params.id);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
@@ -56,9 +58,9 @@ export default function PackageDetail() {
       <div className="bg-transparent flex flex-col flex-1">
         <div className="flex-1 flex flex-col items-center justify-center gap-3">
           <Image src={"/empty.png"} alt="Empty Logo" width={372} height={200} />
-          <h1 className="title-lg text-gray-2">The package is empty.</h1>
+          <h1 className="title-lg text-gray-2">{t("package.emptyPackage")}</h1>
           <span className="text-white text-lg text-center">
-            This package was deleted or moved <br /> and can’t be found.
+            {t("package.packageDeletedOrMoved")}
           </span>
         </div>
         <div
@@ -72,7 +74,7 @@ export default function PackageDetail() {
               variant="default"
               className="w-full h-12 text-lg font-semibold"
             >
-              Back to main page
+              {t("package.backToMain")}
             </Button>
           </Link>
         </div>
@@ -128,7 +130,7 @@ export default function PackageDetail() {
           <div className="px-5">
             <h1 className="title-md">{productDetail.name}</h1>
             <span className="text-gray-font text-md">
-              Gangnam, 위치정보 받아와야함
+              {t("package.locationTbd")}
             </span>
             <div className="mt-4 rounded-[12px] bg-gray-container border border-[#2E3033]">
               <button
@@ -137,7 +139,9 @@ export default function PackageDetail() {
                 onClick={() => setIsDescriptionOpen(prev => !prev)}
                 aria-expanded={isDescriptionOpen}
               >
-                <span className="text-white text-lg">Description</span>
+                <span className="text-white text-lg">
+                  {t("package.description")}
+                </span>
                 <svg
                   width="24"
                   height="24"
@@ -167,7 +171,7 @@ export default function PackageDetail() {
 
           {/* Package Details Section */}
           <div>
-            <h2 className="title-md px-5">Package Details</h2>
+            <h2 className="title-md px-5">{t("package.packageDetails")}</h2>
             <GapY size={12} />
             {/* Package Components */}
             <div className="flex flex-col w-full gap-3 px-5">
@@ -226,7 +230,7 @@ export default function PackageDetail() {
             <div className="pl-5">
               <div className="flex items-center justify-between pr-5">
                 <span className="flex items-center h-8 title-md font-bold">
-                  Customers review
+                  {t("package.customersReview")}
                 </span>
                 <Link href={`/package/${productDetail.id}/reviews`}>
                   <div className="flex flex-col items-center h-7 justify-end">
@@ -250,12 +254,14 @@ export default function PackageDetail() {
                 <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
                   {reviewsLoading ? (
                     <div className="flex items-center justify-center w-[250px] h-[132px]">
-                      <div className="text-gray-400">리뷰를 불러오는 중...</div>
+                      <div className="text-gray-400">
+                        {t("package.loadingReviews")}
+                      </div>
                     </div>
                   ) : reviewsError ? (
                     <div className="flex items-center justify-center w-[250px] h-[132px]">
                       <div className="text-gray-400">
-                        리뷰를 불러올 수 없습니다.
+                        {t("package.errorLoadingReviews")}
                       </div>
                     </div>
                   ) : reviews && reviews.length > 0 ? (
@@ -278,8 +284,7 @@ export default function PackageDetail() {
                               ) : (
                                 <div className="w-full h-full bg-gray-600 flex items-center justify-center">
                                   <span className="text-white text-xs font-medium">
-                                    {/* {review.userName.charAt(0).toUpperCase()} */}
-                                    유저 이름
+                                    {t("package.userName")}
                                   </span>
                                 </div>
                               )}
@@ -301,7 +306,9 @@ export default function PackageDetail() {
                     ))
                   ) : (
                     <div className="flex items-center justify-center w-[250px] h-[132px]">
-                      <div className="text-gray-400">아직 리뷰가 없습니다.</div>
+                      <div className="text-gray-400">
+                        {t("package.noReviewsYet")}
+                      </div>
                     </div>
                   )}
                 </div>

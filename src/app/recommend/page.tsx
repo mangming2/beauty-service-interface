@@ -8,6 +8,7 @@ import PackageSection from "@/components/main/PackageSection";
 import { useProducts } from "@/queries/useProductQueries";
 import type { Product } from "@/api/product";
 import { PageLoading } from "@/components/common";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const BASE_TAGS = [
   "SMent",
@@ -19,12 +20,13 @@ const BASE_TAGS = [
 ];
 
 const PACKAGE_SECTIONS_CONFIG = {
-  middle: { title: "How about this package?", indices: [0, 3] },
-  last: { title: "Looking for another Date?", indices: [3, 6] },
+  middle: { titleKey: "wish.howAboutThisPackage", indices: [0, 3] },
+  last: { titleKey: "wish.lookingForAnotherDate", indices: [3, 6] },
 };
 
 function Content() {
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   // URL 태그 파싱
   const urlTags =
     searchParams
@@ -123,7 +125,7 @@ function Content() {
             <>
               <GapY size={20} />
               <PackageSection
-                title={PACKAGE_SECTIONS_CONFIG.middle.title}
+                title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
                 packages={middlePackages}
                 onPackageClick={handlePackageClick}
               />
@@ -138,7 +140,7 @@ function Content() {
               <>
                 <GapY size={20} />
                 <PackageSection
-                  title={PACKAGE_SECTIONS_CONFIG.last.title}
+                  title={t(PACKAGE_SECTIONS_CONFIG.last.titleKey)}
                   packages={lastPackages}
                   onPackageClick={handlePackageClick}
                 />

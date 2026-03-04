@@ -17,6 +17,7 @@ import Etc from "@/assets/3d-images/etc.png";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { Step1Schema, Step1Data, concepts } from "@/types/form";
 import { useFormStore } from "@/lib/store";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const conceptImages = {
   girlcrush: GirlCrush,
@@ -30,6 +31,7 @@ const conceptImages = {
 export default function FormPage1() {
   const router = useRouter();
   const { formData, updateStep1, setCurrentStep } = useFormStore();
+  const { t } = useTranslation();
 
   const form = useForm<Step1Data>({
     resolver: zodResolver(Step1Schema),
@@ -83,9 +85,7 @@ export default function FormPage1() {
         <GapY size={20} />
         {/* Header */}
         <div className="px-5">
-          <h1 className="text-xl font-semibold">
-            What kind of Vibe or concept do you love most? (max 3)
-          </h1>
+          <h1 className="text-xl font-semibold">{t("form.step1Title")}</h1>
         </div>
 
         <GapY size={32} />
@@ -147,7 +147,7 @@ export default function FormPage1() {
           onClick={handleSubmit(onSubmit)}
           disabled={selectedConcepts && selectedConcepts.length === 0}
         >
-          Next
+          {t("form.next")}
         </Button>
       </div>
     </div>

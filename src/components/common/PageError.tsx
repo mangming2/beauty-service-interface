@@ -5,6 +5,7 @@ import Link from "next/link";
 import ErrorLogo from "../../../public/error-logo.png";
 import { Button } from "@/components/ui/button";
 import { GapY } from "@/components/ui/gap";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface PageErrorProps {
   title?: string;
@@ -15,13 +16,17 @@ interface PageErrorProps {
 }
 
 export function PageError({
-  title = "Oops!",
-  description = "An unexpected error occurred.\nPlease try again later.",
-  buttonText = "Back to main page",
+  title,
+  description,
+  buttonText,
   buttonHref = "/",
   errorDigest,
 }: PageErrorProps) {
-  const descriptionLines = description.split("\n");
+  const { t } = useTranslation();
+  const displayTitle = title ?? t("common.oops");
+  const displayDescription = description ?? t("common.unexpectedError");
+  const displayButtonText = buttonText ?? t("common.backToMain");
+  const descriptionLines = displayDescription.split("\n");
 
   return (
     <div
@@ -41,7 +46,7 @@ export function PageError({
         </div>
 
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-gray-2">{title}</h1>
+          <h1 className="text-2xl font-semibold text-gray-2">{displayTitle}</h1>
           <GapY size={24} />
           <p className="text-lg text-white">
             {descriptionLines.map((line, index) => (
@@ -53,7 +58,7 @@ export function PageError({
           </p>
           {process.env.NODE_ENV === "development" && errorDigest && (
             <p className="text-sm text-gray-400 mt-2">
-              Error ID: {errorDigest}
+              {t("common.errorId")}: {errorDigest}
             </p>
           )}
         </div>
@@ -70,7 +75,7 @@ export function PageError({
             variant="default"
             className="w-full h-12 text-lg font-semibold"
           >
-            {buttonText}
+            {displayButtonText}
           </Button>
         </Link>
       </div>

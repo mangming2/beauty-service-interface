@@ -10,12 +10,14 @@ import { useOptionDetail } from "@/queries/useOptionQueries";
 import { LocationIcon } from "@/components/common/Icons";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const PLACEHOLDER_IMAGE = "/dummy-profile.png";
 
 export default function BookingConfirmPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   const packageId = Number(params.id);
   const optionIdFromQuery = Number(searchParams.get("optionId"));
   const optionId =
@@ -88,21 +90,19 @@ export default function BookingConfirmPage() {
 
   return (
     <div className="bg-background text-white px-5 pt-6 pb-5 flex flex-col flex-1">
-      <h1 className="title-lg text-white">Order Status</h1>
+      <h1 className="title-lg text-white">{t("bookingPage.orderStatus")}</h1>
       <GapY size={8} />
       <p className="text-md text-gray-font">
-        Please proceed with reservations by vendor.
+        {t("bookingPage.proceedByVendor")}
       </p>
-      <p className="text-md text-gray-font">
-        You can modify your reservation status anytime later.
-      </p>
+      <p className="text-md text-gray-font">{t("bookingPage.modifyAnytime")}</p>
       <GapY size={20} />
 
       <div className="rounded-[12px] bg-gray-container border border-[#2E3033] p-3 flex gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2 py-0.5 rounded caption-sm bg-primary text-white">
-              Featured
+              {t("bookingPage.featured")}
             </span>
             {productDetail.tagNames?.length ? (
               <span className="text-white text-xs truncate">
@@ -142,15 +142,15 @@ export default function BookingConfirmPage() {
 
       <GapY size={24} />
 
-      <h2 className="title-md text-white">Package Details</h2>
+      <h2 className="title-md text-white">{t("package.packageDetails")}</h2>
       <GapY size={12} />
       <div className="rounded-[12px] p-4 space-y-3">
         <div className="flex justify-between items-center text-md text-gray-font">
-          <span>Date & Time</span>
+          <span>{t("bookingPage.dateTime")}</span>
           <span>{dateTimeDisplay}</span>
         </div>
         <div className="flex justify-between items-center text-md text-gray-font">
-          <span>Total Fee</span>
+          <span>{t("bookingPage.totalFee")}</span>
           <span>₩{currentOption.price.toLocaleString()}</span>
         </div>
       </div>
@@ -158,7 +158,7 @@ export default function BookingConfirmPage() {
       <div className="mt-auto">
         <Link href="/my">
           <Button className="w-full h-[52px] bg-primary">
-            <span className="text-lg">Save</span>
+            <span className="text-lg">{t("bookingPage.save")}</span>
           </Button>
         </Link>
       </div>

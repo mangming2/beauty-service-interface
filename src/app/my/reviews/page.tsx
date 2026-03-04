@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { PageLoading } from "@/components/common";
 import { format } from "date-fns";
 import { Icons } from "@/components/common";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function MyReviewsPage() {
   const queryClient = useQueryClient();
   const { user } = useUser();
+  const { t } = useTranslation();
   const { data: reviews, isLoading: reviewsLoading } = useMyReviews();
   const deleteReviewMutation = useDeleteReview();
 
@@ -23,11 +25,11 @@ export default function MyReviewsPage() {
   );
 
   if (!user) {
-    return <PageLoading message="사용자 정보를 불러오는 중..." />;
+    return <PageLoading message={t("edit.loadingUser")} />;
   }
 
   if (reviewsLoading) {
-    return <PageLoading message="리뷰를 불러오는 중..." />;
+    return <PageLoading message={t("package.loadingReviews")} />;
   }
 
   const formatDate = (dateString?: string) => {
@@ -47,9 +49,9 @@ export default function MyReviewsPage() {
       const diffInMs = now.getTime() - date.getTime();
       const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-      if (diffInDays === 0) return "오늘";
-      if (diffInDays === 1) return "1일 전";
-      return `${diffInDays}일 전`;
+      if (diffInDays === 0) return t("reviews.today");
+      if (diffInDays === 1) return t("reviews.daysAgoOne");
+      return `${diffInDays}${t("reviews.daysAgo")}`;
     } catch {
       return "";
     }
@@ -99,7 +101,7 @@ export default function MyReviewsPage() {
             onClick={() => setIsEditMode(true)}
             className="text-disabled text-lg p-0"
           >
-            Edit
+            {t("reviews.edit")}
           </Button>
         ) : (
           <Button
@@ -111,7 +113,7 @@ export default function MyReviewsPage() {
             }}
             className="text-disabled text-lg p-0"
           >
-            Cancel
+            {t("reviews.cancel")}
           </Button>
         )}
       </div>
@@ -170,7 +172,7 @@ export default function MyReviewsPage() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <div className="text-gray-400">작성한 리뷰가 없습니다.</div>
+            <div className="text-gray-400">{t("reviews.noReviewsWritten")}</div>
           </div>
         )}
       </div>
@@ -190,7 +192,9 @@ export default function MyReviewsPage() {
               deletedReviewIds.size === 0 || deleteReviewMutation.isPending
             }
           >
-            {deleteReviewMutation.isPending ? "저장 중..." : "Save"}
+            {deleteReviewMutation.isPending
+              ? t("reviews.saving")
+              : t("reviews.save")}
           </Button>
         </div>
       )}

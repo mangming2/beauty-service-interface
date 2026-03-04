@@ -10,6 +10,7 @@ import { useMyBookings } from "@/queries/useMyPageQueries";
 import { useMyReviews } from "@/queries/useMyPageQueries";
 import type { Booking } from "@/api/my-page";
 import type { BookingHistory, CompletedBooking } from "./types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const PLACEHOLDER_IMAGE = "/dummy-profile.png";
 
@@ -76,6 +77,7 @@ export default function BookingHistory() {
     null
   );
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const { t } = useTranslation();
 
   const { data: bookings = [], isLoading: bookingsLoading } = useMyBookings();
   const { data: reviews = [] } = useMyReviews();
@@ -151,9 +153,11 @@ export default function BookingHistory() {
       ) : (
         <Card className="bg-gray-container rounded-1 border-none p-0">
           <CardContent className="p-3 gap-[10px] text-center h-[71px] flex flex-col items-center justify-center">
-            <p className="text-white title-sm">No bookings yet</p>
+            <p className="text-white title-sm">
+              {t("bookingHistory.noBookingsYet")}
+            </p>
             <p className="text-gray-font caption-sm">
-              Book your first package to get started
+              {t("bookingHistory.bookFirstPackage")}
             </p>
           </CardContent>
         </Card>

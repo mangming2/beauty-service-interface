@@ -9,10 +9,12 @@ import { GapY } from "@/components/ui/gap";
 import { ProgressBar } from "@/components/form/ProgressBar";
 import { Step3Schema, Step3Data, idolOptions } from "@/types/form";
 import { useFormStore } from "@/lib/store";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function FormPage3() {
   const router = useRouter();
   const { formData, updateStep3, setCurrentStep } = useFormStore();
+  const { t } = useTranslation();
 
   const form = useForm<Step3Data>({
     resolver: zodResolver(Step3Schema),
@@ -56,7 +58,7 @@ export default function FormPage3() {
           {/* Header */}
           <div>
             <h1 className="h-[68px] text-xl font-semibold">
-              Which package would you like?
+              {t("form.step3Title")}
             </h1>
           </div>
 
@@ -100,7 +102,7 @@ export default function FormPage3() {
           onClick={handleSubmit(onSubmit)}
           disabled={!selectedOption}
         >
-          Next
+          {t("form.next")}
         </Button>
       </div>
     </div>

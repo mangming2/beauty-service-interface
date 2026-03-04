@@ -11,15 +11,17 @@ import { EditIcon, SettingIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GapY } from "../../components/ui/gap";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function MyPage() {
   const { user } = useUser();
   const signOutMutation = useLogout();
   const router = useRouter();
+  const { t } = useTranslation();
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
   const userProfile = {
-    name: user?.name || user?.email?.split("@")[0] || "K-pop Fan",
+    name: user?.name || user?.email?.split("@")[0] || t("my.defaultName"),
     email: user?.email || "fan@example.com",
     avatar: user?.profileImage || "/dummy-profile.png",
   };
@@ -37,7 +39,7 @@ export default function MyPage() {
           <div className="relative w-20 h-20 rounded-full overflow-hidden">
             <Image
               src={userProfile.avatar}
-              alt="Profile"
+              alt={t("common.profile")}
               fill
               className="object-cover"
             />
@@ -62,7 +64,7 @@ export default function MyPage() {
           width={80}
           height={32}
         >
-          My reviews
+          {t("my.myReviews")}
         </Button>
         <Button
           variant="graySmall"
@@ -71,7 +73,7 @@ export default function MyPage() {
           width={80}
           height={32}
         >
-          {signOutMutation.isPending ? "..." : "로그아웃"}
+          {signOutMutation.isPending ? "..." : t("my.logout")}
         </Button>
       </div>
 
@@ -85,13 +87,13 @@ export default function MyPage() {
               value="booking-history"
               className="relative title-sm bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-font data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-font"
             >
-              Booking History
+              {t("my.bookingHistory")}
             </TabsTrigger>
             <TabsTrigger
               value="schedule"
               className="relative title-sm bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-font data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-font"
             >
-              Schedule
+              {t("my.schedule")}
             </TabsTrigger>
           </TabsList>
 

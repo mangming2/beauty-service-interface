@@ -9,6 +9,7 @@ import PackageSection from "@/components/main/PackageSection";
 import { useMyPageUser } from "@/queries/useMyPageQueries";
 import { useSurveyForCurrentUser } from "@/queries/useSurveyQueries";
 import { useProducts } from "@/queries/useProductQueries";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // TODO: 백엔드 연동 시 더미 데이터를 실제 API 응답으로 교체
 const DUMMY_RECOMMENDATION_GALLERIES = [
@@ -60,12 +61,13 @@ const DUMMY_RECOMMENDATION_GALLERIES = [
 ];
 
 const DUMMY_PACKAGE_SECTION = {
-  title: "How about this package?",
+  titleKey: "wish.howAboutThisPackage",
   packageIndices: [0, 2],
 };
 
 export default function Wish() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { data: myPageUser, isLoading: userLoading } = useMyPageUser();
   const {
     data: survey,
@@ -92,14 +94,13 @@ export default function Wish() {
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
           <div className="text-lg text-red-400 mb-4">
-            {(surveyError as Error)?.message ||
-              "데이터를 불러오는 중 오류가 발생했습니다."}
+            {(surveyError as Error)?.message || t("wish.errorLoadingData")}
           </div>
           <button
             onClick={() => router.push("/form/step1")}
             className="px-4 py-2 bg-pink-500 rounded text-white"
           >
-            다시 시작하기
+            {t("wish.tryAgain")}
           </button>
         </div>
       </div>
@@ -111,12 +112,12 @@ export default function Wish() {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg mb-4">제출된 데이터가 없습니다.</div>
+          <div className="text-lg mb-4">{t("wish.noSubmittedData")}</div>
           <button
             onClick={() => router.push("/form/step1")}
             className="px-4 py-2 bg-pink-500 rounded text-white"
           >
-            폼 작성하기
+            {t("wish.fillForm")}
           </button>
         </div>
       </div>
@@ -154,7 +155,7 @@ export default function Wish() {
 
         {/* ✏️ PackageSection - 매핑 제거 */}
         <PackageSection
-          title={DUMMY_PACKAGE_SECTION.title}
+          title={t(DUMMY_PACKAGE_SECTION.titleKey)}
           packages={
             products?.slice(
               DUMMY_PACKAGE_SECTION.packageIndices[0],

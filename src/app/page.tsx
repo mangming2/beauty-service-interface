@@ -152,7 +152,9 @@ export default function Home() {
         {/* Board Section - 최근 게시물 3개 */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="title-md">DOKI Now</h2>
+            <h2 className="title-md">
+              <TranslatedText translationKey="home.dokiNow" />
+            </h2>
             <Link
               href="/board"
               className="text-gray_1 caption-md flex items-center gap-[4px]"

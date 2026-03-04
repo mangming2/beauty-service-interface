@@ -53,7 +53,9 @@ export function FormButton() {
     return (
       <Link href="/form/complete">
         <Button className="w-full h-[52px] flex justify-between items-center">
-          <div className="text-lg">Your K-pop style is Ready</div>
+          <div className="text-lg">
+            <TranslatedText translationKey="form.yourKpopStyleReady" />
+          </div>
           <div className="flex w-[28px] items-center justify-center py-[6px]">
             <ArrowRightIcon
               color="white"

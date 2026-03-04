@@ -9,11 +9,13 @@ import { useUser } from "@/queries/useAuthQueries";
 import { useUpdateNickname } from "@/queries/useUserQueries";
 import { PageLoading } from "@/components/common";
 import { GapY } from "../../../components/ui/gap";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function EditProfilePage() {
   const router = useRouter();
   const { user } = useUser();
   const updateNicknameMutation = useUpdateNickname();
+  const { t } = useTranslation();
 
   // 사용자 정보에서 닉네임 초기값 (store의 name 또는 이메일 아이디)
   const getInitialNickname = () => {
@@ -40,10 +42,10 @@ export default function EditProfilePage() {
     const length = value.length;
 
     if (hasInvalidChar) {
-      return "Please enter English letters or numbers only.";
+      return t("edit.englishOrNumbersOnly");
     }
     if (length < 2 || length > 10) {
-      return "Please enter 2-10 characters.";
+      return t("edit.enter2to10Chars");
     }
 
     return null;
@@ -69,7 +71,7 @@ export default function EditProfilePage() {
 
   // 사용자 정보 없을 때 (미로그인 등)
   if (!user) {
-    return <PageLoading message="사용자 정보를 불러오는 중..." />;
+    return <PageLoading message={t("edit.loadingUser")} />;
   }
 
   // user 데이터가 로드된 후 nickname이 null이면 초기값 설정, 그 외에는 nickname 사용
@@ -139,9 +141,7 @@ export default function EditProfilePage() {
               hasError ? "text-pink-dark" : "text-gray-400"
             }`}
           >
-            {hasError
-              ? errorMessage
-              : "Please enter 2-10 English letters or numbers only."}
+            {hasError ? errorMessage : t("edit.nicknameHint")}
           </p>
         </div>
       </div>
@@ -160,7 +160,9 @@ export default function EditProfilePage() {
               : "bg-gray-600 text-gray-400 cursor-not-allowed"
           }`}
         >
-          {updateNicknameMutation.isPending ? "Updating..." : "Complete"}
+          {updateNicknameMutation.isPending
+            ? t("edit.updating")
+            : t("edit.complete")}
         </Button>
       </div>
     </div>

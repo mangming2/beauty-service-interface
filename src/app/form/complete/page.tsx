@@ -12,6 +12,7 @@ import { useMyPageUser } from "@/queries/useMyPageQueries";
 import { useSurveyForCurrentUser } from "@/queries/useSurveyQueries";
 import { useProducts } from "@/queries/useProductQueries";
 import { surveyToDisplayData } from "@/lib/surveyUtils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 /** 백엔드 추천 API 없을 때 사용하는 플레이스홀더 */
 const PLACEHOLDER_RECOMMENDATION = {
@@ -31,12 +32,13 @@ const PLACEHOLDER_RECOMMENDATION = {
 };
 
 const PACKAGE_SECTION_TITLES = [
-  "How about this package?",
-  "Looking for another Date?",
+  "wish.howAboutThisPackage",
+  "wish.lookingForAnotherDate",
 ] as const;
 
 export default function FormComplete() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { data: myPageUser, isLoading: userLoading } = useMyPageUser();
   const {
     data: survey,
@@ -61,14 +63,13 @@ export default function FormComplete() {
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
           <div className="text-lg text-red-400 mb-4">
-            {(surveyError as Error)?.message ||
-              "데이터를 불러오는 중 오류가 발생했습니다."}
+            {(surveyError as Error)?.message || t("wish.errorLoadingData")}
           </div>
           <button
             onClick={() => router.push("/form/step1")}
             className="px-4 py-2 bg-pink-500 rounded text-white"
           >
-            다시 시작하기
+            {t("wish.tryAgain")}
           </button>
         </div>
       </div>
@@ -79,12 +80,12 @@ export default function FormComplete() {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg mb-4">제출된 데이터가 없습니다.</div>
+          <div className="text-lg mb-4">{t("wish.noSubmittedData")}</div>
           <button
             onClick={() => router.push("/form/step1")}
             className="px-4 py-2 bg-pink-500 rounded text-white"
           >
-            폼 작성하기
+            {t("wish.fillForm")}
           </button>
         </div>
       </div>
@@ -106,7 +107,7 @@ export default function FormComplete() {
         {/* Tags Section */}
         <div className="flex flex-col pl-5 py-1 gap-2">
           <div className="flex items-center title-md h-11">
-            All summed up in tags
+            {t("form.allSummedUpInTags")}
           </div>
           <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
             {display.concepts.map((concept, index) => (
@@ -153,10 +154,10 @@ export default function FormComplete() {
         <GapY size={20} />
 
         {/* Package Sections - products API 데이터 사용 */}
-        {PACKAGE_SECTION_TITLES.map((title, index) => (
+        {PACKAGE_SECTION_TITLES.map((titleKey, index) => (
           <div key={index}>
             <PackageSection
-              title={title}
+              title={t(titleKey)}
               packages={packageChunks[index]}
               onPackageClick={handlePackageClick}
               firstCardPriority={index === 0}

@@ -1,5 +1,6 @@
 import PackageCard from "@/components/main/PackageCard";
 import type { Product } from "@/api/product";
+import { TranslatedText } from "@/components/main/TranslatedText";
 
 interface PackageSectionProps {
   title: string;
@@ -21,7 +22,9 @@ export default function PackageSection({
         <h3 className="flex items-center title-md font-medium">{title}</h3>
         <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
           <div className="flex items-center gap-[5px]">
-            <span className="text-gray_1 text-sm">more</span>
+            <span className="text-gray_1 text-sm">
+              <TranslatedText translationKey="more" />
+            </span>
           </div>
         </div>
       </div>

@@ -13,12 +13,14 @@ import { Step5Schema, Step5Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useUser } from "@/queries/useAuthQueries";
 import { useSubmitSurveyForm } from "@/queries/useSurveyQueries";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function FormPage5() {
   const router = useRouter();
   const { isAuthenticated, isLoggedIn } = useUser();
   const { formData, updateStep5, setCurrentStep } = useFormStore();
   const submitFormMutation = useSubmitSurveyForm();
+  const { t } = useTranslation();
 
   const form = useForm<Step5Data>({
     resolver: zodResolver(Step5Schema),
@@ -91,7 +93,7 @@ export default function FormPage5() {
         {/* Header */}
         <div className="px-5">
           <h1 className="h-[68px] text-xl font-semibold mb-6">
-            Where would you like to visit?
+            {t("form.step5Title")}
           </h1>
         </div>
 
@@ -127,7 +129,7 @@ export default function FormPage5() {
           {submitFormMutation.isError && (
             <div className="mt-4 text-red-400 text-sm text-center px-[16px]">
               {(submitFormMutation.error as Error)?.message ||
-                "폼 제출 중 오류가 발생했습니다."}
+                t("form.submitError")}
             </div>
           )}
         </form>
@@ -144,7 +146,9 @@ export default function FormPage5() {
           onClick={handleSubmit(onSubmit)}
         >
           <span className="text-white font-medium">
-            {submitFormMutation.isPending ? "제출 중..." : "제출하기"}
+            {submitFormMutation.isPending
+              ? t("form.submitting")
+              : t("form.submit")}
           </span>
         </Button>
       </div>
