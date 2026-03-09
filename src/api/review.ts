@@ -12,7 +12,8 @@ export async function getProductReviews(
 ): Promise<ReviewDetail[]> {
   try {
     const reviews = await apiGet<ReviewDetail[]>(
-      `/products/${productId}/reviews`
+      `/products/${productId}/reviews`,
+      { requireAuth: false }
     );
     return reviews ?? [];
   } catch (error) {

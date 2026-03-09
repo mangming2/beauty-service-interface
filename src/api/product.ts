@@ -60,6 +60,7 @@ export interface GetProductsParams {
   lastId?: number;
   size?: number;
   tag?: string;
+  is_random?: boolean;
 }
 
 /** 상품 생성 응답 */
@@ -91,11 +92,14 @@ export async function getProducts(
     if (params.tag !== undefined) {
       queryParams.append("tag", params.tag);
     }
+    if (params.is_random === true) {
+      queryParams.append("is_random", "true");
+    }
 
     const queryString = queryParams.toString();
     const url = `/products${queryString ? `?${queryString}` : ""}`;
 
-    const data = await apiGet<Product[]>(url, { requireAuth: true });
+    const data = await apiGet<Product[]>(url, { requireAuth: false });
     return data || [];
   } catch (error) {
     console.error("Get products error:", error);
@@ -122,7 +126,9 @@ export async function getProductDetail(
   productId: number
 ): Promise<ProductDetail | null> {
   try {
-    const data = await apiGet<ProductDetail>(`/products/${productId}`);
+    const data = await apiGet<ProductDetail>(`/products/${productId}`, {
+      requireAuth: false,
+    });
 
     if (!data) {
       return null;

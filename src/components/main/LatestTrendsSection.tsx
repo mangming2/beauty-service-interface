@@ -11,8 +11,10 @@ import { useProducts } from "@/queries/useProductQueries";
 const TRENDS_SIZE = 3;
 
 export function LatestTrendsSection() {
-  const { data: products = [] } = useProducts({ size: TRENDS_SIZE });
-  const trends = products.slice(0, TRENDS_SIZE);
+  const { data: trends = [] } = useProducts({
+    size: TRENDS_SIZE,
+    is_random: true,
+  });
 
   return (
     <div>
