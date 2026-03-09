@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { GapY } from "../../../components/ui/gap";
-import { useProductDetail } from "@/queries/useProductQueries";
+import {
+  useProductDetail,
+  useProductOptions,
+} from "@/queries/useProductQueries";
 import { useProductReviews } from "@/queries/useReviewQueries";
 import Link from "next/link";
 import { PageError, PageLoading } from "@/components/common";
@@ -29,6 +32,9 @@ export default function PackageDetail() {
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
   const { data: productDetail, isLoading, error } = useProductDetail(packageId);
+
+  const { data: options = [], isLoading: optionsLoading } =
+    useProductOptions(packageId);
 
   const {
     data: reviews,
@@ -117,7 +123,7 @@ export default function PackageDetail() {
         {/* Main Package Image */}
         <div className="relative w-full h-[412px]">
           <Image
-            src={"/dummy-profile.png"}
+            src={productDetail.imageUrls?.[0] ?? "/dummy-profile.png"}
             alt={productDetail.name}
             fill
             className="object-cover"
@@ -130,7 +136,7 @@ export default function PackageDetail() {
           <div className="px-5">
             <h1 className="title-md">{productDetail.name}</h1>
             <span className="text-gray-font text-md">
-              {t("package.locationTbd")}
+              {productDetail?.address}
             </span>
             <div className="mt-4 rounded-[12px] bg-gray-container border border-[#2E3033]">
               <button
@@ -161,7 +167,7 @@ export default function PackageDetail() {
               </button>
               {isDescriptionOpen && (
                 <p className="px-3 py-2 text-md text-white leading-relaxed">
-                  {productDetail.description}
+                  {productDetail.description ?? ""}
                 </p>
               )}
             </div>
@@ -173,56 +179,86 @@ export default function PackageDetail() {
           <div>
             <h2 className="title-md px-5">{t("package.packageDetails")}</h2>
             <GapY size={12} />
-            {/* Package Components */}
+            {/* Option list from GET /products/:productId/options */}
             <div className="flex flex-col w-full gap-3 px-5">
-              {productDetail.options.map(product => (
-                <div key={product.id}>
-                  <Card
-                    className="bg-gray-container border-solid border-[1px] border-[#2E3033] rounded-[8px] p-3 cursor-pointer"
-                    onClick={() => handleOptionBook(product.id)}
-                  >
-                    <CardContent className="p-0">
-                      <div className="flex gap-3 items-start">
-                        <div className="flex-1 min-w-0">
-                          {productDetail.tagNames?.length > 0 && (
-                            <p className="text-pink-font text-[14px] leading-[18px] mb-1 truncate">
-                              {(productDetail.tagNames ?? [])
-                                .slice(0, 2)
-                                .map(tag => `#${tag}`)
-                                .join(" ")}
-                            </p>
-                          )}
-                          <p className="text-[24px] text-white mb-1 font-semibold leading-tight truncate">
-                            {product.name}
-                          </p>
-                          <div className="flex items-center gap-1">
-                            <LocationIcon
-                              width={14}
-                              height={14}
-                              color="#ABA9A9"
-                            />
-                            <p className="text-[#A9A9AA] text-[12px] truncate">
-                              {product.location}
-                            </p>
-                          </div>
-                          <GapY size={8} />
-                          <p className="text-pink-font text-[16px] font-semibold">
-                            ₩ {product.price.toLocaleString()}
-                          </p>
-                        </div>
-                        <div className="relative w-[108px] h-[108px] overflow-hidden flex-shrink-0 rounded-[2px]">
-                          <Image
-                            src={"/dummy-profile.png"}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+              {optionsLoading ? (
+                <div className="py-6 text-center text-gray-400">
+                  {t("package.loadingReviews")}
                 </div>
-              ))}
+              ) : (
+                options.map(option => {
+                  const finalPrice =
+                    option.discountRate > 0
+                      ? Math.round(
+                          (option.price * (100 - option.discountRate)) / 100
+                        )
+                      : option.price;
+                  return (
+                    <div key={option.id}>
+                      <Card
+                        className="bg-gray-container border-solid border-[1px] border-[#2E3033] rounded-[8px] p-3 cursor-pointer"
+                        onClick={() => handleOptionBook(option.id)}
+                      >
+                        <CardContent className="p-0">
+                          <div className="flex gap-3 items-start">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                {option.isRepresent && (
+                                  <div className="caption-sm bg-primary text-white px-2 py-1">
+                                    Featured
+                                  </div>
+                                )}
+                                <p className="text-white caption-md truncate">
+                                  {(option.optionTags?.length
+                                    ? option.optionTags
+                                    : ["더미태그1", "더미태그2"]
+                                  )
+                                    .slice(0, 2)
+                                    .map(tag => `#${tag}`)
+                                    .join(" ")}
+                                </p>
+                              </div>
+
+                              <p className="text-[24px] text-white mb-1 font-semibold leading-tight truncate">
+                                {option.name}
+                              </p>
+                              <div className="flex items-center gap-1">
+                                <LocationIcon
+                                  width={14}
+                                  height={14}
+                                  color="#ABA9A9"
+                                />
+                                <p className="text-[#A9A9AA] text-[12px] truncate">
+                                  {option.address}
+                                </p>
+                              </div>
+                              <GapY size={8} />
+                              <div className="flex items-center gap-1">
+                                <p className="text-primary text-md">
+                                  {option.discountRate > 0
+                                    ? `${option.discountRate}% `
+                                    : "더미%"}
+                                </p>
+                                <p className="text-white text-md">
+                                  ₩{finalPrice.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="relative w-[108px] h-[108px] overflow-hidden flex-shrink-0 rounded-[2px]">
+                              <Image
+                                src={option.imageUrl ?? "/dummy-profile.png"}
+                                alt={option.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             <GapY size={20} />

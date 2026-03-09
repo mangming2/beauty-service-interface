@@ -2,14 +2,37 @@ import { apiGet, apiPost } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
-/** 상품 목록 아이템 (목록 API 응답; tagNames는 상세 등에서만 올 수 있음) */
+/** 대표 옵션 요약 (목록/상세 공통) */
+export interface RepresentOption {
+  rating?: number;
+  reviewCount?: number;
+  tags: string[];
+  location: string;
+  /** 정규화 주소 (상세 조회 시) */
+  address?: string;
+  discountRate: number;
+  originalPrice: number;
+  finalPrice: number;
+  imageUrls?: string[];
+}
+
+/** 상품 목록 아이템 (목록 API 응답) */
 export interface Product {
   id: number;
   name: string;
-  description: string;
-  minPrice: number;
-  totalPrice: number;
+  description?: string;
+  minPrice?: number;
+  totalPrice?: number;
+  /** @deprecated 목록은 representOption.tags 사용 */
   tagNames?: string[];
+  /** 대표 옵션 (태그, 주소, 할인율, 원가/할인가, 이미지) */
+  representOption?: RepresentOption;
+  /** 상품 대표 이미지 */
+  imageUrls?: string[];
+  /** 옵션들 평균 별점 */
+  rating?: number;
+  /** 누적 리뷰 수 */
+  reviewCount?: number;
 }
 
 /** 상품 상세 - 옵션 정보 (목록/요약; 상세는 Option 타입 참고) */
@@ -18,29 +41,38 @@ export interface ProductOption {
   name: string;
   description: string;
   price: number;
+  /** 할인 적용가 (할인 시) */
+  finalPrice?: number;
   location: string;
-  /** 옵션 상세 API와 동일 필드 (있을 경우 사용) */
   address?: string;
   discountRate?: number;
   bookingGuide?: string;
   regularClosingDay?: string | null;
   imageUrls?: string[];
+  representOption?: boolean;
+}
+
+/** 상품별 옵션 목록 조회 API 응답 (GET /products/:productId/options) */
+export interface ProductOptionListItem {
+  id: number;
+  name: string;
+  description: string;
+  discountRate: number;
+  price: number;
+  address: string;
+  optionTags: string[];
+  imageUrl: string | null;
+  isRepresent: boolean;
 }
 
 /** 상품 상세 */
 export interface ProductDetail {
   id: number;
   name: string;
-  description: string;
-  options: ProductOption[];
-  tagNames: string[];
-  slotStartDate: string;
-  slotEndDate: string;
-  slotStartTime: string;
-  slotEndTime: string;
-  reservationSlotCount: number;
-  minPrice: number;
-  totalPrice: number;
+  description?: string;
+  address: string;
+  /** 상품 대표 이미지 (대표옵션 이미지) */
+  imageUrls?: string[];
 }
 
 /** 상품 생성 요청 */
@@ -150,6 +182,25 @@ export async function getProductDetail(
       return null;
     }
     console.error("Get product detail error:", error);
+    throw error;
+  }
+}
+
+/**
+ * 특정 상품의 옵션 목록 조회
+ * GET /products/:productId/options
+ */
+export async function getProductOptions(
+  productId: number
+): Promise<ProductOptionListItem[]> {
+  try {
+    const data = await apiGet<ProductOptionListItem[]>(
+      `/products/${productId}/options`,
+      { requireAuth: true }
+    );
+    return data ?? [];
+  } catch (error) {
+    console.error("Get product options error:", error);
     throw error;
   }
 }

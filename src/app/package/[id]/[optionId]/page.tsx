@@ -9,7 +9,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { dummyLink } from "@/constants";
 import Image from "next/image";
 import { Divider } from "@/components/ui/divider";
-import { useProductDetail } from "@/queries/useProductQueries";
 import { useOptionDetail } from "@/queries/useOptionQueries";
 import { useCreateSchedule } from "@/queries/useScheduleQueries";
 import { notFound } from "next/navigation";
@@ -29,15 +28,10 @@ export default function PackageOptionBookingPage() {
   const isValidPackageId = !isNaN(packageId) && packageId > 0;
   const isValidOptionId = !isNaN(optionId) && optionId > 0;
 
-  const { data: productDetail, isLoading } = useProductDetail(
-    isValidPackageId ? packageId : undefined
-  );
+  const resolvedOptionId = isValidOptionId ? optionId : undefined;
 
-  const resolvedOptionId = isValidOptionId
-    ? optionId
-    : (productDetail?.options[0]?.id ?? undefined);
-
-  const { data: optionDetail } = useOptionDetail(resolvedOptionId);
+  const { data: optionDetail, isLoading: isOptionLoading } =
+    useOptionDetail(resolvedOptionId);
   const createScheduleMutation = useCreateSchedule();
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -48,11 +42,11 @@ export default function PackageOptionBookingPage() {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   useEffect(() => {
-    const startDate = productDetail?.slotStartDate
-      ? toDateOnly(new Date(productDetail.slotStartDate))
+    const startDate = optionDetail?.slotStartDate
+      ? toDateOnly(new Date(optionDetail.slotStartDate))
       : undefined;
-    const endDate = productDetail?.slotEndDate
-      ? toDateOnly(new Date(productDetail.slotEndDate))
+    const endDate = optionDetail?.slotEndDate
+      ? toDateOnly(new Date(optionDetail.slotEndDate))
       : undefined;
     if (!startDate) return;
 
@@ -71,13 +65,13 @@ export default function PackageOptionBookingPage() {
       if (endMonth && prevMonth > endMonth) return startMonth;
       return prev;
     });
-  }, [productDetail?.slotStartDate, productDetail?.slotEndDate]);
+  }, [optionDetail?.slotStartDate, optionDetail?.slotEndDate]);
 
-  if (!isValidPackageId) {
+  if (!isValidPackageId || !isValidOptionId) {
     notFound();
   }
 
-  if (isLoading) {
+  if (isOptionLoading) {
     return (
       <div className="bg-black text-white flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-pink-500" />
@@ -85,34 +79,27 @@ export default function PackageOptionBookingPage() {
     );
   }
 
-  if (!productDetail) {
+  if (!optionDetail) {
     notFound();
   }
 
-  const currentOption = optionDetail ?? {
-    id: productDetail.options[0]?.id ?? 0,
-    name: productDetail.options[0]?.name ?? productDetail.name,
-    description:
-      productDetail.options[0]?.description ?? productDetail.description,
-    price: productDetail.options[0]?.price ?? productDetail.minPrice,
-    address: productDetail.options[0]?.address ?? "",
-    discountRate: productDetail.options[0]?.discountRate ?? 0,
-    bookingGuide: productDetail.options[0]?.bookingGuide ?? "",
-    regularClosingDay: productDetail.options[0]?.regularClosingDay ?? null,
-    imageUrls: productDetail.options[0]?.imageUrls ?? [],
-  };
+  if (optionDetail === null) {
+    notFound();
+  }
+
+  const currentOption = optionDetail;
 
   const optionImageUrl = currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
 
-  const slotStartDate = productDetail.slotStartDate
-    ? toDateOnly(new Date(productDetail.slotStartDate))
+  const slotStartDate = currentOption.slotStartDate
+    ? toDateOnly(new Date(currentOption.slotStartDate))
     : undefined;
-  const slotEndDate = productDetail.slotEndDate
-    ? toDateOnly(new Date(productDetail.slotEndDate))
+  const slotEndDate = currentOption.slotEndDate
+    ? toDateOnly(new Date(currentOption.slotEndDate))
     : undefined;
 
-  const startHour = Number(productDetail.slotStartTime?.slice(0, 2));
-  const endHour = Number(productDetail.slotEndTime?.slice(0, 2));
+  const startHour = Number(currentOption.slotStartTime?.slice(0, 2));
+  const endHour = Number(currentOption.slotEndTime?.slice(0, 2));
   const timeSlots =
     Number.isFinite(startHour) && Number.isFinite(endHour)
       ? Array.from({ length: Math.max(endHour - startHour, 0) }, (_, i) => {
@@ -147,9 +134,9 @@ export default function PackageOptionBookingPage() {
     startAt.setHours(hour, minute, 0, 0);
 
     const slotCount =
-      Number.isFinite(productDetail.reservationSlotCount) &&
-      productDetail.reservationSlotCount > 0
-        ? productDetail.reservationSlotCount
+      Number.isFinite(currentOption.reservationSlotCount) &&
+      (currentOption.reservationSlotCount ?? 0) > 0
+        ? currentOption.reservationSlotCount!
         : 1;
     const endAt = new Date(startAt);
     endAt.setHours(endAt.getHours() + slotCount);
@@ -157,7 +144,7 @@ export default function PackageOptionBookingPage() {
     try {
       await createScheduleMutation.mutateAsync({
         productId: packageId,
-        title: currentOption.name || productDetail.name,
+        title: currentOption.name,
         startAt: startAt.toISOString(),
         endAt: endAt.toISOString(),
       });
@@ -229,7 +216,7 @@ export default function PackageOptionBookingPage() {
               {currentOption.name}
             </h2>
             <p className="text-[11px] text-gray-400 mt-1 uppercase">
-              {productDetail.name}
+              {currentOption.name}
             </p>
 
             <div className="flex items-center justify-between mt-3">

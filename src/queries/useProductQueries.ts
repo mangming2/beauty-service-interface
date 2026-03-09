@@ -2,9 +2,11 @@ import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   getProducts,
   getProductDetail,
+  getProductOptions,
   getProductsByTag,
   type Product,
   type ProductDetail,
+  type ProductOptionListItem,
   type GetProductsParams,
 } from "@/api/product";
 import type { ApiError } from "@/lib/apiClient";
@@ -18,6 +20,8 @@ export const productKeys = {
     [...productKeys.lists(), filters] as const,
   details: () => [...productKeys.all, "detail"] as const,
   detail: (id: number) => [...productKeys.details(), id] as const,
+  options: (productId: number) =>
+    [...productKeys.detail(productId), "options"] as const,
   byTag: (tag: string) => [...productKeys.all, "tag", tag] as const,
 } as const;
 
@@ -80,6 +84,23 @@ export function useProductDetail(productId: number | undefined) {
     queryKey: productKeys.detail(productId!),
     queryFn: () => getProductDetail(productId!),
     enabled: isValidProductId,
+    staleTime: 5 * 60 * 1000,
+    retry: retryUnless401,
+  });
+}
+
+// ========== 상품별 옵션 목록 조회 ==========
+
+/**
+ * 특정 상품의 옵션 목록 조회 (GET /products/:productId/options)
+ */
+export function useProductOptions(productId: number | undefined) {
+  const isValidId = typeof productId === "number" && Number.isFinite(productId);
+
+  return useQuery<ProductOptionListItem[]>({
+    queryKey: productKeys.options(productId!),
+    queryFn: () => getProductOptions(productId!),
+    enabled: isValidId,
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,
   });

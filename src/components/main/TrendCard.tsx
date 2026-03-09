@@ -40,7 +40,7 @@ export function TrendCard({
                 <MusicIcon color="#ABA9A9" />
                 <span className="ml-1">{artist} 아티스트?</span>
                 <span className="mx-1">·</span>
-                <span>{location} 장소?</span>
+                <span>{location}</span>
               </div>
               <p className="text-md text-white">{description}</p>
             </div>

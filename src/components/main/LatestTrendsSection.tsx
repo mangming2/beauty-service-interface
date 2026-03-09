@@ -6,14 +6,14 @@ import { TrendCard } from "@/components/main/TrendCard";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { Divider } from "@/components/ui/divider";
 import { GapY } from "@/components/ui/gap";
-import { useProducts } from "@/queries/useProductQueries";
+import type { Product } from "@/api/product";
+import { useLatestInKoreaRecommendations } from "@/queries/useRecommendationQueries";
 
 const TRENDS_SIZE = 3;
 
 export function LatestTrendsSection() {
-  const { data: trends = [] } = useProducts({
+  const { data: trends = [] } = useLatestInKoreaRecommendations({
     size: TRENDS_SIZE,
-    is_random: true,
   });
 
   return (
@@ -38,15 +38,23 @@ export function LatestTrendsSection() {
       <GapY size={12} />
 
       <div className="flex flex-col">
-        {trends.map((product, index, array) => (
+        {trends.map((product: Product, index: number, array: Product[]) => (
           <div key={product.id}>
             <TrendCard
               id={String(product.id)}
               title={product.name}
-              artist={product.tagNames?.[0] ?? "-"}
-              location="-"
-              description={product.description}
-              imageSrc="/dummy-profile.png"
+              artist={
+                product.representOption?.tags?.[0] ??
+                product.tagNames?.[0] ??
+                "-"
+              }
+              location={product.representOption?.location ?? "-"}
+              description={product.description ?? ""}
+              imageSrc={
+                product.imageUrls?.[0] ??
+                product.representOption?.imageUrls?.[0] ??
+                "/dummy-profile.png"
+              }
             />
             {index < array.length - 1 && <Divider />}
           </div>

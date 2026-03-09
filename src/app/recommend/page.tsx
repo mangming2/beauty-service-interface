@@ -50,7 +50,7 @@ function Content() {
     selectedTags.length > 0
       ? products?.filter(pkg =>
           selectedTags.some(tag =>
-            (pkg.tagNames ?? []).some(
+            (pkg.representOption?.tags ?? pkg.tagNames ?? []).some(
               t =>
                 t.toLowerCase().includes(tag.toLowerCase()) ||
                 tag.toLowerCase().includes(t.toLowerCase())
@@ -100,20 +100,27 @@ function Content() {
         <div key={pkg.id}>
           <div className="pl-5">
             <RecommendationGallery
-              images={[
-                "/dummy-package.png",
-                "/dummy-package.png",
-                "/dummy-package.png",
-              ]}
+              images={
+                pkg.imageUrls?.length
+                  ? pkg.imageUrls
+                  : [
+                      "/dummy-package.png",
+                      "/dummy-package.png",
+                      "/dummy-package.png",
+                    ]
+              }
               salonInfo={{
-                tags: pkg.tagNames ?? [],
+                tags: pkg.representOption?.tags ?? pkg.tagNames ?? [],
                 name: pkg.name,
-                minPrice: pkg.minPrice,
-                totalPrice: pkg.totalPrice,
-                rating: 0,
-                reviewCount: 0,
+                minPrice:
+                  pkg.representOption?.originalPrice ?? pkg.minPrice ?? 0,
+                totalPrice:
+                  pkg.representOption?.finalPrice ?? pkg.totalPrice ?? 0,
+                rating: pkg.rating ?? pkg.representOption?.rating ?? 0,
+                reviewCount:
+                  pkg.reviewCount ?? pkg.representOption?.reviewCount ?? 0,
                 distance: "0km",
-                location: "location",
+                location: pkg.representOption?.location ?? "location",
                 languages: "languages",
               }}
               onClick={() => handlePackageClick(pkg.id)}

@@ -33,11 +33,20 @@ export default function PackageSection({
           <PackageCard
             key={pkg.id}
             packageId={pkg.id}
-            imageSrc="/dummy-profile.png" // TODO: API에 이미지 필드 추가 시 교체
+            imageSrc={
+              pkg.imageUrls?.[0] ??
+              pkg.representOption?.imageUrls?.[0] ??
+              "/dummy-profile.png"
+            }
             imageAlt={pkg.name}
             title={pkg.name}
-            tags={pkg.tagNames ?? []}
-            minPrice={pkg.minPrice}
+            tags={pkg.representOption?.tags ?? pkg.tagNames ?? []}
+            minPrice={
+              pkg.representOption?.finalPrice ??
+              pkg.totalPrice ??
+              pkg.minPrice ??
+              0
+            }
             onClick={id => onPackageClick?.(id)}
             priority={firstCardPriority && index === 0}
           />

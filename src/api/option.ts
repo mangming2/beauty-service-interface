@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // ========== 타입 정의 ==========
 
-/** 옵션 (상세 API 응답) */
+/** 옵션 (상세/생성 응답, 목록 조회) */
 export interface Option {
   id: number;
   name: string;
@@ -15,6 +15,14 @@ export interface Option {
   bookingGuide: string;
   regularClosingDay: string | null;
   imageUrls: string[];
+  /** 예약 슬롯 (옵션 단위) */
+  slotStartDate?: string;
+  slotEndDate?: string;
+  slotStartTime?: string;
+  slotEndTime?: string;
+  reservationSlotCount?: number;
+  /** 목록 조회 시 대표 옵션 여부 */
+  representOption?: boolean;
 }
 
 /** 옵션 생성 요청 */
