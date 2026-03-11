@@ -186,6 +186,10 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
+      confirm: "Confirm - 확인",
+      bookOtherOptions: "Book Other Options",
+      bookOtherOptionsSubtitle:
+        "Explore other options available for this product.",
     },
     notFound: {
       pageNotFound: "Page Not Found",
@@ -416,6 +420,10 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
+      confirm: "Confirm - 확인",
+      bookOtherOptions: "Book Other Options",
+      bookOtherOptionsSubtitle:
+        "Explore other options available for this product.",
     },
     notFound: {
       pageNotFound: "Page Not Found",
@@ -648,6 +656,10 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
+      confirm: "Confirm - 확인",
+      bookOtherOptions: "Book Other Options",
+      bookOtherOptionsSubtitle:
+        "Explore other options available for this product.",
     },
     notFound: {
       pageNotFound: "ページが見つかりません",
@@ -877,6 +889,10 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
+      confirm: "Confirm - 확인",
+      bookOtherOptions: "Book Other Options",
+      bookOtherOptionsSubtitle:
+        "Explore other options available for this product.",
     },
     notFound: {
       pageNotFound: "页面未找到",

@@ -10,7 +10,7 @@ import {
   useProductOptions,
 } from "@/queries/useProductQueries";
 import { useOptionDetail } from "@/queries/useOptionQueries";
-import { LocationIcon } from "@/components/common/Icons";
+import { LocationIcon, ArrowRightIcon } from "@/components/common/Icons";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -87,12 +87,13 @@ export default function BookingConfirmPage() {
   };
 
   const optionImageUrl = currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
+  const packageImageUrl = productDetail.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
 
   const dateTimeDisplay =
     savedDate && savedTime ? `${savedDate} ${savedTime}` : "—";
 
   return (
-    <div className="bg-background text-white px-5 pt-6 pb-5 flex flex-col flex-1">
+    <div className="bg-background text-white px-5 pt-6 flex flex-col flex-1">
       <h1 className="title-lg text-white">{t("bookingPage.orderStatus")}</h1>
       <GapY size={8} />
       <p className="text-md text-gray-font">
@@ -116,23 +117,23 @@ export default function BookingConfirmPage() {
               </span>
             ) : null}
           </div>
-          <h2 className="text-lg font-semibold text-white leading-tight truncate">
-            {currentOption.name}
-          </h2>
+          <h2 className="text-lg text-white">{currentOption.name}</h2>
           <div className="flex items-center gap-1 mt-1">
             <LocationIcon width={14} height={14} color="#ABA9A9" />
             <p className="text-[#A9A9AA] text-xs truncate">
               {currentOption.address}
             </p>
           </div>
-          <p className="text-pink-font text-base font-semibold mt-2">
+          <p className="text-pink-font text-md mt-1">
             {currentOption.discountRate > 0
               ? `${currentOption.discountRate}% `
               : ""}
+          </p>
+          <p className="text-md text-white mt-1 ">
             ₩{currentOption.price.toLocaleString()}
           </p>
         </div>
-        <div className="relative w-[108px] h-[108px] flex-shrink-0 rounded-[4px] overflow-hidden">
+        <div className="relative w-[92px] h-[92px] flex-shrink-0 rounded-[4px] overflow-hidden">
           <Image
             src={optionImageUrl}
             alt={currentOption.name}
@@ -146,6 +147,45 @@ export default function BookingConfirmPage() {
       <GapY size={24} />
 
       <h2 className="title-md text-white">{t("package.packageDetails")}</h2>
+      {productDetail.description && (
+        <p className="text-md text-gray-font mt-1">
+          {productDetail.description}
+        </p>
+      )}
+      <GapY size={12} />
+      <Link
+        href={`/package/${packageId}${resolvedOptionId ? `/${resolvedOptionId}` : ""}`}
+        className="block rounded-[12px] bg-gray-container border border-[#2E3033] overflow-hidden"
+      >
+        <div className="flex items-center gap-3 p-3">
+          <div className="relative w-[80px] h-[80px] flex-shrink-0 rounded-lg overflow-hidden">
+            <Image
+              src={packageImageUrl}
+              alt={productDetail.name}
+              fill
+              className="object-cover"
+              unoptimized={packageImageUrl.startsWith("http")}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-white font-bold text-lg truncate">
+              {productDetail.name}
+            </h3>
+            <div className="flex items-center gap-1 mt-1">
+              <LocationIcon width={14} height={14} color="#A9A9AA" />
+              <p className="text-gray-400 text-sm truncate">
+                {currentOption.address || productDetail.address}
+              </p>
+            </div>
+          </div>
+          <ArrowRightIcon
+            color="#B9BBC2"
+            width={8}
+            height={16}
+            className="flex-shrink-0"
+          />
+        </div>
+      </Link>
       <GapY size={12} />
       <div className="rounded-[12px] p-4 space-y-3">
         <div className="flex justify-between items-center text-md text-gray-font">
@@ -158,10 +198,61 @@ export default function BookingConfirmPage() {
         </div>
       </div>
 
-      <div className="mt-auto">
+      {(() => {
+        const otherOptions = options.filter(opt => opt.id !== resolvedOptionId);
+        if (otherOptions.length === 0) return null;
+        return (
+          <>
+            <GapY size={24} />
+            <h2 className="title-md text-white">
+              {t("bookingPage.bookOtherOptions")}
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">
+              {t("bookingPage.bookOtherOptionsSubtitle")}
+            </p>
+            <GapY size={12} />
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
+              {otherOptions.map(opt => (
+                <Link
+                  key={opt.id}
+                  href={`/package/${packageId}/${opt.id}`}
+                  className="flex-shrink-0 w-[140px] rounded-xl overflow-hidden bg-none border-none"
+                >
+                  <div className="relative w-full aspect-square">
+                    <Image
+                      src={opt.imageUrl ?? PLACEHOLDER_IMAGE}
+                      alt={opt.name}
+                      fill
+                      className="object-cover"
+                      unoptimized={(opt.imageUrl ?? "").startsWith("http")}
+                    />
+                  </div>
+                  <div className="p-2">
+                    {opt.optionTags?.length ? (
+                      <p className="text-gray-400 text-xs truncate mb-1">
+                        {opt.optionTags.map(tag => `#${tag}`).join(" ")}
+                      </p>
+                    ) : (
+                      <p className="text-gray-400 text-xs truncate mb-1">
+                        {"더미태그1, 더미태그2"}
+                      </p>
+                    )}
+                    <p className="text-white text-lg truncate">{opt.name}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        );
+      })()}
+
+      <div
+        className="mt-auto p-5"
+        style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
+      >
         <Link href="/my">
           <Button className="w-full h-[52px] bg-primary">
-            <span className="text-lg">{t("bookingPage.save")}</span>
+            <span className="text-lg">{t("bookingPage.confirm")}</span>
           </Button>
         </Link>
       </div>
