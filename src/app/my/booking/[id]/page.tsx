@@ -11,7 +11,7 @@ import { ArrowRightIcon, LocationIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { Divider } from "@/components/ui/divider";
 import { useBookingDetail } from "@/queries/useMyPageQueries";
-import { useProductDetail } from "@/queries/useProductQueries";
+import { useProductOptions } from "@/queries/useProductQueries";
 
 const PLACEHOLDER_IMAGE = "/dummy-profile.png";
 const platformFee = 20000;
@@ -26,18 +26,17 @@ export default function MyBookingPage() {
   const { data: booking, isLoading: bookingLoading } = useBookingDetail(
     isValidId ? reservationId : undefined
   );
-  const { data: productDetail } = useProductDetail(booking?.packageId);
+  const { data: options = [] } = useProductOptions(booking?.packageId);
 
   const [currentStep] = useState(2); // Sending, Processing, Accepted
 
-  const components =
-    productDetail?.options.map(opt => ({
-      id: String(opt.id),
-      title: opt.name,
-      location: opt.location,
-      price: opt.price,
-      status: "pending" as const,
-    })) ?? [];
+  const components = options.map(opt => ({
+    id: String(opt.id),
+    title: opt.name,
+    location: opt.address,
+    price: opt.price,
+    status: "pending" as const,
+  }));
 
   const handleSave = () => {
     if (booking) {

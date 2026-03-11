@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { GapY } from "@/components/ui/gap";
-import { useProductDetail } from "@/queries/useProductQueries";
+import {
+  useProductDetail,
+  useProductOptions,
+} from "@/queries/useProductQueries";
 import { useOptionDetail } from "@/queries/useOptionQueries";
 import { LocationIcon } from "@/components/common/Icons";
 import { notFound } from "next/navigation";
@@ -32,8 +35,10 @@ export default function BookingConfirmPage() {
   const { data: productDetail, isLoading } = useProductDetail(
     isValidId ? packageId : undefined
   );
-  const resolvedOptionId =
-    optionId ?? productDetail?.options[0]?.id ?? undefined;
+  const { data: options = [] } = useProductOptions(
+    isValidId ? packageId : undefined
+  );
+  const resolvedOptionId = optionId ?? options[0]?.id ?? undefined;
   const { data: optionDetail } = useOptionDetail(resolvedOptionId);
 
   useEffect(() => {
@@ -68,19 +73,17 @@ export default function BookingConfirmPage() {
     notFound();
   }
 
+  const firstOption = options[0];
   const currentOption = optionDetail ?? {
-    id: productDetail.options[0]?.id ?? 0,
-    name: productDetail.options[0]?.name ?? productDetail.name,
-    description: productDetail.options[0]?.description ?? "",
-    price: productDetail.options[0]?.price ?? productDetail.minPrice,
-    address:
-      productDetail.options[0]?.address ??
-      productDetail.options[0]?.location ??
-      "",
-    discountRate: productDetail.options[0]?.discountRate ?? 0,
-    bookingGuide: productDetail.options[0]?.bookingGuide ?? "",
-    regularClosingDay: productDetail.options[0]?.regularClosingDay ?? null,
-    imageUrls: productDetail.options[0]?.imageUrls ?? [],
+    id: firstOption?.id ?? 0,
+    name: firstOption?.name ?? productDetail.name,
+    description: firstOption?.description ?? "",
+    price: firstOption?.price ?? 0,
+    address: firstOption?.address ?? "",
+    discountRate: firstOption?.discountRate ?? 0,
+    bookingGuide: "",
+    regularClosingDay: null,
+    imageUrls: firstOption?.imageUrl ? [firstOption.imageUrl] : [],
   };
 
   const optionImageUrl = currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
@@ -104,9 +107,9 @@ export default function BookingConfirmPage() {
             <span className="px-2 py-0.5 rounded caption-sm bg-primary text-white">
               {t("bookingPage.featured")}
             </span>
-            {productDetail.tagNames?.length ? (
+            {firstOption?.optionTags?.length ? (
               <span className="text-white text-xs truncate">
-                {(productDetail.tagNames ?? [])
+                {(firstOption.optionTags ?? [])
                   .slice(0, 2)
                   .map(tag => `#${tag}`)
                   .join(" ")}

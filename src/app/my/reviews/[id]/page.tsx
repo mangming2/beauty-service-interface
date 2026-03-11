@@ -2,7 +2,10 @@
 
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useProductDetail } from "@/queries/useProductQueries";
+import {
+  useProductDetail,
+  useProductOptions,
+} from "@/queries/useProductQueries";
 import { useCreateReview } from "@/queries/useReviewQueries";
 import { useUser } from "@/queries/useAuthQueries";
 import { getAuthToken } from "@/lib/apiClient";
@@ -29,6 +32,8 @@ export default function CreateReviewPage() {
   const { data: productDetail, isLoading: productLoading } = useProductDetail(
     Number(packageId)
   );
+  const { data: options = [] } = useProductOptions(Number(packageId));
+  const firstOption = options[0];
   const { user } = useUser();
   const createReviewMutation = useCreateReview();
 
@@ -117,9 +122,7 @@ export default function CreateReviewPage() {
                     {productDetail.name}
                   </h4>
                   <p className="text-sm text-gray-font">
-                    {productDetail.options[0]?.address ??
-                      productDetail.options[0]?.location ??
-                      ""}
+                    {firstOption?.address ?? productDetail.address ?? ""}
                   </p>
                   <GapY size={20} />
                   <p className="caption-md text-gray-400">

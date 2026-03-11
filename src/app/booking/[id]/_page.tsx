@@ -8,7 +8,10 @@ import { ArrowRightIcon } from "@/components/common/Icons";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { useProductDetail } from "@/queries/useProductQueries";
+import {
+  useProductDetail,
+  useProductOptions,
+} from "@/queries/useProductQueries";
 
 const PLACEHOLDER_IMAGE = "/dummy-profile.png";
 const platformFee = 20000;
@@ -20,6 +23,9 @@ export default function BookingPage() {
   const isValidId = !isNaN(packageId) && packageId > 0;
 
   const { data: productDetail, isLoading: productLoading } = useProductDetail(
+    isValidId ? packageId : undefined
+  );
+  const { data: options = [], isLoading: optionsLoading } = useProductOptions(
     isValidId ? packageId : undefined
   );
 
@@ -42,7 +48,7 @@ export default function BookingPage() {
     notFound();
   }
 
-  if (productLoading) {
+  if (productLoading || optionsLoading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500" />
@@ -54,14 +60,17 @@ export default function BookingPage() {
     notFound();
   }
 
-  const components = productDetail.options.map(opt => ({
+  const components = options.map(opt => ({
     id: String(opt.id),
     title: opt.name,
     price: opt.price,
-    location: opt.location,
+    location: opt.address,
     description: opt.description,
-    imageSrc: PLACEHOLDER_IMAGE,
+    imageSrc: opt.imageUrl ?? PLACEHOLDER_IMAGE,
   }));
+
+  const optionsTotal = options.reduce((sum, o) => sum + o.price, 0);
+  const totalPrice = optionsTotal + platformFee;
 
   const handleBack = () => {
     router.push(`/package/${packageId}`);
@@ -135,7 +144,7 @@ export default function BookingPage() {
           <div className="border-t border-gray-700 pt-2 mt-2">
             <div className="flex justify-between font-bold">
               <span>Total</span>
-              <span>₩{productDetail.totalPrice.toLocaleString()}</span>
+              <span>₩{totalPrice.toLocaleString()}</span>
             </div>
           </div>
         </div>
