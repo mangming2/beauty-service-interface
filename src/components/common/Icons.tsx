@@ -832,6 +832,27 @@ const MusicIcon = ({ color = "white", ...rest }: IconProps) => {
     </svg>
   );
 };
+
+const BookmarkIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="9"
+      height="11"
+      viewBox="0 0 9 11"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M0.400024 0.933724C0.400024 0.639172 0.638806 0.400391 0.933358 0.400391H7.33336C7.62791 0.400391 7.86669 0.639172 7.86669 0.933724V9.55684C7.86669 9.97879 7.39989 10.2336 7.04495 10.0055L4.42176 8.31913C4.24608 8.20619 4.02064 8.20619 3.84495 8.31913L1.22176 10.0055C0.866822 10.2336 0.400024 9.97879 0.400024 9.55684V0.933724Z"
+        fill={color ?? "#ABA9A9"}
+        stroke={color ?? "#ABA9A9"}
+        strokeWidth="0.8"
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -863,6 +884,7 @@ export {
   SettingIcon,
   SearchIcon,
   MusicIcon,
+  BookmarkIcon,
 };
 
 export const Icons = {
@@ -893,4 +915,5 @@ export const Icons = {
   setting: SettingIcon,
   search: SearchIcon,
   music: MusicIcon,
+  bookmark: BookmarkIcon,
 };
