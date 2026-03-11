@@ -108,7 +108,7 @@ export function LatestCommunityPosts() {
                     {formatLikeCount(post.likeCount)}
                   </span>
                   <span className="flex items-center gap-1 text-disabled text-sm">
-                    <BookmarkIcon className="w-4 h-4" />
+                    <BookmarkIcon color="#ABA9A9" className="w-4 h-4" />
                     {post.commentCount}
                   </span>
                 </div>
