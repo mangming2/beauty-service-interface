@@ -13,7 +13,7 @@ export const Header = () => {
   const isFormPage = pathname.startsWith("/form");
   const isWishPage = pathname === "/wish";
   const isMyPage = pathname === "/my";
-  const isBoardPage = pathname === "/board";
+  const isBoardPage = pathname === "/board" || pathname.startsWith("/board/");
   const isSearchPage = pathname === "/search";
   const isMyEditPage = pathname === "/my/edit";
   const isPackageReviewsPage = /^\/package\/[^/]+\/reviews$/.test(pathname);
@@ -57,12 +57,14 @@ export const Header = () => {
           !isPackageReviewsPage &&
           !isMyReviewsPage &&
           !isSearchPage && (
-            <Image
-              src="/main-logo.png"
-              alt={t("common.mainLogo")}
-              width={66}
-              height={18}
-            />
+            <Link href="/" className="inline-block">
+              <Image
+                src="/main-logo.png"
+                alt={t("common.mainLogo")}
+                width={66}
+                height={18}
+              />
+            </Link>
           )}
         <div className="flex items-center gap-3">
           {(isMainPage || isBoardPage || isSearchPage) && (

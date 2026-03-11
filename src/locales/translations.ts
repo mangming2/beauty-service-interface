@@ -10,6 +10,7 @@ export const translations = {
     boardView: "게시판 보기",
     community: "Community",
     events: "Events",
+    notice: "Notice",
     concepts: {
       all: "전체",
       girlCrush: "걸크러시",
@@ -92,6 +93,7 @@ export const translations = {
     footer: {
       home: "Home",
       wish: "Wish",
+      community: "Community",
       my: "My",
     },
     home: {
@@ -246,6 +248,7 @@ export const translations = {
     boardView: "View Board",
     community: "Community",
     events: "Events",
+    notice: "Notice",
     concepts: {
       all: "All Concept",
       girlCrush: "Girl Crush",
@@ -326,6 +329,7 @@ export const translations = {
     footer: {
       home: "Home",
       wish: "Wish",
+      community: "Community",
       my: "My",
     },
     home: {
@@ -480,6 +484,7 @@ export const translations = {
     boardView: "掲示板を見る",
     community: "Community",
     events: "Events",
+    notice: "Notice",
     concepts: {
       all: "All",
       girlCrush: "ガールクラッシュ",
@@ -562,6 +567,7 @@ export const translations = {
     footer: {
       home: "Home",
       wish: "Wish",
+      community: "Community",
       my: "My",
     },
     home: {
@@ -717,6 +723,7 @@ export const translations = {
     boardView: "查看公告栏",
     community: "Community",
     events: "Events",
+    notice: "Notice",
     concepts: {
       all: "全部",
       girlCrush: "Girl Crush",
@@ -795,6 +802,7 @@ export const translations = {
     footer: {
       home: "Home",
       wish: "Wish",
+      community: "Community",
       my: "My",
     },
     home: {
