@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format } from "date-fns";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, Check } from "lucide-react";
 import { dummyLink } from "@/constants";
 import Image from "next/image";
 import { Divider } from "@/components/ui/divider";
@@ -40,6 +40,7 @@ export default function PackageOptionBookingPage() {
   const [isAddressOpen, setIsAddressOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const [externalBookingAgreed, setExternalBookingAgreed] = useState(false);
 
   useEffect(() => {
     const startDate = optionDetail?.slotStartDate
@@ -169,7 +170,7 @@ export default function PackageOptionBookingPage() {
     onToggle: () => void,
     content: string
   ) => (
-    <div className="rounded-[4px] bg-gray-container border border-[#2E3033]">
+    <div className="bg-gray-container border border-[#2E3033] rounded-[8px] overflow-hidden">
       <button
         type="button"
         className="w-full px-3 py-[10px] flex items-center justify-between text-left"
@@ -224,14 +225,14 @@ export default function PackageOptionBookingPage() {
               <p className="text-lg text-white">
                 {currentOption.discountRate > 0
                   ? `${currentOption.discountRate}% `
-                  : ""}
+                  : "더미%"}
                 <span className="text-pink-font">
                   ₩{currentOption.price.toLocaleString()}
                 </span>
               </p>
             </div>
 
-            <div className="mt-3 space-y-5">
+            <div className="roun mt-3 space-y-5">
               {renderAccordion(
                 "Description",
                 isDescriptionOpen,
@@ -251,6 +252,40 @@ export default function PackageOptionBookingPage() {
                 currentOption.bookingGuide ||
                   "Reserve through the official website and complete payment to confirm your booking."
               )}
+            </div>
+          </div>
+        </div>
+
+        <Divider height={8} className="bg-[#2E3033] mt-4 mb-4" />
+
+        <div className="bg-[#2E3033] rounded-[8px] p-4 mb-4">
+          <h3 className="text-lg font-bold text-white mb-3">
+            Before you continue.
+          </h3>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setExternalBookingAgreed(prev => !prev)}
+              className="flex gap-2 text-left"
+            >
+              <span
+                className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  externalBookingAgreed ? "bg-[#BCBCBC]" : "bg-[#4A4B52]"
+                }`}
+              >
+                {externalBookingAgreed && (
+                  <Check className="w-3 h-3 text-white stroke-[3]" />
+                )}
+              </span>
+            </button>
+            <div>
+              <span className="text-white text-lg">
+                External Booking Notice
+              </span>
+              <p className="text-md text-gray-font">
+                I understand that my reservation is not completed here and must
+                be finalized on Naver Booking.
+              </p>
             </div>
           </div>
         </div>
@@ -349,7 +384,11 @@ export default function PackageOptionBookingPage() {
           >
             Complete
           </Button>
-          <Button className="flex-1 h-[52px] text-lg" onClick={handleBookLink}>
+          <Button
+            className="flex-1 h-[52px] text-lg"
+            onClick={handleBookLink}
+            disabled={!externalBookingAgreed || !selectedDate || !selectedTime}
+          >
             Book Link
           </Button>
         </div>
