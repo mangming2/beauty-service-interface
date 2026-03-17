@@ -10,7 +10,8 @@ export default function BoardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isNotice = pathname === "/board/notice";
+  const isNotice =
+    pathname === "/board/notice" || pathname.startsWith("/board/notice/");
   const isCommunity = pathname === "/board/community";
 
   return (

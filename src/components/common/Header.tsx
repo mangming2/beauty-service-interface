@@ -14,6 +14,8 @@ export const Header = () => {
   const isWishPage = pathname === "/wish";
   const isMyPage = pathname === "/my";
   const isBoardPage = pathname === "/board" || pathname.startsWith("/board/");
+  const isNoticeDetailPage =
+    pathname.startsWith("/board/notice/") && pathname !== "/board/notice";
   const isSearchPage = pathname === "/search";
   const isMyEditPage = pathname === "/my/edit";
   const isPackageReviewsPage = /^\/package\/[^/]+\/reviews$/.test(pathname);
@@ -35,7 +37,12 @@ export const Header = () => {
         {(isMyEditPage || isMyPage) && (
           <h1 className="text-white h-6 title-md">{t("header.myPage")}</h1>
         )}
-        {isBoardPage && (
+        {isNoticeDetailPage && (
+          <h1 className="text-white h-6 title-md">
+            {t("header.noticeDetailTitle")}
+          </h1>
+        )}
+        {isBoardPage && !isNoticeDetailPage && (
           <h1 className="text-white h-6 title-md">{t("header.boardTitle")}</h1>
         )}
         {isPackageReviewsPage && (

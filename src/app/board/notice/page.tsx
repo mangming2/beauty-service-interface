@@ -16,7 +16,7 @@ export default function BoardNoticePage() {
       {NOTICE_POSTS.map(post => (
         <li key={post.id}>
           <Link
-            href={`/board/${post.id}`}
+            href={`/board/notice/${post.id}`}
             className="flex items-center justify-between py-4"
           >
             <div>

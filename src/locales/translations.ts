@@ -89,6 +89,7 @@ export const translations = {
       packageReviews: "Package Reviews",
       myReviews: "My Reviews",
       searchTitle: "검색",
+      noticeDetailTitle: "공지사항 글 상세",
     },
     footer: {
       home: "Home",
@@ -325,6 +326,7 @@ export const translations = {
       packageReviews: "Package Reviews",
       myReviews: "My Reviews",
       searchTitle: "Search",
+      noticeDetailTitle: "Notice Detail",
     },
     footer: {
       home: "Home",
@@ -563,6 +565,7 @@ export const translations = {
       packageReviews: "Package Reviews",
       myReviews: "My Reviews",
       searchTitle: "検索",
+      noticeDetailTitle: "お知らせ詳細",
     },
     footer: {
       home: "Home",
@@ -798,6 +801,7 @@ export const translations = {
       packageReviews: "Package Reviews",
       myReviews: "My Reviews",
       searchTitle: "搜索",
+      noticeDetailTitle: "公告详情",
     },
     footer: {
       home: "Home",
