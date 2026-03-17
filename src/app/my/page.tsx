@@ -6,7 +6,7 @@ import Image from "next/image";
 
 import { useUser, useLogout } from "@/queries/useAuthQueries";
 import BookingHistory from "@/components/my/booking-history";
-import Schedule from "@/components/my/Schedule";
+// import Schedule from "@/components/my/Schedule"; // 이번 배포 미포함
 import { EditIcon, SettingIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -89,12 +89,14 @@ export default function MyPage() {
             >
               {t("my.bookingHistory")}
             </TabsTrigger>
+            {/* 이번 배포 미포함
             <TabsTrigger
               value="schedule"
               className="relative title-sm bg-transparent border-0 text-gray-400 data-[state=active]:text-pink-font data-[state=active]:bg-transparent hover:text-white transition-colors duration-200 pb-3 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-pink-font"
             >
               {t("my.schedule")}
             </TabsTrigger>
+            */}
           </TabsList>
 
           {/* Booking History Tab */}
@@ -102,10 +104,11 @@ export default function MyPage() {
             <BookingHistory />
           </TabsContent>
 
-          {/* Schedule Tab */}
+          {/* Schedule Tab - 이번 배포 미포함
           <TabsContent value="schedule" className="mt-6">
             <Schedule />
           </TabsContent>
+          */}
         </Tabs>
       </div>
     </div>
