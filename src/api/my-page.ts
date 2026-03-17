@@ -1,4 +1,5 @@
 import { apiGet } from "@/lib/apiClient";
+import type { ApiError } from "@/lib/apiClient";
 import type { ReviewDetail } from "@/types/api";
 
 // ========== 타입 정의 ==========
@@ -36,7 +37,13 @@ export async function getMyPageUser(): Promise<MyPageUser> {
     const data = await apiGet<MyPageUser>("/mypage/user");
     return data;
   } catch (error) {
-    console.error("Get my page user error:", error);
+    const err = error as ApiError | undefined;
+    if (
+      err?.status !== 401 &&
+      !(err?.status === 404 && err?.code === "USER_NOT_FOUND")
+    ) {
+      console.error("Get my page user error:", error);
+    }
     throw error;
   }
 }

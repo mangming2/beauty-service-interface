@@ -47,8 +47,23 @@ export async function reissueToken(): Promise<string | null> {
     });
 
     if (!response.ok) {
-      if (process.env.NODE_ENV === "development") {
-        const text = await response.text();
+      const text = await response.text();
+      // 404 USER_NOT_FOUND: refresh 토큰에 해당하는 사용자가 없음(삭제/만료 등) → 로그아웃 처리
+      if (response.status === 404) {
+        try {
+          const data = JSON.parse(text || "{}");
+          if (data.errorCode === "USER_NOT_FOUND") {
+            useAuthStore.getState().logout();
+            if (process.env.NODE_ENV === "development") {
+              console.info("[reissue] 사용자 없음(404), 로그아웃 처리됨");
+            }
+            return null;
+          }
+        } catch {
+          useAuthStore.getState().logout();
+        }
+      }
+      if (process.env.NODE_ENV === "development" && response.status !== 404) {
         console.warn(
           "[reissue] 재발급 실패:",
           response.status,
