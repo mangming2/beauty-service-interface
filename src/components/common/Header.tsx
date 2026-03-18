@@ -37,9 +37,6 @@ export const Header = () => {
         {(isMyEditPage || isMyPage) && (
           <h1 className="text-white h-6 title-md">{t("header.myPage")}</h1>
         )}
-        {isBoardPage && !isNoticeDetailPage && (
-          <h1 className="text-white h-6 title-md">{t("header.boardTitle")}</h1>
-        )}
         {isPackageReviewsPage && (
           <h1 className="text-white h-6 title-md">
             {t("header.packageReviews")}
@@ -55,7 +52,6 @@ export const Header = () => {
           !isWishPage &&
           !isMyEditPage &&
           !isMyPage &&
-          !isBoardPage &&
           !isPackageReviewsPage &&
           !isMyReviewsPage &&
           !isSearchPage) ||

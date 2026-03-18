@@ -112,16 +112,15 @@ function Content() {
               salonInfo={{
                 tags: pkg.representOption?.tags ?? pkg.tagNames ?? [],
                 name: pkg.name,
-                minPrice:
+                originalPrice:
                   pkg.representOption?.originalPrice ?? pkg.minPrice ?? 0,
-                totalPrice:
+                finalPrice:
                   pkg.representOption?.finalPrice ?? pkg.totalPrice ?? 0,
+                discountRate: pkg.representOption?.discountRate ?? 0,
                 rating: pkg.rating ?? pkg.representOption?.rating ?? 0,
                 reviewCount:
                   pkg.reviewCount ?? pkg.representOption?.reviewCount ?? 0,
-                distance: "0km",
                 location: pkg.representOption?.location ?? "location",
-                languages: "languages",
               }}
               onClick={() => handlePackageClick(pkg.id)}
             />
