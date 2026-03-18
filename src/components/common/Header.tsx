@@ -37,11 +37,6 @@ export const Header = () => {
         {(isMyEditPage || isMyPage) && (
           <h1 className="text-white h-6 title-md">{t("header.myPage")}</h1>
         )}
-        {isNoticeDetailPage && (
-          <h1 className="text-white h-6 title-md">
-            {t("header.noticeDetailTitle")}
-          </h1>
-        )}
         {isBoardPage && !isNoticeDetailPage && (
           <h1 className="text-white h-6 title-md">{t("header.boardTitle")}</h1>
         )}
@@ -56,23 +51,24 @@ export const Header = () => {
         {isSearchPage && (
           <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
         )}
-        {!isFormPage &&
+        {((!isFormPage &&
           !isWishPage &&
           !isMyEditPage &&
           !isMyPage &&
           !isBoardPage &&
           !isPackageReviewsPage &&
           !isMyReviewsPage &&
-          !isSearchPage && (
-            <Link href="/" className="inline-block">
-              <Image
-                src="/main-logo.png"
-                alt={t("common.mainLogo")}
-                width={66}
-                height={18}
-              />
-            </Link>
-          )}
+          !isSearchPage) ||
+          isNoticeDetailPage) && (
+          <Link href="/" className="inline-block">
+            <Image
+              src="/main-logo.png"
+              alt={t("common.mainLogo")}
+              width={66}
+              height={18}
+            />
+          </Link>
+        )}
         <div className="flex items-center gap-3">
           {(isMainPage || isBoardPage || isSearchPage) && (
             <Link

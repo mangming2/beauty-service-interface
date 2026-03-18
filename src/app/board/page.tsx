@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { ArrowRightIcon } from "@/components/common/Icons";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { useCommunityPosts } from "@/queries/useCommunityQueries";
+import { GapY } from "../../components/ui/gap";
 
 const TAB_NOTICE = "notice";
 const TAB_COMMUNITY = "community";
@@ -26,8 +28,8 @@ export default function BoardPage() {
   const communityPosts = communityData?.posts ?? [];
 
   return (
-    <div>
-      <div className="pt-6 border-b border-gray-outline px-4">
+    <div className="px-5">
+      <div className="pt-6 border-b border-gray-outline">
         <nav className="flex gap-6">
           <Link
             href="/board"
@@ -41,23 +43,32 @@ export default function BoardPage() {
               <TranslatedText translationKey="notice" />
             </span>
           </Link>
-          <Link
-            href="/board?tab=community"
-            className={`relative title-sm flex-initial pb-3 pt-0 px-0 rounded-none transition-colors duration-200 after:absolute after:left-0 after:right-0 after:h-px after:bottom-0 after:bg-gray-outline ${
-              tab === TAB_COMMUNITY
-                ? "text-pink-font after:bg-pink-font"
-                : "text-gray-400 hover:text-white after:bg-gray-outline"
-            }`}
+          <button
+            type="button"
+            onClick={() => alert("커뮤니티는 개발 중입니다.")}
+            className="relative title-sm flex-initial pb-3 pt-0 px-0 rounded-none transition-colors duration-200 after:absolute after:left-0 after:right-0 after:h-px after:bottom-0 after:bg-gray-outline text-gray-400 hover:text-white cursor-pointer bg-transparent border-0 text-left"
           >
             <span className="relative z-[1]">
               <TranslatedText translationKey="community" />
             </span>
-          </Link>
+          </button>
         </nav>
       </div>
 
+      <GapY size={24} />
+
+      <div className="relative w-full aspect-[3/1] overflow-hidden rounded">
+        <Image
+          src="/notice.png"
+          alt="공지"
+          fill
+          className="object-cover"
+          sizes="100vw"
+        />
+      </div>
+
       {tab === TAB_NOTICE && (
-        <ul className="divide-y divide-gray-outline px-4">
+        <ul className="divide-y divide-gray-outline">
           {noticeLoading ? (
             <li className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500" />
