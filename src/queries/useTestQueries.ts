@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { healthCheck, testSignup, testLogin } from "@/api/test";
+import {
+  healthCheck,
+  testSignup,
+  testSignupAdmin,
+  testLogin,
+} from "@/api/test";
 import { useAuthStore } from "@/store/useAuthStore";
 import { authKeys } from "@/queries/useAuthQueries";
 
@@ -41,18 +46,30 @@ export function useHealthCheck(enabled: boolean = false) {
   });
 }
 
-// ========== 테스트 회원가입 ==========
+// ========== 테스트 회원가입 (USER) ==========
 
 export function useTestSignup() {
   return useMutation<TestSignupResponse, Error, string>({
-    mutationFn: async (seed: string) => {
-      return await testSignup(seed);
-    },
+    mutationFn: async (seed: string) => testSignup(seed),
     onSuccess: data => {
       console.log("✅ 테스트 회원가입 성공:", data);
     },
     onError: error => {
       console.error("❌ 테스트 회원가입 실패:", error);
+    },
+  });
+}
+
+// ========== 테스트 관리자 회원가입 (ADMIN) ==========
+
+export function useTestSignupAdmin() {
+  return useMutation<TestSignupResponse, Error, string>({
+    mutationFn: async (seed: string) => testSignupAdmin(seed),
+    onSuccess: data => {
+      console.log("✅ 테스트 관리자 회원가입 성공:", data);
+    },
+    onError: error => {
+      console.error("❌ 테스트 관리자 회원가입 실패:", error);
     },
   });
 }
@@ -77,8 +94,8 @@ export function useTestLogin() {
       // auth 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: authKeys.all });
 
-      // 홈으로 이동
-      router.push("/");
+      // 로그인 페이지와 동일하게 마이페이지로 이동
+      router.push("/my");
     },
     onError: error => {
       console.error("❌ 테스트 로그인 실패:", error);

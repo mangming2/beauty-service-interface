@@ -1,6 +1,4 @@
-import { apiGet, getAuthToken } from "@/lib/apiClient";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+import { apiGet, apiRequest } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
@@ -25,12 +23,22 @@ export interface Option {
   representOption?: boolean;
 }
 
-/** 옵션 생성 요청 */
+/** 옵션 생성 요청 (POST /options multipart request body) */
 export interface CreateOptionRequest {
   name: string;
   description: string;
   price: number;
-  location: string;
+  address: string;
+  slotStartDate: string;
+  slotEndDate: string;
+  slotStartHour: number;
+  slotEndHour: number;
+  discountRate?: number;
+  discountStartAt?: string;
+  discountEndAt?: string;
+  bookingGuide?: string;
+  regularClosingDay?: string | null;
+  optionTagNames?: string[];
 }
 
 // ========== 옵션 API ==========
@@ -76,40 +84,24 @@ export async function getOptionDetail(
 /**
  * 옵션 생성 (multipart/form-data)
  * POST /options
+ * apiRequest 사용 → 401 시 토큰 재발급·리다이렉트 동일 적용
  */
 export async function createOption(
   request: CreateOptionRequest,
   images?: File[]
 ): Promise<Option> {
   const formData = new FormData();
-
   formData.append(
     "request",
     new Blob([JSON.stringify(request)], { type: "application/json" })
   );
-
   if (images?.length) {
-    images.forEach(file => {
-      formData.append("images", file);
-    });
+    images.forEach(file => formData.append("images", file));
   }
 
-  const accessToken = getAuthToken();
-  const headers: Record<string, string> = {};
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}/options`, {
+  return apiRequest<Option>("/options", {
     method: "POST",
-    headers,
     body: formData,
-    credentials: "include",
+    requireAuth: true,
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to create option");
-  }
-
-  return response.json();
 }

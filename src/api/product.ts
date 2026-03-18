@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "@/lib/apiClient";
+import { apiGet, apiRequest } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
@@ -75,16 +75,12 @@ export interface ProductDetail {
   imageUrls?: string[];
 }
 
-/** 상품 생성 요청 */
+/** 상품 생성 요청 (POST /products multipart request body) */
 export interface CreateProductRequest {
   name: string;
   description: string;
-  slotStartDate: string;
-  slotEndDate: string;
-  slotStartHour: number;
-  slotEndHour: number;
   optionIds: number[];
-  tagNames: string[];
+  representOptionId: number;
 }
 
 /** 상품 목록 조회 파라미터 */
@@ -206,17 +202,28 @@ export async function getProductOptions(
 }
 
 /**
- * 상품 생성 (application/json)
+ * 상품 생성 (multipart/form-data)
  * POST /products
+ * - request: JSON { name, description, optionIds, representOptionId }
+ * - images: 파일 목록 (선택)
+ * apiRequest 사용 → 401 시 토큰 재발급·리다이렉트 동일 적용
  */
 export async function createProduct(
-  request: CreateProductRequest
+  request: CreateProductRequest,
+  images?: File[]
 ): Promise<CreateProductResponse> {
-  try {
-    const data = await apiPost<CreateProductResponse>("/products", request);
-    return data;
-  } catch (error) {
-    console.error("Create product error:", error);
-    throw error;
+  const formData = new FormData();
+  formData.append(
+    "request",
+    new Blob([JSON.stringify(request)], { type: "application/json" })
+  );
+  if (images?.length) {
+    images.forEach(file => formData.append("images", file));
   }
+
+  return apiRequest<CreateProductResponse>("/products", {
+    method: "POST",
+    body: formData,
+    requireAuth: true,
+  });
 }

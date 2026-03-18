@@ -1,13 +1,21 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   getProducts,
   getProductDetail,
   getProductOptions,
   getProductsByTag,
+  createProduct,
   type Product,
   type ProductDetail,
   type ProductOptionListItem,
   type GetProductsParams,
+  type CreateProductRequest,
+  type CreateProductResponse,
 } from "@/api/product";
 import type { ApiError } from "@/lib/apiClient";
 
@@ -148,5 +156,22 @@ export function useInfiniteProductsByTag(
     enabled: !!tag,
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,
+  });
+}
+
+// ========== 상품 생성 (관리자) ==========
+
+interface CreateProductParams {
+  request: CreateProductRequest;
+  images?: File[];
+}
+
+export function useCreateProduct() {
+  const queryClient = useQueryClient();
+  return useMutation<CreateProductResponse, Error, CreateProductParams>({
+    mutationFn: ({ request, images }) => createProduct(request, images),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+    },
   });
 }

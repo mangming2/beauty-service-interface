@@ -10,6 +10,8 @@ export interface MyPageUser {
   email: string;
   nickname: string;
   lastLoginAt: string;
+  /** 서버에서 반환 시 관리자 뱃지 표시 (예: USER | ADMIN) */
+  role?: "USER" | "ADMIN";
 }
 
 /** 예약 내역 */
@@ -35,6 +37,9 @@ export interface Booking {
 export async function getMyPageUser(): Promise<MyPageUser> {
   try {
     const data = await apiGet<MyPageUser>("/mypage/user");
+    if (process.env.NODE_ENV === "development") {
+      console.log("[GET /mypage/user] 응답:", JSON.stringify(data, null, 2));
+    }
     return data;
   } catch (error) {
     const err = error as ApiError | undefined;

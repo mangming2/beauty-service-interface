@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
 
 import { useUser, useLogout } from "@/queries/useAuthQueries";
+import { useMyPageUser } from "@/queries/useMyPageQueries";
 import BookingHistory from "@/components/my/booking-history";
 // import Schedule from "@/components/my/Schedule"; // 이번 배포 미포함
 import { EditIcon, SettingIcon } from "@/components/common/Icons";
@@ -15,13 +17,33 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 export default function MyPage() {
   const { user } = useUser();
+  const { data: myPageUser, isLoading: myPageUserLoading } = useMyPageUser();
   const signOutMutation = useLogout();
   const router = useRouter();
   const { t } = useTranslation();
+  const isAdmin = myPageUser?.role === "ADMIN";
+
+  // 개발 시 콘솔에서 유저 정보 확인용
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    if (myPageUserLoading) return;
+    console.log("[My 페이지] 유저 정보 출처 정리:");
+    console.log(
+      "  1) Auth Store (useUser) — 로그인 시 저장된 값:",
+      user ?? null
+    );
+    console.log(
+      "  2) GET /mypage/user (useMyPageUser) — 마이페이지 API 응답:",
+      myPageUser ?? null
+    );
+  }, [user, myPageUser, myPageUserLoading]);
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
-  // profiles 테이블 데이터를 우선적으로 사용하고, 없으면 auth.users 데이터 사용
   const userProfile = {
-    name: user?.name || user?.email?.split("@")[0] || t("my.defaultName"),
+    name:
+      myPageUser?.nickname ||
+      user?.name ||
+      user?.email?.split("@")[0] ||
+      t("my.defaultName"),
     email: user?.email || "fan@example.com",
     avatar: user?.profileImage || "/dummy-profile.png",
   };
@@ -45,8 +67,13 @@ export default function MyPage() {
             />
           </div>
           <div className="flex-1">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 flex-wrap">
               <h1 className="text-xl font-bold">{userProfile.name}</h1>
+              {isAdmin && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                  {t("my.admin")}
+                </span>
+              )}
               <Link href="/my/edit">
                 <EditIcon className="cursor-pointer" width={20} height={20} />
               </Link>
@@ -57,7 +84,7 @@ export default function MyPage() {
         </div>
       </div>
 
-      <div className="flex px-3 gap-2">
+      <div className="flex px-3 gap-2 flex-wrap">
         <Button
           variant="graySmall"
           onClick={() => router.push("/my/reviews")}
@@ -66,6 +93,16 @@ export default function MyPage() {
         >
           {t("my.myReviews")}
         </Button>
+        {isAdmin && (
+          <Button
+            variant="graySmall"
+            onClick={() => router.push("/admin")}
+            width={100}
+            height={32}
+          >
+            {t("my.adminPage")}
+          </Button>
+        )}
         <Button
           variant="graySmall"
           onClick={() => signOutMutation.mutate()}

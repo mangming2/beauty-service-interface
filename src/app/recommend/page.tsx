@@ -11,13 +11,14 @@ import { PageLoading } from "@/components/common";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const BASE_TAGS = [
-  "SMent",
-  "Aespa",
-  "Girl crush",
-  "Metallic",
-  "example1",
-  "example2",
-];
+  "Recommended",
+  "For You",
+  "Most Booked",
+  "Most Reviewed",
+  "Low Price",
+  "High Price",
+  "Best Deal",
+] as const;
 
 const PACKAGE_SECTIONS_CONFIG = {
   middle: { titleKey: "wish.howAboutThisPackage", indices: [0, 3] },
@@ -27,37 +28,76 @@ const PACKAGE_SECTIONS_CONFIG = {
 function Content() {
   const searchParams = useSearchParams();
   const { t } = useTranslation();
-  // URL 태그 파싱
-  const urlTags =
+  // 폼에서 넘어온 태그 (For You 매칭용)
+  const formTags =
     searchParams
       .get("tags")
       ?.split(",")
       .map(t => t.trim())
       .filter(Boolean) || [];
-  const availableTags = Array.from(new Set([...BASE_TAGS, ...urlTags]));
+  const availableTags = [...BASE_TAGS];
   const router = useRouter();
-  const [selectedTags, setSelectedTags] = useState<string[]>(urlTags);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const { data: products, isLoading } = useProducts();
 
-  // 상품 섹션 데이터
+  const productTags = (pkg: Product) =>
+    pkg.representOption?.tags ?? pkg.tagNames ?? [];
+  const productPrice = (pkg: Product) =>
+    pkg.representOption?.finalPrice ?? pkg.totalPrice ?? pkg.minPrice ?? 0;
+
+  const isMostBookedSelected = selectedTags.includes("Most Booked");
+  const isForYouSelected = selectedTags.includes("For You");
+
+  // 1) Most Booked 선택 시 → 개발중 표시용, 리스트는 빈 배열
+  // 2) 그 외: 필터 후 정렬
+  let filteredPackages: Product[] | undefined = products;
+  if (products) {
+    if (isMostBookedSelected) {
+      filteredPackages = [];
+    } else {
+      // For You: 폼 태그와 겹치는 태그가 있는 상품만
+      if (isForYouSelected && formTags.length > 0) {
+        filteredPackages = products.filter(pkg =>
+          productTags(pkg).some(pt =>
+            formTags.some(
+              ft =>
+                pt.toLowerCase().includes(ft.toLowerCase()) ||
+                ft.toLowerCase().includes(pt.toLowerCase())
+            )
+          )
+        );
+      }
+      // 정렬 (선택된 태그 우선순위: Recommended < Most Reviewed < Low/High Price < Best Deal)
+      const sortTag =
+        selectedTags.find(t =>
+          ["Most Reviewed", "Low Price", "High Price", "Best Deal"].includes(t)
+        ) ?? "Recommended";
+      filteredPackages = [...(filteredPackages ?? [])];
+      if (sortTag === "Most Reviewed") {
+        filteredPackages.sort(
+          (a, b) =>
+            (b.reviewCount ?? b.representOption?.reviewCount ?? 0) -
+            (a.reviewCount ?? a.representOption?.reviewCount ?? 0)
+        );
+      } else if (sortTag === "Low Price") {
+        filteredPackages.sort((a, b) => productPrice(a) - productPrice(b));
+      } else if (sortTag === "High Price") {
+        filteredPackages.sort((a, b) => productPrice(b) - productPrice(a));
+      } else if (sortTag === "Best Deal") {
+        filteredPackages.sort(
+          (a, b) =>
+            (b.representOption?.discountRate ?? 0) -
+            (a.representOption?.discountRate ?? 0)
+        );
+      }
+    }
+  }
+
+  // 상품 섹션 데이터 (정렬/필터된 목록이 아닌 원본 기준)
   const middlePackages = products?.slice(
     ...PACKAGE_SECTIONS_CONFIG.middle.indices
   );
   const lastPackages = products?.slice(...PACKAGE_SECTIONS_CONFIG.last.indices);
-
-  // 필터링된 상품
-  const filteredPackages =
-    selectedTags.length > 0
-      ? products?.filter(pkg =>
-          selectedTags.some(tag =>
-            (pkg.representOption?.tags ?? pkg.tagNames ?? []).some(
-              t =>
-                t.toLowerCase().includes(tag.toLowerCase()) ||
-                tag.toLowerCase().includes(t.toLowerCase())
-            )
-          )
-        )
-      : products;
 
   const handleTagClick = (tag: string) => {
     setSelectedTags(prev =>
@@ -95,65 +135,73 @@ function Content() {
 
       <GapY size={20} />
 
+      {/* Most Booked 선택 시 개발중 메시지 */}
+      {isMostBookedSelected && (
+        <div className="px-5 py-12 text-center text-gray-400 text-lg">
+          개발중입니다
+        </div>
+      )}
+
       {/* Galleries */}
-      {filteredPackages?.map((pkg: Product, index: number) => (
-        <div key={pkg.id}>
-          <div className="pl-5">
-            <RecommendationGallery
-              images={
-                pkg.imageUrls?.length
-                  ? pkg.imageUrls
-                  : [
-                      "/dummy-package.png",
-                      "/dummy-package.png",
-                      "/dummy-package.png",
-                    ]
-              }
-              salonInfo={{
-                tags: pkg.representOption?.tags ?? pkg.tagNames ?? [],
-                name: pkg.name,
-                originalPrice:
-                  pkg.representOption?.originalPrice ?? pkg.minPrice ?? 0,
-                finalPrice:
-                  pkg.representOption?.finalPrice ?? pkg.totalPrice ?? 0,
-                discountRate: pkg.representOption?.discountRate ?? 0,
-                rating: pkg.rating ?? pkg.representOption?.rating ?? 0,
-                reviewCount:
-                  pkg.reviewCount ?? pkg.representOption?.reviewCount ?? 0,
-                location: pkg.representOption?.location ?? "location",
-              }}
-              onClick={() => handlePackageClick(pkg.id)}
-            />
-          </div>
-
-          {/* 2번째 갤러리 후 */}
-          {index % 2 === 1 && !!middlePackages?.length && (
-            <>
-              <GapY size={20} />
-              <PackageSection
-                title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
-                packages={middlePackages}
-                onPackageClick={handlePackageClick}
+      {!isMostBookedSelected &&
+        filteredPackages?.map((pkg: Product, index: number) => (
+          <div key={pkg.id}>
+            <div className="pl-5">
+              <RecommendationGallery
+                images={
+                  pkg.imageUrls?.length
+                    ? pkg.imageUrls
+                    : [
+                        "/dummy-package.png",
+                        "/dummy-package.png",
+                        "/dummy-package.png",
+                      ]
+                }
+                salonInfo={{
+                  tags: pkg.representOption?.tags ?? pkg.tagNames ?? [],
+                  name: pkg.name,
+                  originalPrice:
+                    pkg.representOption?.originalPrice ?? pkg.minPrice ?? 0,
+                  finalPrice:
+                    pkg.representOption?.finalPrice ?? pkg.totalPrice ?? 0,
+                  discountRate: pkg.representOption?.discountRate ?? 0,
+                  rating: pkg.rating ?? pkg.representOption?.rating ?? 0,
+                  reviewCount:
+                    pkg.reviewCount ?? pkg.representOption?.reviewCount ?? 0,
+                  location: pkg.representOption?.location ?? "location",
+                }}
+                onClick={() => handlePackageClick(pkg.id)}
               />
-              <GapY size={20} />
-            </>
-          )}
+            </div>
 
-          {/* 마지막이 홀수번째일 때 */}
-          {index === filteredPackages.length - 1 &&
-            index % 2 === 0 &&
-            !!lastPackages?.length && (
+            {/* 2번째 갤러리 후 */}
+            {index % 2 === 1 && !!middlePackages?.length && (
               <>
                 <GapY size={20} />
                 <PackageSection
-                  title={t(PACKAGE_SECTIONS_CONFIG.last.titleKey)}
-                  packages={lastPackages}
+                  title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
+                  packages={middlePackages}
                   onPackageClick={handlePackageClick}
                 />
+                <GapY size={20} />
               </>
             )}
-        </div>
-      ))}
+
+            {/* 마지막이 홀수번째일 때 */}
+            {index === filteredPackages.length - 1 &&
+              index % 2 === 0 &&
+              !!lastPackages?.length && (
+                <>
+                  <GapY size={20} />
+                  <PackageSection
+                    title={t(PACKAGE_SECTIONS_CONFIG.last.titleKey)}
+                    packages={lastPackages}
+                    onPackageClick={handlePackageClick}
+                  />
+                </>
+              )}
+          </div>
+        ))}
       <GapY size={24} />
     </div>
   );
