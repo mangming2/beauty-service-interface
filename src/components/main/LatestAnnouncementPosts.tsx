@@ -9,14 +9,14 @@ import {
   HeartIcon,
 } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
-import { useCommunityPosts } from "@/queries/useCommunityQueries";
+import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 
 function formatLikeCount(count: number): string {
   return count >= 1000 ? "999+" : String(count);
 }
 
-export function LatestCommunityPosts() {
-  const { data, isLoading, isError } = useCommunityPosts({ size: 3 });
+export function LatestAnnouncementPosts() {
+  const { data, isLoading, isError } = useAnnouncements({ size: 3 });
 
   if (isLoading) {
     return (
@@ -66,7 +66,7 @@ export function LatestCommunityPosts() {
           {posts.map(post => (
             <Link
               key={post.postId}
-              href={`/board/${post.postId}`}
+              href={`/board/notice/${post.postId}`}
               className="block bg-gray-container p-3"
             >
               {/* 상단: 작성자 + 날짜 */}
@@ -81,9 +81,7 @@ export function LatestCommunityPosts() {
                       className="object-contain w-full h-full"
                     />
                   </div>
-                  <span className="text-gray-2 text-sm">
-                    {post.authorDisplayName}
-                  </span>
+                  <span className="text-gray-2 text-sm">DOKI 담당자</span>
                 </div>
                 <span className="text-disabled caption-sm">
                   {format(new Date(post.createdAt), "yy.MM.dd HH:mm")}
@@ -92,24 +90,24 @@ export function LatestCommunityPosts() {
               {/* 제목 */}
               <h3 className="text-white text-md mb-1 truncate">{post.title}</h3>
               {/* 미리보기 한 줄 */}
-              <p className="text-white text-sm mb-1">{post.previewContent}</p>
+              {/* <p className="text-white text-sm mb-1">{post.previewContent}</p> */}
               {/* 하단: 태그 + 좋아요/댓글 */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
-                  {post.tags?.[0] ? (
+                  {/* {post.tags?.[0] ? (
                     <span className="px-2 py-0.5 bg-gray-outline text-gray-font caption-sm truncate max-w-[120px]">
                       {post.tags[0]}
                     </span>
-                  ) : null}
+                  ) : null} */}
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <span className="flex items-center gap-1 text-disabled text-sm">
                     <HeartIcon color="#ff60b3" className="w-4 h-4" />
-                    {formatLikeCount(post.likeCount)}
+                    {formatLikeCount(post.viewCount)}
                   </span>
                   <span className="flex items-center gap-1 text-disabled text-sm">
                     <BookmarkIcon color="#ABA9A9" className="w-4 h-4" />
-                    {post.commentCount}
+                    {post.viewCount}
                   </span>
                 </div>
               </div>

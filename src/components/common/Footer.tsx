@@ -41,7 +41,7 @@ export const Footer = () => {
               />
             }
             text={t("footer.community")}
-            href="/board/community"
+            href="/board"
             isActive={pathname.startsWith("/board")}
           />
         </div>

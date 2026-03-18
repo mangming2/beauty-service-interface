@@ -75,7 +75,7 @@ export async function getAnnouncements(
     const queryString = queryParams.toString();
     const url = `${BASE}${queryString ? `?${queryString}` : ""}`;
     const data = await apiGet<AnnouncementListResponse>(url, {
-      requireAuth: false,
+      requireAuth: true,
     });
     return data;
   } catch (error) {
@@ -93,7 +93,7 @@ export async function getAnnouncementDetail(
 ): Promise<AnnouncementPostDetail | null> {
   try {
     const data = await apiGet<AnnouncementPostDetail>(`${BASE}/${postId}`, {
-      requireAuth: false,
+      requireAuth: true,
     });
     return data ?? null;
   } catch (error: unknown) {

@@ -2,16 +2,16 @@
 
 import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
-import { useAnnouncementDetail } from "@/queries/useAnnouncementQueries";
+import { useCommunityPostDetail } from "@/queries/useCommunityQueries";
 import { Spinner } from "@/components/ui/spinner";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
-export default function NoticeDetailPage() {
+export default function CommunityDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const postId = id ? parseInt(id, 10) : undefined;
 
-  const { data: post, isLoading, isError } = useAnnouncementDetail(postId);
+  const { data: post, isLoading, isError } = useCommunityPostDetail(postId);
 
   if (postId === undefined || Number.isNaN(postId)) {
     notFound();
@@ -29,30 +29,24 @@ export default function NoticeDetailPage() {
     notFound();
   }
 
-  const displayDate = post.announcementDate || post.createdAt;
-  const parsedDate = displayDate ? parseISO(displayDate) : null;
-  const dateStr = parsedDate
-    ? format(parsedDate, "yy.MM.dd")
-    : (displayDate ?? "");
-  const timeStr = parsedDate ? format(parsedDate, "HH:mm") : "";
-
   return (
     <article className="bg-background text-white px-4 pb-8">
       <div className="flex items-start gap-3 mt-4">
-        <div className="rounded-full flex-shrink-0 w-14 h-14 bg-black overflow-hidden relative">
+        <div className="rounded-full flex-shrink-0 w-10 h-10 bg-gray-container flex items-center justify-center overflow-hidden">
           <Image
             src="/main-icon.png"
             alt=""
-            width={56}
-            height={56}
-            className="object-contain w-full h-full"
+            width={40}
+            height={40}
+            className="object-contain"
           />
         </div>
-        <div className="flex flex-col h-full gap-1 ">
-          <p className="text-lg text-white font-medium">DOKI 담당자</p>
-          <p className="caption-md text-gray_1 flex-shrink-0">
-            {dateStr}
-            {timeStr ? ` ${timeStr}` : ""}
+        <div className="min-w-0 flex-1">
+          <p className="text-md text-white font-medium">
+            {post.authorDisplayName}
+          </p>
+          <p className="caption-md text-gray_1 mt-0.5">
+            {format(new Date(post.createdAt), "yy.MM.dd HH:mm")}
           </p>
         </div>
       </div>
@@ -85,9 +79,10 @@ export default function NoticeDetailPage() {
         </div>
       )}
 
-      {post.viewCount !== undefined && (
-        <p className="caption-md text-gray_1 mt-6">조회수 {post.viewCount}</p>
-      )}
+      <div className="caption-md text-gray_1 mt-6 flex gap-4">
+        <span>좋아요 {post.likeCount}</span>
+        <span>댓글 {post.commentCount}</span>
+      </div>
     </article>
   );
 }

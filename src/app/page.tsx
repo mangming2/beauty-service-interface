@@ -13,7 +13,7 @@ import { GapY } from "@/components/ui/gap";
 import { PopularCarousel } from "@/components/main/PopularCarousel";
 import { ConceptScrollContainer } from "@/components/main/ConceptScrollContainer";
 import { LatestTrendsSection } from "@/components/main/LatestTrendsSection";
-import { LatestCommunityPosts } from "@/components/main/LatestCommunityPosts";
+import { LatestAnnouncementPosts } from "@/components/main/LatestAnnouncementPosts";
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -149,7 +149,7 @@ export default function Home() {
         <GapY size={20} />
 
         {/* Board Section - 최근 게시물 3개 */}
-        <LatestCommunityPosts />
+        <LatestAnnouncementPosts />
 
         <GapY size={20} />
 
