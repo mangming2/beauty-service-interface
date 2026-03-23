@@ -1,0 +1,307 @@
+"use client";
+
+import type { CreateOptionRequest } from "@/api/option";
+
+const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+export interface OptionFormFieldsProps {
+  optionReq: CreateOptionRequest;
+  setOptionReq: React.Dispatch<React.SetStateAction<CreateOptionRequest>>;
+  optionTagsStr: string;
+  setOptionTagsStr: (v: string) => void;
+  optionImages: File[];
+  setOptionImages: (files: File[]) => void;
+}
+
+export function OptionFormFields({
+  optionReq,
+  setOptionReq,
+  optionTagsStr,
+  setOptionTagsStr,
+  setOptionImages,
+}: OptionFormFieldsProps) {
+  return (
+    <>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">이름 *</label>
+        <input
+          required
+          value={optionReq.name}
+          onChange={e =>
+            setOptionReq(prev => ({ ...prev, name: e.target.value }))
+          }
+          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600 outline-none focus:ring-1 focus:ring-pink-500"
+          placeholder="뷰티 스파 이용권"
+        />
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">설명 *</label>
+        <textarea
+          required
+          value={optionReq.description}
+          onChange={e =>
+            setOptionReq(prev => ({
+              ...prev,
+              description: e.target.value,
+            }))
+          }
+          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600 outline-none focus:ring-1 focus:ring-pink-500"
+          placeholder="프라이빗 뷰티 스파 2시간 이용"
+          rows={2}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">가격 *</label>
+          <input
+            type="number"
+            required
+            value={optionReq.price}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                price: Number(e.target.value),
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">할인율 (%)</label>
+          <input
+            type="number"
+            min={0}
+            max={100}
+            value={optionReq.discountRate ?? 0}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                discountRate: Number(e.target.value),
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">주소 *</label>
+        <input
+          required
+          value={optionReq.address}
+          onChange={e =>
+            setOptionReq(prev => ({ ...prev, address: e.target.value }))
+          }
+          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          placeholder="Olympic-ro 300, Songpa-gu, Seoul"
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            슬롯 시작일 *
+          </label>
+          <input
+            type="date"
+            required
+            value={optionReq.slotStartDate}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                slotStartDate: e.target.value,
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            슬롯 종료일 *
+          </label>
+          <input
+            type="date"
+            required
+            value={optionReq.slotEndDate}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                slotEndDate: e.target.value,
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            슬롯 시작 시 *
+          </label>
+          <input
+            type="number"
+            min={0}
+            max={23}
+            value={optionReq.slotStartHour}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                slotStartHour: Number(e.target.value),
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            슬롯 종료 시 *
+          </label>
+          <input
+            type="number"
+            min={0}
+            max={24}
+            value={optionReq.slotEndHour}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                slotEndHour: Number(e.target.value),
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">정기 휴무일</label>
+        <select
+          value={optionReq.regularClosingDay ?? ""}
+          onChange={e =>
+            setOptionReq(prev => ({
+              ...prev,
+              regularClosingDay: e.target.value || null,
+            }))
+          }
+          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+        >
+          <option value="">없음</option>
+          {DAYS.map(d => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            할인 시작일시
+          </label>
+          <input
+            type="datetime-local"
+            value={
+              optionReq.discountStartAt
+                ? optionReq.discountStartAt.slice(0, 16)
+                : ""
+            }
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                discountStartAt: e.target.value
+                  ? `${e.target.value}:00`
+                  : undefined,
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            할인 종료일시
+          </label>
+          <input
+            type="datetime-local"
+            value={
+              optionReq.discountEndAt
+                ? optionReq.discountEndAt.slice(0, 16)
+                : ""
+            }
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                discountEndAt: e.target.value
+                  ? `${e.target.value}:00`
+                  : undefined,
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          />
+        </div>
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">예약 안내</label>
+        <input
+          value={optionReq.bookingGuide ?? ""}
+          onChange={e =>
+            setOptionReq(prev => ({
+              ...prev,
+              bookingGuide: e.target.value,
+            }))
+          }
+          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          placeholder="네이버 예약"
+        />
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">
+          태그 (쉼표 구분)
+        </label>
+        <input
+          value={optionTagsStr}
+          onChange={e => setOptionTagsStr(e.target.value)}
+          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          placeholder="hair,makeup"
+        />
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">
+          이미지 (선택)
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={e =>
+            setOptionImages(e.target.files ? [...e.target.files] : [])
+          }
+          className="w-full text-sm text-gray-400 file:mr-2 file:py-2 file:px-3 file:rounded file:border-0 file:bg-gray-700 file:text-white"
+        />
+      </div>
+    </>
+  );
+}
+
+export function optionToCreateRequest(
+  o: import("@/api/option").Option
+): CreateOptionRequest {
+  const parseHour = (t: string | undefined, fallback: number) => {
+    if (!t) return fallback;
+    const h = Number.parseInt(t.slice(0, 2), 10);
+    return Number.isFinite(h) ? h : fallback;
+  };
+  const dateOnly = (d: string | undefined, fallback: string) => {
+    if (!d) return fallback;
+    return d.length >= 10 ? d.slice(0, 10) : d;
+  };
+  return {
+    name: o.name,
+    description: o.description,
+    price: o.price,
+    address: o.address,
+    slotStartDate: dateOnly(o.slotStartDate, "2025-01-01"),
+    slotEndDate: dateOnly(o.slotEndDate, "2025-12-31"),
+    slotStartHour: parseHour(o.slotStartTime, 9),
+    slotEndHour: parseHour(o.slotEndTime, 18),
+    discountRate: o.discountRate,
+    bookingGuide: o.bookingGuide ?? "",
+    regularClosingDay: o.regularClosingDay,
+    optionTagNames: [],
+  };
+}

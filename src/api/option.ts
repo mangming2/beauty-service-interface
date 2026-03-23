@@ -1,4 +1,4 @@
-import { apiGet, apiRequest } from "@/lib/apiClient";
+import { apiGet, apiRequest, apiDelete } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
@@ -104,4 +104,37 @@ export async function createOption(
     body: formData,
     requireAuth: true,
   });
+}
+
+/**
+ * 옵션 수정 (multipart/form-data)
+ * PUT /options/:optionId
+ */
+export async function updateOption(
+  optionId: number,
+  request: CreateOptionRequest,
+  images?: File[]
+): Promise<Option> {
+  const formData = new FormData();
+  formData.append(
+    "request",
+    new Blob([JSON.stringify(request)], { type: "application/json" })
+  );
+  if (images?.length) {
+    images.forEach(file => formData.append("images", file));
+  }
+
+  return apiRequest<Option>(`/options/${optionId}`, {
+    method: "PUT",
+    body: formData,
+    requireAuth: true,
+  });
+}
+
+/**
+ * 옵션 삭제
+ * DELETE /options/:optionId
+ */
+export async function deleteOption(optionId: number): Promise<void> {
+  await apiDelete<void>(`/options/${optionId}`, { requireAuth: true });
 }

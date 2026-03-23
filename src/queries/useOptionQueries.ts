@@ -3,10 +3,13 @@ import {
   getOptions,
   getOptionDetail,
   createOption,
+  updateOption,
+  deleteOption,
   type Option,
   type CreateOptionRequest,
 } from "@/api/option";
 import { productKeys } from "./useProductQueries";
+import type { ApiError } from "@/lib/apiClient";
 
 // ========== Query Keys ==========
 
@@ -22,12 +25,18 @@ export const optionKeys = {
 /**
  * 옵션 목록 조회
  */
+function retryUnless401(failureCount: number, error: unknown): boolean {
+  const err = error as ApiError | undefined;
+  if (err?.status === 401) return false;
+  return failureCount < 2;
+}
+
 export function useOptions() {
   return useQuery<Option[]>({
     queryKey: optionKeys.lists(),
     queryFn: getOptions,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -35,12 +44,15 @@ export function useOptions() {
  * 옵션 상세 조회
  */
 export function useOptionDetail(optionId: number | undefined) {
+  const enabled =
+    typeof optionId === "number" && Number.isFinite(optionId) && optionId > 0;
+
   return useQuery<Option | null>({
     queryKey: optionKeys.detail(optionId!),
     queryFn: () => getOptionDetail(optionId!),
-    enabled: optionId !== undefined,
+    enabled,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnless401,
   });
 }
 
@@ -62,6 +74,41 @@ export function useCreateOption() {
       createOption(request, images),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
+}
+
+interface UpdateOptionParams {
+  optionId: number;
+  request: CreateOptionRequest;
+  images?: File[];
+}
+
+export function useUpdateOption() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ optionId, request, images }: UpdateOptionParams) =>
+      updateOption(optionId, request, images),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: optionKeys.detail(variables.optionId),
+      });
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
+}
+
+export function useDeleteOption() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (optionId: number) => deleteOption(optionId),
+    onSuccess: (_, optionId) => {
+      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
+      queryClient.removeQueries({ queryKey: optionKeys.detail(optionId) });
       queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
   });

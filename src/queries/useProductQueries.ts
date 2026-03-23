@@ -10,6 +10,8 @@ import {
   getProductOptions,
   getProductsByTag,
   createProduct,
+  updateProduct,
+  deleteProduct,
   type Product,
   type ProductDetail,
   type ProductOptionListItem,
@@ -172,6 +174,41 @@ export function useCreateProduct() {
     mutationFn: ({ request, images }) => createProduct(request, images),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
+}
+
+interface UpdateProductParams {
+  productId: number;
+  request: CreateProductRequest;
+  images?: File[];
+}
+
+export function useUpdateProduct() {
+  const queryClient = useQueryClient();
+  return useMutation<CreateProductResponse, Error, UpdateProductParams>({
+    mutationFn: ({ productId, request, images }) =>
+      updateProduct(productId, request, images),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: productKeys.detail(variables.productId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: productKeys.options(variables.productId),
+      });
+    },
+  });
+}
+
+export function useDeleteProduct() {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, number>({
+    mutationFn: (productId: number) => deleteProduct(productId),
+    onSuccess: (_, productId) => {
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.removeQueries({ queryKey: productKeys.detail(productId) });
+      queryClient.removeQueries({ queryKey: productKeys.options(productId) });
     },
   });
 }

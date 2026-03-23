@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -13,7 +14,7 @@ import { GapY } from "../../components/ui/gap";
 const TAB_NOTICE = "notice";
 const TAB_COMMUNITY = "community";
 
-export default function BoardPage() {
+function BoardContent() {
   const searchParams = useSearchParams();
   const tab =
     searchParams.get("tab") === TAB_COMMUNITY ? TAB_COMMUNITY : TAB_NOTICE;
@@ -144,5 +145,19 @@ export default function BoardPage() {
         </ul>
       )}
     </div>
+  );
+}
+
+export default function BoardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="px-5 py-12 flex justify-center text-gray-400">
+          로딩 중...
+        </div>
+      }
+    >
+      <BoardContent />
+    </Suspense>
   );
 }

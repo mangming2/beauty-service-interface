@@ -56,7 +56,8 @@ export async function testSignupAdmin(
 // ========== 테스트 로그인 ==========
 
 /** 테스트 로그인 시 서버와 동일한 시크릿 (app.auth.test-login.secret) */
-const TEST_AUTH_KEY = process.env.NEXT_PUBLIC_TEST_AUTH_KEY || "doki-test-login";
+const TEST_AUTH_KEY =
+  process.env.NEXT_PUBLIC_TEST_AUTH_KEY || "doki-test-login";
 
 /**
  * 테스트 로그인

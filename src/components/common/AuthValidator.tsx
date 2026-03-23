@@ -34,7 +34,10 @@ export function AuthValidator({ children }: { children: React.ReactNode }) {
         const status = err?.status;
         const code = err?.code;
         // 401(세션만료) 또는 404(USER_NOT_FOUND) 시 로그아웃만 수행, 콘솔 스팸 방지
-        if (!cancelled && (status === 401 || (status === 404 && code === "USER_NOT_FOUND"))) {
+        if (
+          !cancelled &&
+          (status === 401 || (status === 404 && code === "USER_NOT_FOUND"))
+        ) {
           logout();
         }
       }

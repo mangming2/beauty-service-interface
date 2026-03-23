@@ -1,4 +1,4 @@
-import { apiGet, apiRequest } from "@/lib/apiClient";
+import { apiGet, apiRequest, apiDelete } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
@@ -226,4 +226,37 @@ export async function createProduct(
     body: formData,
     requireAuth: true,
   });
+}
+
+/**
+ * 상품 수정 (multipart/form-data)
+ * PUT /products/:productId
+ */
+export async function updateProduct(
+  productId: number,
+  request: CreateProductRequest,
+  images?: File[]
+): Promise<CreateProductResponse> {
+  const formData = new FormData();
+  formData.append(
+    "request",
+    new Blob([JSON.stringify(request)], { type: "application/json" })
+  );
+  if (images?.length) {
+    images.forEach(file => formData.append("images", file));
+  }
+
+  return apiRequest<CreateProductResponse>(`/products/${productId}`, {
+    method: "PUT",
+    body: formData,
+    requireAuth: true,
+  });
+}
+
+/**
+ * 상품 삭제
+ * DELETE /products/:productId
+ */
+export async function deleteProduct(productId: number): Promise<void> {
+  await apiDelete<void>(`/products/${productId}`, { requireAuth: true });
 }
