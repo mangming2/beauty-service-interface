@@ -47,29 +47,34 @@ function BoardContent() {
               <TranslatedText translationKey="notice" />
             </span>
           </Link>
-          <button
-            type="button"
-            onClick={() => alert(t("boardPage.communityUnderDevelopment"))}
-            className="relative title-sm flex-initial pb-3 pt-0 px-0 rounded-none transition-colors duration-200 after:absolute after:left-0 after:right-0 after:h-px after:bottom-0 after:bg-gray-outline text-gray-400 hover:text-white cursor-pointer bg-transparent border-0 text-left"
+          <Link
+            href="/board?tab=community"
+            className={`relative title-sm flex-initial pb-3 pt-0 px-0 rounded-none transition-colors duration-200 after:absolute after:left-0 after:right-0 after:h-px after:bottom-0 after:bg-gray-outline ${
+              tab === TAB_COMMUNITY
+                ? "text-pink-font after:bg-pink-font"
+                : "text-gray-400 hover:text-white after:bg-gray-outline"
+            }`}
           >
             <span className="relative z-[1]">
               <TranslatedText translationKey="community" />
             </span>
-          </button>
+          </Link>
         </nav>
       </div>
 
       <GapY size={24} />
 
-      <div className="relative w-full aspect-[3/1] overflow-hidden rounded">
-        <Image
-          src="/notice.png"
-          alt={t("boardPage.noticeAlt")}
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-      </div>
+      {tab === TAB_NOTICE && (
+        <div className="relative w-full aspect-[3/1] overflow-hidden rounded">
+          <Image
+            src="/notice.png"
+            alt={t("boardPage.noticeAlt")}
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+        </div>
+      )}
 
       {tab === TAB_NOTICE && (
         <ul className="divide-y divide-gray-outline">
@@ -123,40 +128,20 @@ function BoardContent() {
       )}
 
       {tab === TAB_COMMUNITY && (
-        <ul className="divide-y divide-gray-outline px-4">
-          {communityLoading ? (
-            <li className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500" />
-            </li>
-          ) : communityPosts.length === 0 ? (
-            <li className="py-8 text-center text-gray_1 caption-md">
-              {t("boardPage.noPosts")}
-            </li>
-          ) : (
-            communityPosts.map(post => (
-              <li key={post.postId}>
-                <Link
-                  href={`/board/community/${post.postId}`}
-                  className="flex items-center justify-between py-4"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-md text-white truncate">{post.title}</p>
-                    <p className="caption-md text-gray_1 mt-0.5">
-                      {post.authorDisplayName} ·{" "}
-                      {format(new Date(post.createdAt), "yy.MM.dd")}
-                    </p>
-                  </div>
-                  <ArrowRightIcon
-                    color="#FFFFFE"
-                    width={6}
-                    height={16}
-                    className="size-auto shrink-0 ml-2"
-                  />
-                </Link>
-              </li>
-            ))
-          )}
-        </ul>
+        <div className="flex flex-col items-center justify-center gap-4 py-20">
+          <Image
+            src="/error-logo.png"
+            alt="coming soon"
+            width={160}
+            height={160}
+          />
+          <p className="title-md text-gray-2 text-center">
+            Something new is coming.
+          </p>
+          <p className="text-md text-white font-semibold text-center whitespace-pre-line">
+            {"We're crafting a space for us.\nComing soon!"}
+          </p>
+        </div>
       )}
     </div>
   );
