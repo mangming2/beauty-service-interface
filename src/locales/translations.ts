@@ -734,7 +734,8 @@ export const translations = {
       loadingReviews: "レビューを読み込み中...",
       errorLoadingReviews: "レビューを読み込めませんでした。",
       noReviewsYet: "まだレビューがありません。",
-      noReviewsYetSub: "パッケージを試して\n最初のレビューを書いてみてください。",
+      noReviewsYetSub:
+        "パッケージを試して\n最初のレビューを書いてみてください。",
       userName: "ユーザー名",
       emptyPackage: "The package is empty.",
       packageDeletedOrMoved:
@@ -822,7 +823,8 @@ export const translations = {
       daysAgoOne: "1日前",
       daysAgo: "日前",
       noReviewsWritten: "まだレビューがありません。",
-      noReviewsWrittenSub: "パッケージを試して\n最初のレビューを書いてみてください。",
+      noReviewsWrittenSub:
+        "パッケージを試して\n最初のレビューを書いてみてください。",
       edit: "Edit",
       cancel: "Cancel",
       save: "Save",

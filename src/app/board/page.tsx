@@ -25,11 +25,9 @@ function BoardContent() {
   const { data: noticeData, isLoading: noticeLoading } = useAnnouncements({
     size: 50,
   });
-  const { data: communityData, isLoading: communityLoading } =
-    useCommunityPosts({ size: 50 });
+  useCommunityPosts({ size: 50 });
 
   const noticePosts = noticeData?.posts ?? [];
-  const communityPosts = communityData?.posts ?? [];
 
   return (
     <div className="px-5">

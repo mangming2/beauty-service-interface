@@ -126,11 +126,7 @@ export default function PackageDetail() {
               disabled={toggleWishMutation.isPending}
               className="w-6 h-6 flex items-center justify-center"
             >
-              {isWished ? (
-                <HeartIcon color="#F92595" />
-              ) : (
-                <BorderHeartIcon />
-              )}
+              {isWished ? <HeartIcon color="#F92595" /> : <BorderHeartIcon />}
             </button>
             <ShareIcon />
           </div>
