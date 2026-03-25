@@ -1,4 +1,4 @@
-import { apiGet, apiDelete, apiRequest } from "@/lib/apiClient";
+import { apiGet, apiDelete, apiRequest, type ApiError } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
@@ -6,6 +6,8 @@ import { apiGet, apiDelete, apiRequest } from "@/lib/apiClient";
 export interface AnnouncementPostListItem {
   postId: number;
   title: string;
+  /** 목록 응답에 포함될 수 있음(미리보기용) */
+  content?: string;
   announcementDate: string;
   viewCount: number;
   createdAt: string;
@@ -75,11 +77,14 @@ export async function getAnnouncements(
     const queryString = queryParams.toString();
     const url = `${BASE}${queryString ? `?${queryString}` : ""}`;
     const data = await apiGet<AnnouncementListResponse>(url, {
-      requireAuth: true,
+      optionalAuth: true,
     });
     return data;
   } catch (error) {
-    console.error("Get announcements error:", error);
+    const err = error as ApiError | undefined;
+    if (err?.status !== 401) {
+      console.error("Get announcements error:", error);
+    }
     throw error;
   }
 }
@@ -93,13 +98,15 @@ export async function getAnnouncementDetail(
 ): Promise<AnnouncementPostDetail | null> {
   try {
     const data = await apiGet<AnnouncementPostDetail>(`${BASE}/${postId}`, {
-      requireAuth: true,
+      optionalAuth: true,
     });
     return data ?? null;
   } catch (error: unknown) {
-    const err = error as { status?: number } | null;
+    const err = error as ApiError | undefined;
     if (err?.status === 404) return null;
-    console.error("Get announcement detail error:", error);
+    if (err?.status !== 401) {
+      console.error("Get announcement detail error:", error);
+    }
     throw error;
   }
 }

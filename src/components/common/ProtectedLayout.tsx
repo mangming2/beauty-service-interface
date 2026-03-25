@@ -16,6 +16,8 @@ const PUBLIC_PATHS = ["/", "/login", "/auth/callback", "/recommend", "/board"];
 const isPackageDetailPath = (path: string) => /^\/package\/[^/]+$/.test(path);
 const isPackageReviewsPath = (path: string) =>
   /^\/package\/[^/]+\/reviews$/.test(path);
+const isBoardNoticeDetailPath = (path: string) =>
+  /^\/board\/notice\/[^/]+$/.test(path);
 
 export function ProtectedLayout({ children }: ProtectedLayoutProps) {
   const pathname = usePathname();
@@ -24,6 +26,7 @@ export function ProtectedLayout({ children }: ProtectedLayoutProps) {
     PUBLIC_PATHS.includes(pathname) ||
     isPackageDetailPath(pathname) ||
     isPackageReviewsPath(pathname) ||
+    isBoardNoticeDetailPath(pathname) ||
     (isDev && pathname.startsWith("/dev/"));
 
   if (isPublicPage) {

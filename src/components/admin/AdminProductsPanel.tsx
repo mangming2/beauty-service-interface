@@ -17,13 +17,11 @@ import {
   useUpdateProduct,
   useDeleteProduct,
 } from "@/queries/useProductQueries";
-import { useOptions } from "@/queries/useOptionQueries";
 import { ProductFormFields } from "./product-form-fields";
 
 const PAGE_SIZE = 50;
 
 export function AdminProductsPanel() {
-  const { data: allOptions = [] } = useOptions();
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts({ size: PAGE_SIZE });
 
@@ -35,6 +33,11 @@ export function AdminProductsPanel() {
   );
   const { data: productOptions = [], isLoading: optionsLoading } =
     useProductOptions(editId ?? undefined);
+
+  const pickerOptions = useMemo(
+    () => productOptions.map(o => ({ id: o.id, name: o.name })),
+    [productOptions]
+  );
 
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -203,10 +206,10 @@ export function AdminProductsPanel() {
                 productDescription={productDescription}
                 setProductDescription={setProductDescription}
                 productOptionIds={productOptionIds}
+                pickerOptions={pickerOptions}
                 toggleProductOption={toggleProductOption}
                 representOptionId={representOptionId}
                 setRepresentOptionId={setRepresentOptionId}
-                options={allOptions}
                 productImages={productImages}
                 setProductImages={setProductImages}
               />

@@ -14,10 +14,12 @@ export function middleware(req: NextRequest) {
   ];
   const isPackageDetailPath = /^\/package\/[^/]+$/.test(pathname);
   const isPackageReviewsPath = /^\/package\/[^/]+\/reviews$/.test(pathname);
+  const isBoardNoticeDetailPath = /^\/board\/notice\/[^/]+$/.test(pathname);
   const isPublicPage =
     publicExactPages.includes(pathname) ||
     isPackageDetailPath ||
-    isPackageReviewsPath;
+    isPackageReviewsPath ||
+    isBoardNoticeDetailPath;
 
   // 쿠키에서 refreshToken 확인 (httpOnly 쿠키)
   const refreshToken = req.cookies.get("refreshToken")?.value;

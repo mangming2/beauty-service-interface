@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import { Button } from "@/components/ui/button";
+import type { ApiError } from "@/lib/apiClient";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +28,13 @@ function toDatetimeLocalValue(iso: string | undefined): string {
   } catch {
     return "";
   }
+}
+
+function announcementAdminMutationMessage(error: unknown): string {
+  const e = error as ApiError | undefined;
+  if (e?.status === 403) return "관리자 권한이 필요합니다.";
+  if (e?.status === 404) return "게시글을 찾을 수 없습니다.";
+  return e?.message ?? "요청에 실패했습니다.";
 }
 
 export function AdminAnnouncementsPanel() {
@@ -107,7 +116,11 @@ export function AdminAnnouncementsPanel() {
 
   const handleDelete = (postId: number) => {
     if (!confirm("이 공지를 삭제할까요?")) return;
-    deleteMutation.mutate(postId);
+    deleteMutation.mutate(postId, {
+      onError: err => {
+        alert(announcementAdminMutationMessage(err));
+      },
+    });
   };
 
   const pending =
@@ -247,10 +260,42 @@ export function AdminAnnouncementsPanel() {
                   className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-600 text-white"
                 />
               </div>
+              {editingPostId !== null &&
+              detail?.imageUrls &&
+              detail.imageUrls.length > 0 ? (
+                <div>
+                  <p className="text-xs text-gray-400 mb-2">
+                    현재 첨부 이미지
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {detail.imageUrls.map((url, idx) => (
+                      <div
+                        key={`${url}-${idx}`}
+                        className="relative w-full aspect-video rounded border border-gray-600 overflow-hidden bg-gray-900"
+                      >
+                        <Image
+                          src={url}
+                          alt={`첨부 ${idx + 1}`}
+                          fill
+                          className="object-contain"
+                          sizes="(max-width: 512px) 100vw, 512px"
+                          unoptimized
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               <div>
                 <label className="block text-xs text-gray-400 mb-1">
                   이미지 (선택)
                 </label>
+                {editingPostId !== null ? (
+                  <p className="text-xs text-gray-500 mb-1">
+                    새 파일을 넣지 않으면 기존 첨부가 유지되는 경우가 많습니다.
+                    (서버 설정에 따름)
+                  </p>
+                ) : null}
                 <input
                   type="file"
                   accept="image/*"
@@ -275,7 +320,9 @@ export function AdminAnnouncementsPanel() {
               </DialogFooter>
               {(createMutation.isError || updateMutation.isError) && (
                 <p className="text-red-400 text-xs">
-                  {(createMutation.error ?? updateMutation.error)?.message}
+                  {announcementAdminMutationMessage(
+                    createMutation.error ?? updateMutation.error
+                  )}
                 </p>
               )}
             </form>

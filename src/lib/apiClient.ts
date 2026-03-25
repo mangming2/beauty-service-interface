@@ -13,12 +13,15 @@ const PUBLIC_PATHS = ["/", "/login", "/auth/callback", "/recommend", "/board"];
 const isPackageDetailPath = (path: string) => /^\/package\/[^/]+$/.test(path);
 const isPackageReviewsPath = (path: string) =>
   /^\/package\/[^/]+\/reviews$/.test(path);
+const isBoardNoticeDetailPath = (path: string) =>
+  /^\/board\/notice\/[^/]+$/.test(path);
 
 function isPublicPath(pathname: string): boolean {
   return (
     PUBLIC_PATHS.includes(pathname) ||
     isPackageDetailPath(pathname) ||
-    isPackageReviewsPath(pathname)
+    isPackageReviewsPath(pathname) ||
+    isBoardNoticeDetailPath(pathname)
   );
 }
 
@@ -31,8 +34,13 @@ function shouldRedirectToLogin(): boolean {
 /**
  * API 요청 옵션
  */
-interface RequestOptions extends RequestInit {
+export interface RequestOptions extends RequestInit {
   requireAuth?: boolean;
+  /**
+   * true면 토큰이 있을 때만 Bearer를 붙이고, 없으면 익명 요청.
+   * 401 시 토큰이 있었을 때만 재발급·재시도한다(비로그인 401은 그대로 에러).
+   */
+  optionalAuth?: boolean;
 }
 
 /**
@@ -129,9 +137,18 @@ export async function apiRequest<T>(
   endpoint: string,
   options: RequestOptions = {}
 ): Promise<T> {
-  const { requireAuth = true, headers = {}, ...fetchOptions } = options;
+  const {
+    requireAuth: requireAuthOption,
+    optionalAuth = false,
+    headers = {},
+    ...fetchOptions
+  } = options;
+
+  const isOptionalAuth = optionalAuth === true;
+  const requireAuthStrict = !isOptionalAuth && (requireAuthOption ?? true);
 
   const { accessToken, setAccessToken, logout } = useAuthStore.getState();
+  const hadAccessToken = !!accessToken;
 
   const requestHeaders: Record<string, string> = {
     ...(headers as Record<string, string>),
@@ -149,8 +166,8 @@ export async function apiRequest<T>(
     requestHeaders["Content-Type"] = "application/json";
   }
 
-  // 인증이 필요한 경우 토큰 추가
-  if (requireAuth && accessToken) {
+  // strict: 토큰 있을 때만 Bearer / optional: 토큰 있으면 Bearer
+  if ((requireAuthStrict || isOptionalAuth) && accessToken) {
     requestHeaders.Authorization = `Bearer ${accessToken}`;
   }
 
@@ -166,7 +183,7 @@ export async function apiRequest<T>(
     return fetch(url, {
       ...fetchOptions,
       headers: requestHeaders,
-      credentials: requireAuth ? "include" : "omit",
+      credentials: requireAuthStrict || isOptionalAuth ? "include" : "omit",
       redirect: "manual", // 302 OAuth 리다이렉트 시 CORS 에러 방지
     });
   };
@@ -182,7 +199,9 @@ export async function apiRequest<T>(
       response.status === 303 ||
       response.status === 307 ||
       response.status === 308;
-    if (isRedirect && requireAuth) {
+    const treatRedirectAsSessionLoss =
+      requireAuthStrict || (isOptionalAuth && hadAccessToken);
+    if (isRedirect && treatRedirectAsSessionLoss) {
       logout();
       if (typeof window !== "undefined" && shouldRedirectToLogin()) {
         window.location.href = "/login";
@@ -193,8 +212,11 @@ export async function apiRequest<T>(
       } as ApiError;
     }
 
-    // ⭐ 401 에러 → 토큰 재발급 시도
-    if (response.status === 401 && requireAuth) {
+    // ⭐ 401 에러 → 토큰 재발급 시도 (엄격 인증 또는 optional이지만 토큰을 보낸 경우)
+    const shouldTryReissueOn401 =
+      response.status === 401 &&
+      (requireAuthStrict || (isOptionalAuth && hadAccessToken));
+    if (shouldTryReissueOn401) {
       const newToken = await reissueToken();
 
       if (newToken) {

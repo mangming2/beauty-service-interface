@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getOptions,
   getOptionDetail,
   createOption,
   updateOption,
@@ -15,7 +14,6 @@ import type { ApiError } from "@/lib/apiClient";
 
 export const optionKeys = {
   all: ["options"] as const,
-  lists: () => [...optionKeys.all, "list"] as const,
   details: () => [...optionKeys.all, "detail"] as const,
   detail: (id: number) => [...optionKeys.details(), id] as const,
 } as const;
@@ -29,15 +27,6 @@ function retryUnless401(failureCount: number, error: unknown): boolean {
   const err = error as ApiError | undefined;
   if (err?.status === 401) return false;
   return failureCount < 2;
-}
-
-export function useOptions() {
-  return useQuery<Option[]>({
-    queryKey: optionKeys.lists(),
-    queryFn: getOptions,
-    staleTime: 5 * 60 * 1000,
-    retry: retryUnless401,
-  });
 }
 
 /**
@@ -73,7 +62,6 @@ export function useCreateOption() {
     mutationFn: ({ request, images }: CreateOptionParams) =>
       createOption(request, images),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
       queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
   });
@@ -92,7 +80,6 @@ export function useUpdateOption() {
     mutationFn: ({ optionId, request, images }: UpdateOptionParams) =>
       updateOption(optionId, request, images),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
       queryClient.invalidateQueries({
         queryKey: optionKeys.detail(variables.optionId),
       });
@@ -107,7 +94,6 @@ export function useDeleteOption() {
   return useMutation({
     mutationFn: (optionId: number) => deleteOption(optionId),
     onSuccess: (_, optionId) => {
-      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
       queryClient.removeQueries({ queryKey: optionKeys.detail(optionId) });
       queryClient.invalidateQueries({ queryKey: productKeys.all });
     },

@@ -60,6 +60,7 @@ export interface ProductOptionListItem {
   discountRate: number;
   price: number;
   address: string;
+  categoryTagName?: string;
   optionTags: string[];
   imageUrl: string | null;
   isRepresent: boolean;

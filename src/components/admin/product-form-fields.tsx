@@ -1,6 +1,6 @@
 "use client";
 
-import type { Option } from "@/api/option";
+export type ProductFormPickerOption = { id: number; name: string };
 
 export interface ProductFormFieldsProps {
   productName: string;
@@ -8,12 +8,20 @@ export interface ProductFormFieldsProps {
   productDescription: string;
   setProductDescription: (v: string) => void;
   productOptionIds: number[];
-  toggleProductOption: (id: number) => void;
   representOptionId: number | "";
   setRepresentOptionId: (v: number | "") => void;
-  options: Option[];
   productImages: File[];
   setProductImages: (files: File[]) => void;
+
+  /** 체크박스로 옵션 고르기 (상품 수정 등, GET /products/:id/options 로 채움) */
+  pickerOptions?: ProductFormPickerOption[];
+  toggleProductOption?: (id: number) => void;
+
+  /** 옵션 ID 직접 입력 (상품 생성 등 — 전체 옵션 목록 API 없음) */
+  optionIdsText?: string;
+  onOptionIdsTextChange?: (text: string) => void;
+  /** ID 입력 모드에서 대표 옵션 셀렉트 라벨 (참고 상품 옵션 등) */
+  optionIdModeLabels?: ProductFormPickerOption[];
 }
 
 export function ProductFormFields({
@@ -22,12 +30,24 @@ export function ProductFormFields({
   productDescription,
   setProductDescription,
   productOptionIds,
-  toggleProductOption,
   representOptionId,
   setRepresentOptionId,
-  options,
+  pickerOptions = [],
+  toggleProductOption,
+  optionIdsText,
+  onOptionIdsTextChange,
+  optionIdModeLabels,
   setProductImages,
 }: ProductFormFieldsProps) {
+  const isOptionIdMode =
+    optionIdsText !== undefined && onOptionIdsTextChange !== undefined;
+
+  const rowsForRepresent: ProductFormPickerOption[] = isOptionIdMode
+    ? (optionIdModeLabels?.length
+        ? optionIdModeLabels.filter(o => productOptionIds.includes(o.id))
+        : productOptionIds.map(id => ({ id, name: `옵션 #${id}` })))
+    : pickerOptions.filter(o => productOptionIds.includes(o.id));
+
   return (
     <>
       <div>
@@ -51,33 +71,51 @@ export function ProductFormFields({
           rows={2}
         />
       </div>
-      <div>
-        <label className="block text-sm text-gray-400 mb-2">
-          포함 옵션 (복수 선택) *
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {options.map(opt => (
-            <label
-              key={opt.id}
-              className="flex items-center gap-2 px-3 py-2 rounded bg-gray-800 border border-gray-600 cursor-pointer hover:border-pink-500"
-            >
-              <input
-                type="checkbox"
-                checked={productOptionIds.includes(opt.id)}
-                onChange={() => toggleProductOption(opt.id)}
-              />
-              <span className="text-sm">
-                {opt.name} (ID: {opt.id})
-              </span>
-            </label>
-          ))}
-        </div>
-        {options.length === 0 && (
-          <p className="text-gray-500 text-sm">
-            먼저 옵션을 생성한 뒤 상품에 연결하세요.
+      {isOptionIdMode ? (
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            포함 옵션 ID * (쉼표·공백으로 구분)
+          </label>
+          <input
+            required
+            value={optionIdsText}
+            onChange={e => onOptionIdsTextChange(e.target.value)}
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600 font-mono text-sm"
+            placeholder="예: 1, 2, 5"
+          />
+          <p className="text-gray-500 text-xs mt-1 leading-relaxed">
+            전체 옵션 목록 API가 없습니다. 생성해 둔 옵션의 ID를 입력하세요.
           </p>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div>
+          <label className="block text-sm text-gray-400 mb-2">
+            포함 옵션 (복수 선택) *
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {pickerOptions.map(opt => (
+              <label
+                key={opt.id}
+                className="flex items-center gap-2 px-3 py-2 rounded bg-gray-800 border border-gray-600 cursor-pointer hover:border-pink-500"
+              >
+                <input
+                  type="checkbox"
+                  checked={productOptionIds.includes(opt.id)}
+                  onChange={() => toggleProductOption?.(opt.id)}
+                />
+                <span className="text-sm">
+                  {opt.name} (ID: {opt.id})
+                </span>
+              </label>
+            ))}
+          </div>
+          {pickerOptions.length === 0 && (
+            <p className="text-gray-500 text-sm">
+              이 상품에 연결된 옵션이 없습니다.
+            </p>
+          )}
+        </div>
+      )}
       <div>
         <label className="block text-sm text-gray-400 mb-1">
           대표 옵션 ID *
@@ -94,15 +132,13 @@ export function ProductFormFields({
           <option value="">
             {productOptionIds.length
               ? "선택 (미선택 시 첫 옵션)"
-              : "옵션을 먼저 선택하세요"}
+              : "옵션 ID를 먼저 지정하세요"}
           </option>
-          {options
-            .filter(o => productOptionIds.includes(o.id))
-            .map(o => (
-              <option key={o.id} value={o.id}>
-                {o.name} (ID: {o.id})
-              </option>
-            ))}
+          {rowsForRepresent.map(o => (
+            <option key={o.id} value={o.id}>
+              {o.name} (ID: {o.id})
+            </option>
+          ))}
         </select>
       </div>
       <div>

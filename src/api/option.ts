@@ -13,6 +13,8 @@ export interface Option {
   bookingGuide: string;
   regularClosingDay: string | null;
   imageUrls: string[];
+  /** GET /options/:id 응답 필드 */
+  categoryTagName?: string;
   /** 예약 슬롯 (옵션 단위) */
   slotStartDate?: string;
   slotEndDate?: string;
@@ -27,6 +29,8 @@ export interface Option {
 export interface CreateOptionRequest {
   name: string;
   description: string;
+  /** 백엔드 필수 — 대표 카테고리 태그 한 개 (예: hair) */
+  categoryTagName: string;
   price: number;
   address: string;
   slotStartDate: string;
@@ -42,20 +46,8 @@ export interface CreateOptionRequest {
 }
 
 // ========== 옵션 API ==========
-
-/**
- * 옵션 목록 조회
- * GET /options
- */
-export async function getOptions(): Promise<Option[]> {
-  try {
-    const data = await apiGet<Option[]>("/options");
-    return data ?? [];
-  } catch (error) {
-    console.error("Get options error:", error);
-    throw error;
-  }
-}
+// 전체 옵션 목록 GET /options 는 백엔드에 없음.
+// 상품별 목록은 GET /products/:productId/options (product.ts)
 
 /**
  * 옵션 상세 조회

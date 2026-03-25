@@ -10,6 +10,7 @@ import { TranslatedText } from "@/components/main/TranslatedText";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { useCommunityPosts } from "@/queries/useCommunityQueries";
 import { GapY } from "../../components/ui/gap";
+import { truncateAnnouncementPreview } from "@/lib/utils";
 
 const TAB_NOTICE = "notice";
 const TAB_COMMUNITY = "community";
@@ -79,7 +80,9 @@ function BoardContent() {
               공지가 없습니다.
             </li>
           ) : (
-            noticePosts.map(post => (
+            noticePosts.map(post => {
+              const preview = truncateAnnouncementPreview(post.content, 90);
+              return (
               <li key={post.postId}>
                 <Link
                   href={`/board/notice/${post.postId}`}
@@ -87,6 +90,11 @@ function BoardContent() {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-md text-white truncate">{post.title}</p>
+                    {preview ? (
+                      <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">
+                        {preview}
+                      </p>
+                    ) : null}
                     <p className="caption-md text-gray_1 mt-0.5">
                       {format(
                         new Date(post.announcementDate || post.createdAt),
@@ -103,7 +111,8 @@ function BoardContent() {
                   />
                 </Link>
               </li>
-            ))
+              );
+            })
           )}
         </ul>
       )}

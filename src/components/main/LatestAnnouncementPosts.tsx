@@ -10,6 +10,7 @@ import {
 } from "@/components/common/Icons";
 import { GapY } from "@/components/ui/gap";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
+import { truncateAnnouncementPreview } from "@/lib/utils";
 
 function formatLikeCount(count: number): string {
   return count >= 1000 ? "999+" : String(count);
@@ -63,7 +64,9 @@ export function LatestAnnouncementPosts() {
         </p>
       ) : (
         <div className="flex flex-col gap-3">
-          {posts.map(post => (
+          {posts.map(post => {
+            const preview = truncateAnnouncementPreview(post.content, 72);
+            return (
             <Link
               key={post.postId}
               href={`/board/notice/${post.postId}`}
@@ -89,8 +92,11 @@ export function LatestAnnouncementPosts() {
               </div>
               {/* 제목 */}
               <h3 className="text-white text-md mb-1 truncate">{post.title}</h3>
-              {/* 미리보기 한 줄 */}
-              {/* <p className="text-white text-sm mb-1">{post.previewContent}</p> */}
+              {preview ? (
+                <p className="text-gray_1 text-sm mb-1 line-clamp-2">
+                  {preview}
+                </p>
+              ) : null}
               {/* 하단: 태그 + 좋아요/댓글 */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
@@ -112,7 +118,8 @@ export function LatestAnnouncementPosts() {
                 </div>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

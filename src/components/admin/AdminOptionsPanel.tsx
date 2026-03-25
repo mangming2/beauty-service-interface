@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import type { CreateOptionRequest } from "@/api/option";
 import {
-  useOptions,
   useOptionDetail,
   useUpdateOption,
   useDeleteOption,
@@ -21,12 +20,13 @@ import { OptionFormFields, optionToCreateRequest } from "./option-form-fields";
 const defaultOptionReq = (): CreateOptionRequest => ({
   name: "",
   description: "",
+  categoryTagName: "hair",
   price: 100000,
   address: "",
   slotStartDate: "2025-01-01",
   slotEndDate: "2025-12-31",
   slotStartHour: 9,
-  slotEndHour: 18,
+  slotEndHour: 16,
   discountRate: 0,
   bookingGuide: "",
   regularClosingDay: null,
@@ -34,8 +34,9 @@ const defaultOptionReq = (): CreateOptionRequest => ({
 });
 
 export function AdminOptionsPanel() {
-  const { data: options = [], isLoading } = useOptions();
+  const [optionIdInput, setOptionIdInput] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
+
   const { data: detail, isLoading: detailLoading } = useOptionDetail(
     editId ?? undefined
   );
@@ -64,6 +65,20 @@ export function AdminOptionsPanel() {
     setOptionImages([]);
   };
 
+  const parsedTargetId = parseInt(optionIdInput.trim(), 10);
+  const validTargetId =
+    Number.isFinite(parsedTargetId) && parsedTargetId > 0
+      ? parsedTargetId
+      : null;
+
+  const openEditForInputId = () => {
+    if (validTargetId === null) {
+      alert("올바른 옵션 ID(양의 정수)를 입력하세요.");
+      return;
+    }
+    setEditId(validTargetId);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editId === null) return;
@@ -81,78 +96,53 @@ export function AdminOptionsPanel() {
     );
   };
 
-  const handleDelete = (id: number) => {
+  const handleDeleteFromInput = () => {
+    if (validTargetId === null) {
+      alert("올바른 옵션 ID를 입력하세요.");
+      return;
+    }
     if (
       !confirm(
-        `옵션 #${id} 을(를) 삭제할까요? 연결된 상품이 있으면 실패할 수 있습니다.`
+        `옵션 #${validTargetId} 을(를) 삭제할까요? 연결된 상품이 있으면 실패할 수 있습니다.`
       )
     )
       return;
-    deleteMutation.mutate(id);
+    deleteMutation.mutate(validTargetId);
   };
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-400">
-        옵션 목록 · 수정 · 삭제 (PUT/DELETE /options/:id)
+      <p className="text-sm text-gray-400 leading-relaxed">
+        전체 옵션 목록 API(GET /options)는 없습니다. 수정·삭제할{" "}
+        <strong className="text-gray-200">옵션 ID</strong>를 입력한 뒤 작업을
+        선택하세요. (상세 조회: {`GET /options/{optionId}`})
       </p>
-      {isLoading ? (
-        <p className="text-gray-400 text-sm">불러오는 중...</p>
-      ) : options.length === 0 ? (
-        <p className="text-gray-500 text-sm">등록된 옵션이 없습니다.</p>
-      ) : (
-        <div className="rounded-lg border border-gray-600 overflow-x-auto">
-          <table className="w-full text-sm min-w-[320px]">
-            <thead className="bg-gray-800 text-gray-300">
-              <tr>
-                <th className="text-left p-2">ID</th>
-                <th className="text-left p-2">이름</th>
-                <th className="text-left p-2">가격</th>
-                <th className="text-left p-2 hidden sm:table-cell">주소</th>
-                <th className="text-right p-2 w-36">작업</th>
-              </tr>
-            </thead>
-            <tbody>
-              {options.map(opt => (
-                <tr
-                  key={opt.id}
-                  className="border-t border-gray-700 hover:bg-gray-800/50"
-                >
-                  <td className="p-2 text-gray-400">{opt.id}</td>
-                  <td className="p-2 font-medium text-white max-w-[120px] truncate">
-                    {opt.name}
-                  </td>
-                  <td className="p-2">₩{opt.price.toLocaleString()}</td>
-                  <td className="p-2 text-gray-400 max-w-[140px] truncate hidden sm:table-cell">
-                    {opt.address}
-                  </td>
-                  <td className="p-2 text-right space-x-1 whitespace-nowrap">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      className="h-8"
-                      onClick={() => setEditId(opt.id)}
-                    >
-                      수정
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      className="h-8 text-red-300"
-                      onClick={() => handleDelete(opt.id)}
-                      disabled={deleteMutation.isPending}
-                    >
-                      삭제
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="flex flex-wrap gap-2 items-end">
+        <div className="flex-1 min-w-[140px]">
+          <label className="block text-xs text-gray-500 mb-1">옵션 ID</label>
+          <input
+            type="number"
+            min={1}
+            value={optionIdInput}
+            onChange={e => setOptionIdInput(e.target.value)}
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+            placeholder="예: 1"
+          />
         </div>
-      )}
+        <Button type="button" size="sm" onClick={openEditForInputId}>
+          수정
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="secondary"
+          className="text-red-300"
+          onClick={handleDeleteFromInput}
+          disabled={deleteMutation.isPending}
+        >
+          삭제
+        </Button>
+      </div>
 
       <Dialog
         open={dialogOpen}

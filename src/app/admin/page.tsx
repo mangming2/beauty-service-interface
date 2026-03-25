@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useAuthStatus } from "@/queries/useAuthQueries";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useOptions, useCreateOption } from "@/queries/useOptionQueries";
-import { useCreateProduct } from "@/queries/useProductQueries";
+import { useCreateOption } from "@/queries/useOptionQueries";
+import { useCreateProduct, useProductOptions } from "@/queries/useProductQueries";
 import type { CreateOptionRequest } from "@/api/option";
 import type { CreateProductRequest } from "@/api/product";
 import { GapY } from "@/components/ui/gap";
@@ -19,11 +19,29 @@ import { AdminOptionsPanel } from "@/components/admin/AdminOptionsPanel";
 import { AdminProductsPanel } from "@/components/admin/AdminProductsPanel";
 import { AdminUsersPanel } from "@/components/admin/AdminUsersPanel";
 
+/** 관리자 탭: 기본 TabsTrigger는 dark muted 색이라 회색 배경에서 대비가 거의 없음 */
+const adminTabTriggerClass =
+  "text-xs sm:text-sm shrink-0 rounded-md px-2.5 py-2 font-medium " +
+  "text-gray-200 hover:bg-gray-700/60 hover:text-white " +
+  "data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=active]:shadow-sm";
+
+function parseOptionIds(text: string): number[] {
+  const seen = new Set<number>();
+  const out: number[] = [];
+  for (const part of text.split(/[,，\s]+/)) {
+    const n = parseInt(part.trim(), 10);
+    if (!Number.isFinite(n) || n <= 0) continue;
+    if (seen.has(n)) continue;
+    seen.add(n);
+    out.push(n);
+  }
+  return out;
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const isAuthenticated = useAuthStore(s => s.isAuthenticated);
   const { data: authStatus, isLoading: statusLoading } = useAuthStatus();
-  const { data: options = [] } = useOptions();
   const createOptionMutation = useCreateOption();
   const createProductMutation = useCreateProduct();
 
@@ -44,12 +62,13 @@ export default function AdminPage() {
   const [optionReq, setOptionReq] = useState<CreateOptionRequest>({
     name: "",
     description: "",
+    categoryTagName: "hair",
     price: 100000,
     address: "",
     slotStartDate: "2025-01-01",
     slotEndDate: "2025-12-31",
     slotStartHour: 9,
-    slotEndHour: 18,
+    slotEndHour: 16,
     discountRate: 0,
     bookingGuide: "",
     regularClosingDay: null,
@@ -61,8 +80,26 @@ export default function AdminPage() {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productOptionIds, setProductOptionIds] = useState<number[]>([]);
+  const [optionIdsText, setOptionIdsText] = useState("");
+  const [refProductIdStr, setRefProductIdStr] = useState("");
   const [representOptionId, setRepresentOptionId] = useState<number | "">("");
   const [productImages, setProductImages] = useState<File[]>([]);
+
+  const refProductIdParsed = parseInt(refProductIdStr.trim(), 10);
+  const { data: refProductOptions = [] } = useProductOptions(
+    Number.isFinite(refProductIdParsed) && refProductIdParsed > 0
+      ? refProductIdParsed
+      : undefined
+  );
+
+  const optionIdModeLabels = useMemo(() => {
+    const map = new Map<number, string>();
+    refProductOptions.forEach(o => map.set(o.id, o.name));
+    return productOptionIds.map(id => ({
+      id,
+      name: map.get(id) ?? `옵션 #${id}`,
+    }));
+  }, [refProductOptions, productOptionIds]);
 
   const handleCreateOption = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,6 +146,8 @@ export default function AdminPage() {
           setProductName("");
           setProductDescription("");
           setProductOptionIds([]);
+          setOptionIdsText("");
+          setRefProductIdStr("");
           setRepresentOptionId("");
           setProductImages([]);
         },
@@ -116,10 +155,10 @@ export default function AdminPage() {
     );
   };
 
-  const toggleProductOption = (id: number) => {
-    setProductOptionIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
+  const handleOptionIdsTextChange = (text: string) => {
+    setOptionIdsText(text);
+    setProductOptionIds(parseOptionIds(text));
+    setRepresentOptionId("");
   };
 
   if (!isAuthenticated || statusLoading) {
@@ -145,23 +184,23 @@ export default function AdminPage() {
         </div>
 
         <Tabs defaultValue="option-create" className="w-full">
-          <TabsList className="flex flex-wrap h-auto gap-1 bg-gray-800 p-1 justify-start">
-            <TabsTrigger value="option-create" className="text-xs sm:text-sm">
+          <TabsList className="flex flex-wrap h-auto w-full max-w-full gap-1 rounded-lg border border-gray-600 bg-gray-900/90 p-1.5 justify-start">
+            <TabsTrigger value="option-create" className={adminTabTriggerClass}>
               옵션 생성
             </TabsTrigger>
-            <TabsTrigger value="option-manage" className="text-xs sm:text-sm">
+            <TabsTrigger value="option-manage" className={adminTabTriggerClass}>
               옵션 관리
             </TabsTrigger>
-            <TabsTrigger value="product-create" className="text-xs sm:text-sm">
+            <TabsTrigger value="product-create" className={adminTabTriggerClass}>
               상품 생성
             </TabsTrigger>
-            <TabsTrigger value="product-manage" className="text-xs sm:text-sm">
+            <TabsTrigger value="product-manage" className={adminTabTriggerClass}>
               상품 관리
             </TabsTrigger>
-            <TabsTrigger value="announcements" className="text-xs sm:text-sm">
+            <TabsTrigger value="announcements" className={adminTabTriggerClass}>
               공지
             </TabsTrigger>
-            <TabsTrigger value="users" className="text-xs sm:text-sm">
+            <TabsTrigger value="users" className={adminTabTriggerClass}>
               유저
             </TabsTrigger>
           </TabsList>
@@ -200,16 +239,33 @@ export default function AdminPage() {
 
           <TabsContent value="product-create" className="mt-6">
             <form onSubmit={handleCreateProduct} className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">
+                  이름 참고용 상품 ID (선택)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  value={refProductIdStr}
+                  onChange={e => setRefProductIdStr(e.target.value)}
+                  className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+                  placeholder="기존 상품 번호 — 대표 옵션 드롭다운에 이름 표시"
+                />
+                <p className="text-gray-500 text-xs mt-1">
+                  {`GET /products/{productId}/options 로 라벨을 가져옵니다. 입력한 옵션 ID와 겹치는 항목만 이름이 보입니다.`}
+                </p>
+              </div>
               <ProductFormFields
                 productName={productName}
                 setProductName={setProductName}
                 productDescription={productDescription}
                 setProductDescription={setProductDescription}
                 productOptionIds={productOptionIds}
-                toggleProductOption={toggleProductOption}
                 representOptionId={representOptionId}
                 setRepresentOptionId={setRepresentOptionId}
-                options={options}
+                optionIdsText={optionIdsText}
+                onOptionIdsTextChange={handleOptionIdsTextChange}
+                optionIdModeLabels={optionIdModeLabels}
                 productImages={productImages}
                 setProductImages={setProductImages}
               />
