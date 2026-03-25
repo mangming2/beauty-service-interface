@@ -94,7 +94,7 @@ export default function SearchPage() {
                     imageSrc={
                       product.imageUrls?.[0] ??
                       product.representOption?.imageUrls?.[0] ??
-                      "/dummy-profile.png"
+                      "/dummy-logo.png"
                     }
                   />
                   {index < array.length - 1 && <Divider />}

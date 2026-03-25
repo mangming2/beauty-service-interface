@@ -14,7 +14,7 @@ import { useCreateSchedule } from "@/queries/useScheduleQueries";
 import { notFound } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
 
-const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+const PLACEHOLDER_IMAGE = "/dummy-logo.png";
 
 function toDateOnly(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());

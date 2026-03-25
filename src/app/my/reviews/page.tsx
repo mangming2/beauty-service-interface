@@ -173,9 +173,18 @@ export default function MyReviewsPage() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-4 py-16">
-            <Image src="/no-review.png" alt="no reviews" width={200} height={200} />
-            <p className="title-md text-gray-2 text-center">{t("reviews.noReviewsWritten")}</p>
-            <p className="text-md text-white font-semibold text-center whitespace-pre-line">{t("reviews.noReviewsWrittenSub")}</p>
+            <Image
+              src="/no-review.png"
+              alt="no reviews"
+              width={200}
+              height={200}
+            />
+            <p className="title-md text-gray-2 text-center">
+              {t("reviews.noReviewsWritten")}
+            </p>
+            <p className="text-md text-white font-semibold text-center whitespace-pre-line">
+              {t("reviews.noReviewsWrittenSub")}
+            </p>
           </div>
         )}
       </div>

@@ -11,7 +11,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function getSafeImageSrc(
   src: string | null | undefined,
-  fallback = "/dummy-profile.png"
+  fallback = "/dummy-logo.png"
 ): string {
   if (!src) return fallback;
   if (src.startsWith("http://") || src.startsWith("https://")) return src;

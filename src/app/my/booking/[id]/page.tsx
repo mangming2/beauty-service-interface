@@ -13,7 +13,7 @@ import { Divider } from "@/components/ui/divider";
 import { useBookingDetail } from "@/queries/useMyPageQueries";
 import { useProductOptions } from "@/queries/useProductQueries";
 
-const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+const PLACEHOLDER_IMAGE = "/dummy-logo.png";
 const platformFee = 20000;
 
 export default function MyBookingPage() {

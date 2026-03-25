@@ -12,7 +12,7 @@ import type { Booking } from "@/api/my-page";
 import type { BookingHistory, CompletedBooking } from "./types";
 import { useTranslation } from "@/hooks/useTranslation";
 
-const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+const PLACEHOLDER_IMAGE = "/dummy-logo.png";
 
 function formatVisitDate(dateStr: string): string {
   try {
