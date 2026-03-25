@@ -1,15 +1,17 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { GapY } from "@/components/ui/gap";
 import {
   useProductDetail,
   useProductOptions,
+  useProducts,
 } from "@/queries/useProductQueries";
 import { useOptionDetail } from "@/queries/useOptionQueries";
+import { useCreateReservation } from "@/queries/useReservationQueries";
 import { LocationIcon, ArrowRightIcon } from "@/components/common/Icons";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -19,7 +21,9 @@ import { getSafeImageSrc } from "@/lib/utils";
 export default function BookingConfirmPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { t } = useTranslation();
+  const reservationCreated = useRef(false);
   const packageId = Number(params.id);
   const optionIdFromQuery = Number(searchParams.get("optionId"));
   const optionId =
@@ -39,6 +43,8 @@ export default function BookingConfirmPage() {
   );
   const resolvedOptionId = optionId ?? options[0]?.id ?? undefined;
   const { data: optionDetail } = useOptionDetail(resolvedOptionId);
+  const { data: allProducts = [] } = useProducts({ is_random: true, size: 8 });
+  const createReservationMutation = useCreateReservation();
 
   useEffect(() => {
     const date = localStorage.getItem("selectedBookingDate");
@@ -91,6 +97,11 @@ export default function BookingConfirmPage() {
   const dateTimeDisplay =
     savedDate && savedTime ? `${savedDate} ${savedTime}` : "—";
 
+  const otherOptions = options.filter(opt => opt.id !== resolvedOptionId);
+  const recommendedProducts = allProducts
+    .filter(p => p.id !== packageId)
+    .slice(0, 6);
+
   return (
     <div className="bg-background text-white px-5 pt-6 flex flex-col flex-1">
       <h1 className="title-lg text-white">{t("bookingPage.orderStatus")}</h1>
@@ -101,6 +112,7 @@ export default function BookingConfirmPage() {
       <p className="text-md text-gray-font">{t("bookingPage.modifyAnytime")}</p>
       <GapY size={20} />
 
+      {/* 현재 예약 옵션 카드 */}
       <div className="rounded-[12px] bg-gray-container border border-[#2E3033] p-3 flex gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -145,6 +157,7 @@ export default function BookingConfirmPage() {
 
       <GapY size={24} />
 
+      {/* 패키지 상세 */}
       <h2 className="title-md text-white">{t("package.packageDetails")}</h2>
       {productDetail.description && (
         <p className="text-md text-gray-font mt-1">
@@ -197,59 +210,146 @@ export default function BookingConfirmPage() {
         </div>
       </div>
 
-      {(() => {
-        const otherOptions = options.filter(opt => opt.id !== resolvedOptionId);
-        if (otherOptions.length === 0) return null;
-        return (
-          <>
-            <GapY size={24} />
-            <h2 className="title-md text-white">
-              {t("bookingPage.bookOtherOptions")}
-            </h2>
-            <p className="text-sm text-gray-400 mt-1">
-              {t("bookingPage.bookOtherOptionsSubtitle")}
-            </p>
-            <GapY size={12} />
-            <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
-              {otherOptions.map(opt => (
+      {/* 다른 옵션 예약 */}
+      {otherOptions.length > 0 && (
+        <>
+          <GapY size={24} />
+          <h2 className="title-md text-white">
+            {t("bookingPage.bookOtherOptions")}
+          </h2>
+          <p className="text-sm text-gray-400 mt-1">
+            {t("bookingPage.bookOtherOptionsSubtitle")}
+          </p>
+          <GapY size={12} />
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
+            {otherOptions.map(opt => {
+              const imgSrc = getSafeImageSrc(opt.imageUrl);
+              return (
                 <Link
                   key={opt.id}
                   href={`/package/${packageId}/${opt.id}`}
-                  className="flex-shrink-0 w-[140px] rounded-xl overflow-hidden bg-none border-none"
+                  className="flex-shrink-0 w-[168px]"
                 >
-                  <div className="relative w-full aspect-square">
+                  <div className="relative size-[168px] overflow-hidden rounded-t-xl">
                     <Image
-                      src={getSafeImageSrc(opt.imageUrl)}
+                      src={imgSrc}
                       alt={opt.name}
                       fill
                       className="object-cover"
-                      unoptimized={(opt.imageUrl ?? "").startsWith("http")}
+                      unoptimized={imgSrc.startsWith("http")}
                     />
                   </div>
-                  <div className="p-2">
+                  <div className="pt-2">
                     {opt.optionTags?.length ? (
-                      <p className="text-gray-400 text-xs truncate mb-1">
-                        {opt.optionTags.map(tag => `#${tag}`).join(" ")}
+                      <p className="text-gray-400 text-xs truncate mb-0.5">
+                        {opt.optionTags
+                          .slice(0, 2)
+                          .map(tag => `#${tag}`)
+                          .join(" ")}
                       </p>
                     ) : null}
-                    <p className="text-white text-lg truncate">{opt.name}</p>
+                    <p className="text-white font-bold text-md truncate">
+                      {opt.name}
+                    </p>
                   </div>
                 </Link>
-              ))}
-            </div>
-          </>
-        );
-      })()}
+              );
+            })}
+          </div>
+        </>
+      )}
 
+      {/* 추천 패키지 */}
+      {recommendedProducts.length > 0 && (
+        <>
+          <GapY size={24} />
+          <h2 className="title-md text-white">
+            {t("bookingPage.recommendedForYou")}
+          </h2>
+          <p className="text-sm text-gray-400 mt-1">
+            {t("bookingPage.recommendedForYouSubtitle")}
+          </p>
+          <GapY size={12} />
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
+            {recommendedProducts.map(product => {
+              const imgSrc = getSafeImageSrc(
+                product.imageUrls?.[0] ??
+                  product.representOption?.imageUrls?.[0]
+              );
+              const tags = product.representOption?.tags ?? [];
+              return (
+                <Link
+                  key={product.id}
+                  href={`/package/${product.id}`}
+                  className="flex-shrink-0 w-[168px]"
+                >
+                  <div className="relative size-[168px] overflow-hidden rounded-t-xl">
+                    <Image
+                      src={imgSrc}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                      unoptimized={imgSrc.startsWith("http")}
+                    />
+                  </div>
+                  <div className="pt-2">
+                    {tags.length > 0 ? (
+                      <p className="text-gray-400 text-xs truncate mb-0.5">
+                        {tags
+                          .slice(0, 2)
+                          .map(tag => `#${tag}`)
+                          .join(" ")}
+                      </p>
+                    ) : null}
+                    <p className="text-white font-bold text-md truncate">
+                      {product.name}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      <GapY size={24} />
+
+      {/* 플로팅 확인 버튼 */}
       <div
-        className="sticky bottom-0 p-5 bg-background"
+        className="sticky bottom-0 py-4 bg-background"
         style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
       >
-        <Link href="/my">
-          <Button className="w-full h-[52px] bg-primary">
-            <span className="text-lg">{t("bookingPage.confirm")}</span>
-          </Button>
-        </Link>
+        <Button
+          className="w-full h-[52px] bg-primary"
+          disabled={createReservationMutation.isPending}
+          onClick={async () => {
+            if (reservationCreated.current) {
+              router.push("/my");
+              return;
+            }
+            if (resolvedOptionId) {
+              try {
+                await createReservationMutation.mutateAsync({
+                  productId: packageId,
+                  request: {
+                    reservationSlotId: resolvedOptionId,
+                    totalPrice: currentOption.price,
+                  },
+                });
+                reservationCreated.current = true;
+              } catch (error) {
+                console.error("예약 생성 실패:", error);
+              }
+            }
+            router.push("/my");
+          }}
+        >
+          <span className="text-lg">
+            {createReservationMutation.isPending
+              ? t("bookingPage.loading")
+              : t("bookingPage.confirm")}
+          </span>
+        </Button>
       </div>
     </div>
   );

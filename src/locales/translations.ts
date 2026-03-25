@@ -122,6 +122,10 @@ export const translations = {
       tryAgain: "다시 시작하기",
       noSubmittedData: "제출된 데이터가 없습니다.",
       fillForm: "폼 작성하기",
+      myWishlist: "찜한 패키지",
+      emptyWishlist: "찜한 패키지가 없어요",
+      emptyWishlistSub: "마음에 드는 패키지에 하트를 눌러보세요!",
+      from: "최저",
     },
     my: {
       defaultName: "K-pop Fan",
@@ -205,6 +209,8 @@ export const translations = {
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",
+      recommendedForYou: "Recommended for You",
+      recommendedForYouSubtitle: "Discover more options you might like.",
     },
     notFound: {
       pageNotFound: "Page Not Found",
@@ -404,6 +410,10 @@ export const translations = {
       tryAgain: "Try again",
       noSubmittedData: "No submitted data.",
       fillForm: "Fill out the form",
+      myWishlist: "My Wishlist",
+      emptyWishlist: "No wishlisted packages",
+      emptyWishlistSub: "Tap the heart on a package you like!",
+      from: "From",
     },
     my: {
       defaultName: "K-pop Fan",
@@ -487,6 +497,8 @@ export const translations = {
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",
+      recommendedForYou: "Recommended for You",
+      recommendedForYouSubtitle: "Discover more options you might like.",
     },
     notFound: {
       pageNotFound: "Page Not Found",
@@ -688,6 +700,10 @@ export const translations = {
       tryAgain: "再試行",
       noSubmittedData: "送信されたデータがありません。",
       fillForm: "フォームを記入",
+      myWishlist: "お気に入りパッケージ",
+      emptyWishlist: "お気に入りがありません",
+      emptyWishlistSub: "気に入ったパッケージにハートを押してみてください！",
+      from: "最低",
     },
     my: {
       defaultName: "K-pop Fan",
@@ -771,6 +787,8 @@ export const translations = {
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",
+      recommendedForYou: "Recommended for You",
+      recommendedForYouSubtitle: "Discover more options you might like.",
     },
     notFound: {
       pageNotFound: "ページが見つかりません",
@@ -968,6 +986,10 @@ export const translations = {
       tryAgain: "重试",
       noSubmittedData: "暂无提交数据。",
       fillForm: "填写表单",
+      myWishlist: "收藏的套餐",
+      emptyWishlist: "没有收藏的套餐",
+      emptyWishlistSub: "给喜欢的套餐点个心吧！",
+      from: "最低",
     },
     my: {
       defaultName: "K-pop Fan",
@@ -1051,6 +1073,8 @@ export const translations = {
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",
+      recommendedForYou: "Recommended for You",
+      recommendedForYouSubtitle: "Discover more options you might like.",
     },
     notFound: {
       pageNotFound: "页面未找到",

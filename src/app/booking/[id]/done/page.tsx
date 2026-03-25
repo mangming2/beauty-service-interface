@@ -44,7 +44,7 @@ export default function BookingDonePage() {
       <div className="mt-[33px] py-4">
         <Link href={confirmHref}>
           <Button className="w-full h-[52px]">
-            <span className="text-lg">{t("bookingPage.save")}</span>
+            <span className="text-lg">{t("bookingPage.next")}</span>
           </Button>
         </Link>
       </div>

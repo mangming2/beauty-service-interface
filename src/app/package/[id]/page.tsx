@@ -11,9 +11,11 @@ import {
   useProductOptions,
 } from "@/queries/useProductQueries";
 import { useProductReviews } from "@/queries/useReviewQueries";
+import { useWishes, useToggleWish } from "@/queries/useWishQueries";
 import Link from "next/link";
 import { PageError, PageLoading } from "@/components/common";
 import {
+  HeartIcon,
   BorderHeartIcon,
   LocationIcon,
   ShareIcon,
@@ -36,6 +38,10 @@ export default function PackageDetail() {
 
   const { data: options = [], isLoading: optionsLoading } =
     useProductOptions(packageId);
+
+  const { data: wishes = [] } = useWishes();
+  const toggleWishMutation = useToggleWish();
+  const isWished = wishes.some(w => w.id === packageId);
 
   const {
     data: reviews,
@@ -114,7 +120,18 @@ export default function PackageDetail() {
           }}
         >
           <div className="flex items-center gap-4">
-            <BorderHeartIcon color="#F92595" />
+            <button
+              type="button"
+              onClick={() => toggleWishMutation.mutate(packageId)}
+              disabled={toggleWishMutation.isPending}
+              className="w-6 h-6 flex items-center justify-center"
+            >
+              {isWished ? (
+                <HeartIcon color="#F92595" />
+              ) : (
+                <BorderHeartIcon />
+              )}
+            </button>
             <ShareIcon />
           </div>
           <LanguageSelector />
