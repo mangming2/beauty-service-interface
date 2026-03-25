@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
 
-import { useUser, useLogout } from "@/queries/useAuthQueries";
+import { useUser, useLogout, useAuthStatus } from "@/queries/useAuthQueries";
 import { useMyPageUser } from "@/queries/useMyPageQueries";
 import BookingHistory from "@/components/my/booking-history";
 // import Schedule from "@/components/my/Schedule"; // 이번 배포 미포함
@@ -18,10 +18,11 @@ import { useTranslation } from "@/hooks/useTranslation";
 export default function MyPage() {
   const { user } = useUser();
   const { data: myPageUser, isLoading: myPageUserLoading } = useMyPageUser();
+  const { data: authStatus } = useAuthStatus();
   const signOutMutation = useLogout();
   const router = useRouter();
   const { t } = useTranslation();
-  const isAdmin = myPageUser?.role === "ADMIN";
+  const isAdmin = authStatus?.admin === true || authStatus?.role === "ADMIN";
 
   // 개발 시 콘솔에서 유저 정보 확인용
   useEffect(() => {
@@ -36,7 +37,11 @@ export default function MyPage() {
       "  2) GET /mypage/user (useMyPageUser) — 마이페이지 API 응답:",
       myPageUser ?? null
     );
-  }, [user, myPageUser, myPageUserLoading]);
+    console.log(
+      "  3) GET /auth/status (useAuthStatus) — 인증·권한:",
+      authStatus ?? null
+    );
+  }, [user, myPageUser, myPageUserLoading, authStatus]);
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   const userProfile = {
     name:

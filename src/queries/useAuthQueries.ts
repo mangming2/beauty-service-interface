@@ -1,18 +1,27 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
   loginWithProvider,
   reissueToken,
   logout,
+  getAuthStatus,
   type OAuthProvider,
 } from "@/api/auth";
 import { useAuthStore } from "@/store/useAuthStore";
+import type { ApiError } from "@/lib/apiClient";
 
 // ========== Query Keys ==========
 
 export const authKeys = {
   all: ["auth"] as const,
+  status: () => [...authKeys.all, "status"] as const,
 } as const;
+
+function retryUnless401(failureCount: number, error: unknown): boolean {
+  const err = error as ApiError | undefined;
+  if (err?.status === 401) return false;
+  return failureCount < 2;
+}
 
 // ========== 사용자 정보 ==========
 
@@ -26,6 +35,22 @@ export function useUser() {
     isAuthenticated,
     isLoggedIn: !!accessToken,
   };
+}
+
+/**
+ * 서버 기준 인증·관리자 여부 (GET /auth/status)
+ * 로그인된 경우에만 요청합니다.
+ */
+export function useAuthStatus(options?: { enabled?: boolean }) {
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+
+  return useQuery({
+    queryKey: authKeys.status(),
+    queryFn: getAuthStatus,
+    enabled: (options?.enabled ?? true) && isAuthenticated,
+    staleTime: 60 * 1000,
+    retry: retryUnless401,
+  });
 }
 
 // ========== 로그인 ==========

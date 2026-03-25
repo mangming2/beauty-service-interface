@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { useMyPageUser } from "@/queries/useMyPageQueries";
+import { useAuthStatus } from "@/queries/useAuthQueries";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useOptions, useCreateOption } from "@/queries/useOptionQueries";
 import { useCreateProduct } from "@/queries/useProductQueries";
 import type { CreateOptionRequest } from "@/api/option";
@@ -20,19 +21,25 @@ import { AdminUsersPanel } from "@/components/admin/AdminUsersPanel";
 
 export default function AdminPage() {
   const router = useRouter();
-  const { data: myPageUser, isLoading: userLoading } = useMyPageUser();
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+  const { data: authStatus, isLoading: statusLoading } = useAuthStatus();
   const { data: options = [] } = useOptions();
   const createOptionMutation = useCreateOption();
   const createProductMutation = useCreateProduct();
 
-  const isAdmin = myPageUser?.role === "ADMIN";
+  const isAdmin =
+    authStatus?.admin === true || authStatus?.role === "ADMIN";
 
   useEffect(() => {
-    if (userLoading) return;
-    if (!myPageUser || !isAdmin) {
+    if (!isAuthenticated) {
+      router.replace("/login");
+      return;
+    }
+    if (statusLoading) return;
+    if (!isAdmin) {
       router.replace("/my");
     }
-  }, [myPageUser, isAdmin, userLoading, router]);
+  }, [isAuthenticated, isAdmin, statusLoading, router]);
 
   const [optionReq, setOptionReq] = useState<CreateOptionRequest>({
     name: "",
@@ -115,7 +122,7 @@ export default function AdminPage() {
     );
   };
 
-  if (userLoading || !myPageUser) {
+  if (!isAuthenticated || statusLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
         <span>로딩 중...</span>

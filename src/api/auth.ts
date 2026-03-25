@@ -1,10 +1,18 @@
-import { apiPost } from "@/lib/apiClient";
+import { apiGet, apiPost } from "@/lib/apiClient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // ========== 타입 정의 ==========
 
 export type OAuthProvider = "google" | "kakao" | "naver";
+
+/** GET /auth/status 응답 */
+export interface AuthStatusResponse {
+  authenticated: boolean;
+  admin: boolean;
+  role: "ADMIN" | "USER" | null;
+  userId: number | null;
+}
 
 export interface ReissueTokenResponse {
   grantType: string;
@@ -31,4 +39,12 @@ export async function reissueToken(): Promise<ReissueTokenResponse> {
 /** 로그아웃 (API 호출만) */
 export async function logout(): Promise<void> {
   await apiPost("/auth/logout", undefined, { credentials: "include" });
+}
+
+/**
+ * 현재 인증·권한 조회
+ * GET /auth/status
+ */
+export async function getAuthStatus(): Promise<AuthStatusResponse> {
+  return apiGet<AuthStatusResponse>("/auth/status", { requireAuth: true });
 }
