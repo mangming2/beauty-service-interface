@@ -11,6 +11,7 @@ import { PageLoading } from "@/components/common";
 import { format } from "date-fns";
 import { Icons } from "@/components/common";
 import { useTranslation } from "@/hooks/useTranslation";
+import Image from "next/image";
 
 export default function MyReviewsPage() {
   const queryClient = useQueryClient();
@@ -23,10 +24,6 @@ export default function MyReviewsPage() {
   const [deletedReviewIds, setDeletedReviewIds] = useState<Set<number>>(
     new Set()
   );
-
-  if (!user) {
-    return <PageLoading message={t("edit.loadingUser")} />;
-  }
 
   if (reviewsLoading) {
     return <PageLoading message={t("package.loadingReviews")} />;
@@ -66,6 +63,10 @@ export default function MyReviewsPage() {
       setIsEditMode(false);
       return;
     }
+    if (!user) {
+      setIsEditMode(false);
+      return;
+    }
     const userId = Number(user.id);
     if (Number.isNaN(userId)) {
       setIsEditMode(false);
@@ -94,7 +95,7 @@ export default function MyReviewsPage() {
     <div className="text-white bg-transparent flex flex-col flex-1">
       {/* Header */}
       <div className="flex justify-end px-4 py-3">
-        {!isEditMode ? (
+        {!isEditMode && reviews && reviews.length > 0 ? (
           <Button
             variant="ghost"
             size="sm"
@@ -103,7 +104,7 @@ export default function MyReviewsPage() {
           >
             {t("reviews.edit")}
           </Button>
-        ) : (
+        ) : isEditMode ? (
           <Button
             variant="ghost"
             size="sm"
@@ -115,7 +116,7 @@ export default function MyReviewsPage() {
           >
             {t("reviews.cancel")}
           </Button>
-        )}
+        ) : null}
       </div>
 
       {/* Reviews List */}
@@ -171,8 +172,10 @@ export default function MyReviewsPage() {
               ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <div className="text-gray-400">{t("reviews.noReviewsWritten")}</div>
+          <div className="flex flex-col items-center justify-center gap-4 py-16">
+            <Image src="/no-review.png" alt="no reviews" width={200} height={200} />
+            <p className="title-md text-gray-2 text-center">{t("reviews.noReviewsWritten")}</p>
+            <p className="text-md text-white font-semibold text-center whitespace-pre-line">{t("reviews.noReviewsWrittenSub")}</p>
           </div>
         )}
       </div>

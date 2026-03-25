@@ -271,11 +271,11 @@ export default function ReviewsPage() {
               ))}
             </>
           ) : (
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-6 text-center">
-                <div className="text-gray-400">{t("package.noReviewsYet")}</div>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col items-center justify-center gap-4 py-16">
+              <Image src="/no-review.png" alt="no reviews" width={200} height={200} />
+              <p className="title-md text-gray-2 text-center">{t("package.noReviewsYet")}</p>
+              <p className="text-md text-white font-semibold text-center whitespace-pre-line">{t("package.noReviewsYetSub")}</p>
+            </div>
           )}
         </div>
         <GapY size={8} />
