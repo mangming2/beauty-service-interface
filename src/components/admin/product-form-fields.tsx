@@ -43,9 +43,10 @@ export function ProductFormFields({
     optionIdsText !== undefined && onOptionIdsTextChange !== undefined;
 
   const rowsForRepresent: ProductFormPickerOption[] = isOptionIdMode
-    ? (optionIdModeLabels?.length
-        ? optionIdModeLabels.filter(o => productOptionIds.includes(o.id))
-        : productOptionIds.map(id => ({ id, name: `옵션 #${id}` })))
+    ? productOptionIds.map(id => {
+        const labeled = optionIdModeLabels?.find(o => o.id === id);
+        return labeled ?? { id, name: `옵션 #${id}` };
+      })
     : pickerOptions.filter(o => productOptionIds.includes(o.id));
 
   return (
@@ -84,7 +85,8 @@ export function ProductFormFields({
             placeholder="예: 1, 2, 5"
           />
           <p className="text-gray-500 text-xs mt-1 leading-relaxed">
-            전체 옵션 목록 API가 없습니다. 생성해 둔 옵션의 ID를 입력하세요.
+            쉼표·공백으로 구분합니다. 생성 시에는 옵션 ID를 직접 입력하고, 수정 시에는
+            현재 연결된 ID가 채워지며 여기서 추가·삭제할 수 있습니다.
           </p>
         </div>
       ) : (

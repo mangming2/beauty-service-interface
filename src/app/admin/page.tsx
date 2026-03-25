@@ -20,25 +20,13 @@ import { AdminProductsPanel } from "@/components/admin/AdminProductsPanel";
 import { AdminUsersPanel } from "@/components/admin/AdminUsersPanel";
 import { AdminReservationsPanel } from "@/components/admin/AdminReservationsPanel";
 import { AdminRecommendationsPanel } from "@/components/admin/AdminRecommendationsPanel";
+import { parseOptionIds } from "@/lib/parseOptionIds";
 
 /** 관리자 탭: 기본 TabsTrigger는 dark muted 색이라 회색 배경에서 대비가 거의 없음 */
 const adminTabTriggerClass =
   "text-xs sm:text-sm shrink-0 rounded-md px-2.5 py-2 font-medium " +
   "text-gray-200 hover:bg-gray-700/60 hover:text-white " +
   "data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=active]:shadow-sm";
-
-function parseOptionIds(text: string): number[] {
-  const seen = new Set<number>();
-  const out: number[] = [];
-  for (const part of text.split(/[,，\s]+/)) {
-    const n = parseInt(part.trim(), 10);
-    if (!Number.isFinite(n) || n <= 0) continue;
-    if (seen.has(n)) continue;
-    seen.add(n);
-    out.push(n);
-  }
-  return out;
-}
 
 export default function AdminPage() {
   const router = useRouter();

@@ -28,17 +28,23 @@ const PACKAGE_SECTIONS_CONFIG = {
 function Content() {
   const searchParams = useSearchParams();
   const { t } = useTranslation();
-  // 폼에서 넘어온 태그 (For You 매칭용)
+  // URL ?tags=… (홈 컨셉 등). "All"은 전체 보기이므로 GET /products 의 tag 에 넣지 않음
   const formTags =
     searchParams
       .get("tags")
       ?.split(",")
       .map(t => t.trim())
       .filter(Boolean) || [];
+  const conceptTags = formTags.filter(t => t.toLowerCase() !== "all");
+  /** 백엔드는 tag 단일 문자열 — 첫 컨셉 태그로 목록 조회 */
+  const listTag = conceptTags.length > 0 ? conceptTags[0] : undefined;
+
   const availableTags = [...BASE_TAGS];
   const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const { data: products, isLoading } = useProducts();
+  const { data: products, isLoading } = useProducts(
+    listTag !== undefined ? { tag: listTag } : {}
+  );
 
   const productTags = (pkg: Product) =>
     pkg.representOption?.tags ?? pkg.tagNames ?? [];
@@ -55,11 +61,17 @@ function Content() {
     if (isMostBookedSelected) {
       filteredPackages = [];
     } else {
-      // For You: 폼 태그와 겹치는 태그가 있는 상품만
-      if (isForYouSelected && formTags.length > 0) {
+      // For You: 이미 listTag 로 서버 필터된 단일 태그면 클라이언트 재필터 생략
+      const skipForYouClientFilter =
+        listTag !== undefined && conceptTags.length === 1;
+      if (
+        isForYouSelected &&
+        conceptTags.length > 0 &&
+        !skipForYouClientFilter
+      ) {
         filteredPackages = products.filter(pkg =>
           productTags(pkg).some(pt =>
-            formTags.some(
+            conceptTags.some(
               ft =>
                 pt.toLowerCase().includes(ft.toLowerCase()) ||
                 ft.toLowerCase().includes(pt.toLowerCase())

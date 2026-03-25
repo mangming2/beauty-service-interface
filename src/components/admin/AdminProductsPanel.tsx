@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { parseOptionIds } from "@/lib/parseOptionIds";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -41,9 +42,22 @@ export function AdminProductsPanel() {
 
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
-  const [productOptionIds, setProductOptionIds] = useState<number[]>([]);
+  const [optionIdsText, setOptionIdsText] = useState("");
   const [representOptionId, setRepresentOptionId] = useState<number | "">("");
   const [productImages, setProductImages] = useState<File[]>([]);
+
+  const productOptionIds = useMemo(
+    () => parseOptionIds(optionIdsText),
+    [optionIdsText]
+  );
+
+  const optionIdModeLabels = useMemo(() => {
+    const map = new Map(pickerOptions.map(o => [o.id, o.name]));
+    return productOptionIds.map(id => ({
+      id,
+      name: map.get(id) ?? `옵션 #${id}`,
+    }));
+  }, [pickerOptions, productOptionIds]);
 
   const updateMutation = useUpdateProduct();
   const deleteMutation = useDeleteProduct();
@@ -55,7 +69,7 @@ export function AdminProductsPanel() {
     setProductName(productDetail.name);
     setProductDescription(productDetail.description ?? "");
     const ids = productOptions.map(o => o.id);
-    setProductOptionIds(ids);
+    setOptionIdsText(ids.join(", "));
     const rep = productOptions.find(o => o.isRepresent)?.id ?? ids[0];
     setRepresentOptionId(rep ?? "");
     setProductImages([]);
@@ -65,33 +79,32 @@ export function AdminProductsPanel() {
     setEditId(null);
     setProductName("");
     setProductDescription("");
-    setProductOptionIds([]);
+    setOptionIdsText("");
     setRepresentOptionId("");
     setProductImages([]);
   };
 
-  const toggleProductOption = (id: number) => {
-    setProductOptionIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
+  const handleOptionIdsTextChange = (text: string) => {
+    setOptionIdsText(text);
+    setRepresentOptionId("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editId === null) return;
-    if (productOptionIds.length === 0) {
+    const ids = parseOptionIds(optionIdsText);
+    if (ids.length === 0) {
       alert("옵션을 1개 이상 선택하세요.");
       return;
     }
     const repId =
-      representOptionId !== "" &&
-      productOptionIds.includes(Number(representOptionId))
+      representOptionId !== "" && ids.includes(Number(representOptionId))
         ? Number(representOptionId)
-        : productOptionIds[0];
+        : ids[0];
     const request: CreateProductRequest = {
       name: productName,
       description: productDescription,
-      optionIds: productOptionIds,
+      optionIds: ids,
       representOptionId: repId,
     };
     updateMutation.mutate(
@@ -206,12 +219,13 @@ export function AdminProductsPanel() {
                 productDescription={productDescription}
                 setProductDescription={setProductDescription}
                 productOptionIds={productOptionIds}
-                pickerOptions={pickerOptions}
-                toggleProductOption={toggleProductOption}
                 representOptionId={representOptionId}
                 setRepresentOptionId={setRepresentOptionId}
                 productImages={productImages}
                 setProductImages={setProductImages}
+                optionIdsText={optionIdsText}
+                onOptionIdsTextChange={handleOptionIdsTextChange}
+                optionIdModeLabels={optionIdModeLabels}
               />
               <DialogFooter className="gap-2 sm:gap-0">
                 <Button type="button" variant="secondary" onClick={handleClose}>
