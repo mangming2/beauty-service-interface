@@ -14,6 +14,7 @@ import { LocationIcon, ArrowRightIcon } from "@/components/common/Icons";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getSafeImageSrc } from "@/lib/utils";
 
 const PLACEHOLDER_IMAGE = "/dummy-profile.png";
 
@@ -86,8 +87,8 @@ export default function BookingConfirmPage() {
     imageUrls: firstOption?.imageUrl ? [firstOption.imageUrl] : [],
   };
 
-  const optionImageUrl = currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
-  const packageImageUrl = productDetail.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
+  const optionImageUrl = getSafeImageSrc(currentOption.imageUrls?.[0]);
+  const packageImageUrl = getSafeImageSrc(productDetail.imageUrls?.[0]);
 
   const dateTimeDisplay =
     savedDate && savedTime ? `${savedDate} ${savedTime}` : "—";
@@ -220,7 +221,7 @@ export default function BookingConfirmPage() {
                 >
                   <div className="relative w-full aspect-square">
                     <Image
-                      src={opt.imageUrl ?? PLACEHOLDER_IMAGE}
+                      src={getSafeImageSrc(opt.imageUrl)}
                       alt={opt.name}
                       fill
                       className="object-cover"
@@ -247,7 +248,7 @@ export default function BookingConfirmPage() {
       })()}
 
       <div
-        className="mt-auto p-5"
+        className="sticky bottom-0 p-5 bg-background"
         style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
       >
         <Link href="/my">

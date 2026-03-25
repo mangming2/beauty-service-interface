@@ -375,7 +375,7 @@ export default function PackageOptionBookingPage() {
         </div>
       </div>
 
-      <div className="px-4 py-4 mt-auto">
+      <div className="px-4 py-4 sticky bottom-0 bg-background">
         <div className="flex gap-2">
           <Button
             variant="gray"

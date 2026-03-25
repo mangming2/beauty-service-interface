@@ -1,6 +1,7 @@
 import PackageCard from "@/components/main/PackageCard";
 import type { Product } from "@/api/product";
 import { TranslatedText } from "@/components/main/TranslatedText";
+import { getSafeImageSrc } from "@/lib/utils";
 
 interface PackageSectionProps {
   title: string;
@@ -33,11 +34,9 @@ export default function PackageSection({
           <PackageCard
             key={pkg.id}
             packageId={pkg.id}
-            imageSrc={
-              pkg.imageUrls?.[0] ??
-              pkg.representOption?.imageUrls?.[0] ??
-              "/dummy-profile.png"
-            }
+            imageSrc={getSafeImageSrc(
+              pkg.imageUrls?.[0] ?? pkg.representOption?.imageUrls?.[0]
+            )}
             imageAlt={pkg.name}
             title={pkg.name}
             tags={pkg.representOption?.tags ?? pkg.tagNames ?? []}

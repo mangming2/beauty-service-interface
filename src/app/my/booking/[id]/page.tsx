@@ -215,7 +215,7 @@ export default function MyBookingPage() {
       </div>
 
       <div
-        className="mt-auto p-5"
+        className="sticky bottom-0 p-5 bg-background"
         style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
       >
         <Button className="w-full h-[52px] bg-primary" onClick={handleSave}>

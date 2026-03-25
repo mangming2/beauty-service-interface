@@ -23,6 +23,7 @@ import { LanguageSelector } from "../../../components/common/LanguageSelector";
 import { TranslatedText } from "../../../components/main/TranslatedText";
 import { ReviewDetail } from "@/types/api";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getSafeImageSrc } from "@/lib/utils";
 
 export default function PackageDetail() {
   const params = useParams();
@@ -123,7 +124,7 @@ export default function PackageDetail() {
         {/* Main Package Image */}
         <div className="relative w-full h-[412px]">
           <Image
-            src={productDetail.imageUrls?.[0] ?? "/dummy-profile.png"}
+            src={getSafeImageSrc(productDetail.imageUrls?.[0])}
             alt={productDetail.name}
             fill
             className="object-cover"
@@ -246,7 +247,7 @@ export default function PackageDetail() {
                             </div>
                             <div className="relative w-[108px] h-[108px] overflow-hidden flex-shrink-0 rounded-[2px]">
                               <Image
-                                src={option.imageUrl ?? "/dummy-profile.png"}
+                                src={getSafeImageSrc(option.imageUrl)}
                                 alt={option.name}
                                 fill
                                 className="object-cover"

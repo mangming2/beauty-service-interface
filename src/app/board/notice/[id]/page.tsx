@@ -3,6 +3,7 @@
 import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import { useAnnouncementDetail } from "@/queries/useAnnouncementQueries";
+import { getSafeImageSrc } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { format, parseISO } from "date-fns";
 
@@ -73,12 +74,12 @@ export default function NoticeDetailPage() {
               className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-container"
             >
               <Image
-                src={url}
+                src={getSafeImageSrc(url)}
                 alt={`첨부 이미지 ${index + 1}`}
                 fill
                 className="object-contain"
                 sizes="(max-width: 412px) 100vw, 412px"
-                unoptimized
+                unoptimized={url.startsWith("http")}
               />
             </div>
           ))}

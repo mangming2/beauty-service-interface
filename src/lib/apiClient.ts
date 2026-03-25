@@ -203,7 +203,7 @@ export async function apiRequest<T>(
       requireAuthStrict || (isOptionalAuth && hadAccessToken);
     if (isRedirect && treatRedirectAsSessionLoss) {
       logout();
-      if (typeof window !== "undefined" && shouldRedirectToLogin()) {
+      if (typeof window !== "undefined" && (requireAuthStrict || shouldRedirectToLogin())) {
         window.location.href = "/login";
       }
       throw {
@@ -227,7 +227,7 @@ export async function apiRequest<T>(
         // 재발급 실패 → 로그아웃
         logout();
 
-        if (typeof window !== "undefined" && shouldRedirectToLogin()) {
+        if (typeof window !== "undefined" && (requireAuthStrict || shouldRedirectToLogin())) {
           window.location.href = "/login";
         }
 

@@ -198,7 +198,7 @@ export default function FormPage4() {
 
       {/* Navigation */}
       <div
-        className="mt-auto py-4 px-5"
+        className="sticky bottom-0 py-4 px-5 bg-background"
         style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
       >
         <Button

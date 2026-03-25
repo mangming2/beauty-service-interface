@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { GapY } from "@/components/ui/gap";
 import { StarIcon } from "../common/Icons";
+import { getSafeImageSrc } from "@/lib/utils";
 
 interface RecommendationGalleryProps {
   images: string[];
@@ -34,13 +35,13 @@ export default function RecommendationGallery({
             className="w-[348px] h-[196px] relative flex-shrink-0"
           >
             <Image
-              src={imageSrc}
+              src={getSafeImageSrc(imageSrc)}
               alt="recommendation gallery"
               fill
               sizes="(max-width: 412px) 348px, 348px"
               priority={priority && index === 0}
               className="object-cover"
-              unoptimized
+              unoptimized={imageSrc.startsWith("http")}
             />
           </div>
         ))}
