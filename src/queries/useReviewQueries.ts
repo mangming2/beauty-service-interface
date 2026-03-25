@@ -38,7 +38,6 @@ export function useProductReviews(productId: number | undefined) {
 interface CreateReviewParams {
   productId: number;
   data: ReviewFormData;
-  accessToken: string;
 }
 
 /**
@@ -48,8 +47,8 @@ export function useCreateReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ productId, data, accessToken }: CreateReviewParams) =>
-      createReview(productId, data, accessToken),
+    mutationFn: ({ productId, data }: CreateReviewParams) =>
+      createReview(productId, data),
     onSuccess: newReview => {
       queryClient.invalidateQueries({
         queryKey: reviewKeys.list(newReview.productId),
@@ -62,7 +61,6 @@ interface UpdateReviewParams {
   productId: number;
   reviewId: number;
   data: ReviewFormData;
-  accessToken: string;
 }
 
 /**
@@ -72,13 +70,8 @@ export function useUpdateReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      productId,
-      reviewId,
-      data,
-      accessToken,
-    }: UpdateReviewParams) =>
-      updateReview(productId, reviewId, data, accessToken),
+    mutationFn: ({ productId, reviewId, data }: UpdateReviewParams) =>
+      updateReview(productId, reviewId, data),
     onSuccess: updatedReview => {
       queryClient.invalidateQueries({
         queryKey: reviewKeys.list(updatedReview.productId),

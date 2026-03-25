@@ -1,7 +1,5 @@
-import { apiGet, apiDelete } from "@/lib/apiClient";
+import { apiGet, apiDelete, apiRequest } from "@/lib/apiClient";
 import type { ReviewDetail, ReviewFormData } from "@/types/api";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 /**
  * 상품 리뷰 목록 조회
@@ -29,41 +27,27 @@ export async function getProductReviews(
  */
 export async function createReview(
   productId: number,
-  data: ReviewFormData,
-  accessToken: string
+  data: ReviewFormData
 ): Promise<ReviewDetail> {
   const formData = new FormData();
 
-  // request 객체를 JSON Blob으로 추가
   const requestBlob = new Blob(
     [JSON.stringify({ rating: data.rating, content: data.content })],
     { type: "application/json" }
   );
   formData.append("request", requestBlob);
 
-  // 이미지 파일 추가
   if (data.images?.length) {
     data.images.forEach(file => {
       formData.append("images", file);
     });
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/products/${productId}/reviews`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: formData,
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to create review");
-  }
-
-  return response.json();
+  return apiRequest<ReviewDetail>(`/products/${productId}/reviews`, {
+    method: "POST",
+    body: formData,
+    requireAuth: true,
+  });
 }
 
 /**
@@ -73,8 +57,7 @@ export async function createReview(
 export async function updateReview(
   productId: number,
   reviewId: number,
-  data: ReviewFormData,
-  accessToken: string
+  data: ReviewFormData
 ): Promise<ReviewDetail> {
   const formData = new FormData();
 
@@ -90,22 +73,11 @@ export async function updateReview(
     });
   }
 
-  const response = await fetch(
-    `${API_BASE_URL}/products/${productId}/reviews/${reviewId}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: formData,
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to update review");
-  }
-
-  return response.json();
+  return apiRequest<ReviewDetail>(`/products/${productId}/reviews/${reviewId}`, {
+    method: "PUT",
+    body: formData,
+    requireAuth: true,
+  });
 }
 
 /**

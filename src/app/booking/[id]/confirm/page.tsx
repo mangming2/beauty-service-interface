@@ -233,11 +233,7 @@ export default function BookingConfirmPage() {
                       <p className="text-gray-400 text-xs truncate mb-1">
                         {opt.optionTags.map(tag => `#${tag}`).join(" ")}
                       </p>
-                    ) : (
-                      <p className="text-gray-400 text-xs truncate mb-1">
-                        {"더미태그1, 더미태그2"}
-                      </p>
-                    )}
+                    ) : null}
                     <p className="text-white text-lg truncate">{opt.name}</p>
                   </div>
                 </Link>

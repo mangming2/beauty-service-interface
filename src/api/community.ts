@@ -126,7 +126,7 @@ export async function getCommunityPosts(
     const queryString = queryParams.toString();
     const url = `${POSTS}${queryString ? `?${queryString}` : ""}`;
     const data = await apiGet<CommunityListResponse>(url, {
-      requireAuth: true, // 백엔드가 인증 필수인 경우 토큰 전송
+      optionalAuth: true,
     });
     return data;
   } catch (error) {

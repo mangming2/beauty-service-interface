@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useUser, useLogout, useAuthStatus } from "@/queries/useAuthQueries";
 import { useMyPageUser } from "@/queries/useMyPageQueries";
 import BookingHistory from "@/components/my/booking-history";
-// import Schedule from "@/components/my/Schedule"; // 이번 배포 미포함
 import { EditIcon, SettingIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

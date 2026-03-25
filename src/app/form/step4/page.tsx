@@ -55,13 +55,9 @@ export default function FormPage4() {
         from: fromDate,
         to: toDate,
       });
-      // validation 트리거하고 에러 클리어 - async로 처리
-      setTimeout(async () => {
-        const isValid = await form.trigger("dateRange");
-        if (isValid) {
-          form.clearErrors("dateRange");
-        }
-      }, 0);
+      form.trigger("dateRange").then(isValid => {
+        if (isValid) form.clearErrors("dateRange");
+      });
     }
   }, [formData.dateRange, form]);
 

@@ -209,15 +209,14 @@ export default function PackageDetail() {
                                     Featured
                                   </div>
                                 )}
+                                {option.optionTags?.length ? (
                                 <p className="text-white caption-md truncate">
-                                  {(option.optionTags?.length
-                                    ? option.optionTags
-                                    : ["더미태그1", "더미태그2"]
-                                  )
+                                  {option.optionTags
                                     .slice(0, 2)
                                     .map(tag => `#${tag}`)
                                     .join(" ")}
                                 </p>
+                              ) : null}
                               </div>
 
                               <p className="text-[24px] text-white mb-1 font-semibold leading-tight truncate">
@@ -235,11 +234,11 @@ export default function PackageDetail() {
                               </div>
                               <GapY size={8} />
                               <div className="flex items-center gap-1">
-                                <p className="text-primary text-md">
-                                  {option.discountRate > 0
-                                    ? `${option.discountRate}% `
-                                    : "더미%"}
-                                </p>
+                                {option.discountRate > 0 && (
+                                  <p className="text-primary text-md">
+                                    {option.discountRate}%
+                                  </p>
+                                )}
                                 <p className="text-white text-md">
                                   ₩{finalPrice.toLocaleString()}
                                 </p>
@@ -313,21 +312,13 @@ export default function PackageDetail() {
                         <CardContent className="p-0">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="rounded-full bg-gray-container overflow-hidden w-7 h-7 flex-shrink-0">
-                              {true ? (
-                                <Image
-                                  src={"/dummy-profile.png"}
-                                  alt={review.content}
-                                  width={28}
-                                  height={28}
-                                  className="object-cover w-7 h-7"
-                                />
-                              ) : (
-                                <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                                  <span className="text-white text-xs font-medium">
-                                    {t("package.userName")}
-                                  </span>
-                                </div>
-                              )}
+                              <Image
+                                src={"/dummy-profile.png"}
+                                alt={review.content}
+                                width={28}
+                                height={28}
+                                className="object-cover w-7 h-7"
+                              />
                             </div>
                             <div className="flex flex-1 justify-between items-center min-w-0">
                               <p className="text-sm font-medium truncate">

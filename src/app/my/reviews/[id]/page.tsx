@@ -8,7 +8,6 @@ import {
 } from "@/queries/useProductQueries";
 import { useCreateReview } from "@/queries/useReviewQueries";
 import { useUser } from "@/queries/useAuthQueries";
-import { getAuthToken } from "@/lib/apiClient";
 import { StarRating } from "@/components/ui/star-rating";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,17 +49,10 @@ export default function CreateReviewPage() {
       return;
     }
 
-    const accessToken = getAuthToken();
-    if (!accessToken) {
-      alert(t("reviews.loginRequired"));
-      return;
-    }
-
     try {
       await createReviewMutation.mutateAsync({
         productId: Number(packageId),
         data: { rating, content: comment.trim() },
-        accessToken,
       });
 
       // 성공 후 패키지 페이지로 이동
