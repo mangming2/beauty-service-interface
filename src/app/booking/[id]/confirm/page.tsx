@@ -16,8 +16,6 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getSafeImageSrc } from "@/lib/utils";
 
-const PLACEHOLDER_IMAGE = "/dummy-profile.png";
-
 export default function BookingConfirmPage() {
   const params = useParams();
   const searchParams = useSearchParams();

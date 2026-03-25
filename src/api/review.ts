@@ -73,11 +73,14 @@ export async function updateReview(
     });
   }
 
-  return apiRequest<ReviewDetail>(`/products/${productId}/reviews/${reviewId}`, {
-    method: "PUT",
-    body: formData,
-    requireAuth: true,
-  });
+  return apiRequest<ReviewDetail>(
+    `/products/${productId}/reviews/${reviewId}`,
+    {
+      method: "PUT",
+      body: formData,
+      requireAuth: true,
+    }
+  );
 }
 
 /**

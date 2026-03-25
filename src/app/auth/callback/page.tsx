@@ -21,7 +21,9 @@ function LoadingUI() {
           height={120}
           className="mx-auto"
         />
-        <p className="mt-4 text-lg text-gray-600">{t("auth.processingLogin")}</p>
+        <p className="mt-4 text-lg text-gray-600">
+          {t("auth.processingLogin")}
+        </p>
       </div>
     </div>
   );
@@ -78,7 +80,9 @@ function CallbackContent() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <h2 className="mt-4 text-lg font-medium text-white">{t("auth.authErrorTitle")}</h2>
+          <h2 className="mt-4 text-lg font-medium text-white">
+            {t("auth.authErrorTitle")}
+          </h2>
           <p className="mt-2 text-sm text-gray-300 leading-relaxed">{error}</p>
           <Button className="mt-4" onClick={() => router.push("/login")}>
             {t("auth.backToLogin")}

@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button";
 import { useAuthStatus } from "@/queries/useAuthQueries";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCreateOption } from "@/queries/useOptionQueries";
-import { useCreateProduct, useProductOptions } from "@/queries/useProductQueries";
+import {
+  useCreateProduct,
+  useProductOptions,
+} from "@/queries/useProductQueries";
 import type { CreateOptionRequest } from "@/api/option";
 import type { CreateProductRequest } from "@/api/product";
 import { GapY } from "@/components/ui/gap";
@@ -35,8 +38,7 @@ export default function AdminPage() {
   const createOptionMutation = useCreateOption();
   const createProductMutation = useCreateProduct();
 
-  const isAdmin =
-    authStatus?.admin === true || authStatus?.role === "ADMIN";
+  const isAdmin = authStatus?.admin === true || authStatus?.role === "ADMIN";
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -181,10 +183,16 @@ export default function AdminPage() {
             <TabsTrigger value="option-manage" className={adminTabTriggerClass}>
               옵션 관리
             </TabsTrigger>
-            <TabsTrigger value="product-create" className={adminTabTriggerClass}>
+            <TabsTrigger
+              value="product-create"
+              className={adminTabTriggerClass}
+            >
               상품 생성
             </TabsTrigger>
-            <TabsTrigger value="product-manage" className={adminTabTriggerClass}>
+            <TabsTrigger
+              value="product-manage"
+              className={adminTabTriggerClass}
+            >
               상품 관리
             </TabsTrigger>
             <TabsTrigger value="announcements" className={adminTabTriggerClass}>
@@ -196,7 +204,10 @@ export default function AdminPage() {
             <TabsTrigger value="reservations" className={adminTabTriggerClass}>
               예약
             </TabsTrigger>
-            <TabsTrigger value="recommendations" className={adminTabTriggerClass}>
+            <TabsTrigger
+              value="recommendations"
+              className={adminTabTriggerClass}
+            >
               추천상품
             </TabsTrigger>
           </TabsList>

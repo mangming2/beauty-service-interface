@@ -23,7 +23,8 @@ export const myPageKeys = {
   bookings: () => [...myPageKeys.all, "bookings"] as const,
   bookingDetail: (id: number) => [...myPageKeys.all, "bookings", id] as const,
   upcomingBookings: () => [...myPageKeys.all, "bookings", "upcoming"] as const,
-  communityBookmarks: () => [...myPageKeys.all, "community", "bookmarks"] as const,
+  communityBookmarks: () =>
+    [...myPageKeys.all, "community", "bookmarks"] as const,
 } as const;
 
 /** 401(세션 만료) 시 재시도하지 않음 — apiClient에서 이미 reissue 시도함 */

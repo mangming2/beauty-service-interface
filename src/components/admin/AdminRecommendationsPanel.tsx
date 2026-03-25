@@ -50,12 +50,15 @@ export function AdminRecommendationsPanel() {
   return (
     <div className="space-y-6">
       <p className="text-sm text-gray-400">
-        Latest in Korea 추천 상품 등록 (POST /admin/products/recommendations/latest-in-korea)
+        Latest in Korea 추천 상품 등록 (POST
+        /admin/products/recommendations/latest-in-korea)
       </p>
 
       {/* 현재 추천 상품 목록 */}
       <div>
-        <h3 className="text-sm font-medium text-gray-300 mb-2">현재 추천 상품</h3>
+        <h3 className="text-sm font-medium text-gray-300 mb-2">
+          현재 추천 상품
+        </h3>
         {isLoading ? (
           <p className="text-gray-400 text-sm">불러오는 중...</p>
         ) : currentRecommendations.length === 0 ? (
@@ -75,7 +78,9 @@ export function AdminRecommendationsPanel() {
                   <tr key={p.id} className="border-t border-gray-700">
                     <td className="p-2 text-gray-500">{idx + 1}</td>
                     <td className="p-2 text-gray-400">{p.id}</td>
-                    <td className="p-2 text-white max-w-[200px] truncate">{p.name}</td>
+                    <td className="p-2 text-white max-w-[200px] truncate">
+                      {p.name}
+                    </td>
                   </tr>
                 ))}
               </tbody>

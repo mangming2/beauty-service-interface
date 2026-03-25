@@ -85,34 +85,37 @@ function BoardContent() {
             noticePosts.map(post => {
               const preview = truncateAnnouncementPreview(post.content, 90);
               return (
-              <li key={post.postId}>
-                <Link
-                  href={`/board/notice/${post.postId}`}
-                  className="flex items-center justify-between py-4"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-md text-white truncate">{post.title}</p>
-                    {preview ? (
-                      <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">
-                        {preview}
+                <li key={post.postId}>
+                  <Link
+                    href={`/board/notice/${post.postId}`}
+                    className="flex items-center justify-between py-4"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-md text-white truncate">
+                        {post.title}
                       </p>
-                    ) : null}
-                    <p className="caption-md text-gray_1 mt-0.5">
-                      {format(
-                        new Date(post.announcementDate || post.createdAt),
-                        "yy.MM.dd"
-                      )}
-                      {" · "}{t("boardPage.viewCount")} {post.viewCount}
-                    </p>
-                  </div>
-                  <ArrowRightIcon
-                    color="#FFFFFE"
-                    width={6}
-                    height={16}
-                    className="size-auto shrink-0 ml-2"
-                  />
-                </Link>
-              </li>
+                      {preview ? (
+                        <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">
+                          {preview}
+                        </p>
+                      ) : null}
+                      <p className="caption-md text-gray_1 mt-0.5">
+                        {format(
+                          new Date(post.announcementDate || post.createdAt),
+                          "yy.MM.dd"
+                        )}
+                        {" · "}
+                        {t("boardPage.viewCount")} {post.viewCount}
+                      </p>
+                    </div>
+                    <ArrowRightIcon
+                      color="#FFFFFE"
+                      width={6}
+                      height={16}
+                      className="size-auto shrink-0 ml-2"
+                    />
+                  </Link>
+                </li>
               );
             })
           )}

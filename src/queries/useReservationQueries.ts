@@ -88,13 +88,22 @@ export function useUpdateReservation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ productId, reservationId, request }: UpdateReservationParams) =>
+    mutationFn: ({
+      productId,
+      reservationId,
+      request,
+    }: UpdateReservationParams) =>
       updateReservation(productId, reservationId, request),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.bookings() });
-      queryClient.invalidateQueries({ queryKey: myPageKeys.upcomingBookings() });
       queryClient.invalidateQueries({
-        queryKey: reservationKeys.detail(variables.productId, variables.reservationId),
+        queryKey: myPageKeys.upcomingBookings(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: reservationKeys.detail(
+          variables.productId,
+          variables.reservationId
+        ),
       });
     },
   });

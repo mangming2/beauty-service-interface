@@ -9,10 +9,7 @@ export const OPTION_SLOT_HOUR_MIN = 9;
 export const OPTION_SLOT_HOUR_MAX = 16;
 
 function clampSlotHour(h: number): number {
-  return Math.min(
-    OPTION_SLOT_HOUR_MAX,
-    Math.max(OPTION_SLOT_HOUR_MIN, h)
-  );
+  return Math.min(OPTION_SLOT_HOUR_MAX, Math.max(OPTION_SLOT_HOUR_MIN, h));
 }
 
 export interface OptionFormFieldsProps {
@@ -339,10 +336,10 @@ export function optionToCreateRequest(
     address: o.address,
     slotStartDate: dateOnly(o.slotStartDate, "2025-01-01"),
     slotEndDate: dateOnly(o.slotEndDate, "2025-12-31"),
-    slotStartHour: clampSlotHour(parseHour(o.slotStartTime, OPTION_SLOT_HOUR_MIN)),
-    slotEndHour: clampSlotHour(
-      parseHour(o.slotEndTime, OPTION_SLOT_HOUR_MAX)
+    slotStartHour: clampSlotHour(
+      parseHour(o.slotStartTime, OPTION_SLOT_HOUR_MIN)
     ),
+    slotEndHour: clampSlotHour(parseHour(o.slotEndTime, OPTION_SLOT_HOUR_MAX)),
     discountRate: o.discountRate,
     bookingGuide: o.bookingGuide ?? "",
     regularClosingDay: o.regularClosingDay,

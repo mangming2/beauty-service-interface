@@ -210,13 +210,13 @@ export default function PackageDetail() {
                                   </div>
                                 )}
                                 {option.optionTags?.length ? (
-                                <p className="text-white caption-md truncate">
-                                  {option.optionTags
-                                    .slice(0, 2)
-                                    .map(tag => `#${tag}`)
-                                    .join(" ")}
-                                </p>
-                              ) : null}
+                                  <p className="text-white caption-md truncate">
+                                    {option.optionTags
+                                      .slice(0, 2)
+                                      .map(tag => `#${tag}`)
+                                      .join(" ")}
+                                  </p>
+                                ) : null}
                               </div>
 
                               <p className="text-[24px] text-white mb-1 font-semibold leading-tight truncate">

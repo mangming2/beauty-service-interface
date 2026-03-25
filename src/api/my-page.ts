@@ -124,9 +124,13 @@ export async function getUpcomingBookings(): Promise<Booking[]> {
  * 내가 북마크한 커뮤니티 게시글 목록 조회
  * GET /mypage/community/bookmarks
  */
-export async function getMyBookmarkedCommunityPosts(): Promise<CommunityPostListItem[]> {
+export async function getMyBookmarkedCommunityPosts(): Promise<
+  CommunityPostListItem[]
+> {
   try {
-    const data = await apiGet<CommunityPostListItem[]>("/mypage/community/bookmarks");
+    const data = await apiGet<CommunityPostListItem[]>(
+      "/mypage/community/bookmarks"
+    );
     return data ?? [];
   } catch (error) {
     console.error("Get my bookmarked community posts error:", error);

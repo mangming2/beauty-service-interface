@@ -85,8 +85,8 @@ export function ProductFormFields({
             placeholder="예: 1, 2, 5"
           />
           <p className="text-gray-500 text-xs mt-1 leading-relaxed">
-            쉼표·공백으로 구분합니다. 생성 시에는 옵션 ID를 직접 입력하고, 수정 시에는
-            현재 연결된 ID가 채워지며 여기서 추가·삭제할 수 있습니다.
+            쉼표·공백으로 구분합니다. 생성 시에는 옵션 ID를 직접 입력하고, 수정
+            시에는 현재 연결된 ID가 채워지며 여기서 추가·삭제할 수 있습니다.
           </p>
         </div>
       ) : (

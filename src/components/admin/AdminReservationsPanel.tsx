@@ -18,16 +18,19 @@ export function AdminReservationsPanel() {
   const [productIdStr, setProductIdStr] = useState("");
   const [reservationIdStr, setReservationIdStr] = useState("");
   const [searchProductId, setSearchProductId] = useState<number | undefined>();
-  const [searchReservationId, setSearchReservationId] = useState<number | undefined>();
+  const [searchReservationId, setSearchReservationId] = useState<
+    number | undefined
+  >();
 
   const [editOpen, setEditOpen] = useState(false);
   const [editSlotId, setEditSlotId] = useState("");
   const [editTotalPrice, setEditTotalPrice] = useState("");
 
-  const { data: reservation, isLoading, isError } = useReservationDetail(
-    searchProductId,
-    searchReservationId
-  );
+  const {
+    data: reservation,
+    isLoading,
+    isError,
+  } = useReservationDetail(searchProductId, searchReservationId);
 
   const updateMutation = useUpdateReservation();
 
@@ -35,7 +38,12 @@ export function AdminReservationsPanel() {
     e.preventDefault();
     const pId = parseInt(productIdStr.trim(), 10);
     const rId = parseInt(reservationIdStr.trim(), 10);
-    if (!Number.isFinite(pId) || pId <= 0 || !Number.isFinite(rId) || rId <= 0) {
+    if (
+      !Number.isFinite(pId) ||
+      pId <= 0 ||
+      !Number.isFinite(rId) ||
+      rId <= 0
+    ) {
       alert("올바른 상품 ID와 예약 ID를 입력하세요.");
       return;
     }
@@ -80,7 +88,8 @@ export function AdminReservationsPanel() {
   return (
     <div className="space-y-6">
       <p className="text-sm text-gray-400">
-        예약 단건 조회 · 수정 (GET/PUT /products/:productId/reservations/:reservationId)
+        예약 단건 조회 · 수정 (GET/PUT
+        /products/:productId/reservations/:reservationId)
       </p>
 
       {/* 검색 폼 */}
@@ -134,7 +143,9 @@ export function AdminReservationsPanel() {
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-400">상품</span>
-              <span className="text-white">{reservation.product.name} (#{reservation.product.id})</span>
+              <span className="text-white">
+                {reservation.product.name} (#{reservation.product.id})
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">옵션</span>
@@ -150,25 +161,36 @@ export function AdminReservationsPanel() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">가격</span>
-              <span className="text-white">₩{Number(reservation.option.price).toLocaleString()}</span>
+              <span className="text-white">
+                ₩{Number(reservation.option.price).toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">주소</span>
-              <span className="text-white text-right max-w-[200px]">{reservation.option.address}</span>
+              <span className="text-white text-right max-w-[200px]">
+                {reservation.option.address}
+              </span>
             </div>
           </div>
         </div>
       )}
 
       {/* 수정 다이얼로그 */}
-      <Dialog open={editOpen} onOpenChange={open => { if (!open) setEditOpen(false); }}>
+      <Dialog
+        open={editOpen}
+        onOpenChange={open => {
+          if (!open) setEditOpen(false);
+        }}
+      >
         <DialogContent className="sm:max-w-md text-white border-gray-600 bg-[#1a1c20]">
           <DialogHeader>
             <DialogTitle>예약 수정 #{searchReservationId}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleUpdate} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">변경할 슬롯 ID</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                변경할 슬롯 ID
+              </label>
               <input
                 type="number"
                 min={1}
@@ -179,7 +201,9 @@ export function AdminReservationsPanel() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">결제 총액</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                결제 총액
+              </label>
               <input
                 type="number"
                 min={1}
@@ -191,7 +215,11 @@ export function AdminReservationsPanel() {
               />
             </div>
             <DialogFooter className="gap-2 sm:gap-0">
-              <Button type="button" variant="secondary" onClick={() => setEditOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setEditOpen(false)}
+              >
                 취소
               </Button>
               <Button type="submit" disabled={updateMutation.isPending}>
@@ -199,7 +227,9 @@ export function AdminReservationsPanel() {
               </Button>
             </DialogFooter>
             {updateMutation.isError && (
-              <p className="text-red-400 text-xs">{updateMutation.error.message}</p>
+              <p className="text-red-400 text-xs">
+                {updateMutation.error.message}
+              </p>
             )}
           </form>
         </DialogContent>

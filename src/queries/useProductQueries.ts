@@ -88,7 +88,9 @@ export function useInfiniteProducts(
  */
 export function useProductDetail(productId: number | undefined) {
   const isValidProductId =
-    typeof productId === "number" && Number.isFinite(productId) && productId > 0;
+    typeof productId === "number" &&
+    Number.isFinite(productId) &&
+    productId > 0;
 
   return useQuery<ProductDetail | null>({
     queryKey: productKeys.detail(productId!),
@@ -105,7 +107,10 @@ export function useProductDetail(productId: number | undefined) {
  * 특정 상품의 옵션 목록 조회 (GET /products/:productId/options)
  */
 export function useProductOptions(productId: number | undefined) {
-  const isValidId = typeof productId === "number" && Number.isFinite(productId) && productId > 0;
+  const isValidId =
+    typeof productId === "number" &&
+    Number.isFinite(productId) &&
+    productId > 0;
 
   return useQuery<ProductOptionListItem[]>({
     queryKey: productKeys.options(productId!),

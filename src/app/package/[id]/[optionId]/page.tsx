@@ -346,7 +346,9 @@ export default function PackageOptionBookingPage() {
         <Divider height={8} className="bg-gray-container" />
 
         <div className="py-4">
-          <h3 className="text-lg font-semibold mb-3">{t("option.chooseTimeSlot")}</h3>
+          <h3 className="text-lg font-semibold mb-3">
+            {t("option.chooseTimeSlot")}
+          </h3>
           <div className="grid grid-cols-4 gap-x-2 gap-y-3">
             {timeSlots.map(slot => {
               const isSelected = selectedTime === slot;

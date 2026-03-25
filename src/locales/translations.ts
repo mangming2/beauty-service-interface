@@ -279,7 +279,8 @@ export const translations = {
       bookLink: "예약 링크",
       selectDateTimeFirst: "날짜와 시간을 먼저 선택해 주세요.",
       invalidTimeFormat: "선택한 시간 형식이 올바르지 않습니다.",
-      scheduleCreateFailed: "일정 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+      scheduleCreateFailed:
+        "일정 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     },
   },
   En: {
@@ -560,7 +561,8 @@ export const translations = {
       bookLink: "Book Link",
       selectDateTimeFirst: "Please select date and time first.",
       invalidTimeFormat: "The selected time format is invalid.",
-      scheduleCreateFailed: "Failed to create schedule. Please try again later.",
+      scheduleCreateFailed:
+        "Failed to create schedule. Please try again later.",
     },
   },
   Jp: {
