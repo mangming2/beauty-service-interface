@@ -1,6 +1,7 @@
 import { apiGet } from "@/lib/apiClient";
 import type { ApiError } from "@/lib/apiClient";
 import type { ReviewDetail } from "@/types/api";
+import type { CommunityPostListItem } from "@/api/community";
 
 // ========== 타입 정의 ==========
 
@@ -115,6 +116,20 @@ export async function getUpcomingBookings(): Promise<Booking[]> {
     return data ?? [];
   } catch (error) {
     console.error("Get upcoming bookings error:", error);
+    throw error;
+  }
+}
+
+/**
+ * 내가 북마크한 커뮤니티 게시글 목록 조회
+ * GET /mypage/community/bookmarks
+ */
+export async function getMyBookmarkedCommunityPosts(): Promise<CommunityPostListItem[]> {
+  try {
+    const data = await apiGet<CommunityPostListItem[]>("/mypage/community/bookmarks");
+    return data ?? [];
+  } catch (error) {
+    console.error("Get my bookmarked community posts error:", error);
     throw error;
   }
 }

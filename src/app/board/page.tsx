@@ -11,11 +11,13 @@ import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { useCommunityPosts } from "@/queries/useCommunityQueries";
 import { GapY } from "../../components/ui/gap";
 import { truncateAnnouncementPreview } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const TAB_NOTICE = "notice";
 const TAB_COMMUNITY = "community";
 
 function BoardContent() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const tab =
     searchParams.get("tab") === TAB_COMMUNITY ? TAB_COMMUNITY : TAB_NOTICE;
@@ -47,7 +49,7 @@ function BoardContent() {
           </Link>
           <button
             type="button"
-            onClick={() => alert("커뮤니티는 개발 중입니다.")}
+            onClick={() => alert(t("boardPage.communityUnderDevelopment"))}
             className="relative title-sm flex-initial pb-3 pt-0 px-0 rounded-none transition-colors duration-200 after:absolute after:left-0 after:right-0 after:h-px after:bottom-0 after:bg-gray-outline text-gray-400 hover:text-white cursor-pointer bg-transparent border-0 text-left"
           >
             <span className="relative z-[1]">
@@ -62,7 +64,7 @@ function BoardContent() {
       <div className="relative w-full aspect-[3/1] overflow-hidden rounded">
         <Image
           src="/notice.png"
-          alt="공지"
+          alt={t("boardPage.noticeAlt")}
           fill
           className="object-cover"
           sizes="100vw"
@@ -77,7 +79,7 @@ function BoardContent() {
             </li>
           ) : noticePosts.length === 0 ? (
             <li className="py-8 text-center text-gray_1 caption-md">
-              공지가 없습니다.
+              {t("boardPage.noNotices")}
             </li>
           ) : (
             noticePosts.map(post => {
@@ -100,7 +102,7 @@ function BoardContent() {
                         new Date(post.announcementDate || post.createdAt),
                         "yy.MM.dd"
                       )}
-                      {" · "}조회 {post.viewCount}
+                      {" · "}{t("boardPage.viewCount")} {post.viewCount}
                     </p>
                   </div>
                   <ArrowRightIcon
@@ -125,7 +127,7 @@ function BoardContent() {
             </li>
           ) : communityPosts.length === 0 ? (
             <li className="py-8 text-center text-gray_1 caption-md">
-              게시글이 없습니다.
+              {t("boardPage.noPosts")}
             </li>
           ) : (
             communityPosts.map(post => (
@@ -162,7 +164,7 @@ export default function BoardPage() {
     <Suspense
       fallback={
         <div className="px-5 py-12 flex justify-center text-gray-400">
-          로딩 중...
+          <TranslatedText translationKey="common.loading" />
         </div>
       }
     >

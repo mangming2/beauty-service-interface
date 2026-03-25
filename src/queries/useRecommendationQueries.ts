@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getLatestInKoreaRecommendations,
+  upsertLatestKoreaRecommendation,
   type GetLatestInKoreaParams,
+  type UpsertLatestKoreaRecommendationRequest,
 } from "@/api/recommendation";
 import type { Product } from "@/api/product";
 import type { ApiError } from "@/lib/apiClient";
@@ -34,5 +36,22 @@ export function useLatestInKoreaRecommendations(
     queryFn: () => getLatestInKoreaRecommendations(params),
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,
+  });
+}
+
+/**
+ * Latest in Korea 추천 상품 등록/수정 (어드민 전용)
+ */
+export function useUpsertLatestKoreaRecommendation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (request: UpsertLatestKoreaRecommendationRequest) =>
+      upsertLatestKoreaRecommendation(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: recommendationKeys.all,
+      });
+    },
   });
 }

@@ -18,6 +18,8 @@ import { AdminAnnouncementsPanel } from "@/components/admin/AdminAnnouncementsPa
 import { AdminOptionsPanel } from "@/components/admin/AdminOptionsPanel";
 import { AdminProductsPanel } from "@/components/admin/AdminProductsPanel";
 import { AdminUsersPanel } from "@/components/admin/AdminUsersPanel";
+import { AdminReservationsPanel } from "@/components/admin/AdminReservationsPanel";
+import { AdminRecommendationsPanel } from "@/components/admin/AdminRecommendationsPanel";
 
 /** 관리자 탭: 기본 TabsTrigger는 dark muted 색이라 회색 배경에서 대비가 거의 없음 */
 const adminTabTriggerClass =
@@ -203,6 +205,12 @@ export default function AdminPage() {
             <TabsTrigger value="users" className={adminTabTriggerClass}>
               유저
             </TabsTrigger>
+            <TabsTrigger value="reservations" className={adminTabTriggerClass}>
+              예약
+            </TabsTrigger>
+            <TabsTrigger value="recommendations" className={adminTabTriggerClass}>
+              추천상품
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="option-create" className="mt-6">
@@ -300,6 +308,14 @@ export default function AdminPage() {
 
           <TabsContent value="users" className="mt-6">
             <AdminUsersPanel />
+          </TabsContent>
+
+          <TabsContent value="reservations" className="mt-6">
+            <AdminReservationsPanel />
+          </TabsContent>
+
+          <TabsContent value="recommendations" className="mt-6">
+            <AdminRecommendationsPanel />
           </TabsContent>
         </Tabs>
 

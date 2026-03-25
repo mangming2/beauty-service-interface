@@ -43,11 +43,6 @@ export function LatestTrendsSection() {
             <TrendCard
               id={String(product.id)}
               title={product.name}
-              artist={
-                product.representOption?.tags?.[0] ??
-                product.tagNames?.[0] ??
-                "-"
-              }
               location={product.representOption?.location ?? "-"}
               description={product.description ?? ""}
               imageSrc={

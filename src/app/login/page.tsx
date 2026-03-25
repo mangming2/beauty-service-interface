@@ -83,7 +83,7 @@ export default function LoginPage() {
 
   const handleTestLogin = () => {
     if (!testEmail.trim()) {
-      setMessage("이메일을 입력하거나 먼저 테스트 회원가입을 진행하세요.");
+      setMessage(t("login.testLoginEmailRequired"));
       return;
     }
     setMessage("");

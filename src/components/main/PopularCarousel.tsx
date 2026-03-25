@@ -60,30 +60,31 @@ export function PopularCarousel({ items }: PopularCarouselProps) {
               >
                 <div className="w-full h-full flex items-center justify-center">
                   <div
-                    className="relative rounded-[8px] border border-card-border transition-transform duration-300 ease-in-out w-full"
+                    className="relative w-full overflow-hidden rounded-[8px] border border-card-border transition-transform duration-300 ease-in-out"
                     style={{
                       transform: `scale(${scale})`,
                       transformOrigin: "center center",
                     }}
                   >
-                    <div className="absolute top-0 left-0 z-10 bg-black bg-opacity-50 border-solid border-1 border-card-border text-white px-2 py-1 rounded caption-sm">
-                      <TranslatedText translationKey="mostPopular" />
-                    </div>
-                    <div className="w-full">
-                      <div className="relative w-full h-[381px]">
-                        <Image
-                          src={item.imageSrc}
-                          alt={item.alt}
-                          className="object-cover w-full h-full rounded-t-[8px]"
-                          fill
-                          priority={index === 0}
-                        />
+                    <div className="relative h-[456px] w-full">
+                      <Image
+                        src={item.imageSrc}
+                        alt={item.alt}
+                        className="object-cover"
+                        fill
+                        sizes="372px"
+                        priority={index === 0}
+                      />
+                      <div className="absolute left-0 top-0 z-20 rounded-br rounded-tl-[8px] border-b border-r border-card-border bg-black/50 px-2 py-1 text-white caption-sm">
+                        <TranslatedText translationKey="mostPopular" />
                       </div>
-                      <div className="flex flex-col gap-[4px] p-[12px]">
-                        <div className="caption-sm text-primary">
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col gap-1 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-3 pb-4 pt-20">
+                        <p className="caption-sm font-medium text-primary">
                           {item.tags}
-                        </div>
-                        <div className="text-md">{item.location}</div>
+                        </p>
+                        <p className="title-lg font-semibold leading-tight text-white">
+                          {item.location}
+                        </p>
                       </div>
                     </div>
                   </div>

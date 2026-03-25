@@ -1,7 +1,18 @@
-import { apiGet } from "@/lib/apiClient";
+import { apiGet, apiPost } from "@/lib/apiClient";
 import type { Product } from "@/api/product";
 
 const BASE = "/products/recommendations";
+
+/** 어드민 Latest in Korea 추천 상품 등록 요청 */
+export interface UpsertLatestKoreaRecommendationRequest {
+  /** 우선 노출할 추천 상품 ID 목록 (정렬 순서대로, 최대 50개) */
+  productIds: number[];
+}
+
+/** 어드민 Latest in Korea 추천 상품 등록 응답 */
+export interface UpsertLatestKoreaRecommendationResponse {
+  productCount: number;
+}
 
 /** Latest in Korea 추천 목록 조회 파라미터 */
 export interface GetLatestInKoreaParams {
@@ -15,6 +26,26 @@ export interface GetLatestInKoreaParams {
  *
  * GET /products/recommendations/latest-in-korea
  */
+/**
+ * Latest in Korea 추천 상품 등록/수정 (어드민 전용)
+ * POST /admin/products/recommendations/latest-in-korea
+ */
+export async function upsertLatestKoreaRecommendation(
+  request: UpsertLatestKoreaRecommendationRequest
+): Promise<UpsertLatestKoreaRecommendationResponse> {
+  try {
+    const data = await apiPost<UpsertLatestKoreaRecommendationResponse>(
+      "/admin/products/recommendations/latest-in-korea",
+      request,
+      { requireAuth: true }
+    );
+    return data;
+  } catch (error) {
+    console.error("Upsert latest-in-korea recommendation error:", error);
+    throw error;
+  }
+}
+
 export async function getLatestInKoreaRecommendations(
   params: GetLatestInKoreaParams = {}
 ): Promise<Product[]> {

@@ -12,6 +12,7 @@ import { Divider } from "@/components/ui/divider";
 import { useOptionDetail } from "@/queries/useOptionQueries";
 import { useCreateSchedule } from "@/queries/useScheduleQueries";
 import { notFound } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const PLACEHOLDER_IMAGE = "/dummy-profile.png";
 
@@ -22,6 +23,7 @@ function toDateOnly(date: Date): Date {
 export default function PackageOptionBookingPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const packageId = Number(params.id);
   const optionIdParam = params.optionId;
   const optionId = Number(optionIdParam);
@@ -121,13 +123,13 @@ export default function PackageOptionBookingPage() {
 
   const handleComplete = async () => {
     if (!selectedDate || !selectedTime) {
-      alert("날짜와 시간을 먼저 선택해 주세요.");
+      alert(t("option.selectDateTimeFirst"));
       return;
     }
 
     const [hour, minute = 0] = selectedTime.split(":").map(Number);
     if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
-      alert("선택한 시간 형식이 올바르지 않습니다.");
+      alert(t("option.invalidTimeFormat"));
       return;
     }
 
@@ -151,7 +153,7 @@ export default function PackageOptionBookingPage() {
       });
     } catch (error) {
       console.error("일정 생성 실패:", error);
-      alert("일정 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      alert(t("option.scheduleCreateFailed"));
       return;
     }
 
@@ -234,23 +236,23 @@ export default function PackageOptionBookingPage() {
 
             <div className="roun mt-3 space-y-5">
               {renderAccordion(
-                "Description",
+                t("option.description"),
                 isDescriptionOpen,
                 () => setIsDescriptionOpen(prev => !prev),
                 currentOption.description
               )}
               {renderAccordion(
-                "Full Address",
+                t("option.fullAddress"),
                 isAddressOpen,
                 () => setIsAddressOpen(prev => !prev),
                 currentOption.address
               )}
               {renderAccordion(
-                "Booking Guide",
+                t("option.bookingGuide"),
                 isGuideOpen,
                 () => setIsGuideOpen(prev => !prev),
                 currentOption.bookingGuide ||
-                  "Reserve through the official website and complete payment to confirm your booking."
+                  t("bookingPage.reserveThroughWebsite")
               )}
             </div>
           </div>
@@ -260,7 +262,7 @@ export default function PackageOptionBookingPage() {
 
         <div className="bg-[#2E3033] rounded-[8px] p-4 mb-4">
           <h3 className="text-lg font-bold text-white mb-3">
-            Before you continue.
+            {t("option.beforeContinue")}
           </h3>
           <div className="flex gap-3">
             <button
@@ -280,11 +282,10 @@ export default function PackageOptionBookingPage() {
             </button>
             <div>
               <span className="text-white text-lg">
-                External Booking Notice
+                {t("option.externalBookingTitle")}
               </span>
               <p className="text-md text-gray-font">
-                I understand that my reservation is not completed here and must
-                be finalized on Naver Booking.
+                {t("option.externalBookingNotice")}
               </p>
             </div>
           </div>
@@ -293,7 +294,7 @@ export default function PackageOptionBookingPage() {
         <Divider height={8} className="bg-[#2E3033] mt-4 mb-4" />
 
         <div className="py-3">
-          <h3 className="title-sm mb-4">Choose your date.</h3>
+          <h3 className="title-sm mb-4">{t("option.chooseDate")}</h3>
 
           <div className="flex items-center justify-between mb-3 px-2">
             <button
@@ -345,7 +346,7 @@ export default function PackageOptionBookingPage() {
         <Divider height={8} className="bg-gray-container" />
 
         <div className="py-4">
-          <h3 className="text-lg font-semibold mb-3">Choose your time slot.</h3>
+          <h3 className="text-lg font-semibold mb-3">{t("option.chooseTimeSlot")}</h3>
           <div className="grid grid-cols-4 gap-x-2 gap-y-3">
             {timeSlots.map(slot => {
               const isSelected = selectedTime === slot;
@@ -367,7 +368,7 @@ export default function PackageOptionBookingPage() {
             })}
             {timeSlots.length === 0 && (
               <p className="col-span-4 text-sm text-gray-400">
-                Available time slots are not configured.
+                {t("option.noTimeSlots")}
               </p>
             )}
           </div>
@@ -382,14 +383,14 @@ export default function PackageOptionBookingPage() {
             onClick={handleComplete}
             disabled={createScheduleMutation.isPending}
           >
-            Complete
+            {t("option.complete")}
           </Button>
           <Button
             className="flex-1 h-[52px] text-lg"
             onClick={handleBookLink}
             disabled={!externalBookingAgreed || !selectedDate || !selectedTime}
           >
-            Book Link
+            {t("option.bookLink")}
           </Button>
         </div>
       </div>

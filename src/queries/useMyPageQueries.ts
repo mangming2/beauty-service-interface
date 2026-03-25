@@ -5,10 +5,12 @@ import {
   getMyBookings,
   getBookingDetail,
   getUpcomingBookings,
+  getMyBookmarkedCommunityPosts,
   type MyPageUser,
   type Booking,
 } from "@/api/my-page";
 import type { ReviewDetail } from "@/types/api";
+import type { CommunityPostListItem } from "@/api/community";
 import { useAuthStore } from "@/store/useAuthStore";
 import type { ApiError } from "@/lib/apiClient";
 
@@ -21,6 +23,7 @@ export const myPageKeys = {
   bookings: () => [...myPageKeys.all, "bookings"] as const,
   bookingDetail: (id: number) => [...myPageKeys.all, "bookings", id] as const,
   upcomingBookings: () => [...myPageKeys.all, "bookings", "upcoming"] as const,
+  communityBookmarks: () => [...myPageKeys.all, "community", "bookmarks"] as const,
 } as const;
 
 /** 401(세션 만료) 시 재시도하지 않음 — apiClient에서 이미 reissue 시도함 */
@@ -107,6 +110,22 @@ export function useUpcomingBookings() {
   return useQuery<Booking[]>({
     queryKey: myPageKeys.upcomingBookings(),
     queryFn: getUpcomingBookings,
+    enabled: isAuthenticated,
+    staleTime: 5 * 60 * 1000,
+    retry: retryUnless401,
+  });
+}
+
+/**
+ * 내가 북마크한 커뮤니티 게시글 목록 조회
+ * 비로그인 시 API 호출 안 함
+ */
+export function useMyBookmarkedCommunityPosts() {
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+
+  return useQuery<CommunityPostListItem[]>({
+    queryKey: myPageKeys.communityBookmarks(),
+    queryFn: getMyBookmarkedCommunityPosts,
     enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,

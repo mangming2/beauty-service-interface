@@ -286,16 +286,19 @@ export default function PackageDetail() {
               </div>
 
               <GapY size={8} />
-              <Link href={`/package/${productDetail.id}/reviews`}>
+              <Link
+                href={`/package/${productDetail.id}/reviews`}
+                className="block w-full"
+              >
                 <div className="flex flex-nowrap gap-3 overflow-x-auto scrollbar-hide">
                   {reviewsLoading ? (
-                    <div className="flex items-center justify-center w-[250px] h-[132px]">
+                    <div className="flex w-full min-h-[132px] shrink-0 items-center justify-center">
                       <div className="text-gray-400">
                         {t("package.loadingReviews")}
                       </div>
                     </div>
                   ) : reviewsError ? (
-                    <div className="flex items-center justify-center w-[250px] h-[132px]">
+                    <div className="flex w-full min-h-[132px] shrink-0 items-center justify-center">
                       <div className="text-gray-400">
                         {t("package.errorLoadingReviews")}
                       </div>
@@ -341,7 +344,7 @@ export default function PackageDetail() {
                       </Card>
                     ))
                   ) : (
-                    <div className="flex items-center justify-center w-[250px] h-[132px]">
+                    <div className="flex w-full min-h-[132px] shrink-0 items-center justify-center">
                       <div className="text-gray-400">
                         {t("package.noReviewsYet")}
                       </div>

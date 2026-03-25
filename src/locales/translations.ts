@@ -112,6 +112,8 @@ export const translations = {
       emailPlaceholder: "test+fe-qa-001@google.com",
       signupSuccess: "가입 완료",
       loginSuccess: "로그인 완료",
+      testLoginEmailRequired:
+        "이메일을 입력하거나 먼저 테스트 회원가입을 진행하세요.",
     },
     wish: {
       howAboutThisPackage: "How about this package?",
@@ -247,6 +249,38 @@ export const translations = {
       updating: "Updating...",
       loadingUser: "사용자 정보를 불러오는 중...",
     },
+    boardPage: {
+      noNotices: "공지가 없습니다.",
+      noPosts: "게시글이 없습니다.",
+      communityUnderDevelopment: "커뮤니티는 개발 중입니다.",
+      noticeAlt: "공지",
+      viewCount: "조회",
+    },
+    auth: {
+      processingLogin: "로그인 처리 중...",
+      sessionNotPersisted:
+        "로그인 세션이 유지되지 않았습니다. 시크릿/프라이빗 모드에서는 쿠키가 저장되지 않아 로그인이 실패할 수 있습니다. 일반 창에서 다시 시도해 주세요.",
+      authError: "인증 처리 중 오류가 발생했습니다.",
+      authErrorTitle: "인증 오류",
+      backToLogin: "로그인 페이지로 돌아가기",
+    },
+    option: {
+      description: "Description",
+      fullAddress: "Full Address",
+      bookingGuide: "Booking Guide",
+      beforeContinue: "계속하기 전에.",
+      externalBookingTitle: "외부 예약 안내",
+      externalBookingNotice:
+        "이 예약은 여기서 완료되지 않으며 네이버 예약에서 최종 확인해야 합니다.",
+      chooseDate: "날짜를 선택하세요.",
+      chooseTimeSlot: "시간대를 선택하세요.",
+      noTimeSlots: "이용 가능한 시간대가 설정되지 않았습니다.",
+      complete: "Complete",
+      bookLink: "예약 링크",
+      selectDateTimeFirst: "날짜와 시간을 먼저 선택해 주세요.",
+      invalidTimeFormat: "선택한 시간 형식이 올바르지 않습니다.",
+      scheduleCreateFailed: "일정 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+    },
   },
   En: {
     location: "Seoul, South Korea",
@@ -359,6 +393,8 @@ export const translations = {
       emailPlaceholder: "test+fe-qa-001@google.com",
       signupSuccess: "Signup complete",
       loginSuccess: "Login complete",
+      testLoginEmailRequired:
+        "Please enter your email or sign up for a test account first.",
     },
     wish: {
       howAboutThisPackage: "How about this package?",
@@ -494,6 +530,38 @@ export const translations = {
       updating: "Updating...",
       loadingUser: "Loading user info...",
     },
+    boardPage: {
+      noNotices: "No notices.",
+      noPosts: "No posts.",
+      communityUnderDevelopment: "Community is under development.",
+      noticeAlt: "Notice",
+      viewCount: "views",
+    },
+    auth: {
+      processingLogin: "Processing login...",
+      sessionNotPersisted:
+        "Your login session was not maintained. Cookies may not be saved in incognito/private mode, which can cause login to fail. Please try again in a regular window.",
+      authError: "An error occurred during authentication.",
+      authErrorTitle: "Authentication Error",
+      backToLogin: "Back to login page",
+    },
+    option: {
+      description: "Description",
+      fullAddress: "Full Address",
+      bookingGuide: "Booking Guide",
+      beforeContinue: "Before you continue.",
+      externalBookingTitle: "External Booking Notice",
+      externalBookingNotice:
+        "I understand that my reservation is not completed here and must be finalized on Naver Booking.",
+      chooseDate: "Choose your date.",
+      chooseTimeSlot: "Choose your time slot.",
+      noTimeSlots: "Available time slots are not configured.",
+      complete: "Complete",
+      bookLink: "Book Link",
+      selectDateTimeFirst: "Please select date and time first.",
+      invalidTimeFormat: "The selected time format is invalid.",
+      scheduleCreateFailed: "Failed to create schedule. Please try again later.",
+    },
   },
   Jp: {
     location: "ソウル、韓国",
@@ -608,6 +676,8 @@ export const translations = {
       emailPlaceholder: "test+fe-qa-001@google.com",
       signupSuccess: "登録完了",
       loginSuccess: "ログイン完了",
+      testLoginEmailRequired:
+        "メールアドレスを入力するか、テストアカウントに登録してください。",
     },
     wish: {
       howAboutThisPackage: "How about this package?",
@@ -744,6 +814,39 @@ export const translations = {
       updating: "Updating...",
       loadingUser: "ユーザー情報を読み込み中...",
     },
+    boardPage: {
+      noNotices: "お知らせがありません。",
+      noPosts: "投稿がありません。",
+      communityUnderDevelopment: "コミュニティは開発中です。",
+      noticeAlt: "お知らせ",
+      viewCount: "閲覧",
+    },
+    auth: {
+      processingLogin: "ログイン処理中...",
+      sessionNotPersisted:
+        "ログインセッションが維持されませんでした。シークレット/プライベートモードではCookieが保存されないため、ログインに失敗することがあります。通常のウィンドウで再試行してください。",
+      authError: "認証処理中にエラーが発生しました。",
+      authErrorTitle: "認証エラー",
+      backToLogin: "ログインページに戻る",
+    },
+    option: {
+      description: "Description",
+      fullAddress: "住所",
+      bookingGuide: "予約ガイド",
+      beforeContinue: "続ける前に。",
+      externalBookingTitle: "外部予約通知",
+      externalBookingNotice:
+        "この予約はここで完了せず、Naver予約で最終確認する必要があります。",
+      chooseDate: "日付を選択してください。",
+      chooseTimeSlot: "タイムスロットを選択してください。",
+      noTimeSlots: "利用可能なタイムスロットが設定されていません。",
+      complete: "完了",
+      bookLink: "予約リンク",
+      selectDateTimeFirst: "日付と時間を先に選択してください。",
+      invalidTimeFormat: "選択した時間の形式が無効です。",
+      scheduleCreateFailed:
+        "スケジュールの作成に失敗しました。しばらくしてから再試行してください。",
+    },
   },
   ZH: {
     location: "首尔，韩国",
@@ -854,6 +957,7 @@ export const translations = {
       emailPlaceholder: "test+fe-qa-001@google.com",
       signupSuccess: "注册完成",
       loginSuccess: "登录完成",
+      testLoginEmailRequired: "请输入邮箱或先注册测试账号。",
     },
     wish: {
       howAboutThisPackage: "How about this package?",
@@ -988,6 +1092,38 @@ export const translations = {
       complete: "Complete",
       updating: "Updating...",
       loadingUser: "正在加载用户信息...",
+    },
+    boardPage: {
+      noNotices: "暂无公告。",
+      noPosts: "暂无帖子。",
+      communityUnderDevelopment: "社区正在开发中。",
+      noticeAlt: "公告",
+      viewCount: "浏览",
+    },
+    auth: {
+      processingLogin: "正在处理登录...",
+      sessionNotPersisted:
+        "登录会话未能维持。隐私/无痕模式下Cookie可能无法保存，导致登录失败。请在普通窗口中重试。",
+      authError: "认证过程中发生错误。",
+      authErrorTitle: "认证错误",
+      backToLogin: "返回登录页面",
+    },
+    option: {
+      description: "描述",
+      fullAddress: "完整地址",
+      bookingGuide: "预订指南",
+      beforeContinue: "继续之前。",
+      externalBookingTitle: "外部预订通知",
+      externalBookingNotice:
+        "我了解我的预订不在此完成，必须在Naver预订上最终确认。",
+      chooseDate: "选择日期。",
+      chooseTimeSlot: "选择时间段。",
+      noTimeSlots: "可用时间段未配置。",
+      complete: "完成",
+      bookLink: "预订链接",
+      selectDateTimeFirst: "请先选择日期和时间。",
+      invalidTimeFormat: "所选时间格式无效。",
+      scheduleCreateFailed: "创建日程失败，请稍后重试。",
     },
   },
 };

@@ -7,9 +7,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { reissueToken } from "@/lib/apiClient";
 import { getMyPageUser } from "@/api/my-page";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // 로딩 컴포넌트
 function LoadingUI() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
@@ -19,7 +21,7 @@ function LoadingUI() {
           height={120}
           className="mx-auto"
         />
-        <p className="mt-4 text-lg text-gray-600">로그인 처리 중...</p>
+        <p className="mt-4 text-lg text-gray-600">{t("auth.processingLogin")}</p>
       </div>
     </div>
   );
@@ -29,6 +31,7 @@ function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setAccessToken, setUser } = useAuthStore();
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,9 +48,7 @@ function CallbackContent() {
         const accessToken = await reissueToken();
 
         if (!accessToken) {
-          setError(
-            "로그인 세션이 유지되지 않았습니다. 시크릿/프라이빗 모드에서는 쿠키가 저장되지 않아 로그인이 실패할 수 있습니다. 일반 창에서 다시 시도해 주세요."
-          );
+          setError(t("auth.sessionNotPersisted"));
           return;
         }
 
@@ -66,21 +67,21 @@ function CallbackContent() {
         router.replace("/my");
       } catch (err) {
         console.error("Auth callback error:", err);
-        setError("인증 처리 중 오류가 발생했습니다.");
+        setError(t("auth.authError"));
       }
     };
 
     handleCallback();
-  }, [searchParams, setAccessToken, setUser, router]);
+  }, [searchParams, setAccessToken, setUser, router, t]);
 
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
-          <h2 className="mt-4 text-lg font-medium text-white">인증 오류</h2>
+          <h2 className="mt-4 text-lg font-medium text-white">{t("auth.authErrorTitle")}</h2>
           <p className="mt-2 text-sm text-gray-300 leading-relaxed">{error}</p>
           <Button className="mt-4" onClick={() => router.push("/login")}>
-            로그인 페이지로 돌아가기
+            {t("auth.backToLogin")}
           </Button>
         </div>
       </div>
