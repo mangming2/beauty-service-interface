@@ -77,6 +77,29 @@ export default function PackageOptionBookingPage() {
     });
   }, [optionDetail?.slotStartDate, optionDetail?.slotEndDate]);
 
+  // reservationSlots[]이 있으면 선택한 날짜의 가용 슬롯만 표시
+  // 없으면 slotStartTime~slotEndTime 범위로 폴백
+  const timeSlots = useMemo(() => {
+    if (!optionDetail) return [];
+    if (selectedDate && optionDetail.reservationSlots?.length) {
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      return optionDetail.reservationSlots
+        .filter(s => s.reservationDate === dateStr && s.available)
+        .map(s => ({
+          time: s.startTime.slice(0, 5),
+          slotId: s.reservationSlotId,
+        }));
+    }
+    // 폴백: 시간 범위 기반
+    const startHour = Number(optionDetail.slotStartTime?.slice(0, 2));
+    const endHour = Number(optionDetail.slotEndTime?.slice(0, 2));
+    if (!Number.isFinite(startHour) || !Number.isFinite(endHour)) return [];
+    return Array.from({ length: Math.max(endHour - startHour, 0) }, (_, i) => ({
+      time: `${String(startHour + i).padStart(2, "0")}:00`,
+      slotId: null,
+    }));
+  }, [selectedDate, optionDetail]);
+
   if (!isValidPackageId || !isValidOptionId) {
     notFound();
   }
@@ -93,10 +116,6 @@ export default function PackageOptionBookingPage() {
     notFound();
   }
 
-  if (optionDetail === null) {
-    notFound();
-  }
-
   const currentOption = optionDetail;
 
   const optionImageUrl = currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
@@ -107,31 +126,6 @@ export default function PackageOptionBookingPage() {
   const slotEndDate = currentOption.slotEndDate
     ? toDateOnly(new Date(currentOption.slotEndDate))
     : undefined;
-
-  // reservationSlots[]이 있으면 선택한 날짜의 가용 슬롯만 표시
-  // 없으면 slotStartTime~slotEndTime 범위로 폴백
-  const timeSlots = useMemo(() => {
-    if (selectedDate && currentOption.reservationSlots?.length) {
-      const dateStr = format(selectedDate, "yyyy-MM-dd");
-      return currentOption.reservationSlots
-        .filter(s => s.reservationDate === dateStr && s.available)
-        .map(s => ({
-          time: s.startTime.slice(0, 5),
-          slotId: s.reservationSlotId,
-        }));
-    }
-    // 폴백: 시간 범위 기반
-    const startHour = Number(currentOption.slotStartTime?.slice(0, 2));
-    const endHour = Number(currentOption.slotEndTime?.slice(0, 2));
-    if (!Number.isFinite(startHour) || !Number.isFinite(endHour)) return [];
-    return Array.from(
-      { length: Math.max(endHour - startHour, 0) },
-      (_, i) => ({
-        time: `${String(startHour + i).padStart(2, "0")}:00`,
-        slotId: null,
-      })
-    );
-  }, [selectedDate, currentOption]);
 
   const handleBookLink = () => {
     if (selectedDate) {

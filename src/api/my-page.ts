@@ -115,7 +115,9 @@ export async function getBookingDetail(
   reservationId: number
 ): Promise<BookingDetail | null> {
   try {
-    const data = await apiGet<BookingDetail>(`/mypage/bookings/${reservationId}`);
+    const data = await apiGet<BookingDetail>(
+      `/mypage/bookings/${reservationId}`
+    );
     return data;
   } catch (error: unknown) {
     if (

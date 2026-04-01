@@ -88,7 +88,9 @@ export function AdminOptionsPanel() {
 
   const handleDelete = (id: number, name: string) => {
     if (
-      !confirm(`옵션 "${name}" (#${id}) 을(를) 삭제할까요? 연결된 상품이 있으면 실패할 수 있습니다.`)
+      !confirm(
+        `옵션 "${name}" (#${id}) 을(를) 삭제할까요? 연결된 상품이 있으면 실패할 수 있습니다.`
+      )
     )
       return;
     deleteMutation.mutate(id);

@@ -21,9 +21,7 @@ export function AdminUsersPanel() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-400">
-        유저 목록 (GET /admin/users)
-      </p>
+      <p className="text-sm text-gray-400">유저 목록 (GET /admin/users)</p>
       <input
         value={query}
         onChange={e => setQuery(e.target.value)}
@@ -71,7 +69,10 @@ export function AdminUsersPanel() {
                     {u.lastLoginAt
                       ? (() => {
                           try {
-                            return format(parseISO(u.lastLoginAt), "yy.MM.dd HH:mm");
+                            return format(
+                              parseISO(u.lastLoginAt),
+                              "yy.MM.dd HH:mm"
+                            );
                           } catch {
                             return u.lastLoginAt;
                           }

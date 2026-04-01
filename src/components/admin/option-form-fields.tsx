@@ -338,10 +338,8 @@ export function optionToCreateRequest(
   const rawEnd = dateOnly(o.slotEndDate);
 
   // 과거 날짜면 오늘/1년 후로 대체 (백엔드가 과거 슬롯 생성 거부)
-  const slotStartDate =
-    rawStart && rawStart >= today ? rawStart : today;
-  const slotEndDate =
-    rawEnd && rawEnd > slotStartDate ? rawEnd : nextYear;
+  const slotStartDate = rawStart && rawStart >= today ? rawStart : today;
+  const slotEndDate = rawEnd && rawEnd > slotStartDate ? rawEnd : nextYear;
 
   return {
     name: o.name,

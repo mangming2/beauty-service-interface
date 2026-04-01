@@ -4,7 +4,10 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useProductReviews } from "@/queries/useReviewQueries";
-import { useProductDetail, useProductOptions } from "@/queries/useProductQueries";
+import {
+  useProductDetail,
+  useProductOptions,
+} from "@/queries/useProductQueries";
 import { useMyPageUser } from "@/queries/useMyPageQueries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -209,7 +212,9 @@ export default function ReviewsPage() {
                         : 0;
                     return (
                       <div key={star} className="flex items-center gap-1">
-                        <span className="caption-sm w-3 text-white">{star}</span>
+                        <span className="caption-sm w-3 text-white">
+                          {star}
+                        </span>
                         <div className="flex w-30">
                           <div className="w-full bg-[#D9D9D9] rounded-full h-0.5">
                             <div
