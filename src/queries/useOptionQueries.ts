@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  getOptions,
   getOptionDetail,
   createOption,
   updateOption,
   deleteOption,
   type Option,
+  type OptionCatalogItem,
   type CreateOptionRequest,
 } from "@/api/option";
 import { productKeys } from "./useProductQueries";
@@ -14,19 +16,31 @@ import type { ApiError } from "@/lib/apiClient";
 
 export const optionKeys = {
   all: ["options"] as const,
+  lists: () => [...optionKeys.all, "list"] as const,
+  list: (tag?: string) => [...optionKeys.lists(), { tag }] as const,
   details: () => [...optionKeys.all, "detail"] as const,
   detail: (id: number) => [...optionKeys.details(), id] as const,
 } as const;
 
-// ========== Queries ==========
-
-/**
- * 옵션 목록 조회
- */
 function retryUnless401(failureCount: number, error: unknown): boolean {
   const err = error as ApiError | undefined;
   if (err?.status === 401) return false;
   return failureCount < 2;
+}
+
+// ========== Queries ==========
+
+/**
+ * 전체 옵션 목록 조회 (태그 필터 optional)
+ * GET /options?tag=...
+ */
+export function useOptions(tag?: string) {
+  return useQuery<OptionCatalogItem[]>({
+    queryKey: optionKeys.list(tag),
+    queryFn: () => getOptions(tag),
+    staleTime: 5 * 60 * 1000,
+    retry: retryUnless401,
+  });
 }
 
 /**

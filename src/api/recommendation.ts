@@ -18,6 +18,8 @@ export interface UpsertLatestKoreaRecommendationResponse {
 export interface GetLatestInKoreaParams {
   /** 조회 개수 (1~50, 기본 20) */
   size?: number;
+  /** 태그 필터 (카테고리 태그 또는 옵션 태그) */
+  tag?: string;
 }
 
 /**
@@ -53,6 +55,9 @@ export async function getLatestInKoreaRecommendations(
     const queryParams = new URLSearchParams();
     if (params.size !== undefined) {
       queryParams.append("size", String(params.size));
+    }
+    if (params.tag !== undefined) {
+      queryParams.append("tag", params.tag);
     }
     const queryString = queryParams.toString();
     const url = `${BASE}/latest-in-korea${queryString ? `?${queryString}` : ""}`;

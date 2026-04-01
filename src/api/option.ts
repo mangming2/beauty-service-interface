@@ -2,6 +2,15 @@ import { apiGet, apiRequest, apiDelete } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
+/** 예약 슬롯 아이템 (OptionSpecificResponse.reservationSlots) */
+export interface ReservationSlotItem {
+  reservationSlotId: number;
+  reservationDate: string;
+  startTime: string;
+  endTime: string;
+  available: boolean;
+}
+
 /** 옵션 (상세/생성 응답, 목록 조회) */
 export interface Option {
   id: number;
@@ -21,8 +30,29 @@ export interface Option {
   slotStartTime?: string;
   slotEndTime?: string;
   reservationSlotCount?: number;
+  reservationSlots?: ReservationSlotItem[];
   /** 목록 조회 시 대표 옵션 여부 */
   representOption?: boolean;
+}
+
+/** 옵션에 연결된 상품 요약 (GET /options 응답 중 linkedProducts) */
+export interface LinkedProductSummary {
+  productId: number;
+  productName: string;
+  isRepresent: boolean;
+}
+
+/** 옵션 카탈로그 아이템 (GET /options 응답) */
+export interface OptionCatalogItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  address: string;
+  categoryTagName: string;
+  optionTags: string[];
+  imageUrl: string | null;
+  linkedProducts: LinkedProductSummary[];
 }
 
 /** 옵션 생성 요청 (POST /options multipart request body) */
@@ -46,8 +76,16 @@ export interface CreateOptionRequest {
 }
 
 // ========== 옵션 API ==========
-// 전체 옵션 목록 GET /options 는 백엔드에 없음.
-// 상품별 목록은 GET /products/:productId/options (product.ts)
+
+/**
+ * 전체 옵션 목록 조회 (태그 필터 optional)
+ * GET /options?tag=...
+ */
+export async function getOptions(tag?: string): Promise<OptionCatalogItem[]> {
+  const url = tag ? `/options?tag=${encodeURIComponent(tag)}` : "/options";
+  const data = await apiGet<OptionCatalogItem[]>(url, { requireAuth: false });
+  return data ?? [];
+}
 
 /**
  * 옵션 상세 조회

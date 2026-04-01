@@ -66,6 +66,14 @@ export interface ProductOptionListItem {
   isRepresent: boolean;
 }
 
+/** 상품 상세에 포함되는 옵션 링크 (GET /products/:productId 응답) */
+export interface ProductOptionLinkResponse {
+  optionId: number;
+  optionName: string;
+  categoryTagName: string;
+  isRepresent: boolean;
+}
+
 /** 상품 상세 */
 export interface ProductDetail {
   id: number;
@@ -74,6 +82,14 @@ export interface ProductDetail {
   address: string;
   /** 상품 대표 이미지 (대표옵션 이미지) */
   imageUrls?: string[];
+  /** 평균 별점 */
+  averageRating?: number;
+  /** 총 리뷰 수 */
+  totalReviewCount?: number;
+  /** 위시 등록 여부 */
+  wished?: boolean;
+  /** 연결된 옵션 목록 */
+  options?: ProductOptionLinkResponse[];
 }
 
 /** 상품 생성 요청 (POST /products multipart request body) */
@@ -193,7 +209,7 @@ export async function getProductOptions(
   try {
     const data = await apiGet<ProductOptionListItem[]>(
       `/products/${productId}/options`,
-      { requireAuth: true }
+      { requireAuth: false }
     );
     return data ?? [];
   } catch (error) {

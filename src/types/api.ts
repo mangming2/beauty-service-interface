@@ -148,6 +148,7 @@ export interface ReviewDetail {
   reviewId: number;
   productId: number;
   userId: number;
+  optionId?: number;
   rating: number;
   content: string;
   createdAt: string;
@@ -158,6 +159,7 @@ export interface ReviewDetail {
 export interface ReviewFormData {
   rating: number;
   content: string;
+  optionId?: number;
   images?: File[];
 }
 

@@ -31,10 +31,16 @@ export async function createReview(
 ): Promise<ReviewDetail> {
   const formData = new FormData();
 
-  const requestBlob = new Blob(
-    [JSON.stringify({ rating: data.rating, content: data.content })],
-    { type: "application/json" }
-  );
+  const requestBody: Record<string, unknown> = {
+    rating: data.rating,
+    content: data.content,
+  };
+  if (data.optionId !== undefined) {
+    requestBody.optionId = data.optionId;
+  }
+  const requestBlob = new Blob([JSON.stringify(requestBody)], {
+    type: "application/json",
+  });
   formData.append("request", requestBlob);
 
   if (data.images?.length) {
@@ -61,10 +67,16 @@ export async function updateReview(
 ): Promise<ReviewDetail> {
   const formData = new FormData();
 
-  const requestBlob = new Blob(
-    [JSON.stringify({ rating: data.rating, content: data.content })],
-    { type: "application/json" }
-  );
+  const requestBody: Record<string, unknown> = {
+    rating: data.rating,
+    content: data.content,
+  };
+  if (data.optionId !== undefined) {
+    requestBody.optionId = data.optionId;
+  }
+  const requestBlob = new Blob([JSON.stringify(requestBody)], {
+    type: "application/json",
+  });
   formData.append("request", requestBlob);
 
   if (data.images?.length) {

@@ -1,12 +1,10 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getAdminUsers, type GetAdminUsersParams } from "@/api/admin";
+import { useQuery } from "@tanstack/react-query";
+import { getAdminUsers, type AdminUserListItem } from "@/api/admin";
 import type { ApiError } from "@/lib/apiClient";
 
 export const adminKeys = {
   all: ["admin"] as const,
   users: () => [...adminKeys.all, "users"] as const,
-  usersList: (params: Omit<GetAdminUsersParams, "cursor">) =>
-    [...adminKeys.users(), "list", params] as const,
 } as const;
 
 function retryUnless401(failureCount: number, error: unknown): boolean {
@@ -16,21 +14,13 @@ function retryUnless401(failureCount: number, error: unknown): boolean {
 }
 
 /**
- * 관리자 유저 목록 (cursor 페이지네이션 + 검색)
+ * 관리자 유저 전체 목록 조회
+ * GET /admin/users
  */
-export function useInfiniteAdminUsers(
-  params: Omit<GetAdminUsersParams, "cursor"> = {}
-) {
-  return useInfiniteQuery({
-    queryKey: adminKeys.usersList(params),
-    queryFn: ({ pageParam }) =>
-      getAdminUsers({
-        ...params,
-        cursor: pageParam as string | undefined,
-      }),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: lastPage =>
-      lastPage.hasNext ? lastPage.nextCursor : undefined,
+export function useAdminUsers() {
+  return useQuery<AdminUserListItem[]>({
+    queryKey: adminKeys.users(),
+    queryFn: () => getAdminUsers(),
     staleTime: 60 * 1000,
     retry: retryUnless401,
   });
