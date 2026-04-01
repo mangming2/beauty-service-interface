@@ -167,7 +167,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen text-white bg-background p-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold">관리자 페이지</h1>
           <Link href="/my" className="text-sm text-gray-400 hover:text-white">

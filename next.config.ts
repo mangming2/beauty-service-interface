@@ -28,6 +28,12 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
       {
+        protocol: "https",
+        hostname: "apidoki.store",
+        port: "",
+        pathname: "/**",
+      },
+      {
         protocol: "http",
         hostname: "**",
         port: "",

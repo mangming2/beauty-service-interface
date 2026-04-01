@@ -324,18 +324,33 @@ export function optionToCreateRequest(
     const h = Number.parseInt(t.slice(0, 2), 10);
     return Number.isFinite(h) ? h : fallback;
   };
-  const dateOnly = (d: string | undefined, fallback: string) => {
-    if (!d) return fallback;
+  const dateOnly = (d: string | undefined) => {
+    if (!d) return undefined;
     return d.length >= 10 ? d.slice(0, 10) : d;
   };
+
+  const today = new Date().toISOString().slice(0, 10);
+  const nextYear = new Date(Date.now() + 365 * 24 * 3600 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
+  const rawStart = dateOnly(o.slotStartDate);
+  const rawEnd = dateOnly(o.slotEndDate);
+
+  // 과거 날짜면 오늘/1년 후로 대체 (백엔드가 과거 슬롯 생성 거부)
+  const slotStartDate =
+    rawStart && rawStart >= today ? rawStart : today;
+  const slotEndDate =
+    rawEnd && rawEnd > slotStartDate ? rawEnd : nextYear;
+
   return {
     name: o.name,
     description: o.description,
     categoryTagName: o.categoryTagName?.trim() || "hair",
     price: o.price,
     address: o.address,
-    slotStartDate: dateOnly(o.slotStartDate, "2025-01-01"),
-    slotEndDate: dateOnly(o.slotEndDate, "2025-12-31"),
+    slotStartDate,
+    slotEndDate,
     slotStartHour: clampSlotHour(
       parseHour(o.slotStartTime, OPTION_SLOT_HOUR_MIN)
     ),

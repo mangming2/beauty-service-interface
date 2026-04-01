@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import type { CreateOptionRequest } from "@/api/option";
 import {
+  useOptions,
   useOptionDetail,
   useUpdateOption,
   useDeleteOption,
@@ -34,9 +35,12 @@ const defaultOptionReq = (): CreateOptionRequest => ({
 });
 
 export function AdminOptionsPanel() {
-  const [optionIdInput, setOptionIdInput] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
+  const [tagFilter, setTagFilter] = useState("");
 
+  const { data: options = [], isLoading: listLoading } = useOptions(
+    tagFilter.trim() || undefined
+  );
   const { data: detail, isLoading: detailLoading } = useOptionDetail(
     editId ?? undefined
   );
@@ -65,20 +69,6 @@ export function AdminOptionsPanel() {
     setOptionImages([]);
   };
 
-  const parsedTargetId = parseInt(optionIdInput.trim(), 10);
-  const validTargetId =
-    Number.isFinite(parsedTargetId) && parsedTargetId > 0
-      ? parsedTargetId
-      : null;
-
-  const openEditForInputId = () => {
-    if (validTargetId === null) {
-      alert("올바른 옵션 ID(양의 정수)를 입력하세요.");
-      return;
-    }
-    setEditId(validTargetId);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editId === null) return;
@@ -96,53 +86,86 @@ export function AdminOptionsPanel() {
     );
   };
 
-  const handleDeleteFromInput = () => {
-    if (validTargetId === null) {
-      alert("올바른 옵션 ID를 입력하세요.");
-      return;
-    }
+  const handleDelete = (id: number, name: string) => {
     if (
-      !confirm(
-        `옵션 #${validTargetId} 을(를) 삭제할까요? 연결된 상품이 있으면 실패할 수 있습니다.`
-      )
+      !confirm(`옵션 "${name}" (#${id}) 을(를) 삭제할까요? 연결된 상품이 있으면 실패할 수 있습니다.`)
     )
       return;
-    deleteMutation.mutate(validTargetId);
+    deleteMutation.mutate(id);
   };
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-400 leading-relaxed">
-        전체 옵션 목록 API(GET /options)는 없습니다. 수정·삭제할{" "}
-        <strong className="text-gray-200">옵션 ID</strong>를 입력한 뒤 작업을
-        선택하세요. (상세 조회: {`GET /options/{optionId}`})
-      </p>
-      <div className="flex flex-wrap gap-2 items-end">
-        <div className="flex-1 min-w-[140px]">
-          <label className="block text-xs text-gray-500 mb-1">옵션 ID</label>
-          <input
-            type="number"
-            min={1}
-            value={optionIdInput}
-            onChange={e => setOptionIdInput(e.target.value)}
-            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
-            placeholder="예: 1"
-          />
-        </div>
-        <Button type="button" size="sm" onClick={openEditForInputId}>
-          수정
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="secondary"
-          className="text-red-300"
-          onClick={handleDeleteFromInput}
-          disabled={deleteMutation.isPending}
-        >
-          삭제
-        </Button>
+      <div className="flex gap-2 items-center">
+        <input
+          value={tagFilter}
+          onChange={e => setTagFilter(e.target.value)}
+          placeholder="태그 필터 (예: hair)"
+          className="flex-1 px-3 py-2 rounded bg-gray-800 text-white border border-gray-600 text-sm"
+        />
+        <span className="text-xs text-gray-500 shrink-0">
+          {listLoading ? "로딩 중..." : `${options.length}개`}
+        </span>
       </div>
+
+      {options.length === 0 && !listLoading ? (
+        <p className="text-gray-500 text-sm">등록된 옵션이 없습니다.</p>
+      ) : (
+        <div className="rounded-lg border border-gray-600 overflow-x-auto">
+          <table className="w-full text-sm min-w-[400px]">
+            <thead className="bg-gray-800 text-gray-300">
+              <tr>
+                <th className="text-left p-2 w-12">ID</th>
+                <th className="text-left p-2">이름</th>
+                <th className="text-left p-2 hidden sm:table-cell">태그</th>
+                <th className="text-left p-2 w-20">가격</th>
+                <th className="text-left p-2 w-24">액션</th>
+              </tr>
+            </thead>
+            <tbody>
+              {options.map(opt => (
+                <tr
+                  key={opt.id}
+                  className="border-t border-gray-700 hover:bg-gray-800/50"
+                >
+                  <td className="p-2 text-gray-400">{opt.id}</td>
+                  <td className="p-2 text-white max-w-[160px] truncate">
+                    {opt.name}
+                  </td>
+                  <td className="p-2 text-gray-400 hidden sm:table-cell">
+                    {opt.categoryTagName}
+                  </td>
+                  <td className="p-2 text-gray-400">
+                    {opt.price.toLocaleString()}
+                  </td>
+                  <td className="p-2">
+                    <div className="flex gap-1">
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => setEditId(opt.id)}
+                      >
+                        수정
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        className="h-7 px-2 text-xs text-red-300"
+                        onClick={() => handleDelete(opt.id, opt.name)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        삭제
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <Dialog
         open={dialogOpen}

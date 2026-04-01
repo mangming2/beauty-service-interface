@@ -94,6 +94,7 @@ export function useUpdateOption() {
     mutationFn: ({ optionId, request, images }: UpdateOptionParams) =>
       updateOption(optionId, request, images),
     onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
       queryClient.invalidateQueries({
         queryKey: optionKeys.detail(variables.optionId),
       });
@@ -108,6 +109,7 @@ export function useDeleteOption() {
   return useMutation({
     mutationFn: (optionId: number) => deleteOption(optionId),
     onSuccess: (_, optionId) => {
+      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
       queryClient.removeQueries({ queryKey: optionKeys.detail(optionId) });
       queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
