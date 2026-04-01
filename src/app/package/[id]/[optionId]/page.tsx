@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -38,11 +38,18 @@ export default function PackageOptionBookingPage() {
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
   const [isAddressOpen, setIsAddressOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [externalBookingAgreed, setExternalBookingAgreed] = useState(false);
+
+  // 날짜 변경 시 시간 선택 초기화
+  useEffect(() => {
+    setSelectedTime("");
+    setSelectedSlotId(null);
+  }, [selectedDate]);
 
   useEffect(() => {
     const startDate = optionDetail?.slotStartDate
@@ -101,15 +108,30 @@ export default function PackageOptionBookingPage() {
     ? toDateOnly(new Date(currentOption.slotEndDate))
     : undefined;
 
-  const startHour = Number(currentOption.slotStartTime?.slice(0, 2));
-  const endHour = Number(currentOption.slotEndTime?.slice(0, 2));
-  const timeSlots =
-    Number.isFinite(startHour) && Number.isFinite(endHour)
-      ? Array.from({ length: Math.max(endHour - startHour, 0) }, (_, i) => {
-          const hour = startHour + i;
-          return `${String(hour).padStart(2, "0")}:00`;
-        })
-      : [];
+  // reservationSlots[]이 있으면 선택한 날짜의 가용 슬롯만 표시
+  // 없으면 slotStartTime~slotEndTime 범위로 폴백
+  const timeSlots = useMemo(() => {
+    if (selectedDate && currentOption.reservationSlots?.length) {
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      return currentOption.reservationSlots
+        .filter(s => s.reservationDate === dateStr && s.available)
+        .map(s => ({
+          time: s.startTime.slice(0, 5),
+          slotId: s.reservationSlotId,
+        }));
+    }
+    // 폴백: 시간 범위 기반
+    const startHour = Number(currentOption.slotStartTime?.slice(0, 2));
+    const endHour = Number(currentOption.slotEndTime?.slice(0, 2));
+    if (!Number.isFinite(startHour) || !Number.isFinite(endHour)) return [];
+    return Array.from(
+      { length: Math.max(endHour - startHour, 0) },
+      (_, i) => ({
+        time: `${String(startHour + i).padStart(2, "0")}:00`,
+        slotId: null,
+      })
+    );
+  }, [selectedDate, currentOption]);
 
   const handleBookLink = () => {
     if (selectedDate) {
@@ -117,6 +139,9 @@ export default function PackageOptionBookingPage() {
     }
     if (selectedTime) {
       localStorage.setItem("selectedBookingTime", selectedTime);
+    }
+    if (selectedSlotId !== null) {
+      localStorage.setItem("selectedReservationSlotId", String(selectedSlotId));
     }
     window.open(dummyLink, "_blank");
   };
@@ -162,6 +187,9 @@ export default function PackageOptionBookingPage() {
     }
     if (selectedTime) {
       localStorage.setItem("selectedBookingTime", selectedTime);
+    }
+    if (selectedSlotId !== null) {
+      localStorage.setItem("selectedReservationSlotId", String(selectedSlotId));
     }
     router.push(`/booking/${packageId}/done?optionId=${resolvedOptionId}`);
   };
@@ -351,10 +379,10 @@ export default function PackageOptionBookingPage() {
           </h3>
           <div className="grid grid-cols-4 gap-x-2 gap-y-3">
             {timeSlots.map(slot => {
-              const isSelected = selectedTime === slot;
+              const isSelected = selectedTime === slot.time;
               return (
                 <Button
-                  key={slot}
+                  key={slot.slotId ?? slot.time}
                   type="button"
                   variant="ghost"
                   className={`text-base h-10 border-none rounded-[4px] ${
@@ -362,9 +390,12 @@ export default function PackageOptionBookingPage() {
                       ? "bg-pink-font text-white hover:text-white"
                       : "bg-gray-container text-white hover:text-white"
                   }`}
-                  onClick={() => setSelectedTime(slot)}
+                  onClick={() => {
+                    setSelectedTime(slot.time);
+                    setSelectedSlotId(slot.slotId);
+                  }}
                 >
-                  {slot}
+                  {slot.time}
                 </Button>
               );
             })}

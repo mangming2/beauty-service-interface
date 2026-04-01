@@ -26,7 +26,7 @@ export default function MyBookingPage() {
   const { data: booking, isLoading: bookingLoading } = useBookingDetail(
     isValidId ? reservationId : undefined
   );
-  const { data: options = [] } = useProductOptions(booking?.packageId);
+  const { data: options = [] } = useProductOptions(booking?.product?.id);
 
   const [currentStep] = useState(2); // Sending, Processing, Accepted
 
@@ -40,7 +40,7 @@ export default function MyBookingPage() {
 
   const handleSave = () => {
     if (booking) {
-      router.push(`/my/reviews/${booking.packageId}`);
+      router.push(`/my/reviews/${booking.product.id}`);
     }
   };
 
@@ -67,7 +67,7 @@ export default function MyBookingPage() {
 
           <div className="flex justify-between items-center">
             <div className="title-sm text-gray-font">
-              Package: {booking.packageName}
+              Package: {booking.product.name}
             </div>
             <div className="w-6 flex justify-center items-center">
               <ArrowRightIcon color="white" width={7} height={16} />
@@ -121,7 +121,7 @@ export default function MyBookingPage() {
                 component.location.split(" (")[0] || component.location;
               return (
                 <Link
-                  href={`/package/${booking.packageId}/${component.id}`}
+                  href={`/package/${booking.product.id}/${component.id}`}
                   key={component.id}
                 >
                   <div className="flex items-center gap-3 bg-gray-container rounded-[4px] p-3 cursor-pointer">
@@ -178,7 +178,7 @@ export default function MyBookingPage() {
           <div>
             <div className="flex justify-between items-center">
               <h3 className="font-semibold">
-                {t("booking.package")}: {booking.packageName}
+                {t("booking.package")}: {booking.product.name}
               </h3>
               <ArrowRightIcon color="white" />
             </div>
@@ -206,7 +206,7 @@ export default function MyBookingPage() {
               <div className="border-t border-gray-700 pt-3">
                 <div className="flex justify-between font-bold text-lg">
                   <span>{t("booking.total")}</span>
-                  <span>₩{booking.totalPrice.toLocaleString()}</span>
+                  <span>₩{booking.option.price.toLocaleString()}</span>
                 </div>
               </div>
             </div>

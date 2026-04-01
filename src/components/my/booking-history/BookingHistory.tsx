@@ -27,11 +27,12 @@ function mapApiStatusToUi(
 ): "confirmed" | "completed" | "cancelled" {
   switch (status) {
     case "PREBOOK":
-    case "CONFIRMED":
+    case "PENDING":
+    case "BOOKED":
       return "confirmed";
     case "COMPLETED":
       return "completed";
-    case "CANCELLED":
+    case "CANCELED":
       return "cancelled";
     default:
       return "confirmed";
@@ -41,7 +42,7 @@ function mapApiStatusToUi(
 function bookingToHistory(b: Booking): BookingHistory {
   return {
     id: String(b.reservationId),
-    packageTitle: b.packageName,
+    packageTitle: b.productName,
     date: formatVisitDate(b.visitDate),
     time: b.visitStartTime,
     status: mapApiStatusToUi(b.status),
@@ -57,17 +58,17 @@ function bookingToCompleted(
   reviewedProductIds: Set<number>,
   reviewByProductId: Map<number, { rating: number; content: string }>
 ): CompletedBooking {
-  const review = reviewByProductId.get(b.packageId);
+  const review = reviewByProductId.get(b.productId);
   return {
     id: String(b.reservationId),
-    packageId: String(b.packageId),
-    packageTitle: b.packageName,
+    packageId: String(b.productId),
+    packageTitle: b.productName,
     date: formatVisitDate(b.visitDate),
     rating: review?.rating ?? 0,
     comment: review?.content ?? "",
     imageSrc: PLACEHOLDER_IMAGE,
     location: b.attractions?.[0] ?? "",
-    reviewed: reviewedProductIds.has(b.packageId),
+    reviewed: reviewedProductIds.has(b.productId),
   };
 }
 

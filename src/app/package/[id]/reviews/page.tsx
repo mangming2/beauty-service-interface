@@ -2,28 +2,37 @@
 
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { useProductReviews } from "@/queries/useReviewQueries";
+import { useProductDetail, useProductOptions } from "@/queries/useProductQueries";
+import { useMyPageUser } from "@/queries/useMyPageQueries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { StarRating } from "@/components/ui/star-rating";
 import { GapY } from "../../../../components/ui/gap";
 import { Divider } from "@/components/ui/divider";
-import { useUser } from "@/queries/useAuthQueries";
+import { ArrowRightIcon } from "@/components/common/Icons";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function ReviewsPage() {
   const params = useParams();
-  const packageId = params.id;
-  const { user } = useUser();
+  const packageId = Number(params.id);
   const { t } = useTranslation();
 
   const {
     data: reviews,
     isLoading: reviewsLoading,
     error: reviewsError,
-  } = useProductReviews(Number(packageId));
+  } = useProductReviews(packageId);
 
-  // 리뷰 목록에서 요약 계산 (클라이언트)
+  const { data: productDetail } = useProductDetail(packageId);
+  const { data: options = [] } = useProductOptions(packageId);
+  const { data: myUser } = useMyPageUser();
+
+  // optionId → option 매핑
+  const optionMap = new Map(options.map(o => [o.id, o]));
+
+  // 리뷰 요약 계산
   const summary =
     reviews && reviews.length > 0
       ? {
@@ -39,6 +48,17 @@ export default function ReviewsPage() {
           ),
         }
       : null;
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    if (diffInDays === 0) return t("reviews.today");
+    if (diffInDays === 1) return t("reviews.daysAgoOne");
+    return `${diffInDays}${t("reviews.daysAgo")}`;
+  };
 
   if (reviewsLoading) {
     return (
@@ -58,33 +78,109 @@ export default function ReviewsPage() {
     );
   }
 
-  const formatTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-    if (diffInDays === 0) return t("reviews.today");
-    if (diffInDays === 1) return t("reviews.daysAgoOne");
-    return `${diffInDays}${t("reviews.daysAgo")}`;
-  };
-
-  // 내 리뷰와 다른 사람들의 리뷰 분리
+  // 내 리뷰 상단 정렬
   const myReviews =
-    reviews?.filter(review => user && String(review.userId) === user.id) || [];
+    reviews?.filter(r => myUser && r.userId === myUser.id) ?? [];
   const otherReviews =
-    reviews?.filter(review => !user || String(review.userId) !== user.id) || [];
+    reviews?.filter(r => !myUser || r.userId !== myUser.id) ?? [];
+  const sortedReviews = [...myReviews, ...otherReviews];
+
+  const ReviewCard = ({
+    review,
+    isMine,
+  }: {
+    review: (typeof sortedReviews)[0];
+    isMine: boolean;
+  }) => {
+    const option = review.optionId ? optionMap.get(review.optionId) : null;
+
+    return (
+      <div className="flex flex-col gap-3">
+        {/* 옵션 카드 헤더 */}
+        {option ? (
+          <Link href={`/package/${packageId}`}>
+            <div className="bg-gray-container border border-[#2E3033] rounded-[8px] px-3 py-2 flex items-center justify-between">
+              <div>
+                <p className="text-gray-font caption-sm">
+                  {productDetail?.name ?? ""}
+                </p>
+                <p className="text-white text-md font-medium">{option.name}</p>
+              </div>
+              <ArrowRightIcon color="#B9BBC2" width={7} height={14} />
+            </div>
+          </Link>
+        ) : null}
+
+        {/* 유저 + 리뷰 */}
+        <Card className="p-0 bg-transparent border-0 rounded-none">
+          <CardContent className="p-0 pb-3">
+            <div className="flex items-start gap-2 mb-2">
+              <div className="w-7 h-7 rounded-full flex-shrink-0 bg-gray-600 flex items-center justify-center overflow-hidden">
+                {review.avatar_src ? (
+                  <Image
+                    src={review.avatar_src}
+                    alt="avatar"
+                    width={28}
+                    height={28}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white text-xs font-medium">
+                    {isMine ? "ME" : `U`}
+                  </span>
+                )}
+              </div>
+              <div className="text-white font-medium">
+                {isMine ? t("reviews.myReview") : `User #${review.userId}`}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center space-x-2">
+                <StarRating rating={review.rating} readonly size="sm" />
+                <div className="w-px h-4 bg-gray-600" />
+                <span className="text-gray-400 text-sm">
+                  {formatTimeAgo(review.createdAt ?? "")}
+                </span>
+              </div>
+              <p className="text-white text-md">{review.content}</p>
+
+              {/* 리뷰 이미지 */}
+              {review.images && review.images.length > 0 && (
+                <div className="flex gap-2 mt-1 flex-wrap">
+                  {review.images.map(img => (
+                    <div
+                      key={img.id}
+                      className="relative w-16 h-16 rounded-[4px] overflow-hidden flex-shrink-0"
+                    >
+                      <Image
+                        src={img.url}
+                        alt={img.originalFilename}
+                        fill
+                        className="object-cover"
+                        unoptimized={img.url.startsWith("http")}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen text-white">
       <div className="container mx-auto px-5">
         <GapY size={20} />
-        {/* Review Summary Section */}
+
+        {/* 평점 요약 */}
         {summary && (
           <Card className="bg-gray-outline border-none rounded-[4px]">
             <CardContent className="py-5 px-3">
               <div className="flex items-center justify-center gap-7">
-                {/* Overall Rating */}
                 <div className="text-center">
                   <div className="title-lg text-white">
                     {summary.averageRating.toFixed(1)}{" "}
@@ -104,7 +200,6 @@ export default function ReviewsPage() {
                   </div>
                 </div>
 
-                {/* Rating Distribution */}
                 <div className="flex flex-col">
                   {[5, 4, 3, 2, 1].map(star => {
                     const count = summary.ratingDistribution[star] || 0;
@@ -112,12 +207,9 @@ export default function ReviewsPage() {
                       summary.totalReviews > 0
                         ? (count / summary.totalReviews) * 100
                         : 0;
-
                     return (
                       <div key={star} className="flex items-center gap-1">
-                        <span className="caption-sm w-3 text-white">
-                          {star}
-                        </span>
+                        <span className="caption-sm w-3 text-white">{star}</span>
                         <div className="flex w-30">
                           <div className="w-full bg-[#D9D9D9] rounded-full h-0.5">
                             <div
@@ -137,156 +229,45 @@ export default function ReviewsPage() {
             </CardContent>
           </Card>
         )}
+
         <GapY size={16} />
 
-        {/* Individual Reviews */}
-        <div className="space-y-4">
-          {reviews && reviews.length > 0 ? (
-            <>
-              {/* 내 리뷰들 */}
-              {myReviews.map((review, index) => {
-                // 내 리뷰의 마지막 항목은 항상 border-b 제거
-                const isLastMyReview = index === myReviews.length - 1;
-                return (
-                  <Card
-                    key={review.content}
-                    className={`p-0 bg-transparent border-0 rounded-none ${
-                      !isLastMyReview ? "border-b-[1px] border-gray" : ""
-                    }`}
-                  >
-                    <CardContent className="p-0 pb-3">
-                      <div className="flex flex-col  items-start space-x-4">
-                        <div className="flex items-start gap-2">
-                          {/* Avatar */}
-                          <div className="w-7 h-7 rounded-full flex-shrink-0 overflow-hidden">
-                            {review.avatar_src ? (
-                              <Image
-                                src={review.avatar_src}
-                                alt={review.content}
-                                width={28}
-                                height={28}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                                <span className="text-white text-sm font-medium">
-                                  {review.content.charAt(0).toUpperCase()}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                          {/* Username */}
-                          <div className="text-white font-medium mb-1">
-                            {review.content}
-                          </div>
-                        </div>
-                        <GapY size={8} />
-                        {/* Review Content */}
-                        <div className="flex flex-col gap-3">
-                          {/* Rating and Time */}
-                          <div className="flex items-center space-x-2">
-                            <StarRating
-                              rating={review.rating}
-                              readonly
-                              size="sm"
-                            />
-                            <div className="w-px h-4 bg-gray-600" />
-                            <span className="text-gray-400 text-sm">
-                              {formatTimeAgo(review.createdAt || "")}
-                            </span>
-                          </div>
-
-                          {/* Comment */}
-                          <div className="text-white text-md">
-                            {review.content}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-
-              {/* 내 리뷰와 다른 사람들의 리뷰 사이 divider */}
-              {myReviews.length > 0 && otherReviews.length > 0 && (
-                <Divider height={8} />
-              )}
-
-              {/* 다른 사람들의 리뷰들 */}
-              {otherReviews.map(review => (
-                <Card
-                  key={review.reviewId}
-                  className="p-0 bg-transparent border-0 border-b-[1px] rounded-none border-gray"
-                >
-                  <CardContent className="p-0 pb-3">
-                    <div className="flex flex-col  items-start space-x-4">
-                      <div className="flex items-start gap-2">
-                        {/* Avatar */}
-                        <div className="w-7 h-7 rounded-full flex-shrink-0 overflow-hidden">
-                          {review.avatar_src ? (
-                            <Image
-                              src={review.avatar_src}
-                              alt={review.content}
-                              width={28}
-                              height={28}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                              <span className="text-white text-sm font-medium">
-                                {review.content.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        {/* Username */}
-                        <div className="text-white font-medium mb-1">
-                          {review.content}
-                        </div>
-                      </div>
-                      <GapY size={8} />
-                      {/* Review Content */}
-                      <div className="flex flex-col gap-3">
-                        {/* Rating and Time */}
-                        <div className="flex items-center space-x-2">
-                          <StarRating
-                            rating={review.rating}
-                            readonly
-                            size="sm"
-                          />
-                          <div className="w-px h-4 bg-gray-600" />
-                          <span className="text-gray-400 text-sm">
-                            {formatTimeAgo(review.createdAt || "")}
-                          </span>
-                        </div>
-
-                        {/* Comment */}
-                        <div className="text-white text-md">
-                          {review.content}
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center gap-4 py-16">
-              <Image
-                src="/no-review.png"
-                alt="no reviews"
-                width={200}
-                height={200}
+        {/* 리뷰 목록 */}
+        {sortedReviews.length > 0 ? (
+          <div className="space-y-4">
+            {myReviews.length > 0 && (
+              <>
+                {myReviews.map(review => (
+                  <ReviewCard key={review.reviewId} review={review} isMine />
+                ))}
+                {otherReviews.length > 0 && <Divider height={8} />}
+              </>
+            )}
+            {otherReviews.map(review => (
+              <ReviewCard
+                key={review.reviewId}
+                review={review}
+                isMine={false}
               />
-              <p className="title-md text-gray-2 text-center">
-                {t("package.noReviewsYet")}
-              </p>
-              <p className="text-md text-white font-semibold text-center whitespace-pre-line">
-                {t("package.noReviewsYetSub")}
-              </p>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-4 py-16">
+            <Image
+              src="/no-review.png"
+              alt="no reviews"
+              width={200}
+              height={200}
+            />
+            <p className="title-md text-gray-2 text-center">
+              {t("package.noReviewsYet")}
+            </p>
+            <p className="text-md text-white font-semibold text-center whitespace-pre-line">
+              {t("package.noReviewsYetSub")}
+            </p>
+          </div>
+        )}
+
         <GapY size={8} />
       </div>
     </div>

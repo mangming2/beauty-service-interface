@@ -206,7 +206,7 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
-      confirm: "Confirm - 확인",
+      confirm: "확인",
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",
@@ -496,7 +496,7 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
-      confirm: "Confirm - 확인",
+      confirm: "Confirm",
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",
@@ -789,7 +789,7 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
-      confirm: "Confirm - 확인",
+      confirm: "確認",
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",
@@ -1078,7 +1078,7 @@ export const translations = {
       reserveThroughWebsite: "Reserve through the official website",
       preBook: "PreBook",
       loading: "Loading...",
-      confirm: "Confirm - 확인",
+      confirm: "确认",
       bookOtherOptions: "Book Other Options",
       bookOtherOptionsSubtitle:
         "Explore other options available for this product.",

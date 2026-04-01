@@ -60,11 +60,12 @@ function mapApiStatusToUi(
 ): "confirmed" | "completed" | "cancelled" {
   switch (status) {
     case "PREBOOK":
-    case "CONFIRMED":
+    case "PENDING":
+    case "BOOKED":
       return "confirmed";
     case "COMPLETED":
       return "completed";
-    case "CANCELLED":
+    case "CANCELED":
       return "cancelled";
     default:
       return "confirmed";
@@ -111,8 +112,8 @@ export default function Schedule() {
     () =>
       bookings.map(b => ({
         id: String(b.reservationId),
-        packageId: b.packageId,
-        packageTitle: b.packageName,
+        packageId: b.productId,
+        packageTitle: b.productName,
         date: formatVisitDate(b.visitDate),
         time: b.visitStartTime,
         status: mapApiStatusToUi(b.status),

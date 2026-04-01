@@ -33,6 +33,7 @@ export default function BookingConfirmPage() {
 
   const [savedDate, setSavedDate] = useState<string>("");
   const [savedTime, setSavedTime] = useState<string>("");
+  const [savedSlotId, setSavedSlotId] = useState<number | null>(null);
 
   const isValidId = !isNaN(packageId) && packageId > 0;
   const { data: productDetail, isLoading } = useProductDetail(
@@ -60,6 +61,11 @@ export default function BookingConfirmPage() {
       }
     }
     if (time) setSavedTime(time);
+    const slotId = localStorage.getItem("selectedReservationSlotId");
+    if (slotId) {
+      const parsed = parseInt(slotId, 10);
+      if (Number.isFinite(parsed) && parsed > 0) setSavedSlotId(parsed);
+    }
   }, []);
 
   if (!isValidId) {
@@ -316,7 +322,7 @@ export default function BookingConfirmPage() {
 
       {/* 플로팅 확인 버튼 */}
       <div
-        className="sticky bottom-0 py-4 bg-background"
+        className="sticky bottom-0 py-4 px-5 bg-background"
         style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
       >
         <Button
@@ -327,12 +333,12 @@ export default function BookingConfirmPage() {
               router.push("/my");
               return;
             }
-            if (resolvedOptionId) {
+            if (savedSlotId ?? resolvedOptionId) {
               try {
                 await createReservationMutation.mutateAsync({
                   productId: packageId,
                   request: {
-                    reservationSlotId: resolvedOptionId,
+                    reservationSlotId: savedSlotId ?? resolvedOptionId!,
                     totalPrice: currentOption.price,
                   },
                 });

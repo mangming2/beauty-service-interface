@@ -8,6 +8,7 @@ import {
   getMyBookmarkedCommunityPosts,
   type MyPageUser,
   type Booking,
+  type BookingDetail,
 } from "@/api/my-page";
 import type { ReviewDetail } from "@/types/api";
 import type { CommunityPostListItem } from "@/api/community";
@@ -92,7 +93,7 @@ export function useMyBookings() {
 export function useBookingDetail(reservationId: number | undefined) {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
-  return useQuery<Booking | null>({
+  return useQuery<BookingDetail | null>({
     queryKey: myPageKeys.bookingDetail(reservationId!),
     queryFn: () => getBookingDetail(reservationId!),
     enabled: isAuthenticated && reservationId !== undefined,

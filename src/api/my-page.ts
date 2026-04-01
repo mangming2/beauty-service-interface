@@ -15,18 +15,43 @@ export interface MyPageUser {
   role?: "USER" | "ADMIN";
 }
 
-/** 예약 내역 */
+/** 예약 목록 아이템 (GET /mypage/bookings) */
 export interface Booking {
   reservationId: number;
-  status: "PREBOOK" | "CONFIRMED" | "CANCELLED" | "COMPLETED";
-  packageId: number;
-  packageName: string;
-  packageDescription: string;
+  status: "PREBOOK" | "PENDING" | "BOOKED" | "COMPLETED" | "CANCELED";
+  productId: number;
+  productName: string;
+  productDescription: string;
   totalPrice: number;
   visitDate: string;
   visitStartTime: string;
   visitEndTime: string;
   attractions: string[];
+}
+
+/** 예약 상세 (GET /mypage/bookings/:reservationId) — ReservationSpecificResponse */
+export interface BookingDetail {
+  option: {
+    id: number;
+    name: string;
+    description: string;
+    discountRate: number;
+    price: number;
+    address: string;
+    categoryTagName: string;
+    optionTags: string[];
+    imageUrl: string | null;
+    isRepresent: boolean;
+  };
+  visitDate: string;
+  visitStartAt: string;
+  product: {
+    id: number;
+    name: string;
+    averageRating: number;
+    totalReviewCount: number;
+    imageUrls: string[];
+  };
 }
 
 // ========== 마이페이지 API ==========
@@ -88,9 +113,9 @@ export async function getMyBookings(): Promise<Booking[]> {
  */
 export async function getBookingDetail(
   reservationId: number
-): Promise<Booking | null> {
+): Promise<BookingDetail | null> {
   try {
-    const data = await apiGet<Booking>(`/mypage/bookings/${reservationId}`);
+    const data = await apiGet<BookingDetail>(`/mypage/bookings/${reservationId}`);
     return data;
   } catch (error: unknown) {
     if (

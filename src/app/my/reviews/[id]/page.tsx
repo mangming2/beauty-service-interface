@@ -33,7 +33,7 @@ export default function CreateReviewPage() {
   );
   const { data: options = [] } = useProductOptions(Number(packageId));
   const firstOption = options[0];
-  const { user } = useUser();
+  const { isAuthenticated } = useUser();
   const createReviewMutation = useCreateReview();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,8 +44,9 @@ export default function CreateReviewPage() {
       return;
     }
 
-    if (!user) {
+    if (!isAuthenticated) {
       alert(t("reviews.loginRequired"));
+      router.push("/login");
       return;
     }
 
