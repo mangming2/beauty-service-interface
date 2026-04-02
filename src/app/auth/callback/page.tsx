@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LottieAnimation from "@/components/common/LottieAnimation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -35,8 +35,12 @@ function CallbackContent() {
   const { setAccessToken, setUser } = useAuthStore();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const handleCallback = async () => {
       try {
         // 1. 에러 파라미터 확인

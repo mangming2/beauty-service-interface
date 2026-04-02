@@ -1,10 +1,11 @@
+import { useCallback } from "react";
 import { useLanguageStore } from "@/lib/store";
 import { translations } from "@/locales/translations";
 
 export const useTranslation = () => {
   const { currentLanguage } = useLanguageStore();
 
-  const t = (key: string) => {
+  const t = useCallback((key: string) => {
     const keys = key.split(".");
     let value: string | Record<string, unknown> = translations[currentLanguage];
 
@@ -26,7 +27,7 @@ export const useTranslation = () => {
     }
 
     return typeof value === "string" ? value : key;
-  };
+  }, [currentLanguage]);
 
   return { t, currentLanguage };
 };
