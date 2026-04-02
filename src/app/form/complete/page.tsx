@@ -17,7 +17,7 @@ import type { Product } from "@/api/product";
 
 /** 백엔드 추천 API 없을 때 사용하는 플레이스홀더 */
 const PLACEHOLDER_RECOMMENDATION = {
-  images: ["/dummy-profile.png", "/dummy-profile.png", "/dummy-profile.png"],
+  images: ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"],
   salonInfo: {
     tags: ["추천"],
     name: "추천 샐런 (준비 중)",
@@ -130,7 +130,7 @@ export default function FormComplete() {
     ? {
         images: galleryProduct.imageUrls?.length
           ? galleryProduct.imageUrls
-          : ["/dummy-package.png", "/dummy-package.png", "/dummy-package.png"],
+          : ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"],
         salonInfo: {
           tags:
             galleryProduct.representOption?.tags ??

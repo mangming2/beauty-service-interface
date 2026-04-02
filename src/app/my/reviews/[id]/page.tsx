@@ -104,10 +104,11 @@ export default function CreateReviewPage() {
               <div className="flex gap-2 pt-2 pb-3">
                 <div className="relative w-20 h-20 overflow-hidden flex-shrink-0">
                   <Image
-                    src={"/dummy-profile.png"}
+                    src={productDetail.imageUrls?.[0] ?? "/dummy-logo.png"}
                     alt={productDetail.name}
                     fill
                     className="object-cover"
+                    unoptimized
                   />
                 </div>
                 <div className="flex-1">

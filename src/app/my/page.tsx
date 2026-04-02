@@ -38,7 +38,7 @@ export default function MyPage() {
       user?.email?.split("@")[0] ||
       t("my.defaultName"),
     email: user?.email || "fan@example.com",
-    avatar: user?.profileImage || "/dummy-profile.png",
+    avatar: user?.profileImage || "/dummy-logo.png",
   };
 
   // 사용자 정보 로딩 중일 때

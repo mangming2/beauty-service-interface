@@ -163,11 +163,7 @@ function Content() {
                 images={
                   pkg.imageUrls?.length
                     ? pkg.imageUrls
-                    : [
-                        "/dummy-package.png",
-                        "/dummy-package.png",
-                        "/dummy-package.png",
-                      ]
+                    : ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"]
                 }
                 salonInfo={{
                   tags: pkg.representOption?.tags ?? pkg.tagNames ?? [],

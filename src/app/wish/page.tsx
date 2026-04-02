@@ -49,12 +49,6 @@ export default function Wish() {
 
   return (
     <div className="flex flex-col flex-1 text-white">
-      <div className="px-5 pt-6">
-        <h1 className="title-lg text-white">{t("wish.myWishlist")}</h1>
-      </div>
-
-      <GapY size={20} />
-
       {wishes.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-3 pb-20">
           <Image src="/empty.png" alt="empty" width={180} height={120} />
@@ -75,9 +69,9 @@ export default function Wish() {
                       product?.imageUrls?.length
                         ? product.imageUrls
                         : [
-                            "/dummy-package.png",
-                            "/dummy-package.png",
-                            "/dummy-package.png",
+                            "/dummy-logo.png",
+                            "/dummy-logo.png",
+                            "/dummy-logo.png",
                           ]
                     }
                     salonInfo={{

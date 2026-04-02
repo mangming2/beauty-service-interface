@@ -45,7 +45,7 @@ interface ScheduleItem {
   color: string;
 }
 
-const PLACEHOLDER_IMAGE = "/dummy-profile.png";
+const PLACEHOLDER_IMAGE = "/dummy-logo.png";
 
 function formatVisitDate(dateStr: string): string {
   try {

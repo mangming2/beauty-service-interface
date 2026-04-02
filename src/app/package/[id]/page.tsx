@@ -327,15 +327,7 @@ export default function PackageDetail() {
                       >
                         <CardContent className="p-0">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="rounded-full bg-gray-container overflow-hidden w-7 h-7 flex-shrink-0">
-                              <Image
-                                src={"/dummy-profile.png"}
-                                alt={review.content}
-                                width={28}
-                                height={28}
-                                className="object-cover w-7 h-7"
-                              />
-                            </div>
+                            <div className="rounded-full bg-gray-600 w-7 h-7 flex-shrink-0" />
                             <div className="flex flex-1 justify-between items-center min-w-0">
                               <p className="text-sm font-medium truncate">
                                 {review.userId}
