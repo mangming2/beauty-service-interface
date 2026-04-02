@@ -68,7 +68,7 @@ export default function MyBookingPage() {
     components.reduce((sum, c) => sum + c.price, 0) + platformFee;
 
   return (
-    <div className="min-h-screen bg-background text-white">
+    <div className="min-h-screen bg-background text-white pb-24">
       <div>
         {/* 헤더 영역 */}
         <div className="flex flex-col p-5 gap-4">
@@ -220,7 +220,7 @@ export default function MyBookingPage() {
       </div>
 
       <div
-        className="sticky bottom-0 p-5 bg-background"
+        className="sticky bottom-0 py-4 px-5 bg-background"
         style={{ boxShadow: "inset 0 6px 6px -6px rgba(255, 255, 255, 0.12)" }}
       >
         <Button className="w-full h-[52px] bg-primary" onClick={handleSave}>
