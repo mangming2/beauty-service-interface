@@ -2,7 +2,11 @@
 
 import type { ReactNode } from "react";
 
-export type ProductFormPickerOption = { id: number; name: string; price?: number };
+export type ProductFormPickerOption = {
+  id: number;
+  name: string;
+  price?: number;
+};
 
 export interface ProductFormFieldsProps {
   productName: string;

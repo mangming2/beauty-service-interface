@@ -49,7 +49,9 @@ export function useLatestInKoreaRecommendations(
  * 관리자 추천 패키지 목록 조회
  * GET /products/recommendations/admin-picked
  */
-export function useAdminPickedRecommendations(params: GetAdminPickedParams = {}) {
+export function useAdminPickedRecommendations(
+  params: GetAdminPickedParams = {}
+) {
   return useQuery<AdminPickedProduct[]>({
     queryKey: recommendationKeys.adminPicked(params),
     queryFn: () => getAdminPickedRecommendations(params),
@@ -65,8 +67,13 @@ export function useAdminPickedRecommendations(params: GetAdminPickedParams = {})
 export function useSetProductRecommendation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ productId, recommended }: { productId: number; recommended: boolean }) =>
-      setProductRecommendation(productId, recommended),
+    mutationFn: ({
+      productId,
+      recommended,
+    }: {
+      productId: number;
+      recommended: boolean;
+    }) => setProductRecommendation(productId, recommended),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recommendationKeys.all });
     },

@@ -26,8 +26,11 @@ function parseProductIds(text: string): number[] {
 // ─── 섹션 1: 랜딩 캐러셀 추천 (admin-picked) ───────────────────────────────
 
 function AdminPickedSection() {
-  const { data: allProducts = [], isLoading: productsLoading } = useProducts({ size: 100 });
-  const { data: pickedList = [], isLoading: pickedLoading } = useAdminPickedRecommendations({ size: 100 });
+  const { data: allProducts = [], isLoading: productsLoading } = useProducts({
+    size: 100,
+  });
+  const { data: pickedList = [], isLoading: pickedLoading } =
+    useAdminPickedRecommendations({ size: 100 });
   const setRecommendationMutation = useSetProductRecommendation();
 
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
@@ -46,7 +49,8 @@ function AdminPickedSection() {
   const toggle = (id: number) => {
     setCheckedIds(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -65,7 +69,9 @@ function AdminPickedSection() {
     setSaving(true);
     setSaveError(null);
     try {
-      await Promise.all(changes.map(c => setRecommendationMutation.mutateAsync(c)));
+      await Promise.all(
+        changes.map(c => setRecommendationMutation.mutateAsync(c))
+      );
       alert(`${changes.length}개 상품 저장 완료`);
     } catch (e) {
       setSaveError((e as Error)?.message ?? "저장 중 오류가 발생했습니다.");
@@ -85,13 +91,18 @@ function AdminPickedSection() {
           <span className="text-xs font-medium px-2 py-0.5 rounded bg-pink-500/20 text-pink-400 border border-pink-500/30">
             랜딩 캐러셀
           </span>
-          <h3 className="text-base font-semibold text-white">추천 패키지 on/off</h3>
+          <h3 className="text-base font-semibold text-white">
+            추천 패키지 on/off
+          </h3>
         </div>
         <p className="text-xs text-gray-400 leading-relaxed">
-          랜딩 페이지 <strong className="text-gray-200">상단 캐러셀</strong>에 노출할 패키지를 선택하세요.
-          체크한 상품이 캐러셀에 표시됩니다.
+          랜딩 페이지 <strong className="text-gray-200">상단 캐러셀</strong>에
+          노출할 패키지를 선택하세요. 체크한 상품이 캐러셀에 표시됩니다.
           <br />
-          API: <code className="text-gray-300">PUT /admin/products/&#123;productId&#125;/recommendation</code>
+          API:{" "}
+          <code className="text-gray-300">
+            PUT /admin/products/&#123;productId&#125;/recommendation
+          </code>
         </p>
       </div>
 
@@ -127,7 +138,9 @@ function AdminPickedSection() {
                     />
                   </td>
                   <td className="p-2 text-gray-400">{p.id}</td>
-                  <td className="p-2 text-white max-w-[200px] truncate">{p.name}</td>
+                  <td className="p-2 text-white max-w-[200px] truncate">
+                    {p.name}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -137,9 +150,7 @@ function AdminPickedSection() {
 
       {/* 저장 */}
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-gray-500">
-          {checkedCount}개 선택됨
-        </p>
+        <p className="text-xs text-gray-500">{checkedCount}개 선택됨</p>
         <Button onClick={handleSave} disabled={saving || isLoading}>
           {saving ? "저장 중..." : "저장"}
         </Button>
@@ -152,7 +163,9 @@ function AdminPickedSection() {
 // ─── 섹션 2: Latest in Korea 순서 관리 ─────────────────────────────────────
 
 function LatestInKoreaSection() {
-  const { data: list = [], isLoading } = useLatestInKoreaRecommendations({ size: 50 });
+  const { data: list = [], isLoading } = useLatestInKoreaRecommendations({
+    size: 50,
+  });
   const upsertMutation = useUpsertLatestKoreaRecommendation();
 
   const [productIdsText, setProductIdsText] = useState("");
@@ -186,16 +199,25 @@ function LatestInKoreaSection() {
           <h3 className="text-base font-semibold text-white">노출 순서 관리</h3>
         </div>
         <p className="text-xs text-gray-400 leading-relaxed">
-          랜딩 페이지 <strong className="text-gray-200">하단 "Latest Trends"</strong> 섹션에 노출할 상품 목록과 순서를 설정합니다.
-          입력한 순서 그대로 저장되며, 저장 시 기존 목록은 완전히 교체됩니다. (최대 50개)
+          랜딩 페이지{" "}
+          <strong className="text-gray-200">
+            하단 &ldquo;Latest Trends&rdquo;
+          </strong>{" "}
+          섹션에 노출할 상품 목록과 순서를 설정합니다. 입력한 순서 그대로
+          저장되며, 저장 시 기존 목록은 완전히 교체됩니다. (최대 50개)
           <br />
-          API: <code className="text-gray-300">POST /admin/products/recommendations/latest-in-korea</code>
+          API:{" "}
+          <code className="text-gray-300">
+            POST /admin/products/recommendations/latest-in-korea
+          </code>
         </p>
       </div>
 
       {/* 현재 목록 */}
       <div>
-        <p className="text-xs font-medium text-gray-400 mb-2">현재 노출 목록 (순서대로)</p>
+        <p className="text-xs font-medium text-gray-400 mb-2">
+          현재 노출 목록 (순서대로)
+        </p>
         {isLoading ? (
           <p className="text-gray-500 text-sm">불러오는 중...</p>
         ) : list.length === 0 ? (
@@ -215,7 +237,9 @@ function LatestInKoreaSection() {
                   <tr key={p.id} className="border-t border-gray-700/60">
                     <td className="p-2 text-gray-500">{idx + 1}</td>
                     <td className="p-2 text-gray-400">{p.id}</td>
-                    <td className="p-2 text-white max-w-[200px] truncate">{p.name}</td>
+                    <td className="p-2 text-white max-w-[200px] truncate">
+                      {p.name}
+                    </td>
                   </tr>
                 ))}
               </tbody>

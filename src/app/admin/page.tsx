@@ -78,7 +78,10 @@ export default function AdminPage() {
   const { data: allOptions = [], isLoading: optionsLoading } = useOptions();
 
   const allTags = useMemo(
-    () => ["전체", ...Array.from(new Set(allOptions.map(o => o.categoryTagName)))],
+    () => [
+      "전체",
+      ...Array.from(new Set(allOptions.map(o => o.categoryTagName))),
+    ],
     [allOptions]
   );
 
@@ -349,30 +352,56 @@ export default function AdminPage() {
                       DB 초기화 + 더미 데이터 생성
                     </p>
                     <p className="text-gray-400 text-xs mt-1">
-                      모든 테이블을 truncate하고 id=9999 기준 더미 데이터를 생성합니다.
+                      모든 테이블을 truncate하고 id=9999 기준 더미 데이터를
+                      생성합니다.
                       <br />
-                      <code className="text-gray-300">POST /dev/tools/db/reset-and-seed</code>
+                      <code className="text-gray-300">
+                        POST /dev/tools/db/reset-and-seed
+                      </code>
                     </p>
                   </div>
                   <Button
                     type="button"
                     disabled={resetAndSeedMutation.isPending}
                     onClick={() => {
-                      if (!confirm("DB 전체를 초기화하고 더미 데이터를 생성합니다. 계속할까요?")) return;
+                      if (
+                        !confirm(
+                          "DB 전체를 초기화하고 더미 데이터를 생성합니다. 계속할까요?"
+                        )
+                      )
+                        return;
                       resetAndSeedMutation.mutate();
                     }}
                     className="bg-red-600 hover:bg-red-700 text-white w-full"
                   >
-                    {resetAndSeedMutation.isPending ? "초기화 중..." : "DB 초기화 + 더미 생성"}
+                    {resetAndSeedMutation.isPending
+                      ? "초기화 중..."
+                      : "DB 초기화 + 더미 생성"}
                   </Button>
-                  {resetAndSeedMutation.isSuccess && resetAndSeedMutation.data && (
-                    <div className="text-xs text-green-400 space-y-0.5">
-                      <p>✓ 완료 (truncated {resetAndSeedMutation.data.truncatedTableCount}개 테이블)</p>
-                      <p>상품 ID: {resetAndSeedMutation.data.seededProductId} / 옵션 ID: {resetAndSeedMutation.data.seededOptionId}</p>
-                      <p>예약 ID: {resetAndSeedMutation.data.seededReservationId} / 리뷰 ID: {resetAndSeedMutation.data.seededReviewId}</p>
-                      <p>유저 ID: {resetAndSeedMutation.data.seededUserId} / 배너 ID: {resetAndSeedMutation.data.seededMainBannerId}</p>
-                    </div>
-                  )}
+                  {resetAndSeedMutation.isSuccess &&
+                    resetAndSeedMutation.data && (
+                      <div className="text-xs text-green-400 space-y-0.5">
+                        <p>
+                          ✓ 완료 (truncated{" "}
+                          {resetAndSeedMutation.data.truncatedTableCount}개
+                          테이블)
+                        </p>
+                        <p>
+                          상품 ID: {resetAndSeedMutation.data.seededProductId} /
+                          옵션 ID: {resetAndSeedMutation.data.seededOptionId}
+                        </p>
+                        <p>
+                          예약 ID:{" "}
+                          {resetAndSeedMutation.data.seededReservationId} / 리뷰
+                          ID: {resetAndSeedMutation.data.seededReviewId}
+                        </p>
+                        <p>
+                          유저 ID: {resetAndSeedMutation.data.seededUserId} /
+                          배너 ID:{" "}
+                          {resetAndSeedMutation.data.seededMainBannerId}
+                        </p>
+                      </div>
+                    )}
                   {resetAndSeedMutation.isError && (
                     <p className="text-red-400 text-xs">
                       오류: {resetAndSeedMutation.error.message}

@@ -102,7 +102,8 @@ export async function getAdminPickedRecommendations(
   params: GetAdminPickedParams = {}
 ): Promise<AdminPickedProduct[]> {
   const queryParams = new URLSearchParams();
-  if (params.size !== undefined) queryParams.append("size", String(params.size));
+  if (params.size !== undefined)
+    queryParams.append("size", String(params.size));
   if (params.tag) queryParams.append("tag", params.tag);
   if (params.query) queryParams.append("query", params.query);
   const qs = queryParams.toString();

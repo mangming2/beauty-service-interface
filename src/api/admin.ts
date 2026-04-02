@@ -37,7 +37,11 @@ export interface DbResetAndSeedResult {
  * POST /dev/tools/db/reset-and-seed
  */
 export async function resetAndSeedDb(): Promise<DbResetAndSeedResult> {
-  return apiPost<DbResetAndSeedResult>("/dev/tools/db/reset-and-seed", undefined, {
-    requireAuth: true,
-  });
+  return apiPost<DbResetAndSeedResult>(
+    "/dev/tools/db/reset-and-seed",
+    undefined,
+    {
+      requireAuth: true,
+    }
+  );
 }
