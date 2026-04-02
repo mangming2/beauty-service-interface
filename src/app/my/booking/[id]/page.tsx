@@ -68,8 +68,8 @@ export default function MyBookingPage() {
     components.reduce((sum, c) => sum + c.price, 0) + platformFee;
 
   return (
-    <div className="min-h-screen bg-background text-white pb-24">
-      <div>
+    <div className="bg-background text-white flex flex-col flex-1">
+      <div className="flex-1">
         {/* 헤더 영역 */}
         <div className="flex flex-col p-5 gap-4">
           <div className="title-lg">{t("bookingPage.bookingDetail")}</div>
