@@ -408,7 +408,12 @@ export default function PackageOptionBookingPage() {
             variant="gray"
             className="w-[120px] h-[52px] text-lg"
             onClick={handleComplete}
-            disabled={createScheduleMutation.isPending}
+            disabled={
+              createScheduleMutation.isPending ||
+              !externalBookingAgreed ||
+              !selectedDate ||
+              !selectedTime
+            }
           >
             {t("option.complete")}
           </Button>
