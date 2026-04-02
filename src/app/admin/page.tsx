@@ -7,11 +7,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useAuthStatus } from "@/queries/useAuthQueries";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useCreateOption } from "@/queries/useOptionQueries";
-import {
-  useCreateProduct,
-  useProductOptions,
-} from "@/queries/useProductQueries";
+import { useCreateOption, useOptions } from "@/queries/useOptionQueries";
+import { useCreateProduct } from "@/queries/useProductQueries";
 import type { CreateOptionRequest } from "@/api/option";
 import type { CreateProductRequest } from "@/api/product";
 import { GapY } from "@/components/ui/gap";
@@ -23,7 +20,7 @@ import { AdminProductsPanel } from "@/components/admin/AdminProductsPanel";
 import { AdminUsersPanel } from "@/components/admin/AdminUsersPanel";
 import { AdminReservationsPanel } from "@/components/admin/AdminReservationsPanel";
 import { AdminRecommendationsPanel } from "@/components/admin/AdminRecommendationsPanel";
-import { parseOptionIds } from "@/lib/parseOptionIds";
+import { useResetAndSeedDb } from "@/queries/useAdminQueries";
 
 /** 관리자 탭: 기본 TabsTrigger는 dark muted 색이라 회색 배경에서 대비가 거의 없음 */
 const adminTabTriggerClass =
@@ -37,6 +34,7 @@ export default function AdminPage() {
   const { data: authStatus, isLoading: statusLoading } = useAuthStatus();
   const createOptionMutation = useCreateOption();
   const createProductMutation = useCreateProduct();
+  const resetAndSeedMutation = useResetAndSeedDb();
 
   const isAdmin = authStatus?.admin === true || authStatus?.role === "ADMIN";
 
@@ -72,26 +70,26 @@ export default function AdminPage() {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productOptionIds, setProductOptionIds] = useState<number[]>([]);
-  const [optionIdsText, setOptionIdsText] = useState("");
-  const [refProductIdStr, setRefProductIdStr] = useState("");
   const [representOptionId, setRepresentOptionId] = useState<number | "">("");
   const [productImages, setProductImages] = useState<File[]>([]);
+  const [tagFilter, setTagFilter] = useState("전체");
+  const [optionSearch, setOptionSearch] = useState("");
 
-  const refProductIdParsed = parseInt(refProductIdStr.trim(), 10);
-  const { data: refProductOptions = [] } = useProductOptions(
-    Number.isFinite(refProductIdParsed) && refProductIdParsed > 0
-      ? refProductIdParsed
-      : undefined
+  const { data: allOptions = [], isLoading: optionsLoading } = useOptions();
+
+  const allTags = useMemo(
+    () => ["전체", ...Array.from(new Set(allOptions.map(o => o.categoryTagName)))],
+    [allOptions]
   );
 
-  const optionIdModeLabels = useMemo(() => {
-    const map = new Map<number, string>();
-    refProductOptions.forEach(o => map.set(o.id, o.name));
-    return productOptionIds.map(id => ({
-      id,
-      name: map.get(id) ?? `옵션 #${id}`,
-    }));
-  }, [refProductOptions, productOptionIds]);
+  const filteredOptions = useMemo(
+    () =>
+      allOptions
+        .filter(o => tagFilter === "전체" || o.categoryTagName === tagFilter)
+        .filter(o => o.name.includes(optionSearch.trim()))
+        .map(o => ({ id: o.id, name: o.name, price: o.price })),
+    [allOptions, tagFilter, optionSearch]
+  );
 
   const handleCreateOption = (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,18 +136,19 @@ export default function AdminPage() {
           setProductName("");
           setProductDescription("");
           setProductOptionIds([]);
-          setOptionIdsText("");
-          setRefProductIdStr("");
           setRepresentOptionId("");
+          setTagFilter("전체");
+          setOptionSearch("");
           setProductImages([]);
         },
       }
     );
   };
 
-  const handleOptionIdsTextChange = (text: string) => {
-    setOptionIdsText(text);
-    setProductOptionIds(parseOptionIds(text));
+  const toggleProductOption = (id: number) => {
+    setProductOptionIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
     setRepresentOptionId("");
   };
 
@@ -210,6 +209,11 @@ export default function AdminPage() {
             >
               추천상품
             </TabsTrigger>
+            {process.env.NODE_ENV === "development" && (
+              <TabsTrigger value="dev-tools" className={adminTabTriggerClass}>
+                🛠 Dev Tools
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="option-create" className="mt-6">
@@ -246,22 +250,6 @@ export default function AdminPage() {
 
           <TabsContent value="product-create" className="mt-6">
             <form onSubmit={handleCreateProduct} className="space-y-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  이름 참고용 상품 ID (선택)
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  value={refProductIdStr}
-                  onChange={e => setRefProductIdStr(e.target.value)}
-                  className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
-                  placeholder="기존 상품 번호 — 대표 옵션 드롭다운에 이름 표시"
-                />
-                <p className="text-gray-500 text-xs mt-1">
-                  {`GET /products/{productId}/options 로 라벨을 가져옵니다. 입력한 옵션 ID와 겹치는 항목만 이름이 보입니다.`}
-                </p>
-              </div>
               <ProductFormFields
                 productName={productName}
                 setProductName={setProductName}
@@ -270,11 +258,40 @@ export default function AdminPage() {
                 productOptionIds={productOptionIds}
                 representOptionId={representOptionId}
                 setRepresentOptionId={setRepresentOptionId}
-                optionIdsText={optionIdsText}
-                onOptionIdsTextChange={handleOptionIdsTextChange}
-                optionIdModeLabels={optionIdModeLabels}
+                pickerOptions={filteredOptions}
+                toggleProductOption={toggleProductOption}
                 productImages={productImages}
                 setProductImages={setProductImages}
+                optionPickerHeader={
+                  <div className="space-y-2 mb-2">
+                    <div className="flex flex-wrap gap-1">
+                      {allTags.map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => setTagFilter(tag)}
+                          className={`px-2.5 py-1 rounded text-xs font-medium border transition-colors ${
+                            tagFilter === tag
+                              ? "bg-pink-500 border-pink-500 text-white"
+                              : "bg-gray-800 border-gray-600 text-gray-300 hover:border-gray-400"
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                    <input
+                      type="text"
+                      value={optionSearch}
+                      onChange={e => setOptionSearch(e.target.value)}
+                      placeholder="옵션명 검색"
+                      className="w-full px-3 py-1.5 rounded bg-gray-800 text-white border border-gray-600 text-sm"
+                    />
+                    {optionsLoading && (
+                      <p className="text-gray-500 text-xs">옵션 로딩 중...</p>
+                    )}
+                  </div>
+                }
               />
               <Button
                 type="submit"
@@ -316,6 +333,55 @@ export default function AdminPage() {
           <TabsContent value="recommendations" className="mt-6">
             <AdminRecommendationsPanel />
           </TabsContent>
+
+          {process.env.NODE_ENV === "development" && (
+            <TabsContent value="dev-tools" className="mt-6">
+              <div className="space-y-4 max-w-lg">
+                <div>
+                  <h2 className="text-base font-semibold mb-1">Dev Tools</h2>
+                  <p className="text-gray-400 text-sm">
+                    로컬/개발 환경 전용입니다. 프로덕션에서는 노출되지 않습니다.
+                  </p>
+                </div>
+                <div className="rounded-lg border border-red-500/30 bg-red-950/20 p-4 space-y-3">
+                  <div>
+                    <p className="text-sm font-medium text-red-400">
+                      DB 초기화 + 더미 데이터 생성
+                    </p>
+                    <p className="text-gray-400 text-xs mt-1">
+                      모든 테이블을 truncate하고 id=9999 기준 더미 데이터를 생성합니다.
+                      <br />
+                      <code className="text-gray-300">POST /dev/tools/db/reset-and-seed</code>
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    disabled={resetAndSeedMutation.isPending}
+                    onClick={() => {
+                      if (!confirm("DB 전체를 초기화하고 더미 데이터를 생성합니다. 계속할까요?")) return;
+                      resetAndSeedMutation.mutate();
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white w-full"
+                  >
+                    {resetAndSeedMutation.isPending ? "초기화 중..." : "DB 초기화 + 더미 생성"}
+                  </Button>
+                  {resetAndSeedMutation.isSuccess && resetAndSeedMutation.data && (
+                    <div className="text-xs text-green-400 space-y-0.5">
+                      <p>✓ 완료 (truncated {resetAndSeedMutation.data.truncatedTableCount}개 테이블)</p>
+                      <p>상품 ID: {resetAndSeedMutation.data.seededProductId} / 옵션 ID: {resetAndSeedMutation.data.seededOptionId}</p>
+                      <p>예약 ID: {resetAndSeedMutation.data.seededReservationId} / 리뷰 ID: {resetAndSeedMutation.data.seededReviewId}</p>
+                      <p>유저 ID: {resetAndSeedMutation.data.seededUserId} / 배너 ID: {resetAndSeedMutation.data.seededMainBannerId}</p>
+                    </div>
+                  )}
+                  {resetAndSeedMutation.isError && (
+                    <p className="text-red-400 text-xs">
+                      오류: {resetAndSeedMutation.error.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
 
         <GapY size={24} />

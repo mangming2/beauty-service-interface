@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   useLatestInKoreaRecommendations,
   useUpsertLatestKoreaRecommendation,
+  useAdminPickedRecommendations,
+  useSetProductRecommendation,
 } from "@/queries/useRecommendationQueries";
+import { useProducts } from "@/queries/useProductQueries";
 
 function parseProductIds(text: string): number[] {
   const seen = new Set<number>();
@@ -20,14 +23,139 @@ function parseProductIds(text: string): number[] {
   return out;
 }
 
-export function AdminRecommendationsPanel() {
-  const { data: currentRecommendations = [], isLoading } =
-    useLatestInKoreaRecommendations({ size: 50 });
+// ─── 섹션 1: 랜딩 캐러셀 추천 (admin-picked) ───────────────────────────────
 
+function AdminPickedSection() {
+  const { data: allProducts = [], isLoading: productsLoading } = useProducts({ size: 100 });
+  const { data: pickedList = [], isLoading: pickedLoading } = useAdminPickedRecommendations({ size: 100 });
+  const setRecommendationMutation = useSetProductRecommendation();
+
+  const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
+  const [initialized, setInitialized] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // 추천 목록 로드되면 초기 체크 상태 설정
+  useEffect(() => {
+    if (!pickedLoading && !initialized) {
+      setCheckedIds(new Set(pickedList.map(p => p.id)));
+      setInitialized(true);
+    }
+  }, [pickedLoading, pickedList, initialized]);
+
+  const toggle = (id: number) => {
+    setCheckedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const handleSave = async () => {
+    const pickedIds = new Set(pickedList.map(p => p.id));
+    const changes = allProducts
+      .filter(p => checkedIds.has(p.id) !== pickedIds.has(p.id))
+      .map(p => ({ productId: p.id, recommended: checkedIds.has(p.id) }));
+
+    if (changes.length === 0) {
+      alert("변경 사항이 없습니다.");
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await Promise.all(changes.map(c => setRecommendationMutation.mutateAsync(c)));
+      alert(`${changes.length}개 상품 저장 완료`);
+    } catch (e) {
+      setSaveError((e as Error)?.message ?? "저장 중 오류가 발생했습니다.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const isLoading = productsLoading || pickedLoading;
+  const checkedCount = checkedIds.size;
+
+  return (
+    <div className="rounded-xl border border-gray-600 p-5 space-y-4">
+      {/* 헤더 */}
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-medium px-2 py-0.5 rounded bg-pink-500/20 text-pink-400 border border-pink-500/30">
+            랜딩 캐러셀
+          </span>
+          <h3 className="text-base font-semibold text-white">추천 패키지 on/off</h3>
+        </div>
+        <p className="text-xs text-gray-400 leading-relaxed">
+          랜딩 페이지 <strong className="text-gray-200">상단 캐러셀</strong>에 노출할 패키지를 선택하세요.
+          체크한 상품이 캐러셀에 표시됩니다.
+          <br />
+          API: <code className="text-gray-300">PUT /admin/products/&#123;productId&#125;/recommendation</code>
+        </p>
+      </div>
+
+      {/* 상품 목록 + 체크박스 */}
+      {isLoading ? (
+        <p className="text-gray-500 text-sm">불러오는 중...</p>
+      ) : allProducts.length === 0 ? (
+        <p className="text-gray-500 text-sm">등록된 상품이 없습니다.</p>
+      ) : (
+        <div className="rounded-lg border border-gray-700 overflow-x-auto max-h-80 overflow-y-auto">
+          <table className="w-full text-sm min-w-[280px]">
+            <thead className="bg-gray-800/60 text-gray-400 sticky top-0">
+              <tr>
+                <th className="p-2 w-10 text-center">추천</th>
+                <th className="text-left p-2 w-16">ID</th>
+                <th className="text-left p-2">상품명</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allProducts.map(p => (
+                <tr
+                  key={p.id}
+                  className={`border-t border-gray-700/60 cursor-pointer hover:bg-gray-800/40 transition-colors ${checkedIds.has(p.id) ? "bg-pink-500/5" : ""}`}
+                  onClick={() => toggle(p.id)}
+                >
+                  <td className="p-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={checkedIds.has(p.id)}
+                      onChange={() => toggle(p.id)}
+                      onClick={e => e.stopPropagation()}
+                      className="accent-pink-500"
+                    />
+                  </td>
+                  <td className="p-2 text-gray-400">{p.id}</td>
+                  <td className="p-2 text-white max-w-[200px] truncate">{p.name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* 저장 */}
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs text-gray-500">
+          {checkedCount}개 선택됨
+        </p>
+        <Button onClick={handleSave} disabled={saving || isLoading}>
+          {saving ? "저장 중..." : "저장"}
+        </Button>
+      </div>
+      {saveError && <p className="text-red-400 text-xs">{saveError}</p>}
+    </div>
+  );
+}
+
+// ─── 섹션 2: Latest in Korea 순서 관리 ─────────────────────────────────────
+
+function LatestInKoreaSection() {
+  const { data: list = [], isLoading } = useLatestInKoreaRecommendations({ size: 50 });
   const upsertMutation = useUpsertLatestKoreaRecommendation();
 
   const [productIdsText, setProductIdsText] = useState("");
-
   const parsedIds = parseProductIds(productIdsText);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +168,7 @@ export function AdminRecommendationsPanel() {
       { productIds: parsedIds },
       {
         onSuccess: data => {
-          alert(`추천 상품 ${data.productCount}개가 등록되었습니다.`);
+          alert(`${data.productCount}개 저장 완료`);
           setProductIdsText("");
         },
       }
@@ -48,25 +176,34 @@ export function AdminRecommendationsPanel() {
   };
 
   return (
-    <div className="space-y-6">
-      <p className="text-sm text-gray-400">
-        Latest in Korea 추천 상품 등록 (POST
-        /admin/products/recommendations/latest-in-korea)
-      </p>
-
-      {/* 현재 추천 상품 목록 */}
+    <div className="rounded-xl border border-gray-600 p-5 space-y-4">
+      {/* 헤더 */}
       <div>
-        <h3 className="text-sm font-medium text-gray-300 mb-2">
-          현재 추천 상품
-        </h3>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-medium px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
+            Latest Trends
+          </span>
+          <h3 className="text-base font-semibold text-white">노출 순서 관리</h3>
+        </div>
+        <p className="text-xs text-gray-400 leading-relaxed">
+          랜딩 페이지 <strong className="text-gray-200">하단 "Latest Trends"</strong> 섹션에 노출할 상품 목록과 순서를 설정합니다.
+          입력한 순서 그대로 저장되며, 저장 시 기존 목록은 완전히 교체됩니다. (최대 50개)
+          <br />
+          API: <code className="text-gray-300">POST /admin/products/recommendations/latest-in-korea</code>
+        </p>
+      </div>
+
+      {/* 현재 목록 */}
+      <div>
+        <p className="text-xs font-medium text-gray-400 mb-2">현재 노출 목록 (순서대로)</p>
         {isLoading ? (
-          <p className="text-gray-400 text-sm">불러오는 중...</p>
-        ) : currentRecommendations.length === 0 ? (
-          <p className="text-gray-500 text-sm">등록된 추천 상품이 없습니다.</p>
+          <p className="text-gray-500 text-sm">불러오는 중...</p>
+        ) : list.length === 0 ? (
+          <p className="text-gray-500 text-sm">등록된 상품이 없습니다.</p>
         ) : (
-          <div className="rounded-lg border border-gray-600 overflow-x-auto">
+          <div className="rounded-lg border border-gray-700 overflow-x-auto">
             <table className="w-full text-sm min-w-[280px]">
-              <thead className="bg-gray-800 text-gray-300">
+              <thead className="bg-gray-800/60 text-gray-400">
                 <tr>
                   <th className="text-left p-2 w-12">순서</th>
                   <th className="text-left p-2 w-16">ID</th>
@@ -74,13 +211,11 @@ export function AdminRecommendationsPanel() {
                 </tr>
               </thead>
               <tbody>
-                {currentRecommendations.map((p, idx) => (
-                  <tr key={p.id} className="border-t border-gray-700">
+                {list.map((p, idx) => (
+                  <tr key={p.id} className="border-t border-gray-700/60">
                     <td className="p-2 text-gray-500">{idx + 1}</td>
                     <td className="p-2 text-gray-400">{p.id}</td>
-                    <td className="p-2 text-white max-w-[200px] truncate">
-                      {p.name}
-                    </td>
+                    <td className="p-2 text-white max-w-[200px] truncate">{p.name}</td>
                   </tr>
                 ))}
               </tbody>
@@ -89,15 +224,12 @@ export function AdminRecommendationsPanel() {
         )}
       </div>
 
-      {/* 추천 상품 등록 폼 */}
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-300">추천 상품 교체</h3>
-        <p className="text-xs text-gray-500">
-          입력한 순서대로 저장됩니다. 기존 목록은 완전히 교체됩니다. (최대 50개)
-        </p>
+      {/* 교체 폼 */}
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <p className="text-xs font-medium text-gray-400">목록 교체</p>
         <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            상품 ID 목록 (쉼표 또는 공백 구분)
+          <label className="block text-xs text-gray-500 mb-1">
+            상품 ID (쉼표 또는 공백으로 구분, 입력 순서대로 저장)
           </label>
           <textarea
             value={productIdsText}
@@ -108,7 +240,7 @@ export function AdminRecommendationsPanel() {
           />
           {parsedIds.length > 0 && (
             <p className="text-xs text-gray-500 mt-1">
-              파싱된 ID ({parsedIds.length}개): {parsedIds.join(", ")}
+              파싱된 ID {parsedIds.length}개: {parsedIds.join(", ")}
             </p>
           )}
         </div>
@@ -117,12 +249,23 @@ export function AdminRecommendationsPanel() {
           disabled={upsertMutation.isPending || parsedIds.length === 0}
           className="w-full"
         >
-          {upsertMutation.isPending ? "저장 중..." : "추천 상품 저장"}
+          {upsertMutation.isPending ? "저장 중..." : "목록 저장 (기존 교체)"}
         </Button>
         {upsertMutation.isError && (
-          <p className="text-red-400 text-sm">{upsertMutation.error.message}</p>
+          <p className="text-red-400 text-xs">{upsertMutation.error.message}</p>
         )}
       </form>
+    </div>
+  );
+}
+
+// ─── 메인 패널 ──────────────────────────────────────────────────────────────
+
+export function AdminRecommendationsPanel() {
+  return (
+    <div className="space-y-6">
+      <AdminPickedSection />
+      <LatestInKoreaSection />
     </div>
   );
 }

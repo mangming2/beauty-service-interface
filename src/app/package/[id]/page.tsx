@@ -36,8 +36,11 @@ export default function PackageDetail() {
 
   const { data: productDetail, isLoading, error } = useProductDetail(packageId);
 
-  const { data: options = [], isLoading: optionsLoading } =
+  const { data: rawOptions = [], isLoading: optionsLoading } =
     useProductOptions(packageId);
+  const options = [...rawOptions].sort((a, b) =>
+    a.isRepresent === b.isRepresent ? 0 : a.isRepresent ? -1 : 1
+  );
 
   const { data: wishes = [] } = useWishes();
   const toggleWishMutation = useToggleWish();

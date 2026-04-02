@@ -10,7 +10,7 @@ import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
 import All from "@/assets/3d-images/doki-all.png";
 import { GapY } from "@/components/ui/gap";
-import { PopularCarousel } from "@/components/main/PopularCarousel";
+import { PopularCarouselSection } from "@/components/main/PopularCarouselSection";
 import { ConceptScrollContainer } from "@/components/main/ConceptScrollContainer";
 import { LatestTrendsSection } from "@/components/main/LatestTrendsSection";
 import { LatestAnnouncementPosts } from "@/components/main/LatestAnnouncementPosts";
@@ -49,28 +49,7 @@ export default function Home() {
       <GapY size={24} />
       {/* Main Content */}
       {/* Most Popular Section */}
-      <PopularCarousel
-        items={[
-          {
-            imageSrc: "/aespa-1.jpg",
-            alt: "Futuristic Chic Idol Debut",
-            tags: "#aespa #metallic #sm",
-            location: "Songdo, Incheon",
-          },
-          {
-            imageSrc: "/aespa-2.jpg",
-            alt: "Metallic Concept",
-            tags: "#aespa #metallic #sm",
-            location: "Songdo, Incheon",
-          },
-          {
-            imageSrc: "/dummy-profile.png",
-            alt: "Concept 3",
-            tags: "#kpop #idol #debut",
-            location: "Seoul",
-          },
-        ]}
-      />
+      <PopularCarouselSection />
       <div className="px-5">
         <GapY size={20} />
 

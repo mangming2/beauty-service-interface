@@ -16,31 +16,20 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 export default function MyPage() {
   const { user } = useUser();
-  const { data: myPageUser, isLoading: myPageUserLoading } = useMyPageUser();
+  const { data: myPageUser } = useMyPageUser();
   const { data: authStatus } = useAuthStatus();
   const signOutMutation = useLogout();
   const router = useRouter();
   const { t } = useTranslation();
-  const isAdmin = authStatus?.admin === true || authStatus?.role === "ADMIN";
+  const isAdmin =
+    authStatus?.admin === true ||
+    authStatus?.role === "ADMIN" ||
+    myPageUser?.role === "ADMIN";
 
-  // 개발 시 콘솔에서 유저 정보 확인용
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") return;
-    if (myPageUserLoading) return;
-    console.log("[My 페이지] 유저 정보 출처 정리:");
-    console.log(
-      "  1) Auth Store (useUser) — 로그인 시 저장된 값:",
-      user ?? null
-    );
-    console.log(
-      "  2) GET /mypage/user (useMyPageUser) — 마이페이지 API 응답:",
-      myPageUser ?? null
-    );
-    console.log(
-      "  3) GET /auth/status (useAuthStatus) — 인증·권한:",
-      authStatus ?? null
-    );
-  }, [user, myPageUser, myPageUserLoading, authStatus]);
+    console.log("[auth/status]", authStatus ?? null);
+  }, [authStatus]);
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   const userProfile = {
     name:

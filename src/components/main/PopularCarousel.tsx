@@ -8,6 +8,7 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import Link from "next/link";
 import { TranslatedText } from "@/components/main/TranslatedText";
 
 type CarouselItemType = {
@@ -15,6 +16,7 @@ type CarouselItemType = {
   alt: string;
   tags: string;
   location: string;
+  href?: string;
 };
 
 type PopularCarouselProps = {
@@ -59,8 +61,9 @@ export function PopularCarousel({ items }: PopularCarouselProps) {
                 className="basis-[382px] shrink-0 pl-[4px] pr-[4px]"
               >
                 <div className="w-full h-full flex items-center justify-center">
-                  <div
-                    className="relative w-full overflow-hidden rounded-[8px] border border-card-border transition-transform duration-300 ease-in-out"
+                  <Link
+                    href={item.href ?? "#"}
+                    className="relative w-full overflow-hidden rounded-[8px] border border-card-border transition-transform duration-300 ease-in-out block"
                     style={{
                       transform: `scale(${scale})`,
                       transformOrigin: "center center",
@@ -87,7 +90,7 @@ export function PopularCarousel({ items }: PopularCarouselProps) {
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </CarouselItem>
             );

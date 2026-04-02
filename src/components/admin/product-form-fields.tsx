@@ -1,6 +1,8 @@
 "use client";
 
-export type ProductFormPickerOption = { id: number; name: string };
+import type { ReactNode } from "react";
+
+export type ProductFormPickerOption = { id: number; name: string; price?: number };
 
 export interface ProductFormFieldsProps {
   productName: string;
@@ -16,6 +18,8 @@ export interface ProductFormFieldsProps {
   /** 체크박스로 옵션 고르기 (상품 수정 등, GET /products/:id/options 로 채움) */
   pickerOptions?: ProductFormPickerOption[];
   toggleProductOption?: (id: number) => void;
+  /** 체크박스 목록 위에 렌더링할 필터/검색 UI */
+  optionPickerHeader?: ReactNode;
 
   /** 옵션 ID 직접 입력 (상품 생성 등 — 전체 옵션 목록 API 없음) */
   optionIdsText?: string;
@@ -34,6 +38,7 @@ export function ProductFormFields({
   setRepresentOptionId,
   pickerOptions = [],
   toggleProductOption,
+  optionPickerHeader,
   optionIdsText,
   onOptionIdsTextChange,
   optionIdModeLabels,
@@ -94,6 +99,7 @@ export function ProductFormFields({
           <label className="block text-sm text-gray-400 mb-2">
             포함 옵션 (복수 선택) *
           </label>
+          {optionPickerHeader}
           <div className="flex flex-wrap gap-2">
             {pickerOptions.map(opt => (
               <label
@@ -106,14 +112,20 @@ export function ProductFormFields({
                   onChange={() => toggleProductOption?.(opt.id)}
                 />
                 <span className="text-sm">
-                  {opt.name} (ID: {opt.id})
+                  {opt.name} (ID: {opt.id}
+                  {opt.price !== undefined
+                    ? ` · ${opt.price.toLocaleString()}원`
+                    : ""}
+                  )
                 </span>
               </label>
             ))}
           </div>
           {pickerOptions.length === 0 && (
             <p className="text-gray-500 text-sm">
-              이 상품에 연결된 옵션이 없습니다.
+              {optionPickerHeader
+                ? "조건에 맞는 옵션이 없습니다."
+                : "이 상품에 연결된 옵션이 없습니다."}
             </p>
           )}
         </div>

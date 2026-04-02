@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "@/lib/apiClient";
+import { apiGet, apiPost, apiPut } from "@/lib/apiClient";
 import type { Product } from "@/api/product";
 
 const BASE = "/products/recommendations";
@@ -46,6 +46,69 @@ export async function upsertLatestKoreaRecommendation(
     console.error("Upsert latest-in-korea recommendation error:", error);
     throw error;
   }
+}
+
+/** 추천 패키지 여부 설정 응답 */
+export interface SetRecommendationResponse {
+  productId: number;
+  recommended: boolean;
+}
+
+/**
+ * 특정 상품 추천 여부 설정 (관리자 전용)
+ * PUT /admin/products/{productId}/recommendation
+ */
+export async function setProductRecommendation(
+  productId: number,
+  recommended: boolean
+): Promise<SetRecommendationResponse> {
+  return apiPut<SetRecommendationResponse>(
+    `/admin/products/${productId}/recommendation`,
+    { recommended },
+    { requireAuth: true }
+  );
+}
+
+/** 추천 패키지 목록 아이템 (GET /products/recommendations/admin-picked) */
+export interface AdminPickedProduct {
+  id: number;
+  name: string;
+  averageRating: number;
+  totalReviewCount: number;
+  representOption: {
+    rating: number;
+    reviewCount: number;
+    tags: string[];
+    location: string;
+    discountRate: number;
+    originalPrice: number;
+    finalPrice: number;
+  };
+  imageUrls: string[];
+}
+
+/** 추천 패키지 목록 조회 파라미터 */
+export interface GetAdminPickedParams {
+  size?: number;
+  tag?: string;
+  query?: string;
+}
+
+/**
+ * 관리자 추천 패키지 목록 조회
+ * GET /products/recommendations/admin-picked
+ */
+export async function getAdminPickedRecommendations(
+  params: GetAdminPickedParams = {}
+): Promise<AdminPickedProduct[]> {
+  const queryParams = new URLSearchParams();
+  if (params.size !== undefined) queryParams.append("size", String(params.size));
+  if (params.tag) queryParams.append("tag", params.tag);
+  if (params.query) queryParams.append("query", params.query);
+  const qs = queryParams.toString();
+  const url = `${BASE}/admin-picked${qs ? `?${qs}` : ""}`;
+  const data = await apiGet<AdminPickedProduct[]>(url, { requireAuth: false });
+  return data ?? [];
 }
 
 export async function getLatestInKoreaRecommendations(
