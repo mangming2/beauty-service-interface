@@ -6,11 +6,13 @@ import { useAnnouncementDetail } from "@/queries/useAnnouncementQueries";
 import { getSafeImageSrc } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { format, parseISO } from "date-fns";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function NoticeDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const postId = id ? parseInt(id, 10) : undefined;
+  const { t } = useTranslation();
 
   const { data: post, isLoading, isError } = useAnnouncementDetail(postId);
 
@@ -87,7 +89,7 @@ export default function NoticeDetailPage() {
       )}
 
       {post.viewCount !== undefined && (
-        <p className="caption-md text-gray_1 mt-6">조회수 {post.viewCount}</p>
+        <p className="caption-md text-gray_1 mt-6">{t("boardPage.viewCount")} {post.viewCount}</p>
       )}
     </article>
   );

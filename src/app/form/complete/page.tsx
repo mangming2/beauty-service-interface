@@ -15,21 +15,7 @@ import { surveyToDisplayData } from "@/lib/surveyUtils";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { Product } from "@/api/product";
 
-/** 백엔드 추천 API 없을 때 사용하는 플레이스홀더 */
-const PLACEHOLDER_RECOMMENDATION = {
-  images: ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"],
-  salonInfo: {
-    tags: ["추천"],
-    name: "추천 샐런 (준비 중)",
-    originalPrice: 0,
-    finalPrice: 0,
-    discountRate: 0,
-    rating: 0,
-    reviewCount: 0,
-    location: "-",
-  },
-  packagePath: "#",
-};
+const PLACEHOLDER_IMAGES = ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"];
 
 const PACKAGE_SECTION_TITLES = [
   "wish.howAboutThisPackage",
@@ -159,8 +145,17 @@ export default function FormComplete() {
         onClick: () => handlePackageClick(galleryProduct.id),
       }
     : {
-        images: PLACEHOLDER_RECOMMENDATION.images,
-        salonInfo: PLACEHOLDER_RECOMMENDATION.salonInfo,
+        images: PLACEHOLDER_IMAGES,
+        salonInfo: {
+          tags: [t("form.recommendedTag")],
+          name: t("form.recommendedSalon"),
+          originalPrice: 0,
+          finalPrice: 0,
+          discountRate: 0,
+          rating: 0,
+          reviewCount: 0,
+          location: "-",
+        },
         onClick: () => router.push(recommendUrl),
       };
 

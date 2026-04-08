@@ -72,10 +72,7 @@ export default function RecommendationGallery({
             </span>
           </div>
           <div className="flex flex-wrap gap-1">
-            {(salonInfo.tags.length > 0
-              ? salonInfo.tags
-              : ["태그1", "태그2", "태그3"]
-            ).map((tag, index) => (
+            {salonInfo.tags.map((tag, index) => (
               <span
                 key={index}
                 className="px-2 py-0.5 bg-gray text-white caption-sm"

@@ -248,11 +248,9 @@ export default function PackageOptionBookingPage() {
             </p>
 
             <div className="flex items-center justify-between mt-3">
-              <p className="text-lg text-white">이거 제목인가요?</p>
+              <p className="text-lg text-white">{t("option.price")}</p>
               <p className="text-lg text-white">
-                {currentOption.discountRate > 0
-                  ? `${currentOption.discountRate}% `
-                  : "더미%"}
+                {currentOption.discountRate > 0 && `${currentOption.discountRate}% `}
                 <span className="text-pink-font">
                   ₩{currentOption.price.toLocaleString()}
                 </span>

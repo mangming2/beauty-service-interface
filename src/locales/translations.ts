@@ -186,6 +186,7 @@ export const translations = {
       formLoadingAllDone: "All done!",
       formLoadingStyleResult: "Here's your style result",
       recommendedSalon: "추천 샐런 (준비 중)",
+      recommendedTag: "추천",
     },
     bookingPage: {
       orderStatus: "Order Status",
@@ -267,6 +268,8 @@ export const translations = {
       communityUnderDevelopment: "커뮤니티는 개발 중입니다.",
       noticeAlt: "공지",
       viewCount: "조회",
+      likes: "좋아요",
+      comments: "댓글",
     },
     auth: {
       processingLogin: "로그인 처리 중...",
@@ -275,11 +278,14 @@ export const translations = {
       authError: "인증 처리 중 오류가 발생했습니다.",
       authErrorTitle: "인증 오류",
       backToLogin: "로그인 페이지로 돌아가기",
+      verifying: "인증 확인 중...",
+      redirectingToLogin: "로그인 페이지로 이동 중...",
     },
     option: {
       description: "Description",
       fullAddress: "Full Address",
       bookingGuide: "Booking Guide",
+      price: "가격",
       beforeContinue: "계속하기 전에.",
       externalBookingTitle: "외부 예약 안내",
       externalBookingNotice:
@@ -480,6 +486,7 @@ export const translations = {
       formLoadingAllDone: "All done!",
       formLoadingStyleResult: "Here's your style result",
       recommendedSalon: "Recommended salon (coming soon)",
+      recommendedTag: "Recommended",
     },
     bookingPage: {
       orderStatus: "Order Status",
@@ -561,6 +568,8 @@ export const translations = {
       communityUnderDevelopment: "Community is under development.",
       noticeAlt: "Notice",
       viewCount: "views",
+      likes: "Likes",
+      comments: "Comments",
     },
     auth: {
       processingLogin: "Processing login...",
@@ -569,11 +578,14 @@ export const translations = {
       authError: "An error occurred during authentication.",
       authErrorTitle: "Authentication Error",
       backToLogin: "Back to login page",
+      verifying: "Verifying...",
+      redirectingToLogin: "Redirecting to login...",
     },
     option: {
       description: "Description",
       fullAddress: "Full Address",
       bookingGuide: "Booking Guide",
+      price: "Price",
       beforeContinue: "Before you continue.",
       externalBookingTitle: "External Booking Notice",
       externalBookingNotice:
@@ -777,6 +789,7 @@ export const translations = {
       formLoadingAllDone: "All done!",
       formLoadingStyleResult: "Here's your style result",
       recommendedSalon: "おすすめサロン（準備中）",
+      recommendedTag: "おすすめ",
     },
     bookingPage: {
       orderStatus: "Order Status",
@@ -860,6 +873,8 @@ export const translations = {
       communityUnderDevelopment: "コミュニティは開発中です。",
       noticeAlt: "お知らせ",
       viewCount: "閲覧",
+      likes: "いいね",
+      comments: "コメント",
     },
     auth: {
       processingLogin: "ログイン処理中...",
@@ -868,10 +883,13 @@ export const translations = {
       authError: "認証処理中にエラーが発生しました。",
       authErrorTitle: "認証エラー",
       backToLogin: "ログインページに戻る",
+      verifying: "認証確認中...",
+      redirectingToLogin: "ログインページに移動中...",
     },
     option: {
       description: "Description",
       fullAddress: "住所",
+      price: "料金",
       bookingGuide: "予約ガイド",
       beforeContinue: "続ける前に。",
       externalBookingTitle: "外部予約通知",
@@ -1070,6 +1088,7 @@ export const translations = {
       formLoadingAllDone: "All done!",
       formLoadingStyleResult: "Here's your style result",
       recommendedSalon: "推荐沙龙（筹备中）",
+      recommendedTag: "推荐",
     },
     bookingPage: {
       orderStatus: "Order Status",
@@ -1151,6 +1170,8 @@ export const translations = {
       communityUnderDevelopment: "社区正在开发中。",
       noticeAlt: "公告",
       viewCount: "浏览",
+      likes: "点赞",
+      comments: "评论",
     },
     auth: {
       processingLogin: "正在处理登录...",
@@ -1159,10 +1180,13 @@ export const translations = {
       authError: "认证过程中发生错误。",
       authErrorTitle: "认证错误",
       backToLogin: "返回登录页面",
+      verifying: "验证中...",
+      redirectingToLogin: "正在跳转到登录页面...",
     },
     option: {
       description: "描述",
       fullAddress: "完整地址",
+      price: "价格",
       bookingGuide: "预订指南",
       beforeContinue: "继续之前。",
       externalBookingTitle: "外部预订通知",

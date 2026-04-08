@@ -53,7 +53,7 @@ export default function PackageDetail() {
   } = useProductReviews(packageId);
   // 로딩 상태
   if (isLoading) {
-    return <PageLoading message="패키지 정보를 불러오는 중..." />;
+    return <PageLoading message={t("package.loadingPackage")} />;
   }
 
   // 에러 상태

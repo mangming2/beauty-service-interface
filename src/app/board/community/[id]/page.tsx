@@ -6,11 +6,13 @@ import { useCommunityPostDetail } from "@/queries/useCommunityQueries";
 import { getSafeImageSrc } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { format } from "date-fns";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function CommunityDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const postId = id ? parseInt(id, 10) : undefined;
+  const { t } = useTranslation();
 
   const { data: post, isLoading, isError } = useCommunityPostDetail(postId);
 
@@ -81,8 +83,8 @@ export default function CommunityDetailPage() {
       )}
 
       <div className="caption-md text-gray_1 mt-6 flex gap-4">
-        <span>좋아요 {post.likeCount}</span>
-        <span>댓글 {post.commentCount}</span>
+        <span>{t("boardPage.likes")} {post.likeCount}</span>
+        <span>{t("boardPage.comments")} {post.commentCount}</span>
       </div>
     </article>
   );

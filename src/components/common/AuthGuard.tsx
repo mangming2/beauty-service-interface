@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PageLoading } from "@/components/common";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -14,6 +15,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const [isHydrated, setIsHydrated] = useState(false);
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const router = useRouter();
+  const { t } = useTranslation();
 
   // hydration 완료 체크
   useEffect(() => {
@@ -28,11 +30,11 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   }, [isHydrated, isAuthenticated, router]);
 
   if (!isHydrated) {
-    return <PageLoading message="인증 확인 중..." />;
+    return <PageLoading message={t("auth.verifying")} />;
   }
 
   if (!isAuthenticated) {
-    return fallback || <PageLoading message="로그인 페이지로 이동 중..." />;
+    return fallback || <PageLoading message={t("auth.redirectingToLogin")} />;
   }
 
   return <>{children}</>;
