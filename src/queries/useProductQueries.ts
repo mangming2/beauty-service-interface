@@ -18,7 +18,10 @@ import {
   type GetProductsParams,
   type CreateProductRequest,
   type CreateProductResponse,
+  type ProductSortType,
 } from "@/api/product";
+
+export type { ProductSortType };
 import type { ApiError } from "@/lib/apiClient";
 
 // ========== Query Keys ==========

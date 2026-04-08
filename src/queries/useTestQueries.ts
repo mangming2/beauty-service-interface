@@ -51,8 +51,7 @@ export function useHealthCheck(enabled: boolean = false) {
 export function useTestSignup() {
   return useMutation<TestSignupResponse, Error, string>({
     mutationFn: async (seed: string) => testSignup(seed),
-    onSuccess: data => {
-      console.log("✅ 테스트 회원가입 성공:", data);
+    onSuccess: () => {
     },
     onError: error => {
       console.error("❌ 테스트 회원가입 실패:", error);
@@ -65,8 +64,7 @@ export function useTestSignup() {
 export function useTestSignupAdmin() {
   return useMutation<TestSignupResponse, Error, string>({
     mutationFn: async (seed: string) => testSignupAdmin(seed),
-    onSuccess: data => {
-      console.log("✅ 테스트 관리자 회원가입 성공:", data);
+    onSuccess: () => {
     },
     onError: error => {
       console.error("❌ 테스트 관리자 회원가입 실패:", error);
@@ -86,8 +84,6 @@ export function useTestLogin() {
       return await testLogin(email);
     },
     onSuccess: data => {
-      console.log("✅ 테스트 로그인 성공");
-
       // ⭐ Zustand에 토큰 저장 (일반 로그인과 동일!)
       login(data.accessToken, data.user);
 

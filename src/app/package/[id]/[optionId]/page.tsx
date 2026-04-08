@@ -13,6 +13,7 @@ import { useOptionDetail } from "@/queries/useOptionQueries";
 import { useCreateSchedule } from "@/queries/useScheduleQueries";
 import { notFound } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getSafeImageSrc } from "@/lib/utils";
 
 const PLACEHOLDER_IMAGE = "/dummy-logo.png";
 
@@ -118,7 +119,9 @@ export default function PackageOptionBookingPage() {
 
   const currentOption = optionDetail;
 
-  const optionImageUrl = currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE;
+  const optionImageUrl = getSafeImageSrc(
+    currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE
+  );
 
   const slotStartDate = currentOption.slotStartDate
     ? toDateOnly(new Date(currentOption.slotStartDate))

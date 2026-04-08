@@ -77,7 +77,6 @@ export function useGoogleLogin() {
       return Promise.resolve();
     },
     onSuccess: () => {
-      console.log("[Google 로그인] 리다이렉트 진행됨 (OAuth 페이지로 이동)");
     },
     onError: error => {
       console.error("[Google 로그인] 에러:", error);

@@ -63,9 +63,6 @@ export interface BookingDetail {
 export async function getMyPageUser(): Promise<MyPageUser> {
   try {
     const data = await apiGet<MyPageUser>("/mypage/user");
-    if (process.env.NODE_ENV === "development") {
-      console.log("[GET /mypage/user] 응답:", JSON.stringify(data, null, 2));
-    }
     return data;
   } catch (error) {
     const err = error as ApiError | undefined;

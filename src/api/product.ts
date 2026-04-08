@@ -100,12 +100,21 @@ export interface CreateProductRequest {
   representOptionId: number;
 }
 
+export type ProductSortType =
+  | "LATEST"
+  | "MOST_BOOKED"
+  | "MOST_REVIEWED"
+  | "PRICE_HIGH"
+  | "PRICE_LOW"
+  | "RECOMMENDED";
+
 /** 상품 목록 조회 파라미터 */
 export interface GetProductsParams {
   lastId?: number;
   size?: number;
   tag?: string;
   is_random?: boolean;
+  sort?: ProductSortType;
 }
 
 /** 상품 생성 응답 */
@@ -139,6 +148,9 @@ export async function getProducts(
     }
     if (params.is_random === true) {
       queryParams.append("is_random", "true");
+    }
+    if (params.sort !== undefined) {
+      queryParams.append("sort", params.sort);
     }
 
     const queryString = queryParams.toString();

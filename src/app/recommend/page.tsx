@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
 import { useProducts } from "@/queries/useProductQueries";
-import type { Product } from "@/api/product";
+import type { Product, ProductSortType } from "@/api/product";
 import { PageLoading } from "@/components/common";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -42,66 +42,64 @@ function Content() {
   const availableTags = [...BASE_TAGS];
   const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const { data: products, isLoading } = useProducts(
-    listTag !== undefined ? { tag: listTag } : {}
-  );
+
+  const serverSort: ProductSortType | undefined = selectedTags.includes(
+    "Most Booked"
+  )
+    ? "MOST_BOOKED"
+    : undefined;
+
+  const { data: products, isLoading } = useProducts({
+    ...(listTag !== undefined ? { tag: listTag } : {}),
+    ...(serverSort ? { sort: serverSort } : {}),
+  });
 
   const productTags = (pkg: Product) =>
     pkg.representOption?.tags ?? pkg.tagNames ?? [];
   const productPrice = (pkg: Product) =>
     pkg.representOption?.finalPrice ?? pkg.totalPrice ?? pkg.minPrice ?? 0;
 
-  const isMostBookedSelected = selectedTags.includes("Most Booked");
   const isForYouSelected = selectedTags.includes("For You");
 
-  // 1) Most Booked 선택 시 → 개발중 표시용, 리스트는 빈 배열
-  // 2) 그 외: 필터 후 정렬
+  // Most Booked: 서버에서 sort=MOST_BOOKED로 이미 정렬됨
+  // 그 외: 필터 후 클라이언트 정렬
   let filteredPackages: Product[] | undefined = products;
-  if (products) {
-    if (isMostBookedSelected) {
-      filteredPackages = [];
-    } else {
-      // For You: 이미 listTag 로 서버 필터된 단일 태그면 클라이언트 재필터 생략
-      const skipForYouClientFilter =
-        listTag !== undefined && conceptTags.length === 1;
-      if (
-        isForYouSelected &&
-        conceptTags.length > 0 &&
-        !skipForYouClientFilter
-      ) {
-        filteredPackages = products.filter(pkg =>
-          productTags(pkg).some(pt =>
-            conceptTags.some(
-              ft =>
-                pt.toLowerCase().includes(ft.toLowerCase()) ||
-                ft.toLowerCase().includes(pt.toLowerCase())
-            )
+  if (products && !serverSort) {
+    // For You: 이미 listTag 로 서버 필터된 단일 태그면 클라이언트 재필터 생략
+    const skipForYouClientFilter =
+      listTag !== undefined && conceptTags.length === 1;
+    if (isForYouSelected && conceptTags.length > 0 && !skipForYouClientFilter) {
+      filteredPackages = products.filter(pkg =>
+        productTags(pkg).some(pt =>
+          conceptTags.some(
+            ft =>
+              pt.toLowerCase().includes(ft.toLowerCase()) ||
+              ft.toLowerCase().includes(pt.toLowerCase())
           )
-        );
-      }
-      // 정렬 (선택된 태그 우선순위: Recommended < Most Reviewed < Low/High Price < Best Deal)
-      const sortTag =
-        selectedTags.find(t =>
-          ["Most Reviewed", "Low Price", "High Price", "Best Deal"].includes(t)
-        ) ?? "Recommended";
-      filteredPackages = [...(filteredPackages ?? [])];
-      if (sortTag === "Most Reviewed") {
-        filteredPackages.sort(
-          (a, b) =>
-            (b.reviewCount ?? b.representOption?.reviewCount ?? 0) -
-            (a.reviewCount ?? a.representOption?.reviewCount ?? 0)
-        );
-      } else if (sortTag === "Low Price") {
-        filteredPackages.sort((a, b) => productPrice(a) - productPrice(b));
-      } else if (sortTag === "High Price") {
-        filteredPackages.sort((a, b) => productPrice(b) - productPrice(a));
-      } else if (sortTag === "Best Deal") {
-        filteredPackages.sort(
-          (a, b) =>
-            (b.representOption?.discountRate ?? 0) -
-            (a.representOption?.discountRate ?? 0)
-        );
-      }
+        )
+      );
+    }
+    // 클라이언트 정렬 (Most Reviewed / Low Price / High Price / Best Deal)
+    const clientSortTag = selectedTags.find(t =>
+      ["Most Reviewed", "Low Price", "High Price", "Best Deal"].includes(t)
+    );
+    filteredPackages = [...(filteredPackages ?? [])];
+    if (clientSortTag === "Most Reviewed") {
+      filteredPackages.sort(
+        (a, b) =>
+          (b.reviewCount ?? b.representOption?.reviewCount ?? 0) -
+          (a.reviewCount ?? a.representOption?.reviewCount ?? 0)
+      );
+    } else if (clientSortTag === "Low Price") {
+      filteredPackages.sort((a, b) => productPrice(a) - productPrice(b));
+    } else if (clientSortTag === "High Price") {
+      filteredPackages.sort((a, b) => productPrice(b) - productPrice(a));
+    } else if (clientSortTag === "Best Deal") {
+      filteredPackages.sort(
+        (a, b) =>
+          (b.representOption?.discountRate ?? 0) -
+          (a.representOption?.discountRate ?? 0)
+      );
     }
   }
 
@@ -111,10 +109,19 @@ function Content() {
   );
   const lastPackages = products?.slice(...PACKAGE_SECTIONS_CONFIG.last.indices);
 
+  const PRICE_TAGS = ["Low Price", "High Price"] as const;
   const handleTagClick = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-    );
+    setSelectedTags(prev => {
+      if (prev.includes(tag)) return prev.filter(t => t !== tag);
+      // Low Price / High Price는 상호 배타적
+      if ((PRICE_TAGS as readonly string[]).includes(tag)) {
+        return [
+          ...prev.filter(t => !(PRICE_TAGS as readonly string[]).includes(t)),
+          tag,
+        ];
+      }
+      return [...prev, tag];
+    });
   };
 
   const handlePackageClick = (id: number) => router.push(`/package/${id}`);
@@ -147,16 +154,8 @@ function Content() {
 
       <GapY size={20} />
 
-      {/* Most Booked 선택 시 개발중 메시지 */}
-      {isMostBookedSelected && (
-        <div className="px-5 py-12 text-center text-gray-400 text-lg">
-          개발중입니다
-        </div>
-      )}
-
       {/* Galleries */}
-      {!isMostBookedSelected &&
-        filteredPackages?.map((pkg: Product, index: number) => (
+      {filteredPackages?.map((pkg: Product, index: number) => (
           <div key={pkg.id}>
             <div className="pl-5">
               <RecommendationGallery

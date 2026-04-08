@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
@@ -26,10 +25,6 @@ export default function MyPage() {
     authStatus?.role === "ADMIN" ||
     myPageUser?.role === "ADMIN";
 
-  useEffect(() => {
-    if (process.env.NODE_ENV !== "development") return;
-    console.log("[auth/status]", authStatus ?? null);
-  }, [authStatus]);
   // 사용자 정보가 있으면 사용하고, 없으면 기본값 사용
   const userProfile = {
     name:
@@ -56,6 +51,8 @@ export default function MyPage() {
               src={userProfile.avatar}
               alt={t("common.profile")}
               fill
+              sizes="80px"
+              priority
               className="object-cover"
             />
           </div>

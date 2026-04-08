@@ -48,6 +48,16 @@ const BACKEND_ENUM_TO_CONCEPT_ID: Record<string, string> = {
   ETC: "etc",
 };
 
+/** 백엔드 concept enum → 화면 표시용 레이블 */
+const BACKEND_ENUM_TO_LABEL: Record<string, string> = {
+  GIRL_CRUSH: "Girl Crush",
+  LOVELY_FRESH: "Lovely & Fresh",
+  ELEGANT_GLAM: "Elegant & Glam",
+  DREAMY: "Dreamy",
+  HIGHTEEN: "Highteen",
+  ETC: "Etc",
+};
+
 /**
  * Survey → FormData 변환 (폼 초기값용)
  * - 백엔드에 저장된 설문 데이터를 폼 store에 로드할 때 사용
@@ -98,7 +108,9 @@ export interface SurveyDisplayData {
  * Survey → 배지 표시용 데이터 변환
  */
 export function surveyToDisplayData(survey: Survey): SurveyDisplayData {
-  const concepts = survey.concept ? [survey.concept] : [];
+  const concepts = survey.concept
+    ? [BACKEND_ENUM_TO_LABEL[survey.concept] ?? survey.concept]
+    : [];
 
   let regions: string[] = [];
   try {

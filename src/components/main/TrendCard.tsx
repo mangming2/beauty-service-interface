@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
+import { getSafeImageSrc } from "@/lib/utils";
 
 const DESCRIPTION_MAX_CHARS = 80;
 
@@ -32,6 +33,8 @@ export function TrendCard({
   id,
 }: TrendCardProps) {
   const displayDescription = formatDescription(description);
+  const safeSrc =
+    typeof imageSrc === "string" ? getSafeImageSrc(imageSrc) : imageSrc;
 
   return (
     <Link href={`/package/${id}`}>
@@ -40,11 +43,14 @@ export function TrendCard({
           <div className="flex items-start gap-4">
             <div className="relative size-[100px] shrink-0 overflow-hidden rounded-lg bg-gray">
               <Image
-                src={imageSrc}
+                src={safeSrc}
                 alt={typeof title === "string" ? title : "Trend"}
                 fill
                 className="object-cover"
                 sizes="100px"
+                unoptimized={
+                  typeof safeSrc === "string" && safeSrc.startsWith("http")
+                }
               />
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-left">

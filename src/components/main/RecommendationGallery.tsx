@@ -29,22 +29,25 @@ export default function RecommendationGallery({
   return (
     <div className="flex flex-col py-4 cursor-pointer" onClick={onClick}>
       <div className="flex gap-3 flex-nowrap overflow-x-auto scrollbar-hide">
-        {images.map((imageSrc, index) => (
+        {images.map((imageSrc, index) => {
+          const safeSrc = getSafeImageSrc(imageSrc);
+          return (
           <div
             key={index}
             className="w-[348px] h-[196px] relative flex-shrink-0"
           >
             <Image
-              src={getSafeImageSrc(imageSrc)}
+              src={safeSrc}
               alt="recommendation gallery"
               fill
               sizes="(max-width: 412px) 348px, 348px"
               priority={priority && index === 0}
               className="object-cover"
-              unoptimized={imageSrc.startsWith("http")}
+              unoptimized={safeSrc.startsWith("http")}
             />
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <GapY size={12} />
