@@ -89,7 +89,9 @@ export default function NoticeDetailPage() {
       )}
 
       {post.viewCount !== undefined && (
-        <p className="caption-md text-gray_1 mt-6">{t("boardPage.viewCount")} {post.viewCount}</p>
+        <p className="caption-md text-gray_1 mt-6">
+          {t("boardPage.viewCount")} {post.viewCount}
+        </p>
       )}
     </article>
   );

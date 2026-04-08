@@ -32,20 +32,20 @@ export default function RecommendationGallery({
         {images.map((imageSrc, index) => {
           const safeSrc = getSafeImageSrc(imageSrc);
           return (
-          <div
-            key={index}
-            className="w-[348px] h-[196px] relative flex-shrink-0"
-          >
-            <Image
-              src={safeSrc}
-              alt="recommendation gallery"
-              fill
-              sizes="(max-width: 412px) 348px, 348px"
-              priority={priority && index === 0}
-              className="object-cover"
-              unoptimized={safeSrc.startsWith("http")}
-            />
-          </div>
+            <div
+              key={index}
+              className="w-[348px] h-[196px] relative flex-shrink-0"
+            >
+              <Image
+                src={safeSrc}
+                alt="recommendation gallery"
+                fill
+                sizes="(max-width: 412px) 348px, 348px"
+                priority={priority && index === 0}
+                className="object-cover"
+                unoptimized={safeSrc.startsWith("http")}
+              />
+            </div>
           );
         })}
       </div>

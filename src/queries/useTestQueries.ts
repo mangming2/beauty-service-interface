@@ -51,8 +51,7 @@ export function useHealthCheck(enabled: boolean = false) {
 export function useTestSignup() {
   return useMutation<TestSignupResponse, Error, string>({
     mutationFn: async (seed: string) => testSignup(seed),
-    onSuccess: () => {
-    },
+    onSuccess: () => {},
     onError: error => {
       console.error("❌ 테스트 회원가입 실패:", error);
     },
@@ -64,8 +63,7 @@ export function useTestSignup() {
 export function useTestSignupAdmin() {
   return useMutation<TestSignupResponse, Error, string>({
     mutationFn: async (seed: string) => testSignupAdmin(seed),
-    onSuccess: () => {
-    },
+    onSuccess: () => {},
     onError: error => {
       console.error("❌ 테스트 관리자 회원가입 실패:", error);
     },

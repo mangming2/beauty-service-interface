@@ -76,8 +76,7 @@ export function useGoogleLogin() {
       loginWithProvider("google");
       return Promise.resolve();
     },
-    onSuccess: () => {
-    },
+    onSuccess: () => {},
     onError: error => {
       console.error("[Google 로그인] 에러:", error);
     },

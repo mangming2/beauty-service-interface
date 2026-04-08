@@ -156,59 +156,59 @@ function Content() {
 
       {/* Galleries */}
       {filteredPackages?.map((pkg: Product, index: number) => (
-          <div key={pkg.id}>
-            <div className="pl-5">
-              <RecommendationGallery
-                images={
-                  pkg.imageUrls?.length
-                    ? pkg.imageUrls
-                    : ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"]
-                }
-                salonInfo={{
-                  tags: pkg.representOption?.tags ?? pkg.tagNames ?? [],
-                  name: pkg.name,
-                  originalPrice:
-                    pkg.representOption?.originalPrice ?? pkg.minPrice ?? 0,
-                  finalPrice:
-                    pkg.representOption?.finalPrice ?? pkg.totalPrice ?? 0,
-                  discountRate: pkg.representOption?.discountRate ?? 0,
-                  rating: pkg.rating ?? pkg.representOption?.rating ?? 0,
-                  reviewCount:
-                    pkg.reviewCount ?? pkg.representOption?.reviewCount ?? 0,
-                  location: pkg.representOption?.location ?? "location",
-                }}
-                onClick={() => handlePackageClick(pkg.id)}
-              />
-            </div>
+        <div key={pkg.id}>
+          <div className="pl-5">
+            <RecommendationGallery
+              images={
+                pkg.imageUrls?.length
+                  ? pkg.imageUrls
+                  : ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"]
+              }
+              salonInfo={{
+                tags: pkg.representOption?.tags ?? pkg.tagNames ?? [],
+                name: pkg.name,
+                originalPrice:
+                  pkg.representOption?.originalPrice ?? pkg.minPrice ?? 0,
+                finalPrice:
+                  pkg.representOption?.finalPrice ?? pkg.totalPrice ?? 0,
+                discountRate: pkg.representOption?.discountRate ?? 0,
+                rating: pkg.rating ?? pkg.representOption?.rating ?? 0,
+                reviewCount:
+                  pkg.reviewCount ?? pkg.representOption?.reviewCount ?? 0,
+                location: pkg.representOption?.location ?? "location",
+              }}
+              onClick={() => handlePackageClick(pkg.id)}
+            />
+          </div>
 
-            {/* 2번째 갤러리 후 */}
-            {index % 2 === 1 && !!middlePackages?.length && (
+          {/* 2번째 갤러리 후 */}
+          {index % 2 === 1 && !!middlePackages?.length && (
+            <>
+              <GapY size={20} />
+              <PackageSection
+                title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
+                packages={middlePackages}
+                onPackageClick={handlePackageClick}
+              />
+              <GapY size={20} />
+            </>
+          )}
+
+          {/* 마지막이 홀수번째일 때 */}
+          {index === filteredPackages.length - 1 &&
+            index % 2 === 0 &&
+            !!lastPackages?.length && (
               <>
                 <GapY size={20} />
                 <PackageSection
-                  title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
-                  packages={middlePackages}
+                  title={t(PACKAGE_SECTIONS_CONFIG.last.titleKey)}
+                  packages={lastPackages}
                   onPackageClick={handlePackageClick}
                 />
-                <GapY size={20} />
               </>
             )}
-
-            {/* 마지막이 홀수번째일 때 */}
-            {index === filteredPackages.length - 1 &&
-              index % 2 === 0 &&
-              !!lastPackages?.length && (
-                <>
-                  <GapY size={20} />
-                  <PackageSection
-                    title={t(PACKAGE_SECTIONS_CONFIG.last.titleKey)}
-                    packages={lastPackages}
-                    onPackageClick={handlePackageClick}
-                  />
-                </>
-              )}
-          </div>
-        ))}
+        </div>
+      ))}
       <GapY size={24} />
     </div>
   );

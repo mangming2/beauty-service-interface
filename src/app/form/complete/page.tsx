@@ -15,7 +15,11 @@ import { surveyToDisplayData } from "@/lib/surveyUtils";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { Product } from "@/api/product";
 
-const PLACEHOLDER_IMAGES = ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"];
+const PLACEHOLDER_IMAGES = [
+  "/dummy-logo.png",
+  "/dummy-logo.png",
+  "/dummy-logo.png",
+];
 
 const PACKAGE_SECTION_TITLES = [
   "wish.howAboutThisPackage",

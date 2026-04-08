@@ -83,8 +83,12 @@ export default function CommunityDetailPage() {
       )}
 
       <div className="caption-md text-gray_1 mt-6 flex gap-4">
-        <span>{t("boardPage.likes")} {post.likeCount}</span>
-        <span>{t("boardPage.comments")} {post.commentCount}</span>
+        <span>
+          {t("boardPage.likes")} {post.likeCount}
+        </span>
+        <span>
+          {t("boardPage.comments")} {post.commentCount}
+        </span>
       </div>
     </article>
   );
