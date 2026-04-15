@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
 import PackageSection from "@/components/main/PackageSection";
 import { useProducts } from "@/queries/useProductQueries";
-import type { Product, ProductSortType } from "@/api/product";
+import { useSurveyForCurrentUser } from "@/queries/useSurveyQueries";
+import { surveyToDisplayData } from "@/lib/surveyUtils";
+import type { Product } from "@/api/product";
 import { PageLoading } from "@/components/common";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -22,7 +24,6 @@ const BASE_TAGS = [
 
 const PACKAGE_SECTIONS_CONFIG = {
   middle: { titleKey: "wish.howAboutThisPackage", indices: [0, 3] },
-  last: { titleKey: "wish.lookingForAnotherDate", indices: [3, 6] },
 };
 
 function Content() {
@@ -43,15 +44,8 @@ function Content() {
   const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const serverSort: ProductSortType | undefined = selectedTags.includes(
-    "Most Booked"
-  )
-    ? "MOST_BOOKED"
-    : undefined;
-
   const { data: products, isLoading } = useProducts({
     ...(listTag !== undefined ? { tag: listTag } : {}),
-    ...(serverSort ? { sort: serverSort } : {}),
   });
 
   const productTags = (pkg: Product) =>
@@ -61,30 +55,48 @@ function Content() {
 
   const isForYouSelected = selectedTags.includes("For You");
 
-  // Most Booked: 서버에서 sort=MOST_BOOKED로 이미 정렬됨
-  // 그 외: 필터 후 클라이언트 정렬
-  let filteredPackages: Product[] | undefined = products;
-  if (products && !serverSort) {
-    // For You: 이미 listTag 로 서버 필터된 단일 태그면 클라이언트 재필터 생략
-    const skipForYouClientFilter =
-      listTag !== undefined && conceptTags.length === 1;
-    if (isForYouSelected && conceptTags.length > 0 && !skipForYouClientFilter) {
-      filteredPackages = products.filter(pkg =>
-        productTags(pkg).some(pt =>
-          conceptTags.some(
-            ft =>
-              pt.toLowerCase().includes(ft.toLowerCase()) ||
-              ft.toLowerCase().includes(pt.toLowerCase())
-          )
-        )
-      );
+  // survey 태그: 로그인 유저의 survey 데이터 우선, 없으면 URL conceptTags 폴백
+  const { data: survey } = useSurveyForCurrentUser();
+  const surveyTags = (() => {
+    if (survey) {
+      const display = surveyToDisplayData(survey);
+      return [
+        ...display.concepts,
+        ...(display.idolName ? [display.idolName] : []),
+        ...display.regions,
+      ].filter(Boolean);
     }
-    // 클라이언트 정렬 (Most Reviewed / Low Price / High Price / Best Deal)
+    return conceptTags;
+  })();
+
+  /** 상품의 태그 중 survey 태그와 매칭되는 수 */
+  const countSurveyTagMatches = (pkg: Product): number =>
+    surveyTags.reduce((count, st) => {
+      const matched = productTags(pkg).some(
+        pt =>
+          pt.toLowerCase().includes(st.toLowerCase()) ||
+          st.toLowerCase().includes(pt.toLowerCase())
+      );
+      return matched ? count + 1 : count;
+    }, 0);
+
+  // 클라이언트 정렬
+  let filteredPackages: Product[] | undefined = products;
+  if (products) {
+    filteredPackages = [...products];
+    // For You: survey 태그 매칭 수 내림차순, 동률이면 가나다 순
+    if (isForYouSelected && surveyTags.length > 0) {
+      filteredPackages.sort((a, b) => {
+        const diff = countSurveyTagMatches(b) - countSurveyTagMatches(a);
+        if (diff !== 0) return diff;
+        return (a.name ?? "").localeCompare(b.name ?? "", "ko");
+      });
+    }
+    // 클라이언트 정렬 (Most Booked / Most Reviewed / Low Price / High Price / Best Deal)
     const clientSortTag = selectedTags.find(t =>
-      ["Most Reviewed", "Low Price", "High Price", "Best Deal"].includes(t)
+      ["Most Booked", "Most Reviewed", "Low Price", "High Price", "Best Deal"].includes(t)
     );
-    filteredPackages = [...(filteredPackages ?? [])];
-    if (clientSortTag === "Most Reviewed") {
+    if (clientSortTag === "Most Booked" || clientSortTag === "Most Reviewed") {
       filteredPackages.sort(
         (a, b) =>
           (b.reviewCount ?? b.representOption?.reviewCount ?? 0) -
@@ -107,7 +119,6 @@ function Content() {
   const middlePackages = products?.slice(
     ...PACKAGE_SECTIONS_CONFIG.middle.indices
   );
-  const lastPackages = products?.slice(...PACKAGE_SECTIONS_CONFIG.last.indices);
 
   const PRICE_TAGS = ["Low Price", "High Price"] as const;
   const handleTagClick = (tag: string) => {
@@ -181,30 +192,19 @@ function Content() {
             />
           </div>
 
-          {/* 2번째 갤러리 후 */}
-          {index % 2 === 1 && !!middlePackages?.length && (
-            <>
-              <GapY size={20} />
-              <PackageSection
-                title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
-                packages={middlePackages}
-                onPackageClick={handlePackageClick}
-              />
-              <GapY size={20} />
-            </>
-          )}
-
-          {/* 마지막이 홀수번째일 때 */}
-          {index === filteredPackages.length - 1 &&
-            index % 2 === 0 &&
-            !!lastPackages?.length && (
+          {/* 3개마다 또는 총 1~2개일 때 마지막 후 배너 */}
+          {!!middlePackages?.length &&
+            ((index + 1) % 3 === 0 ||
+              (index === filteredPackages.length - 1 &&
+                filteredPackages.length < 3)) && (
               <>
                 <GapY size={20} />
                 <PackageSection
-                  title={t(PACKAGE_SECTIONS_CONFIG.last.titleKey)}
-                  packages={lastPackages}
+                  title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
+                  packages={middlePackages}
                   onPackageClick={handlePackageClick}
                 />
+                <GapY size={20} />
               </>
             )}
         </div>
