@@ -76,6 +76,7 @@ export function useCreateOption() {
     mutationFn: ({ request, images }: CreateOptionParams) =>
       createOption(request, images),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: optionKeys.lists() });
       queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
   });
