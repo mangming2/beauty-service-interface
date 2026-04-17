@@ -2,6 +2,33 @@ import { apiGet, apiRequest, apiDelete } from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
+export type SeoulDistrict =
+  | "GANGNAM"
+  | "GANGDONG"
+  | "GANGBUK"
+  | "GANGSEO"
+  | "GWANAK"
+  | "GWANGJIN"
+  | "GURO"
+  | "GEUMCHEON"
+  | "NOWON"
+  | "DOBONG"
+  | "DONGDAEMUN"
+  | "DONGJAK"
+  | "MAPO"
+  | "SEODAEMUN"
+  | "SEOCHO"
+  | "SEONGDONG"
+  | "SEONGBUK"
+  | "SONGPA"
+  | "YANGCHEON"
+  | "YEONGDEUNGPO"
+  | "YONGSAN"
+  | "EUNPYEONG"
+  | "JONGNO"
+  | "JUNG"
+  | "JUNGNANG";
+
 /** 예약 슬롯 아이템 (OptionSpecificResponse.reservationSlots) */
 export interface ReservationSlotItem {
   reservationSlotId: number;
@@ -18,7 +45,8 @@ export interface Option {
   description: string;
   discountRate: number;
   price: number;
-  address: string;
+  detailAddress: string;
+  district: SeoulDistrict;
   bookingGuide: string;
   regularClosingDay: string | null;
   imageUrls: string[];
@@ -48,7 +76,7 @@ export interface OptionCatalogItem {
   name: string;
   description: string;
   price: number;
-  address: string;
+  district: SeoulDistrict;
   categoryTagName: string;
   optionTags: string[];
   imageUrl: string | null;
@@ -62,7 +90,8 @@ export interface CreateOptionRequest {
   /** 백엔드 필수 — 대표 카테고리 태그 한 개 (예: hair) */
   categoryTagName: string;
   price: number;
-  address: string;
+  detailAddress: string;
+  district: SeoulDistrict;
   slotStartDate: string;
   slotEndDate: string;
   slotStartHour: number;

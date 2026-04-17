@@ -1,8 +1,35 @@
 "use client";
 
-import type { CreateOptionRequest } from "@/api/option";
+import type { CreateOptionRequest, SeoulDistrict } from "@/api/option";
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+const SEOUL_DISTRICTS: Array<{ value: SeoulDistrict; label: string }> = [
+  { value: "GANGNAM", label: "강남구" },
+  { value: "GANGDONG", label: "강동구" },
+  { value: "GANGBUK", label: "강북구" },
+  { value: "GANGSEO", label: "강서구" },
+  { value: "GWANAK", label: "관악구" },
+  { value: "GWANGJIN", label: "광진구" },
+  { value: "GURO", label: "구로구" },
+  { value: "GEUMCHEON", label: "금천구" },
+  { value: "NOWON", label: "노원구" },
+  { value: "DOBONG", label: "도봉구" },
+  { value: "DONGDAEMUN", label: "동대문구" },
+  { value: "DONGJAK", label: "동작구" },
+  { value: "MAPO", label: "마포구" },
+  { value: "SEODAEMUN", label: "서대문구" },
+  { value: "SEOCHO", label: "서초구" },
+  { value: "SEONGDONG", label: "성동구" },
+  { value: "SEONGBUK", label: "성북구" },
+  { value: "SONGPA", label: "송파구" },
+  { value: "YANGCHEON", label: "양천구" },
+  { value: "YEONGDEUNGPO", label: "영등포구" },
+  { value: "YONGSAN", label: "용산구" },
+  { value: "EUNPYEONG", label: "은평구" },
+  { value: "JONGNO", label: "종로구" },
+  { value: "JUNG", label: "중구" },
+  { value: "JUNGNANG", label: "중랑구" },
+];
 
 /** 백엔드: 슬롯 시각은 09~16시만 허용 */
 export const OPTION_SLOT_HOUR_MIN = 9;
@@ -113,17 +140,44 @@ export function OptionFormFields({
           />
         </div>
       </div>
-      <div>
-        <label className="block text-sm text-gray-400 mb-1">주소 *</label>
-        <input
-          required
-          value={optionReq.address}
-          onChange={e =>
-            setOptionReq(prev => ({ ...prev, address: e.target.value }))
-          }
-          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
-          placeholder="Olympic-ro 300, Songpa-gu, Seoul"
-        />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">서울 구 *</label>
+          <select
+            required
+            value={optionReq.district}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                district: e.target.value as SeoulDistrict,
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          >
+            {SEOUL_DISTRICTS.map(district => (
+              <option key={district.value} value={district.value}>
+                {district.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            상세 주소 *
+          </label>
+          <input
+            required
+            value={optionReq.detailAddress}
+            onChange={e =>
+              setOptionReq(prev => ({
+                ...prev,
+                detailAddress: e.target.value,
+              }))
+            }
+            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+            placeholder="테헤란로 427 3층"
+          />
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
@@ -346,7 +400,8 @@ export function optionToCreateRequest(
     description: o.description,
     categoryTagName: o.categoryTagName?.trim() || "hair",
     price: o.price,
-    address: o.address,
+    detailAddress: o.detailAddress,
+    district: o.district,
     slotStartDate,
     slotEndDate,
     slotStartHour: clampSlotHour(

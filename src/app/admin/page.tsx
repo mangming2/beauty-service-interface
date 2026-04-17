@@ -54,7 +54,8 @@ export default function AdminPage() {
     description: "",
     categoryTagName: "hair",
     price: 100000,
-    address: "",
+    detailAddress: "",
+    district: "GANGNAM",
     slotStartDate: "2025-01-01",
     slotEndDate: "2025-12-31",
     slotStartHour: 9,
@@ -107,7 +108,12 @@ export default function AdminPage() {
       },
       {
         onSuccess: () => {
-          setOptionReq(prev => ({ ...prev, name: "", description: "" }));
+          setOptionReq(prev => ({
+            ...prev,
+            name: "",
+            description: "",
+            detailAddress: "",
+          }));
           setOptionImages([]);
           setOptionTagsStr("hair,makeup");
         },
