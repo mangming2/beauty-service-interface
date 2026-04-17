@@ -169,6 +169,7 @@ function RecommendationScoreSection() {
   const [scores, setScores] = useState<Record<number, string>>({});
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  // TODO: 백엔드가 recommendationScore 조회 필드를 내려주면 초기 입력값을 저장값으로 동기화하기.
 
   const handleScoreChange = (productId: number, value: string) => {
     if (!/^\d*$/.test(value)) return;

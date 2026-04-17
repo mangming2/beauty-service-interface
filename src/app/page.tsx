@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { ConceptCard } from "@/components/main/ConceptCard";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { FormButton } from "@/components/main/FormButton";
+import { TourAttractionButton } from "@/components/main/TourAttractionButton";
 import GirlCrush from "@/assets/3d-images/girl-crush.png";
 import LovelyFresh from "@/assets/3d-images/lovely-fresh.png";
 import ElegantGlam from "@/assets/3d-images/elegant-glam.png";
@@ -55,6 +56,10 @@ export default function Home() {
 
         {/* CTA Banner */}
         <FormButton />
+
+        <GapY size={12} />
+
+        <TourAttractionButton />
 
         <GapY size={20} />
 
