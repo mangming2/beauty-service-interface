@@ -255,7 +255,7 @@ export async function apiRequest<T>(
       if (isJson) {
         const errorData = await response.json();
         errorMessage = errorData.message || errorData.error || errorMessage;
-        errorCode = errorData.code;
+        errorCode = errorData.errorCode ?? errorData.code;
       } else {
         errorMessage = (await response.text()) || errorMessage;
       }
