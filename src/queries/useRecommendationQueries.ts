@@ -3,6 +3,7 @@ import {
   getLatestInKoreaRecommendations,
   upsertLatestKoreaRecommendation,
   setProductRecommendation,
+  setProductRecommendationScore,
   getAdminPickedRecommendations,
   type GetLatestInKoreaParams,
   type UpsertLatestKoreaRecommendationRequest,
@@ -74,6 +75,22 @@ export function useSetProductRecommendation() {
       productId: number;
       recommended: boolean;
     }) => setProductRecommendation(productId, recommended),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.all });
+    },
+  });
+}
+
+/**
+ * 특정 상품 추천 점수 설정 (관리자 전용)
+ * PUT /admin/products/{productId}/recommendation-score
+ */
+export function useSetProductRecommendationScore() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ productId, score }: { productId: number; score: number }) =>
+      setProductRecommendationScore(productId, score),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recommendationKeys.all });
     },

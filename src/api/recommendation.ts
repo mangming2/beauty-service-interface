@@ -54,6 +54,11 @@ export interface SetRecommendationResponse {
   recommended: boolean;
 }
 
+export interface SetRecommendationScoreResponse {
+  productId: number;
+  recommendationScore: number;
+}
+
 /**
  * 특정 상품 추천 여부 설정 (관리자 전용)
  * PUT /admin/products/{productId}/recommendation
@@ -65,6 +70,21 @@ export async function setProductRecommendation(
   return apiPut<SetRecommendationResponse>(
     `/admin/products/${productId}/recommendation`,
     { recommended },
+    { requireAuth: true }
+  );
+}
+
+/**
+ * 특정 상품 추천 점수 설정 (관리자 전용)
+ * PUT /admin/products/{productId}/recommendation-score
+ */
+export async function setProductRecommendationScore(
+  productId: number,
+  score: number
+): Promise<SetRecommendationScoreResponse> {
+  return apiPut<SetRecommendationScoreResponse>(
+    `/admin/products/${productId}/recommendation-score`,
+    { score },
     { requireAuth: true }
   );
 }

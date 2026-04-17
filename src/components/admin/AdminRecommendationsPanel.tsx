@@ -7,6 +7,7 @@ import {
   useUpsertLatestKoreaRecommendation,
   useAdminPickedRecommendations,
   useSetProductRecommendation,
+  useSetProductRecommendationScore,
 } from "@/queries/useRecommendationQueries";
 import { useProducts } from "@/queries/useProductQueries";
 
@@ -162,6 +163,131 @@ function AdminPickedSection() {
 
 // ─── 섹션 2: Latest in Korea 순서 관리 ─────────────────────────────────────
 
+function RecommendationScoreSection() {
+  const { data: allProducts = [], isLoading } = useProducts({ size: 100 });
+  const setScoreMutation = useSetProductRecommendationScore();
+  const [scores, setScores] = useState<Record<number, string>>({});
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const handleScoreChange = (productId: number, value: string) => {
+    if (!/^\d*$/.test(value)) return;
+    setScores(prev => ({ ...prev, [productId]: value }));
+  };
+
+  const handleSave = async (productId: number) => {
+    const rawValue = scores[productId] ?? "";
+    const score = Number(rawValue);
+
+    if (rawValue === "" || !Number.isInteger(score) || score < 0) {
+      setSaveError("추천 점수는 0 이상의 정수만 저장할 수 있습니다.");
+      setSaveMessage(null);
+      return;
+    }
+
+    setSaveError(null);
+    setSaveMessage(null);
+
+    try {
+      const result = await setScoreMutation.mutateAsync({ productId, score });
+      setScores(prev => ({
+        ...prev,
+        [productId]: String(result.recommendationScore),
+      }));
+      setSaveMessage(
+        `상품 #${productId} 추천 점수를 ${result.recommendationScore}로 저장했습니다.`
+      );
+    } catch (error) {
+      setSaveError(
+        (error as Error)?.message ?? "추천 점수 저장 중 오류가 발생했습니다."
+      );
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-gray-600 p-5 space-y-4">
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-medium px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            Recommend Sort
+          </span>
+          <h3 className="text-base font-semibold text-white">추천 점수 관리</h3>
+        </div>
+        <p className="text-xs text-gray-400 leading-relaxed">
+          추천 페이지에서 <strong className="text-gray-200">Recommend</strong>
+          정렬을 눌렀을 때 사용할 점수를 설정합니다.
+          <br />
+          API:{" "}
+          <code className="text-gray-300">
+            PUT /admin/products/&#123;productId&#125;/recommendation-score
+          </code>
+        </p>
+      </div>
+
+      {isLoading ? (
+        <p className="text-gray-500 text-sm">불러오는 중...</p>
+      ) : allProducts.length === 0 ? (
+        <p className="text-gray-500 text-sm">등록된 상품이 없습니다.</p>
+      ) : (
+        <div className="rounded-lg border border-gray-700 overflow-x-auto max-h-80 overflow-y-auto">
+          <table className="w-full text-sm min-w-[360px]">
+            <thead className="bg-gray-800/60 text-gray-400 sticky top-0">
+              <tr>
+                <th className="text-left p-2 w-16">ID</th>
+                <th className="text-left p-2">상품명</th>
+                <th className="text-left p-2 w-32">추천 점수</th>
+                <th className="text-right p-2 w-24">저장</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allProducts.map(product => (
+                <tr
+                  key={product.id}
+                  className="border-t border-gray-700/60 hover:bg-gray-800/40"
+                >
+                  <td className="p-2 text-gray-400">{product.id}</td>
+                  <td className="p-2 text-white max-w-[200px] truncate">
+                    {product.name}
+                  </td>
+                  <td className="p-2">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={scores[product.id] ?? ""}
+                      onChange={e =>
+                        handleScoreChange(product.id, e.target.value)
+                      }
+                      className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+                      placeholder="0"
+                    />
+                  </td>
+                  <td className="p-2 text-right">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => handleSave(product.id)}
+                      disabled={setScoreMutation.isPending}
+                    >
+                      저장
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <p className="text-xs text-gray-500">
+        현재 저장된 점수 자체를 읽는 조회 API는 없어, 입력한 값만 이 화면에
+        유지됩니다.
+      </p>
+      {saveMessage && <p className="text-green-400 text-xs">{saveMessage}</p>}
+      {saveError && <p className="text-red-400 text-xs">{saveError}</p>}
+    </div>
+  );
+}
+
 function LatestInKoreaSection() {
   const { data: list = [], isLoading } = useLatestInKoreaRecommendations({
     size: 50,
@@ -289,6 +415,7 @@ export function AdminRecommendationsPanel() {
   return (
     <div className="space-y-6">
       <AdminPickedSection />
+      <RecommendationScoreSection />
       <LatestInKoreaSection />
     </div>
   );

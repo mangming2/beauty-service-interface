@@ -26,6 +26,23 @@ const PACKAGE_SECTIONS_CONFIG = {
   middle: { titleKey: "wish.howAboutThisPackage", indices: [0, 3] },
 };
 
+const SERVER_SORT_LABELS = [
+  "Recommended",
+  "Most Booked",
+  "Most Reviewed",
+  "Low Price",
+  "High Price",
+] as const;
+
+function getServerSort(tags: string[]) {
+  if (tags.includes("Recommended")) return "RECOMMENDED" as const;
+  if (tags.includes("Most Booked")) return "MOST_BOOKED" as const;
+  if (tags.includes("Most Reviewed")) return "MOST_REVIEWED" as const;
+  if (tags.includes("Low Price")) return "PRICE_LOW" as const;
+  if (tags.includes("High Price")) return "PRICE_HIGH" as const;
+  return undefined;
+}
+
 function Content() {
   const searchParams = useSearchParams();
   const { t } = useTranslation();
@@ -43,15 +60,15 @@ function Content() {
   const availableTags = [...BASE_TAGS];
   const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const serverSort = getServerSort(selectedTags);
 
   const { data: products, isLoading } = useProducts({
     ...(listTag !== undefined ? { tag: listTag } : {}),
+    ...(serverSort !== undefined ? { sort: serverSort } : {}),
   });
 
   const productTags = (pkg: Product) =>
     pkg.representOption?.tags ?? pkg.tagNames ?? [];
-  const productPrice = (pkg: Product) =>
-    pkg.representOption?.finalPrice ?? pkg.totalPrice ?? pkg.minPrice ?? 0;
 
   const isForYouSelected = selectedTags.includes("For You");
 
@@ -92,21 +109,7 @@ function Content() {
         return (a.name ?? "").localeCompare(b.name ?? "", "ko");
       });
     }
-    // 클라이언트 정렬 (Most Booked / Most Reviewed / Low Price / High Price / Best Deal)
-    const clientSortTag = selectedTags.find(t =>
-      ["Most Booked", "Most Reviewed", "Low Price", "High Price", "Best Deal"].includes(t)
-    );
-    if (clientSortTag === "Most Booked" || clientSortTag === "Most Reviewed") {
-      filteredPackages.sort(
-        (a, b) =>
-          (b.reviewCount ?? b.representOption?.reviewCount ?? 0) -
-          (a.reviewCount ?? a.representOption?.reviewCount ?? 0)
-      );
-    } else if (clientSortTag === "Low Price") {
-      filteredPackages.sort((a, b) => productPrice(a) - productPrice(b));
-    } else if (clientSortTag === "High Price") {
-      filteredPackages.sort((a, b) => productPrice(b) - productPrice(a));
-    } else if (clientSortTag === "Best Deal") {
+    if (selectedTags.includes("Best Deal")) {
       filteredPackages.sort(
         (a, b) =>
           (b.representOption?.discountRate ?? 0) -
@@ -128,6 +131,14 @@ function Content() {
       if ((PRICE_TAGS as readonly string[]).includes(tag)) {
         return [
           ...prev.filter(t => !(PRICE_TAGS as readonly string[]).includes(t)),
+          tag,
+        ];
+      }
+      if ((SERVER_SORT_LABELS as readonly string[]).includes(tag)) {
+        return [
+          ...prev.filter(
+            t => !(SERVER_SORT_LABELS as readonly string[]).includes(t)
+          ),
           tag,
         ];
       }
