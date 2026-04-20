@@ -8,7 +8,6 @@ import {
   type GetLatestInKoreaParams,
   type UpsertLatestKoreaRecommendationRequest,
   type GetAdminPickedParams,
-  type AdminPickedProduct,
 } from "@/api/recommendation";
 import type { Product } from "@/api/product";
 import type { ApiError } from "@/lib/apiClient";
@@ -53,7 +52,7 @@ export function useLatestInKoreaRecommendations(
 export function useAdminPickedRecommendations(
   params: GetAdminPickedParams = {}
 ) {
-  return useQuery<AdminPickedProduct[]>({
+  return useQuery<Product[]>({
     queryKey: recommendationKeys.adminPicked(params),
     queryFn: () => getAdminPickedRecommendations(params),
     staleTime: 5 * 60 * 1000,

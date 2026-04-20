@@ -34,6 +34,8 @@ const SERVER_SORT_LABELS = [
   "High Price",
 ] as const;
 
+// 이 태그들은 서버 정렬을 그대로 사용한다.
+// Recommended -> recommendationScore, Most Booked -> bookingCount 기준 정렬.
 function getServerSort(tags: string[]) {
   if (tags.includes("Recommended")) return "RECOMMENDED" as const;
   if (tags.includes("Most Booked")) return "MOST_BOOKED" as const;

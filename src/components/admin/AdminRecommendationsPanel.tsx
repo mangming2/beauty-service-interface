@@ -169,7 +169,24 @@ function RecommendationScoreSection() {
   const [scores, setScores] = useState<Record<number, string>>({});
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
-  // TODO: 백엔드가 recommendationScore 조회 필드를 내려주면 초기 입력값을 저장값으로 동기화하기.
+
+  useEffect(() => {
+    if (allProducts.length === 0) return;
+
+    setScores(prev => {
+      const next = { ...prev };
+      let changed = false;
+
+      allProducts.forEach(product => {
+        if (next[product.id] !== undefined) return;
+
+        next[product.id] = String(product.recommendationScore ?? 0);
+        changed = true;
+      });
+
+      return changed ? next : prev;
+    });
+  }, [allProducts]);
 
   const handleScoreChange = (productId: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -280,8 +297,7 @@ function RecommendationScoreSection() {
       )}
 
       <p className="text-xs text-gray-500">
-        현재 저장된 점수 자체를 읽는 조회 API는 없어, 입력한 값만 이 화면에
-        유지됩니다.
+        현재 상품 목록에서 내려온 추천 점수를 초기값으로 보여줍니다.
       </p>
       {saveMessage && <p className="text-green-400 text-xs">{saveMessage}</p>}
       {saveError && <p className="text-red-400 text-xs">{saveError}</p>}

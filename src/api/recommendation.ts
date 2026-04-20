@@ -89,23 +89,8 @@ export async function setProductRecommendationScore(
   );
 }
 
-/** 추천 패키지 목록 아이템 (GET /products/recommendations/admin-picked) */
-export interface AdminPickedProduct {
-  id: number;
-  name: string;
-  averageRating: number;
-  totalReviewCount: number;
-  representOption: {
-    rating: number;
-    reviewCount: number;
-    tags: string[];
-    location: string;
-    discountRate: number;
-    originalPrice: number;
-    finalPrice: number;
-  };
-  imageUrls: string[];
-}
+/** 관리자 추천 패키지 목록도 상품 목록 응답과 동일한 형태를 사용한다. */
+export type AdminPickedProduct = Product;
 
 /** 추천 패키지 목록 조회 파라미터 */
 export interface GetAdminPickedParams {

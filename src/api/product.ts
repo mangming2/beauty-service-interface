@@ -7,8 +7,9 @@ export interface RepresentOption {
   rating?: number;
   reviewCount?: number;
   tags: string[];
+  /** 리스트/캐러셀에서 쓰는 지역구 라벨 (예: 강남구) */
   location: string;
-  /** 정규화 주소 (상세 조회 시) */
+  /** 상세/예약 화면에서 쓰는 조합 주소 (예: 강남구 + 상세주소) */
   address?: string;
   discountRate: number;
   originalPrice: number;
@@ -21,6 +22,8 @@ export interface Product {
   id: number;
   name: string;
   description?: string;
+  /** 관리자 추천 점수 */
+  recommendationScore?: number;
   minPrice?: number;
   totalPrice?: number;
   /** @deprecated 목록은 representOption.tags 사용 */
@@ -33,6 +36,8 @@ export interface Product {
   rating?: number;
   /** 누적 리뷰 수 */
   reviewCount?: number;
+  /** 취소 제외 누적 예약 수 */
+  bookingCount?: number;
 }
 
 /** 상품 상세 - 옵션 정보 (목록/요약; 상세는 Option 타입 참고) */
@@ -43,7 +48,9 @@ export interface ProductOption {
   price: number;
   /** 할인 적용가 (할인 시) */
   finalPrice?: number;
+  /** 옵션이 속한 지역구 라벨 */
   location: string;
+  /** 상세/예약에서 쓰는 실제 주소 문자열 */
   address?: string;
   discountRate?: number;
   bookingGuide?: string;
