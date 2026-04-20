@@ -52,7 +52,7 @@ export async function getProductTourAttractions(
   }
 
   const qs = queryParams.toString();
-  const url = `/products/${productId}/tour-attractions${qs ? `?${qs}` : ""}`;
+  const url = `/products/${productId}/tourist-attractions${qs ? `?${qs}` : ""}`;
 
   return apiGet<ProductTourAttractionResponse>(url, { requireAuth: false });
 }
