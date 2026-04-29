@@ -20,6 +20,7 @@ import { AdminProductsPanel } from "@/components/admin/AdminProductsPanel";
 import { AdminUsersPanel } from "@/components/admin/AdminUsersPanel";
 import { AdminReservationsPanel } from "@/components/admin/AdminReservationsPanel";
 import { AdminRecommendationsPanel } from "@/components/admin/AdminRecommendationsPanel";
+import { AdminTourSurveysPanel } from "@/components/admin/AdminTourSurveysPanel";
 import { useResetAndSeedDb } from "@/queries/useAdminQueries";
 
 /** 관리자 탭: 기본 TabsTrigger는 dark muted 색이라 회색 배경에서 대비가 거의 없음 */
@@ -218,6 +219,12 @@ export default function AdminPage() {
             >
               추천상품
             </TabsTrigger>
+            <TabsTrigger
+              value="tour-surveys"
+              className={adminTabTriggerClass}
+            >
+              설문 관리
+            </TabsTrigger>
             {process.env.NODE_ENV === "development" && (
               <TabsTrigger value="dev-tools" className={adminTabTriggerClass}>
                 🛠 Dev Tools
@@ -341,6 +348,10 @@ export default function AdminPage() {
 
           <TabsContent value="recommendations" className="mt-6">
             <AdminRecommendationsPanel />
+          </TabsContent>
+
+          <TabsContent value="tour-surveys" className="mt-6">
+            <AdminTourSurveysPanel />
           </TabsContent>
 
           {process.env.NODE_ENV === "development" && (

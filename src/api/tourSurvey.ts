@@ -181,6 +181,13 @@ function appendRecommendationParams(
   return qs ? `?${qs}` : "";
 }
 
+export async function getTourSurveyForms(): Promise<TourSurveyForm[]> {
+  const data = await apiGet<TourSurveyForm[]>("/tour-surveys", {
+    requireAuth: true,
+  });
+  return data ?? [];
+}
+
 export async function getTourSurveyForm(
   formId: number
 ): Promise<TourSurveyForm> {
@@ -264,4 +271,75 @@ export async function getTourSurveySharePayload(
     `/tour-surveys/submissions/${submissionId}/share-payload`,
     { requireAuth: true }
   );
+}
+
+// ========== Admin API ==========
+
+export interface UpsertTourSurveyOptionRequest {
+  optionKey: string;
+  label: string;
+  description?: string;
+  imageUrl?: string;
+  sortOrder: number;
+  tourAreaCode?: number;
+  tourSignguCode?: number;
+  placeLabel?: string;
+  categoryTag?: string;
+  styleTag?: string;
+}
+
+export interface UpsertTourSurveyQuestionRequest {
+  questionKey: string;
+  title: string;
+  description?: string;
+  sortOrder: number;
+  type: TourSurveyQuestionType;
+  required: boolean;
+  options: UpsertTourSurveyOptionRequest[];
+}
+
+export interface UpsertTourSurveyFormRequest {
+  name: string;
+  code: string;
+  description?: string;
+  isActive: boolean;
+  questions: UpsertTourSurveyQuestionRequest[];
+}
+
+export async function getAdminTourSurveyForms(): Promise<TourSurveyForm[]> {
+  const data = await apiGet<TourSurveyForm[]>("/admin/tour-surveys", {
+    requireAuth: true,
+  });
+  return data ?? [];
+}
+
+export async function getAdminTourSurveyForm(
+  formId: number
+): Promise<TourSurveyForm> {
+  return apiGet<TourSurveyForm>(`/admin/tour-surveys/${formId}`, {
+    requireAuth: true,
+  });
+}
+
+export async function createAdminTourSurveyForm(
+  request: UpsertTourSurveyFormRequest
+): Promise<TourSurveyForm> {
+  return apiPost<TourSurveyForm>("/admin/tour-surveys", request, {
+    requireAuth: true,
+  });
+}
+
+export async function updateAdminTourSurveyForm(
+  formId: number,
+  request: UpsertTourSurveyFormRequest
+): Promise<TourSurveyForm> {
+  return apiPut<TourSurveyForm>(`/admin/tour-surveys/${formId}`, request, {
+    requireAuth: true,
+  });
+}
+
+export async function deleteAdminTourSurveyForm(formId: number): Promise<void> {
+  return apiDelete<void>(`/admin/tour-surveys/${formId}`, {
+    requireAuth: true,
+  });
 }

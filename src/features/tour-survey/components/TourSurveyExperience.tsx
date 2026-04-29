@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -28,21 +27,7 @@ import type {
 } from "@/api/tourSurvey";
 import type { ApiError } from "@/lib/apiClient";
 
-const DEFAULT_FORM_ID = Number(
-  process.env.NEXT_PUBLIC_TOUR_SURVEY_FORM_ID ?? "1"
-);
 const DEFAULT_BASE_YM = process.env.NEXT_PUBLIC_TOUR_SURVEY_BASE_YM ?? "202603";
-
-function parseFormId(value: string | null) {
-  if (!value) {
-    return Number.isFinite(DEFAULT_FORM_ID) && DEFAULT_FORM_ID > 0
-      ? DEFAULT_FORM_ID
-      : undefined;
-  }
-
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
-}
 
 function sortQuestions(questions: TourSurveyQuestion[]) {
   return [...questions]
@@ -77,9 +62,7 @@ function optionMeta(option: TourSurveyOption) {
     .join(" · ");
 }
 
-export function TourSurveyExperience() {
-  const searchParams = useSearchParams();
-  const formId = parseFormId(searchParams.get("formId"));
+export function TourSurveyExperience({ formId }: { formId: number }) {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [submissionId, setSubmissionId] = useState<number>();
@@ -205,20 +188,6 @@ export function TourSurveyExperience() {
     }
   };
 
-  if (!formId) {
-    return (
-      <div className="min-h-screen bg-[#101319] px-4 py-12 text-white">
-        <div className="mx-auto max-w-[412px] rounded-[24px] border border-red-300/20 bg-red-500/10 p-5">
-          <h1 className="text-lg font-semibold">설문 ID가 필요해요</h1>
-          <p className="mt-3 break-keep text-sm leading-6 text-red-100">
-            URL에 `?formId=1`처럼 활성 설문 ID를 넣거나
-            `NEXT_PUBLIC_TOUR_SURVEY_FORM_ID`를 설정해 주세요.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return <PageLoading message="여행 설문을 불러오는 중..." />;
   }
@@ -228,11 +197,11 @@ export function TourSurveyExperience() {
       <div className="min-h-screen bg-[#101319] px-4 py-12 text-white">
         <div className="mx-auto max-w-[412px] rounded-[24px] border border-red-300/20 bg-red-500/10 p-5">
           <Link
-            href="/"
+            href="/tour/mv-trip"
             className="inline-flex items-center gap-2 text-sm text-red-100 hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
-            홈으로
+            목록으로
           </Link>
           <h1 className="mt-5 text-lg font-semibold">
             설문을 불러오지 못했어요
@@ -259,11 +228,11 @@ export function TourSurveyExperience() {
     <main className="min-h-screen bg-[#101319] px-4 pb-16 pt-4 text-white">
       <div className="mx-auto max-w-[412px]">
         <Link
-          href="/"
+          href="/tour/mv-trip"
           className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
-          홈으로
+          목록으로
         </Link>
 
         <section className="mt-5 rounded-[28px] border border-pink-300/20 bg-[radial-gradient(circle_at_top_left,_rgba(249,37,149,0.24),_transparent_34%),linear-gradient(180deg,_rgba(33,36,45,0.98),_rgba(17,19,26,0.98))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.26)]">
