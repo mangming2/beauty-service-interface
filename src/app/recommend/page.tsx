@@ -26,14 +26,6 @@ const PACKAGE_SECTIONS_CONFIG = {
   middle: { titleKey: "wish.howAboutThisPackage", indices: [0, 3] },
 };
 
-const SERVER_SORT_LABELS = [
-  "Recommended",
-  "Most Booked",
-  "Most Reviewed",
-  "Low Price",
-  "High Price",
-] as const;
-
 // 이 태그들은 서버 정렬을 그대로 사용한다.
 // Recommended -> recommendationScore, Most Booked -> bookingCount 기준 정렬.
 function getServerSort(tags: string[]) {
@@ -125,26 +117,10 @@ function Content() {
     ...PACKAGE_SECTIONS_CONFIG.middle.indices
   );
 
-  const PRICE_TAGS = ["Low Price", "High Price"] as const;
   const handleTagClick = (tag: string) => {
     setSelectedTags(prev => {
-      if (prev.includes(tag)) return prev.filter(t => t !== tag);
-      // Low Price / High Price는 상호 배타적
-      if ((PRICE_TAGS as readonly string[]).includes(tag)) {
-        return [
-          ...prev.filter(t => !(PRICE_TAGS as readonly string[]).includes(t)),
-          tag,
-        ];
-      }
-      if ((SERVER_SORT_LABELS as readonly string[]).includes(tag)) {
-        return [
-          ...prev.filter(
-            t => !(SERVER_SORT_LABELS as readonly string[]).includes(t)
-          ),
-          tag,
-        ];
-      }
-      return [...prev, tag];
+      if (prev.includes(tag)) return [];
+      return [tag];
     });
   };
 
