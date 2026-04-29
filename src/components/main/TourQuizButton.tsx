@@ -14,10 +14,10 @@ export function TourQuizButton() {
       <Link href="/tour/mv-trip">
         <span className="flex flex-col items-start">
           <span className="text-[11px] uppercase tracking-[0.26em] text-pink-200/90">
-            New Interactive Trip
+            New Trip Finder
           </span>
           <span className="mt-2 break-keep text-sm font-semibold sm:text-base">
-            BTS MV 촬영지 기반 로컬 여행 추천
+            설문으로 완성하는 로컬 여행 추천
           </span>
         </span>
         <Sparkles className="h-5 w-5 shrink-0 text-pink-100" />

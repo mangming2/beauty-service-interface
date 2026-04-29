@@ -1,19 +1,18 @@
 import { Metadata } from "next";
-import { HeroSection } from "@/features/tour-quiz/components/HeroSection";
-import { QuizFlow } from "@/features/tour-quiz/components/QuizFlow";
+import { Suspense } from "react";
+import { PageLoading } from "@/components/common";
+import { TourSurveyExperience } from "@/features/tour-survey/components/TourSurveyExperience";
 
 export const metadata: Metadata = {
-  title: "DOKI | BTS MV 로컬 여행 추천",
-  description: "BTS MV 촬영지를 따라가는 인터랙티브 설문형 한국 로컬 여행 추천",
+  title: "DOKI | 여행 설문 추천",
+  description:
+    "설문 답변과 DOKI 추천 상품을 기반으로 만드는 한국 로컬 여행 추천",
 };
 
 export default function TourMvTripPage() {
   return (
-    <main className="min-h-screen bg-[#101319] px-3 pb-20 pt-4 text-white">
-      <div className="mx-auto w-full">
-        <HeroSection />
-        <QuizFlow />
-      </div>
-    </main>
+    <Suspense fallback={<PageLoading message="여행 설문을 준비하는 중..." />}>
+      <TourSurveyExperience />
+    </Suspense>
   );
 }
