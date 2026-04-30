@@ -31,7 +31,8 @@ export const tourSurveyKeys = {
   forms: () => [...tourSurveyKeys.all, "forms"] as const,
   form: (formId: number) => [...tourSurveyKeys.forms(), formId] as const,
   adminForms: () => [...tourSurveyKeys.all, "admin-forms"] as const,
-  adminForm: (formId: number) => [...tourSurveyKeys.adminForms(), formId] as const,
+  adminForm: (formId: number) =>
+    [...tourSurveyKeys.adminForms(), formId] as const,
   submissions: () => [...tourSurveyKeys.all, "submissions"] as const,
   submission: (submissionId: number) =>
     [...tourSurveyKeys.submissions(), submissionId] as const,
