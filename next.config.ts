@@ -34,6 +34,12 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
       {
+        protocol: "https",
+        hostname: "tapmgrschyuhtnzvddzv.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/doki-images/**",
+      },
+      {
         protocol: "http",
         hostname: "**",
         port: "",

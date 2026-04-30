@@ -394,10 +394,7 @@ function SurveyFormDialog({
       questions: [...prev.questions, newQuestion(prev.questions.length)],
     }));
 
-  const updateQuestion = (
-    i: number,
-    next: UpsertTourSurveyQuestionRequest
-  ) => {
+  const updateQuestion = (i: number, next: UpsertTourSurveyQuestionRequest) => {
     setForm(prev => ({
       ...prev,
       questions: prev.questions.map((q, idx) => (idx === i ? next : q)),
@@ -561,17 +558,13 @@ export function AdminTourSurveysPanel() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-white">
-          설문 템플릿 관리
-        </h2>
+        <h2 className="text-base font-semibold text-white">설문 템플릿 관리</h2>
         <Button size="sm" onClick={openCreate}>
           + 설문 생성
         </Button>
       </div>
 
-      {isLoading && (
-        <p className="text-gray-400 text-sm">로딩 중...</p>
-      )}
+      {isLoading && <p className="text-gray-400 text-sm">로딩 중...</p>}
 
       {!isLoading && forms.length === 0 && (
         <p className="text-gray-500 text-sm">등록된 설문 템플릿이 없습니다.</p>

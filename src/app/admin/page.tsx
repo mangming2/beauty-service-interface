@@ -219,10 +219,7 @@ export default function AdminPage() {
             >
               추천상품
             </TabsTrigger>
-            <TabsTrigger
-              value="tour-surveys"
-              className={adminTabTriggerClass}
-            >
+            <TabsTrigger value="tour-surveys" className={adminTabTriggerClass}>
               설문 관리
             </TabsTrigger>
             {process.env.NODE_ENV === "development" && (
