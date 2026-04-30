@@ -9,7 +9,6 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Link from "next/link";
-import { TranslatedText } from "@/components/main/TranslatedText";
 
 type CarouselItemType = {
   imageSrc: string;
@@ -78,9 +77,6 @@ export function PopularCarousel({ items }: PopularCarouselProps) {
                         sizes="372px"
                         priority={index === 0}
                       />
-                      <div className="absolute left-0 top-0 z-20 rounded-br rounded-tl-[8px] border-b border-r border-card-border bg-black/50 px-2 py-1 text-white caption-sm">
-                        <TranslatedText translationKey="mostPopular" />
-                      </div>
                       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col gap-1 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-3 pb-4 pt-20">
                         <p className="caption-sm font-medium text-primary">
                           {item.tags}
