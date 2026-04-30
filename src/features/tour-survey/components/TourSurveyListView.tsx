@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { PageLoading } from "@/components/common";
@@ -7,6 +8,19 @@ import { useTourSurveyForms } from "@/queries/useTourSurveyQueries";
 
 export function TourSurveyListView() {
   const { data: forms = [], isLoading, error } = useTourSurveyForms();
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") {
+      return;
+    }
+
+    console.info("[tour-surveys] list state", {
+      isLoading,
+      count: forms.length,
+      forms,
+      error,
+    });
+  }, [error, forms, isLoading]);
 
   if (isLoading) {
     return <PageLoading message="설문 목록을 불러오는 중..." />;

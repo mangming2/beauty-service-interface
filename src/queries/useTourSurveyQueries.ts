@@ -5,6 +5,7 @@ import {
   deleteAdminTourSurveyForm,
   deleteTourSurveySubmission,
   generateTourSurveyRecommendation,
+  getAdminTourSurveyForm,
   getAdminTourSurveyForms,
   getTourSurveyForm,
   getTourSurveyForms,
@@ -30,6 +31,7 @@ export const tourSurveyKeys = {
   forms: () => [...tourSurveyKeys.all, "forms"] as const,
   form: (formId: number) => [...tourSurveyKeys.forms(), formId] as const,
   adminForms: () => [...tourSurveyKeys.all, "admin-forms"] as const,
+  adminForm: (formId: number) => [...tourSurveyKeys.adminForms(), formId] as const,
   submissions: () => [...tourSurveyKeys.all, "submissions"] as const,
   submission: (submissionId: number) =>
     [...tourSurveyKeys.submissions(), submissionId] as const,
@@ -213,13 +215,26 @@ export function useAdminTourSurveyForms() {
   });
 }
 
+export function useAdminTourSurveyForm(formId: number | undefined) {
+  return useQuery<TourSurveyForm>({
+    queryKey: tourSurveyKeys.adminForm(formId ?? -1),
+    queryFn: () => getAdminTourSurveyForm(formId!),
+    enabled: isValidId(formId),
+    staleTime: 60 * 1000,
+    retry: retryUnlessAuthOrTourApi,
+  });
+}
+
 export function useCreateAdminTourSurveyForm() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (request: UpsertTourSurveyFormRequest) =>
       createAdminTourSurveyForm(request),
-    onSuccess: () => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: tourSurveyKeys.adminForms() });
+      queryClient.invalidateQueries({ queryKey: tourSurveyKeys.forms() });
+      queryClient.setQueryData(tourSurveyKeys.adminForm(data.id), data);
+      queryClient.setQueryData(tourSurveyKeys.form(data.id), data);
     },
   });
 }
@@ -234,8 +249,11 @@ export function useUpdateAdminTourSurveyForm() {
       formId: number;
       request: UpsertTourSurveyFormRequest;
     }) => updateAdminTourSurveyForm(formId, request),
-    onSuccess: () => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: tourSurveyKeys.adminForms() });
+      queryClient.invalidateQueries({ queryKey: tourSurveyKeys.forms() });
+      queryClient.setQueryData(tourSurveyKeys.adminForm(data.id), data);
+      queryClient.setQueryData(tourSurveyKeys.form(data.id), data);
     },
   });
 }
@@ -244,8 +262,11 @@ export function useDeleteAdminTourSurveyForm() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (formId: number) => deleteAdminTourSurveyForm(formId),
-    onSuccess: () => {
+    onSuccess: (_, formId) => {
       queryClient.invalidateQueries({ queryKey: tourSurveyKeys.adminForms() });
+      queryClient.invalidateQueries({ queryKey: tourSurveyKeys.forms() });
+      queryClient.removeQueries({ queryKey: tourSurveyKeys.adminForm(formId) });
+      queryClient.removeQueries({ queryKey: tourSurveyKeys.form(formId) });
     },
   });
 }

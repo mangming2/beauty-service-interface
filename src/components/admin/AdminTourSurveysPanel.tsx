@@ -23,6 +23,9 @@ import type {
   UpsertTourSurveyOptionRequest,
 } from "@/api/tourSurvey";
 
+const unsupportedQuestionTypeMessage =
+  "현재 사용자 설문 화면은 SINGLE_CHOICE만 지원합니다. MULTIPLE_CHOICE는 아직 사용할 수 없어요.";
+
 // ── 기본값 팩토리 ──────────────────────────────────────────
 function newOption(sortOrder: number): UpsertTourSurveyOptionRequest {
   return {
@@ -317,8 +320,15 @@ function QuestionEditor({
             }
           >
             <option value="SINGLE_CHOICE">SINGLE_CHOICE</option>
-            <option value="MULTIPLE_CHOICE">MULTIPLE_CHOICE</option>
+            <option value="MULTIPLE_CHOICE" disabled>
+              MULTIPLE_CHOICE (준비 중)
+            </option>
           </select>
+          {q.type === "MULTIPLE_CHOICE" && (
+            <p className="mt-1 text-xs text-amber-400">
+              {unsupportedQuestionTypeMessage}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-2 pt-5">
           <input
@@ -382,19 +392,26 @@ function SurveyFormDialog({
   const updateMutation = useUpdateAdminTourSurveyForm();
   const isPending = createMutation.isPending || updateMutation.isPending;
   const error = createMutation.error || updateMutation.error;
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const set = <K extends keyof UpsertTourSurveyFormRequest>(
     key: K,
     value: UpsertTourSurveyFormRequest[K]
-  ) => setForm(prev => ({ ...prev, [key]: value }));
+  ) => {
+    setValidationError(null);
+    setForm(prev => ({ ...prev, [key]: value }));
+  };
 
-  const addQuestion = () =>
+  const addQuestion = () => {
+    setValidationError(null);
     setForm(prev => ({
       ...prev,
       questions: [...prev.questions, newQuestion(prev.questions.length)],
     }));
+  };
 
   const updateQuestion = (i: number, next: UpsertTourSurveyQuestionRequest) => {
+    setValidationError(null);
     setForm(prev => ({
       ...prev,
       questions: prev.questions.map((q, idx) => (idx === i ? next : q)),
@@ -402,6 +419,7 @@ function SurveyFormDialog({
   };
 
   const removeQuestion = (i: number) => {
+    setValidationError(null);
     setForm(prev => ({
       ...prev,
       questions: prev.questions.filter((_, idx) => idx !== i),
@@ -410,6 +428,17 @@ function SurveyFormDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const unsupportedQuestion = form.questions.find(
+      question => question.type !== "SINGLE_CHOICE"
+    );
+
+    if (unsupportedQuestion) {
+      setValidationError(
+        `${unsupportedQuestion.title || unsupportedQuestion.questionKey || "질문"}: ${unsupportedQuestionTypeMessage}`
+      );
+      return;
+    }
+
     const payload: UpsertTourSurveyFormRequest = {
       ...form,
       description: form.description?.trim() || undefined,
@@ -501,6 +530,10 @@ function SurveyFormDialog({
               />
             ))}
           </div>
+
+          {validationError && (
+            <p className="text-amber-400 text-sm">{validationError}</p>
+          )}
 
           {error && (
             <p className="text-red-400 text-sm">
