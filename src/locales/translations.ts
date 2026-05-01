@@ -150,7 +150,7 @@ export const translations = {
     },
     package: {
       description: "Description",
-      packageDetails: "Package Details",
+      packageDetails: "상세 패키지",
       customersReview: "Customers review",
       loadingReviews: "리뷰를 불러오는 중...",
       errorLoadingReviews: "리뷰를 불러올 수 없습니다.",

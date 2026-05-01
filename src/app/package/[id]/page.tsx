@@ -190,7 +190,7 @@ export default function PackageDetail() {
             </div>
           </div>
 
-          <GapY size={20} />
+          <GapY size={40} />
 
           {/* Package Details Section */}
           <div>
@@ -235,7 +235,7 @@ export default function PackageDetail() {
                                 ) : null}
                               </div>
 
-                              <p className="text-[24px] text-white mb-1 font-semibold leading-tight truncate">
+                              <p className="text-[16px] text-white mb-1 font-semibold leading-tight truncate">
                                 {option.name}
                               </p>
                               <div className="flex items-center gap-1">
@@ -277,7 +277,7 @@ export default function PackageDetail() {
               )}
             </div>
 
-            <GapY size={20} />
+            <GapY size={40} />
             {/* Customer Reviews */}
             <div className="pl-5">
               <div className="flex items-center justify-between pr-5">
@@ -354,7 +354,7 @@ export default function PackageDetail() {
               </Link>
             </div>
 
-            <GapY size={20} />
+            <GapY size={40} />
           </div>
         </div>
       </div>

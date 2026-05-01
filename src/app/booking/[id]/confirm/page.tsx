@@ -3,6 +3,7 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Divider } from "@/components/ui/divider";
 import Image from "next/image";
 import { GapY } from "@/components/ui/gap";
 import {
@@ -109,117 +110,126 @@ export default function BookingConfirmPage() {
     .slice(0, 6);
 
   return (
-    <div className="bg-background text-white px-5 pt-6 flex flex-col flex-1">
-      <h1 className="title-lg text-white">{t("bookingPage.orderStatus")}</h1>
-      <GapY size={8} />
-      <p className="text-md text-gray-font">
-        {t("bookingPage.proceedByVendor")}
-      </p>
-      <p className="text-md text-gray-font">{t("bookingPage.modifyAnytime")}</p>
-      <GapY size={20} />
-
-      {/* 현재 예약 옵션 카드 */}
-      <div className="rounded-[12px] bg-gray-container border border-[#2E3033] p-3 flex gap-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 rounded caption-sm bg-primary text-white">
-              {t("bookingPage.featured")}
-            </span>
-            {firstOption?.optionTags?.length ? (
-              <span className="text-white text-xs truncate">
-                {(firstOption.optionTags ?? [])
-                  .slice(0, 2)
-                  .map(tag => `#${tag}`)
-                  .join(" ")}
-              </span>
-            ) : null}
-          </div>
-          <h2 className="text-lg text-white">{currentOption.name}</h2>
-          <div className="flex items-center gap-1 mt-1">
-            <LocationIcon width={14} height={14} color="#ABA9A9" />
-            <p className="text-[#A9A9AA] text-xs truncate">
-              {currentOption.address}
-            </p>
-          </div>
-          <p className="text-pink-font text-md mt-1">
-            {currentOption.discountRate > 0
-              ? `${currentOption.discountRate}% `
-              : ""}
-          </p>
-          <p className="text-md text-white mt-1 ">
-            ₩{currentOption.price.toLocaleString()}
-          </p>
-        </div>
-        <div className="relative w-[92px] h-[92px] flex-shrink-0 rounded-[4px] overflow-hidden">
-          <Image
-            src={optionImageUrl}
-            alt={currentOption.name}
-            fill
-            className="object-cover"
-            unoptimized={optionImageUrl.startsWith("http")}
-          />
-        </div>
-      </div>
-
-      <GapY size={24} />
-
-      {/* 패키지 상세 */}
-      <h2 className="title-md text-white">{t("package.packageDetails")}</h2>
-      {productDetail.description && (
-        <p className="text-md text-gray-font mt-1">
-          {productDetail.description}
+    <div className="bg-background text-white flex flex-col flex-1">
+      <section className="px-5 pt-6 pb-6">
+        <h1 className="title-lg text-white">{t("bookingPage.orderStatus")}</h1>
+        <GapY size={8} />
+        <p className="text-md text-gray-font">
+          {t("bookingPage.proceedByVendor")}
         </p>
-      )}
-      <GapY size={12} />
-      <Link
-        href={`/package/${packageId}${resolvedOptionId ? `/${resolvedOptionId}` : ""}`}
-        className="block rounded-[12px] bg-gray-container border border-[#2E3033] overflow-hidden"
-      >
-        <div className="flex items-center gap-3 p-3">
-          <div className="relative w-[80px] h-[80px] flex-shrink-0 rounded-lg overflow-hidden">
-            <Image
-              src={packageImageUrl}
-              alt={productDetail.name}
-              fill
-              className="object-cover"
-              unoptimized={packageImageUrl.startsWith("http")}
-            />
-          </div>
+        <p className="text-md text-gray-font">
+          {t("bookingPage.modifyAnytime")}
+        </p>
+        <GapY size={20} />
+
+        {/* 현재 예약 옵션 카드 */}
+        <div className="rounded-[12px] bg-gray-container border border-[#2E3033] p-3 flex gap-3">
           <div className="flex-1 min-w-0">
-            <h3 className="text-white font-bold text-lg truncate">
-              {productDetail.name}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2 py-0.5 rounded caption-sm bg-primary text-white">
+                {t("bookingPage.featured")}
+              </span>
+              {firstOption?.optionTags?.length ? (
+                <span className="text-white text-xs truncate">
+                  {(firstOption.optionTags ?? [])
+                    .slice(0, 2)
+                    .map(tag => `#${tag}`)
+                    .join(" ")}
+                </span>
+              ) : null}
+            </div>
+            <h2 className="text-lg text-white">{currentOption.name}</h2>
             <div className="flex items-center gap-1 mt-1">
-              <LocationIcon width={14} height={14} color="#A9A9AA" />
-              <p className="text-gray-400 text-sm truncate">
-                {currentOption.address || productDetail.address}
+              <LocationIcon width={14} height={14} color="#ABA9A9" />
+              <p className="text-[#A9A9AA] text-xs truncate">
+                {currentOption.address}
               </p>
             </div>
+            <p className="text-pink-font text-md mt-1">
+              {currentOption.discountRate > 0
+                ? `${currentOption.discountRate}% `
+                : ""}
+            </p>
+            <p className="text-md text-white mt-1 ">
+              ₩{currentOption.price.toLocaleString()}
+            </p>
           </div>
-          <ArrowRightIcon
-            color="#B9BBC2"
-            width={8}
-            height={16}
-            className="flex-shrink-0"
-          />
+          <div className="relative w-[92px] h-[92px] flex-shrink-0 rounded-[4px] overflow-hidden">
+            <Image
+              src={optionImageUrl}
+              alt={currentOption.name}
+              fill
+              className="object-cover"
+              unoptimized={optionImageUrl.startsWith("http")}
+            />
+          </div>
         </div>
-      </Link>
-      <GapY size={12} />
-      <div className="rounded-[12px] p-4 space-y-3">
-        <div className="flex justify-between items-center text-md text-gray-font">
-          <span>{t("bookingPage.dateTime")}</span>
-          <span>{dateTimeDisplay}</span>
+      </section>
+
+      <Divider height={8} className="bg-gray-container" />
+
+      <section className="px-5 pt-6 pb-6">
+        {/* 패키지 상세 */}
+        <h2 className="title-md text-white">{t("package.packageDetails")}</h2>
+        {productDetail.description && (
+          <p className="text-md text-gray-font mt-1">
+            {productDetail.description}
+          </p>
+        )}
+        <GapY size={12} />
+        <Link
+          href={`/package/${packageId}${resolvedOptionId ? `/${resolvedOptionId}` : ""}`}
+          className="block rounded-[12px] bg-gray-container border border-[#2E3033] overflow-hidden"
+        >
+          <div className="flex items-center gap-3 p-3">
+            <div className="relative w-[80px] h-[80px] flex-shrink-0 rounded-lg overflow-hidden">
+              <Image
+                src={packageImageUrl}
+                alt={productDetail.name}
+                fill
+                className="object-cover"
+                unoptimized={packageImageUrl.startsWith("http")}
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-white font-bold text-lg truncate">
+                {productDetail.name}
+              </h3>
+              <div className="flex items-center gap-1 mt-1">
+                <LocationIcon width={14} height={14} color="#A9A9AA" />
+                <p className="text-gray-400 text-sm truncate">
+                  {currentOption.address || productDetail.address}
+                </p>
+              </div>
+            </div>
+            <ArrowRightIcon
+              color="#B9BBC2"
+              width={8}
+              height={16}
+              className="flex-shrink-0"
+            />
+          </div>
+        </Link>
+        <GapY size={12} />
+        <div className="rounded-[12px] p-4 space-y-3">
+          <div className="flex justify-between items-center text-md text-gray-font">
+            <span>{t("bookingPage.dateTime")}</span>
+            <span>{dateTimeDisplay}</span>
+          </div>
+          <div className="flex justify-between items-center text-md text-gray-font">
+            <span>{t("bookingPage.totalFee")}</span>
+            <span>₩{currentOption.price.toLocaleString()}</span>
+          </div>
         </div>
-        <div className="flex justify-between items-center text-md text-gray-font">
-          <span>{t("bookingPage.totalFee")}</span>
-          <span>₩{currentOption.price.toLocaleString()}</span>
-        </div>
-      </div>
+      </section>
+
+      {(otherOptions.length > 0 || recommendedProducts.length > 0) && (
+        <Divider height={8} className="bg-gray-container" />
+      )}
 
       {/* 다른 옵션 예약 */}
       {otherOptions.length > 0 && (
-        <>
-          <GapY size={24} />
+        <section className="px-5 pt-6 pb-6">
           <h2 className="title-md text-white">
             {t("bookingPage.bookOtherOptions")}
           </h2>
@@ -262,13 +272,16 @@ export default function BookingConfirmPage() {
               );
             })}
           </div>
-        </>
+        </section>
+      )}
+
+      {otherOptions.length > 0 && recommendedProducts.length > 0 && (
+        <Divider height={8} className="bg-gray-container" />
       )}
 
       {/* 추천 패키지 */}
       {recommendedProducts.length > 0 && (
-        <>
-          <GapY size={24} />
+        <section className="px-5 pt-6 pb-6">
           <h2 className="title-md text-white">
             {t("bookingPage.recommendedForYou")}
           </h2>
@@ -315,10 +328,8 @@ export default function BookingConfirmPage() {
               );
             })}
           </div>
-        </>
+        </section>
       )}
-
-      <GapY size={24} />
 
       {/* 플로팅 확인 버튼 */}
       <div
