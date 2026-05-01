@@ -10,7 +10,6 @@ import { ArrowRightIcon, LocationIcon } from "@/components/common/Icons";
 import Link from "next/link";
 import { Divider } from "@/components/ui/divider";
 import { useBookingDetail } from "@/queries/useMyPageQueries";
-import { useProductOptions } from "@/queries/useProductQueries";
 
 const PLACEHOLDER_IMAGE = "/dummy-logo.png";
 const platformFee = 20000;
@@ -25,17 +24,8 @@ export default function MyBookingPage() {
   const { data: booking, isLoading: bookingLoading } = useBookingDetail(
     isValidId ? reservationId : undefined
   );
-  const { data: options = [] } = useProductOptions(booking?.product?.id);
 
   const [currentStep] = useState(2); // 1=PreBook, 2=Booking, 3=Completed
-
-  const components = options.map(opt => ({
-    id: String(opt.id),
-    title: opt.name,
-    location: opt.address,
-    price: opt.price,
-    imageSrc: opt.imageUrl ?? PLACEHOLDER_IMAGE,
-  }));
 
   const handleSave = () => {
     if (booking) {
@@ -62,6 +52,16 @@ export default function MyBookingPage() {
     t("booking.stepPreBook"),
     t("booking.stepBooking"),
     t("booking.stepCompleted"),
+  ];
+
+  const components = [
+    {
+      id: String(booking.option.id),
+      title: booking.option.name,
+      location: booking.option.address ?? "",
+      price: booking.option.price,
+      imageSrc: booking.option.imageUrl ?? PLACEHOLDER_IMAGE,
+    },
   ];
 
   const totalPrice =
@@ -134,7 +134,8 @@ export default function MyBookingPage() {
           <div className="flex flex-col gap-3">
             {components.map(component => {
               const vendor =
-                component.location.split(" (")[0] || component.location;
+                component.location.split(" (")[0]?.trim() ||
+                "Address unavailable";
               return (
                 <Link
                   href={`/package/${booking.product.id}/${component.id}`}
