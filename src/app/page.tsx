@@ -52,7 +52,7 @@ export default function Home() {
       {/* Most Popular Section */}
       <PopularCarouselSection />
       <div className="px-5">
-        <GapY size={20} />
+        <GapY size={40} />
 
         {/* CTA Banner */}
         <FormButton />
@@ -61,7 +61,7 @@ export default function Home() {
 
         <TourQuizButton />
 
-        <GapY size={20} />
+        <GapY size={40} />
 
         {/* Choose Your Concept Section */}
         <div className="flex flex-col gap-[14px]">
@@ -130,12 +130,12 @@ export default function Home() {
           </ConceptScrollContainer>
         </div>
 
-        <GapY size={20} />
+        <GapY size={40} />
 
         {/* Board Section - 최근 게시물 3개 */}
         <LatestAnnouncementPosts />
 
-        <GapY size={20} />
+        <GapY size={40} />
 
         {/* Latest Trends Section */}
         <LatestTrendsSection />

@@ -12,7 +12,7 @@ interface ConceptCardProps {
 export function ConceptCard({ src, alt, label, href }: ConceptCardProps) {
   const content = (
     <div className="text-center">
-      <div className="w-[100px] h-[100px] p-[12px] bg-gray rounded-lg flex items-center justify-center overflow-hidden">
+      <div className="w-[100px] h-[100px] p-[12px] bg-gray rounded-[20px] flex items-center justify-center overflow-hidden">
         <Image
           src={src}
           alt={alt}

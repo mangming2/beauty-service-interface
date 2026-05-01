@@ -8,6 +8,7 @@ import {
   BookmarkIcon,
   HeartIcon,
 } from "@/components/common/Icons";
+import { TranslatedText } from "@/components/main/TranslatedText";
 import { GapY } from "@/components/ui/gap";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { truncateAnnouncementPreview } from "@/lib/utils";
@@ -23,7 +24,7 @@ export function LatestAnnouncementPosts() {
     return (
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="title-md text-white">DOKI Community</h2>
+          <h2 className="title-md text-white">DOKI BUZZ</h2>
           <span className="text-gray_1 caption-md">...</span>
         </div>
         <GapY size={8} />
@@ -39,12 +40,12 @@ export function LatestAnnouncementPosts() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="title-md text-white">DOKI Community</h2>
+        <h2 className="title-md text-white">DOKI BUZZ</h2>
         <Link
           href="/board"
           className="text-gray_1 caption-md flex items-center gap-[4px]"
         >
-          more
+          <TranslatedText translationKey="more" />
           <ArrowRightIcon
             color="#BCBCBC"
             width={3}
