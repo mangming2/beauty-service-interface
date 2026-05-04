@@ -325,23 +325,62 @@ export default function PackageOptionBookingPage() {
           <h3 className="title-sm mb-4">{t("option.chooseDate")}</h3>
 
           <div className="flex items-center justify-between mb-3 px-2">
-            <button
-              type="button"
-              onClick={() => setCurrentMonth(prev => addMonths(prev, -1))}
-              className="text-gray-300 hover:text-white"
-            >
-              <ChevronLeftIcon className="h-5 w-5" />
-            </button>
-            <span className="text-[20px] leading-[125%]">
-              {format(currentMonth, "yyyy.MM")}
-            </span>
-            <button
-              type="button"
-              onClick={() => setCurrentMonth(prev => addMonths(prev, 1))}
-              className="text-gray-300 hover:text-white"
-            >
-              <ChevronRightIcon className="h-5 w-5" />
-            </button>
+            {(() => {
+              const currentMonthStart = new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth(),
+                1
+              );
+              const slotStartMonth = slotStartDate
+                ? new Date(
+                    slotStartDate.getFullYear(),
+                    slotStartDate.getMonth(),
+                    1
+                  )
+                : undefined;
+              const slotEndMonth = slotEndDate
+                ? new Date(slotEndDate.getFullYear(), slotEndDate.getMonth(), 1)
+                : undefined;
+              const canGoPrev =
+                !slotStartMonth || currentMonthStart > slotStartMonth;
+              const canGoNext =
+                !slotEndMonth || currentMonthStart < slotEndMonth;
+              return (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!canGoPrev) return;
+                      setCurrentMonth(prev => addMonths(prev, -1));
+                      setSelectedDate(undefined);
+                      setSelectedTime("");
+                      setSelectedSlotId(null);
+                    }}
+                    className={`${canGoPrev ? "text-gray-300 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
+                    disabled={!canGoPrev}
+                  >
+                    <ChevronLeftIcon className="h-5 w-5" />
+                  </button>
+                  <span className="text-[20px] leading-[125%]">
+                    {format(currentMonth, "yyyy.MM")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!canGoNext) return;
+                      setCurrentMonth(prev => addMonths(prev, 1));
+                      setSelectedDate(undefined);
+                      setSelectedTime("");
+                      setSelectedSlotId(null);
+                    }}
+                    className={`${canGoNext ? "text-gray-300 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
+                    disabled={!canGoNext}
+                  >
+                    <ChevronRightIcon className="h-5 w-5" />
+                  </button>
+                </>
+              );
+            })()}
           </div>
 
           <Calendar
