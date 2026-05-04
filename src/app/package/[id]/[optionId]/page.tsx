@@ -221,7 +221,11 @@ export default function PackageOptionBookingPage() {
           />
         </svg>
       </button>
-      {isOpen && <p className="px-3 pb-3 text-md text-white">{content}</p>}
+      {isOpen && (
+        <p className="px-3 pb-3 text-md text-white whitespace-pre-wrap">
+          {content}
+        </p>
+      )}
     </div>
   );
 
