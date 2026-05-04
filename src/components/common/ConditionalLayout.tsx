@@ -21,6 +21,7 @@ const NORMAL_PAGES = [
   "/booking",
   "/form/complete",
   "/package/[id]/reviews",
+  "/my/reviews",
 ];
 
 // Footer만 필요한 페이지 목록
@@ -40,7 +41,6 @@ const HEADER_ONLY_PAGES = [
   "/package/[id]/[optionId]",
   "/booking/[id]/done",
   "/booking/[id]/confirm",
-  "/my/reviews",
   "/board/notice/[id]",
   "/board/community/[id]",
 ];
