@@ -225,6 +225,7 @@ export default function FormComplete() {
               title={t(titleKey)}
               packages={packageChunks[index]}
               onPackageClick={handlePackageClick}
+              onMoreClick={() => router.push("/recommend?tags=All")}
               firstCardPriority={index === 0}
             />
             <GapY size={20} />

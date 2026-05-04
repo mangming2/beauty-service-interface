@@ -7,6 +7,7 @@ interface PackageSectionProps {
   title: string;
   packages: Product[];
   onPackageClick?: (packageId: number) => void;
+  onMoreClick?: () => void;
   /** 첫 번째 카드가 LCP일 때 true */
   firstCardPriority?: boolean;
 }
@@ -15,6 +16,7 @@ export default function PackageSection({
   title,
   packages,
   onPackageClick,
+  onMoreClick,
   firstCardPriority = false,
 }: PackageSectionProps) {
   return (
@@ -22,11 +24,14 @@ export default function PackageSection({
       <div className="flex justify-between h-[44px]">
         <h3 className="flex items-center title-md font-medium">{title}</h3>
         <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
-          <div className="flex items-center gap-[5px]">
+          <button
+            onClick={onMoreClick}
+            className="flex items-center gap-[5px]"
+          >
             <span className="text-gray_1 text-sm">
               <TranslatedText translationKey="more" />
             </span>
-          </div>
+          </button>
         </div>
       </div>
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pr-5">
