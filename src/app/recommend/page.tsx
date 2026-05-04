@@ -1,5 +1,5 @@
 "use client";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { GapY } from "@/components/ui/gap";
 import { Badge } from "@/components/ui/badge";
@@ -118,6 +118,7 @@ function Content() {
   );
 
   const handleTagClick = (tag: string) => {
+    if (hasDragged.current) return;
     setSelectedTags(prev => {
       if (prev.includes(tag)) return [];
       return [tag];
@@ -125,6 +126,33 @@ function Content() {
   };
 
   const handlePackageClick = (id: number) => router.push(`/package/${id}`);
+
+  const tagScrollRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const hasDragged = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    hasDragged.current = false;
+    startX.current = e.pageX - (tagScrollRef.current?.offsetLeft ?? 0);
+    scrollLeft.current = tagScrollRef.current?.scrollLeft ?? 0;
+  };
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    const x = e.pageX - (tagScrollRef.current?.offsetLeft ?? 0);
+    const walk = x - startX.current;
+    if (Math.abs(walk) > 5) {
+      hasDragged.current = true;
+      e.preventDefault();
+    }
+    if (tagScrollRef.current)
+      tagScrollRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+  const handleMouseUp = () => {
+    isDragging.current = false;
+  };
 
   if (isLoading) return <PageLoading />;
 
@@ -134,7 +162,14 @@ function Content() {
 
       {/* Tags */}
       <div className="pl-5">
-        <div className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide">
+        <div
+          ref={tagScrollRef}
+          className="flex gap-1 flex-nowrap overflow-x-auto scrollbar-hide select-none cursor-grab active:cursor-grabbing"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
           {availableTags.map((tag, i) => (
             <Badge
               key={i}
