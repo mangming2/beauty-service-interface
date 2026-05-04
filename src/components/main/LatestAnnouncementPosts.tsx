@@ -3,19 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
-import {
-  ArrowRightIcon,
-  BookmarkIcon,
-  HeartIcon,
-} from "@/components/common/Icons";
+import { ArrowRightIcon } from "@/components/common/Icons";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { GapY } from "@/components/ui/gap";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { truncateAnnouncementPreview } from "@/lib/utils";
 
-function formatLikeCount(count: number): string {
-  return count >= 1000 ? "999+" : String(count);
-}
+// function formatLikeCount(count: number): string {
+//   return count >= 1000 ? "999+" : String(count);
+// }
 
 export function LatestAnnouncementPosts() {
   const { data, isLoading, isError } = useAnnouncements({ size: 3 });
@@ -103,21 +99,19 @@ export function LatestAnnouncementPosts() {
                 {/* 하단: 태그 + 좋아요/댓글 */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
-                    {/* {post.tags?.[0] ? (
                     <span className="px-2 py-0.5 bg-gray-outline text-gray-font caption-sm truncate max-w-[120px]">
-                      {post.tags[0]}
+                      조회수 {post.viewCount}
                     </span>
-                  ) : null} */}
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <span className="flex items-center gap-1 text-disabled text-sm">
+                    {/* <span className="flex items-center gap-1 text-disabled text-sm">
                       <HeartIcon color="#ff60b3" className="w-4 h-4" />
                       {formatLikeCount(post.viewCount)}
-                    </span>
-                    <span className="flex items-center gap-1 text-disabled text-sm">
+                    </span> */}
+                    {/* <span className="flex items-center gap-1 text-disabled text-sm">
                       <BookmarkIcon color="#ABA9A9" className="w-4 h-4" />
                       {post.viewCount}
-                    </span>
+                    </span> */}
                   </div>
                 </div>
               </Link>

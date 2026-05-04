@@ -10,7 +10,6 @@ export function PopularCarouselSection() {
   });
 
   if (isLoading || picks.length === 0) return null;
-  console.log("Admin picked recommendations:", picks);
   const items = picks.map(p => ({
     imageSrc: getSafeImageSrc(p.imageUrls?.[0]),
     alt: p.name,
