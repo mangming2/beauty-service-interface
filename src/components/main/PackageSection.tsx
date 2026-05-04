@@ -24,10 +24,7 @@ export default function PackageSection({
       <div className="flex justify-between h-[44px]">
         <h3 className="flex items-center title-md font-medium">{title}</h3>
         <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
-          <button
-            onClick={onMoreClick}
-            className="flex items-center gap-[5px]"
-          >
+          <button onClick={onMoreClick} className="flex items-center gap-[5px]">
             <span className="text-gray_1 text-sm">
               <TranslatedText translationKey="more" />
             </span>
