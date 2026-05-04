@@ -2,7 +2,7 @@
 
 import { useAdminPickedRecommendations } from "@/queries/useRecommendationQueries";
 import { PopularCarousel } from "@/components/main/PopularCarousel";
-import { getSafeImageSrc } from "@/lib/utils";
+import { formatHashtagList, getSafeImageSrc } from "@/lib/utils";
 
 export function PopularCarouselSection() {
   const { data: picks = [], isLoading } = useAdminPickedRecommendations({
@@ -10,12 +10,12 @@ export function PopularCarouselSection() {
   });
 
   if (isLoading || picks.length === 0) return null;
-
+  console.log("Admin picked recommendations:", picks);
   const items = picks.map(p => ({
     imageSrc: getSafeImageSrc(p.imageUrls?.[0]),
     alt: p.name,
-    tags: p.representOption?.tags?.map(t => `#${t}`).join(" ") ?? "",
-    location: p.representOption?.location ?? "",
+    tags: formatHashtagList(p.representOption?.tags),
+    title: p.name ?? "",
     href: `/package/${p.id}`,
   }));
 

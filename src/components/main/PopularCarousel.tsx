@@ -14,7 +14,7 @@ type CarouselItemType = {
   imageSrc: string;
   alt: string;
   tags: string;
-  location: string;
+  title: string;
   href?: string;
 };
 
@@ -82,7 +82,7 @@ export function PopularCarousel({ items }: PopularCarouselProps) {
                           {item.tags}
                         </p>
                         <p className="title-lg font-semibold leading-tight text-white">
-                          {item.location}
+                          {item.title}
                         </p>
                       </div>
                     </div>

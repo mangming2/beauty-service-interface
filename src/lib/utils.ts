@@ -24,6 +24,23 @@ export function getSafeImageSrc(
   return fallback;
 }
 
+export function normalizeTag(tag: string): string {
+  return tag.trim().replace(/^#+/, "");
+}
+
+export function formatHashtag(tag: string): string {
+  const normalized = normalizeTag(tag);
+  return normalized ? `#${normalized}` : "";
+}
+
+export function formatHashtagList(
+  tags: string[] | null | undefined,
+  separator = " "
+): string {
+  if (!tags?.length) return "";
+  return tags.map(formatHashtag).filter(Boolean).join(separator);
+}
+
 /** 공지 목록 등에서 본문 미리보기 한 줄 */
 export function truncateAnnouncementPreview(
   content: string | undefined,

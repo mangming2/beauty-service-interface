@@ -17,7 +17,7 @@ import { LocationIcon, ArrowRightIcon } from "@/components/common/Icons";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getSafeImageSrc } from "@/lib/utils";
+import { formatHashtagList, getSafeImageSrc } from "@/lib/utils";
 
 export default function BookingConfirmPage() {
   const params = useParams();
@@ -131,10 +131,9 @@ export default function BookingConfirmPage() {
               </span>
               {firstOption?.optionTags?.length ? (
                 <span className="text-white text-xs truncate">
-                  {(firstOption.optionTags ?? [])
-                    .slice(0, 2)
-                    .map(tag => `#${tag}`)
-                    .join(" ")}
+                  {formatHashtagList(
+                    (firstOption.optionTags ?? []).slice(0, 2)
+                  )}
                 </span>
               ) : null}
             </div>
@@ -258,10 +257,7 @@ export default function BookingConfirmPage() {
                   <div className="pt-2">
                     {opt.optionTags?.length ? (
                       <p className="text-gray-400 text-xs truncate mb-0.5">
-                        {opt.optionTags
-                          .slice(0, 2)
-                          .map(tag => `#${tag}`)
-                          .join(" ")}
+                        {formatHashtagList(opt.optionTags.slice(0, 2))}
                       </p>
                     ) : null}
                     <p className="text-white font-bold text-md truncate">
@@ -314,10 +310,7 @@ export default function BookingConfirmPage() {
                   <div className="pt-2">
                     {tags.length > 0 ? (
                       <p className="text-gray-400 text-xs truncate mb-0.5">
-                        {tags
-                          .slice(0, 2)
-                          .map(tag => `#${tag}`)
-                          .join(" ")}
+                        {formatHashtagList(tags.slice(0, 2))}
                       </p>
                     ) : null}
                     <p className="text-white font-bold text-md truncate">

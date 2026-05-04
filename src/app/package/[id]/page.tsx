@@ -25,7 +25,7 @@ import { LanguageSelector } from "../../../components/common/LanguageSelector";
 import { TranslatedText } from "../../../components/main/TranslatedText";
 import { ReviewDetail } from "@/types/api";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getSafeImageSrc } from "@/lib/utils";
+import { formatHashtagList, getSafeImageSrc } from "@/lib/utils";
 
 export default function PackageDetail() {
   const params = useParams();
@@ -227,10 +227,9 @@ export default function PackageDetail() {
                                 )}
                                 {option.optionTags?.length ? (
                                   <p className="text-white caption-md truncate">
-                                    {option.optionTags
-                                      .slice(0, 2)
-                                      .map(tag => `#${tag}`)
-                                      .join(" ")}
+                                    {formatHashtagList(
+                                      option.optionTags.slice(0, 2)
+                                    )}
                                   </p>
                                 ) : null}
                               </div>
