@@ -29,10 +29,9 @@ export type SeoulDistrict =
   | "JUNG"
   | "JUNGNANG";
 
-/** 예약 슬롯 아이템 (OptionSpecificResponse.reservationSlots) */
-export interface ReservationSlotItem {
-  reservationSlotId: number;
-  reservationDate: string;
+/** GET /options/:id/available-slots 응답 아이템 */
+export interface AvailableSlotItem {
+  hour: number;
   startTime: string;
   endTime: string;
   available: boolean;
@@ -52,13 +51,12 @@ export interface Option {
   imageUrls: string[];
   /** GET /options/:id 응답 필드 */
   categoryTagName?: string;
-  /** 예약 슬롯 (옵션 단위) */
-  slotStartDate?: string;
-  slotEndDate?: string;
-  slotStartTime?: string;
-  slotEndTime?: string;
-  reservationSlotCount?: number;
-  reservationSlots?: ReservationSlotItem[];
+  /** 예약 가능 날짜 범위 (null이면 제한 없음) */
+  slotAvailableFrom?: string | null;
+  slotAvailableUntil?: string | null;
+  /** 예약 가능 시간 범위 (시 단위, slotEndHour는 exclusive) */
+  slotStartHour?: number;
+  slotEndHour?: number;
   /** 목록 조회 시 대표 옵션 여부 */
   representOption?: boolean;
   address: string;
@@ -189,6 +187,21 @@ export async function updateOption(
     body: formData,
     requireAuth: true,
   });
+}
+
+/**
+ * 날짜별 예약 가능 슬롯 조회
+ * GET /options/:optionId/available-slots?date=YYYY-MM-DD
+ */
+export async function getAvailableSlots(
+  optionId: number,
+  date: string
+): Promise<AvailableSlotItem[]> {
+  const data = await apiGet<AvailableSlotItem[]>(
+    `/options/${optionId}/available-slots?date=${encodeURIComponent(date)}`,
+    { requireAuth: false }
+  );
+  return data ?? [];
 }
 
 /**

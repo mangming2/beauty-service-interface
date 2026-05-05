@@ -4,7 +4,9 @@ import { apiPost, apiGet, apiPut } from "@/lib/apiClient";
 
 /** 상품 예약 신청 요청 */
 export interface CreateReservationRequest {
-  reservationSlotId: number;
+  optionId: number;
+  reservationDate: string; // YYYY-MM-DD
+  startHour: number;
   totalPrice: number;
 }
 
@@ -15,8 +17,23 @@ export interface CreateReservationResponse {
 
 /** 예약 수정 요청 */
 export interface UpdateReservationRequest {
-  reservationSlotId: number;
+  optionId: number;
+  reservationDate: string; // YYYY-MM-DD
+  startHour: number;
   totalPrice: number;
+}
+
+/** 일괄 예약 생성 요청 아이템 */
+export interface BulkReservationItem {
+  optionId: number;
+  reservationDate: string; // YYYY-MM-DD
+  startHour: number;
+  totalPrice: number;
+}
+
+/** 일괄 예약 생성 요청 */
+export interface CreateBulkReservationRequest {
+  reservations: BulkReservationItem[];
 }
 
 /** 예약 수정 응답 */
@@ -92,6 +109,22 @@ export async function updateReservation(
     return data;
   } catch (error) {
     console.error("Update reservation error:", error);
+    throw error;
+  }
+}
+
+/**
+ * 일괄 예약 생성
+ * POST /products/:productId/reservations/bulk
+ */
+export async function createBulkReservation(
+  productId: number,
+  request: CreateBulkReservationRequest
+): Promise<void> {
+  try {
+    await apiPost<void>(`/products/${productId}/reservations/bulk`, request);
+  } catch (error) {
+    console.error("Create bulk reservation error:", error);
     throw error;
   }
 }

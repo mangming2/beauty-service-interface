@@ -34,7 +34,8 @@ export default function BookingConfirmPage() {
 
   const [savedDate, setSavedDate] = useState<string>("");
   const [savedTime, setSavedTime] = useState<string>("");
-  const [savedSlotId, setSavedSlotId] = useState<number | null>(null);
+  const [savedReservationDate, setSavedReservationDate] = useState<string>("");
+  const [savedStartHour, setSavedStartHour] = useState<number | null>(null);
 
   const isValidId = !isNaN(packageId) && packageId > 0;
   const { data: productDetail, isLoading } = useProductDetail(
@@ -54,18 +55,21 @@ export default function BookingConfirmPage() {
     if (date) {
       try {
         const d = new Date(date);
-        setSavedDate(
-          `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`
-        );
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        setSavedDate(`${yyyy}.${mm}.${dd}`);
+        setSavedReservationDate(`${yyyy}-${mm}-${dd}`);
       } catch {
         setSavedDate("");
+        setSavedReservationDate("");
       }
     }
     if (time) setSavedTime(time);
-    const slotId = localStorage.getItem("selectedReservationSlotId");
-    if (slotId) {
-      const parsed = parseInt(slotId, 10);
-      if (Number.isFinite(parsed) && parsed > 0) setSavedSlotId(parsed);
+    const startHour = localStorage.getItem("selectedStartHour");
+    if (startHour) {
+      const parsed = parseInt(startHour, 10);
+      if (Number.isFinite(parsed) && parsed >= 0) setSavedStartHour(parsed);
     }
   }, []);
 
@@ -337,12 +341,14 @@ export default function BookingConfirmPage() {
               router.push("/my");
               return;
             }
-            if (savedSlotId ?? resolvedOptionId) {
+            if (resolvedOptionId && savedReservationDate && savedStartHour !== null) {
               try {
                 await createReservationMutation.mutateAsync({
                   productId: packageId,
                   request: {
-                    reservationSlotId: savedSlotId ?? resolvedOptionId!,
+                    optionId: resolvedOptionId,
+                    reservationDate: savedReservationDate,
+                    startHour: savedStartHour,
                     totalPrice: currentOption.price,
                   },
                 });

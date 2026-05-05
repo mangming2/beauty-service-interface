@@ -2,11 +2,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getOptions,
   getOptionDetail,
+  getAvailableSlots,
   createOption,
   updateOption,
   deleteOption,
   type Option,
   type OptionCatalogItem,
+  type AvailableSlotItem,
   type CreateOptionRequest,
 } from "@/api/option";
 import { productKeys } from "./useProductQueries";
@@ -20,6 +22,8 @@ export const optionKeys = {
   list: (tag?: string) => [...optionKeys.lists(), { tag }] as const,
   details: () => [...optionKeys.all, "detail"] as const,
   detail: (id: number) => [...optionKeys.details(), id] as const,
+  availableSlots: (id: number, date: string) =>
+    [...optionKeys.details(), id, "available-slots", date] as const,
 } as const;
 
 function retryUnless401(failureCount: number, error: unknown): boolean {
@@ -55,6 +59,30 @@ export function useOptionDetail(optionId: number | undefined) {
     queryFn: () => getOptionDetail(optionId!),
     enabled,
     staleTime: 5 * 60 * 1000,
+    retry: retryUnless401,
+  });
+}
+
+/**
+ * 날짜별 예약 가능 슬롯 조회
+ * GET /options/:optionId/available-slots?date=YYYY-MM-DD
+ */
+export function useAvailableSlots(
+  optionId: number | undefined,
+  date: string | undefined
+) {
+  const enabled =
+    typeof optionId === "number" &&
+    Number.isFinite(optionId) &&
+    optionId > 0 &&
+    typeof date === "string" &&
+    date.length > 0;
+
+  return useQuery<AvailableSlotItem[]>({
+    queryKey: optionKeys.availableSlots(optionId!, date!),
+    queryFn: () => getAvailableSlots(optionId!, date!),
+    enabled,
+    staleTime: 60 * 1000,
     retry: retryUnless401,
   });
 }

@@ -23,7 +23,9 @@ export function AdminReservationsPanel() {
   >();
 
   const [editOpen, setEditOpen] = useState(false);
-  const [editSlotId, setEditSlotId] = useState("");
+  const [editOptionId, setEditOptionId] = useState("");
+  const [editReservationDate, setEditReservationDate] = useState("");
+  const [editStartHour, setEditStartHour] = useState("");
   const [editTotalPrice, setEditTotalPrice] = useState("");
 
   const {
@@ -52,7 +54,9 @@ export function AdminReservationsPanel() {
   };
 
   const openEditDialog = () => {
-    setEditSlotId("");
+    setEditOptionId(reservation?.option.id?.toString() ?? "");
+    setEditReservationDate(reservation?.visitDate ?? "");
+    setEditStartHour("");
     setEditTotalPrice(reservation?.option.price?.toString() ?? "");
     setEditOpen(true);
   };
@@ -60,10 +64,19 @@ export function AdminReservationsPanel() {
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchProductId || !searchReservationId) return;
-    const slotId = parseInt(editSlotId.trim(), 10);
+    const optId = parseInt(editOptionId.trim(), 10);
+    const hour = parseInt(editStartHour.trim(), 10);
     const price = parseFloat(editTotalPrice.trim());
-    if (!Number.isFinite(slotId) || slotId <= 0) {
-      alert("올바른 슬롯 ID를 입력하세요.");
+    if (!Number.isFinite(optId) || optId <= 0) {
+      alert("올바른 옵션 ID를 입력하세요.");
+      return;
+    }
+    if (!editReservationDate.trim()) {
+      alert("날짜를 입력하세요 (YYYY-MM-DD).");
+      return;
+    }
+    if (!Number.isFinite(hour) || hour < 0 || hour > 23) {
+      alert("올바른 시작 시간(0~23)을 입력하세요.");
       return;
     }
     if (!Number.isFinite(price) || price <= 0) {
@@ -74,7 +87,12 @@ export function AdminReservationsPanel() {
       {
         productId: searchProductId,
         reservationId: searchReservationId,
-        request: { reservationSlotId: slotId, totalPrice: price },
+        request: {
+          optionId: optId,
+          reservationDate: editReservationDate.trim(),
+          startHour: hour,
+          totalPrice: price,
+        },
       },
       {
         onSuccess: () => {
@@ -189,15 +207,41 @@ export function AdminReservationsPanel() {
           <form onSubmit={handleUpdate} className="space-y-4">
             <div>
               <label className="block text-sm text-gray-400 mb-1">
-                변경할 슬롯 ID
+                옵션 ID
               </label>
               <input
                 type="number"
                 min={1}
-                value={editSlotId}
-                onChange={e => setEditSlotId(e.target.value)}
+                value={editOptionId}
+                onChange={e => setEditOptionId(e.target.value)}
                 className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600 text-sm"
-                placeholder="예: 6"
+                placeholder="예: 1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">
+                예약 날짜 (YYYY-MM-DD)
+              </label>
+              <input
+                type="text"
+                value={editReservationDate}
+                onChange={e => setEditReservationDate(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600 text-sm"
+                placeholder="예: 2026-06-20"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">
+                시작 시간 (0~23)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={23}
+                value={editStartHour}
+                onChange={e => setEditStartHour(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600 text-sm"
+                placeholder="예: 14"
               />
             </div>
             <div>

@@ -373,12 +373,7 @@ export function OptionFormFields({
 export function optionToCreateRequest(
   o: import("@/api/option").Option
 ): CreateOptionRequest {
-  const parseHour = (t: string | undefined, fallback: number) => {
-    if (!t) return fallback;
-    const h = Number.parseInt(t.slice(0, 2), 10);
-    return Number.isFinite(h) ? h : fallback;
-  };
-  const dateOnly = (d: string | undefined) => {
+  const dateOnly = (d: string | null | undefined) => {
     if (!d) return undefined;
     return d.length >= 10 ? d.slice(0, 10) : d;
   };
@@ -388,10 +383,9 @@ export function optionToCreateRequest(
     .toISOString()
     .slice(0, 10);
 
-  const rawStart = dateOnly(o.slotStartDate);
-  const rawEnd = dateOnly(o.slotEndDate);
+  const rawStart = dateOnly(o.slotAvailableFrom);
+  const rawEnd = dateOnly(o.slotAvailableUntil);
 
-  // 과거 날짜면 오늘/1년 후로 대체 (백엔드가 과거 슬롯 생성 거부)
   const slotStartDate = rawStart && rawStart >= today ? rawStart : today;
   const slotEndDate = rawEnd && rawEnd > slotStartDate ? rawEnd : nextYear;
 
@@ -404,10 +398,8 @@ export function optionToCreateRequest(
     district: o.district,
     slotStartDate,
     slotEndDate,
-    slotStartHour: clampSlotHour(
-      parseHour(o.slotStartTime, OPTION_SLOT_HOUR_MIN)
-    ),
-    slotEndHour: clampSlotHour(parseHour(o.slotEndTime, OPTION_SLOT_HOUR_MAX)),
+    slotStartHour: clampSlotHour(o.slotStartHour ?? OPTION_SLOT_HOUR_MIN),
+    slotEndHour: clampSlotHour(o.slotEndHour ?? OPTION_SLOT_HOUR_MAX),
     discountRate: o.discountRate,
     bookingGuide: o.bookingGuide ?? "",
     regularClosingDay: o.regularClosingDay,

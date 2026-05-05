@@ -9,7 +9,7 @@ import { ChevronLeftIcon, ChevronRightIcon, Check } from "lucide-react";
 import { dummyLink } from "@/constants";
 import Image from "next/image";
 import { Divider } from "@/components/ui/divider";
-import { useOptionDetail } from "@/queries/useOptionQueries";
+import { useOptionDetail, useAvailableSlots } from "@/queries/useOptionQueries";
 import { useCreateSchedule } from "@/queries/useScheduleQueries";
 import { notFound } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -39,7 +39,7 @@ export default function PackageOptionBookingPage() {
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
+  const [selectedHour, setSelectedHour] = useState<number | null>(null);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
   const [isAddressOpen, setIsAddressOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
@@ -49,15 +49,15 @@ export default function PackageOptionBookingPage() {
   // 날짜 변경 시 시간 선택 초기화
   useEffect(() => {
     setSelectedTime("");
-    setSelectedSlotId(null);
+    setSelectedHour(null);
   }, [selectedDate]);
 
   useEffect(() => {
-    const startDate = optionDetail?.slotStartDate
-      ? toDateOnly(new Date(optionDetail.slotStartDate))
+    const startDate = optionDetail?.slotAvailableFrom
+      ? toDateOnly(new Date(optionDetail.slotAvailableFrom))
       : undefined;
-    const endDate = optionDetail?.slotEndDate
-      ? toDateOnly(new Date(optionDetail.slotEndDate))
+    const endDate = optionDetail?.slotAvailableUntil
+      ? toDateOnly(new Date(optionDetail.slotAvailableUntil))
       : undefined;
     if (!startDate) return;
 
@@ -76,30 +76,23 @@ export default function PackageOptionBookingPage() {
       if (endMonth && prevMonth > endMonth) return startMonth;
       return prev;
     });
-  }, [optionDetail?.slotStartDate, optionDetail?.slotEndDate]);
+  }, [optionDetail?.slotAvailableFrom, optionDetail?.slotAvailableUntil]);
 
-  // reservationSlots[]이 있으면 선택한 날짜의 가용 슬롯만 표시
-  // 없으면 slotStartTime~slotEndTime 범위로 폴백
+  const dateStr = selectedDate ? format(selectedDate, "yyyy-MM-dd") : undefined;
+  const { data: availableSlots = [] } = useAvailableSlots(
+    resolvedOptionId,
+    dateStr
+  );
+
   const timeSlots = useMemo(() => {
-    if (!optionDetail) return [];
-    if (selectedDate && optionDetail.reservationSlots?.length) {
-      const dateStr = format(selectedDate, "yyyy-MM-dd");
-      return optionDetail.reservationSlots
-        .filter(s => s.reservationDate === dateStr && s.available)
-        .map(s => ({
-          time: s.startTime.slice(0, 5),
-          slotId: s.reservationSlotId,
-        }));
-    }
-    // 폴백: 시간 범위 기반
-    const startHour = Number(optionDetail.slotStartTime?.slice(0, 2));
-    const endHour = Number(optionDetail.slotEndTime?.slice(0, 2));
-    if (!Number.isFinite(startHour) || !Number.isFinite(endHour)) return [];
-    return Array.from({ length: Math.max(endHour - startHour, 0) }, (_, i) => ({
-      time: `${String(startHour + i).padStart(2, "0")}:00`,
-      slotId: null,
-    }));
-  }, [selectedDate, optionDetail]);
+    if (!selectedDate) return [];
+    return availableSlots
+      .filter(s => s.available)
+      .map(s => ({
+        time: s.startTime.slice(0, 5),
+        hour: s.hour,
+      }));
+  }, [selectedDate, availableSlots]);
 
   if (!isValidPackageId || !isValidOptionId) {
     notFound();
@@ -123,11 +116,11 @@ export default function PackageOptionBookingPage() {
     currentOption.imageUrls?.[0] ?? PLACEHOLDER_IMAGE
   );
 
-  const slotStartDate = currentOption.slotStartDate
-    ? toDateOnly(new Date(currentOption.slotStartDate))
+  const slotStartDate = currentOption.slotAvailableFrom
+    ? toDateOnly(new Date(currentOption.slotAvailableFrom))
     : undefined;
-  const slotEndDate = currentOption.slotEndDate
-    ? toDateOnly(new Date(currentOption.slotEndDate))
+  const slotEndDate = currentOption.slotAvailableUntil
+    ? toDateOnly(new Date(currentOption.slotAvailableUntil))
     : undefined;
 
   const handleBookLink = () => {
@@ -137,8 +130,8 @@ export default function PackageOptionBookingPage() {
     if (selectedTime) {
       localStorage.setItem("selectedBookingTime", selectedTime);
     }
-    if (selectedSlotId !== null) {
-      localStorage.setItem("selectedReservationSlotId", String(selectedSlotId));
+    if (selectedHour !== null) {
+      localStorage.setItem("selectedStartHour", String(selectedHour));
     }
     window.open(dummyLink, "_blank");
   };
@@ -158,13 +151,8 @@ export default function PackageOptionBookingPage() {
     const startAt = new Date(selectedDate);
     startAt.setHours(hour, minute, 0, 0);
 
-    const slotCount =
-      Number.isFinite(currentOption.reservationSlotCount) &&
-      (currentOption.reservationSlotCount ?? 0) > 0
-        ? currentOption.reservationSlotCount!
-        : 1;
     const endAt = new Date(startAt);
-    endAt.setHours(endAt.getHours() + slotCount);
+    endAt.setHours(endAt.getHours() + 1);
 
     try {
       await createScheduleMutation.mutateAsync({
@@ -185,8 +173,8 @@ export default function PackageOptionBookingPage() {
     if (selectedTime) {
       localStorage.setItem("selectedBookingTime", selectedTime);
     }
-    if (selectedSlotId !== null) {
-      localStorage.setItem("selectedReservationSlotId", String(selectedSlotId));
+    if (selectedHour !== null) {
+      localStorage.setItem("selectedStartHour", String(selectedHour));
     }
     router.push(`/booking/${packageId}/done?optionId=${resolvedOptionId}`);
   };
@@ -354,7 +342,7 @@ export default function PackageOptionBookingPage() {
                       setCurrentMonth(prev => addMonths(prev, -1));
                       setSelectedDate(undefined);
                       setSelectedTime("");
-                      setSelectedSlotId(null);
+                      setSelectedHour(null);
                     }}
                     className={`${canGoPrev ? "text-gray-300 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
                     disabled={!canGoPrev}
@@ -371,7 +359,7 @@ export default function PackageOptionBookingPage() {
                       setCurrentMonth(prev => addMonths(prev, 1));
                       setSelectedDate(undefined);
                       setSelectedTime("");
-                      setSelectedSlotId(null);
+                      setSelectedHour(null);
                     }}
                     className={`${canGoNext ? "text-gray-300 hover:text-white" : "text-gray-600 cursor-not-allowed"}`}
                     disabled={!canGoNext}
@@ -421,7 +409,7 @@ export default function PackageOptionBookingPage() {
               const isSelected = selectedTime === slot.time;
               return (
                 <Button
-                  key={slot.slotId ?? slot.time}
+                  key={slot.hour}
                   type="button"
                   variant="ghost"
                   className={`text-base h-10 border-none rounded-[4px] ${
@@ -431,7 +419,7 @@ export default function PackageOptionBookingPage() {
                   }`}
                   onClick={() => {
                     setSelectedTime(slot.time);
-                    setSelectedSlotId(slot.slotId);
+                    setSelectedHour(slot.hour);
                   }}
                 >
                   {slot.time}
