@@ -14,12 +14,15 @@ import {
   useTestLogin,
 } from "@/queries/useTestQueries";
 import { useTranslation } from "@/hooks/useTranslation";
+import { isInAppBrowser, openInExternalBrowser } from "@/lib/inAppBrowser";
 
 const isDev = process.env.NODE_ENV === "development";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [isHydrated, setIsHydrated] = useState(false);
+  const [inAppBrowser, setInAppBrowser] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [testSeed, setTestSeed] = useState("fe-qa-001");
   const [testAdminSeed, setTestAdminSeed] = useState("fe-admin-001");
   const [testEmail, setTestEmail] = useState("");
@@ -34,6 +37,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     setIsHydrated(true);
+    setInAppBrowser(isInAppBrowser());
   }, []);
 
   useEffect(() => {
@@ -47,11 +51,25 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = async () => {
+    if (inAppBrowser) {
+      openInExternalBrowser(window.location.href);
+      return;
+    }
     try {
       setMessage("");
       await googleLoginMutation.mutateAsync();
     } catch (error: unknown) {
       setMessage((error as Error)?.message || t("login.loginError"));
+    }
+  };
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setMessage("URL 복사에 실패했습니다. 주소창에서 직접 복사해 주세요.");
     }
   };
 
@@ -105,6 +123,26 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-[200px] text-center p-[12px]">
+        {inAppBrowser && (
+          <div className="mb-6 mx-auto max-w-[300px] rounded-xl bg-[#2E3033] border border-yellow-500/40 p-4 text-left">
+            <p className="text-yellow-400 text-sm font-semibold mb-1">
+              앱 내 브라우저 감지됨
+            </p>
+            <p className="text-gray-300 text-xs leading-relaxed mb-3">
+              현재 환경에서는 Google 로그인이 차단됩니다.
+              <br />
+              Safari 또는 Chrome에서 열어 주세요.
+            </p>
+            <button
+              type="button"
+              onClick={handleCopyUrl}
+              className="w-full py-2 rounded-lg bg-yellow-500/20 text-yellow-300 text-xs font-medium hover:bg-yellow-500/30 transition-colors"
+            >
+              {copied ? "복사됨!" : "현재 주소 복사하기"}
+            </button>
+          </div>
+        )}
+
         <div className="text-center">
           <p className="h-[24px] text-disabled text-md">
             {t("login.socialLogin")}
@@ -115,6 +153,9 @@ export default function LoginPage() {
               onClick={handleGoogleLogin}
               disabled={googleLoginMutation.isPending}
               className="w-[40px] h-[40px] bg-white rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title={
+                inAppBrowser ? "외부 브라우저에서 열기" : "Google로 로그인"
+              }
             >
               {googleLoginMutation.isPending ? (
                 <div className="w-[24px] h-[24px] border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -123,6 +164,11 @@ export default function LoginPage() {
               )}
             </button>
           </div>
+          {inAppBrowser && (
+            <p className="mt-3 text-xs text-yellow-400">
+              버튼을 누르면 외부 브라우저 열기를 시도합니다
+            </p>
+          )}
         </div>
 
         <GapY size={17} />
