@@ -78,6 +78,15 @@ export function TourSurveyExperience({ formId }: { formId: number }) {
     Boolean(recommendation)
   );
 
+  const mergedRecommendation = useMemo(() => {
+    if (!recommendation) return null;
+    const shareAttractions = sharePayload?.attractions ?? [];
+    const resultAttractions = recommendation.attractions ?? [];
+    const attractions =
+      shareAttractions.length > 0 ? shareAttractions : resultAttractions;
+    return { ...recommendation, attractions };
+  }, [recommendation, sharePayload]);
+
   const questions = useMemo(
     () => (form ? sortQuestions(form.questions) : []),
     [form]
@@ -214,10 +223,10 @@ export function TourSurveyExperience({ formId }: { formId: number }) {
     );
   }
 
-  if (recommendation) {
+  if (mergedRecommendation) {
     return (
       <TourSurveyResultView
-        recommendation={recommendation}
+        recommendation={mergedRecommendation}
         sharePayload={sharePayload}
         onRestart={resetSurvey}
       />

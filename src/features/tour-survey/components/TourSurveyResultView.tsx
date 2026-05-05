@@ -5,6 +5,8 @@ import Link from "next/link";
 import {
   ArrowLeft,
   Camera,
+  ChevronDown,
+  ChevronUp,
   Copy,
   ExternalLink,
   MapPin,
@@ -74,6 +76,9 @@ export function TourSurveyResultView({
   showBackLink = false,
 }: TourSurveyResultViewProps) {
   const [shareMessage, setShareMessage] = useState("");
+  const [showAllAttractions, setShowAllAttractions] = useState(false);
+
+  const ATTRACTION_PREVIEW = 3;
 
   const shareText = useMemo(
     () => buildShareText(recommendation, sharePayload),
@@ -239,9 +244,15 @@ export function TourSurveyResultView({
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-pink-200" />
                   <h2 className="text-base font-semibold">추천 관광지</h2>
+                  <span className="ml-auto rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-gray-400">
+                    {recommendation.attractions.length}곳
+                  </span>
                 </div>
                 <div className="mt-3 grid gap-3">
-                  {recommendation.attractions.map(attraction => (
+                  {(showAllAttractions
+                    ? recommendation.attractions
+                    : recommendation.attractions.slice(0, ATTRACTION_PREVIEW)
+                  ).map(attraction => (
                     <article
                       key={attraction.attractionCode}
                       className="rounded-[20px] border border-white/10 bg-white/[0.04] p-4"
@@ -272,6 +283,27 @@ export function TourSurveyResultView({
                     </article>
                   ))}
                 </div>
+                {recommendation.attractions.length > ATTRACTION_PREVIEW && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllAttractions(prev => !prev)}
+                    className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-[18px] border border-white/10 bg-white/[0.03] py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/[0.07]"
+                  >
+                    {showAllAttractions ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        접기
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        전체 보기 (
+                        {recommendation.attractions.length - ATTRACTION_PREVIEW}
+                        개 더)
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
 
