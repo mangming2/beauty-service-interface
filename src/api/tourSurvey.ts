@@ -155,6 +155,7 @@ export interface TourSurveySharePayload {
   capture: TourSurveyCapturePayload;
   shareText: string;
   hashtags: string[];
+  attractions?: TourSurveyRecommendedAttraction[];
   meta: TourSurveyShareMeta;
   deepLinkPath: string;
 }

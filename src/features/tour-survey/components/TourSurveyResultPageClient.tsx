@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { PageLoading } from "@/components/common";
@@ -42,11 +43,21 @@ export function TourSurveyResultPageClient({
     Boolean(recommendation)
   );
 
+  // share-payload의 attractions을 fallback으로 사용
+  const mergedRecommendation = useMemo(() => {
+    if (!recommendation) return null;
+    const resultAttractions = recommendation.attractions ?? [];
+    const shareAttractions = sharePayload?.attractions ?? [];
+    const attractions =
+      resultAttractions.length > 0 ? resultAttractions : shareAttractions;
+    return { ...recommendation, attractions };
+  }, [recommendation, sharePayload]);
+
   if (isLoading) {
     return <PageLoading message="설문 결과를 불러오는 중..." />;
   }
 
-  if (error || !recommendation) {
+  if (error || !mergedRecommendation) {
     return (
       <div className="min-h-screen bg-[#101319] px-4 py-12 text-white">
         <div className="mx-auto max-w-[412px] rounded-[24px] border border-red-300/20 bg-red-500/10 p-5">
@@ -73,7 +84,7 @@ export function TourSurveyResultPageClient({
 
   return (
     <TourSurveyResultView
-      recommendation={recommendation}
+      recommendation={mergedRecommendation}
       sharePayload={sharePayload}
       showBackLink
     />
