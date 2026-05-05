@@ -35,21 +35,23 @@ export function TourSurveyResultPageClient({
 }: TourSurveyResultPageClientProps) {
   const {
     data: recommendation,
-    isLoading,
+    isLoading: isRecoLoading,
     error,
   } = useTourSurveyRecommendation(submissionId);
-  const { data: sharePayload } = useTourSurveySharePayload(
-    submissionId,
-    Boolean(recommendation)
-  );
 
-  // share-payload의 attractions을 fallback으로 사용
+  // recommendation과 병렬 로드 — attractions 소스
+  const { data: sharePayload, isLoading: isShareLoading } =
+    useTourSurveySharePayload(submissionId);
+
+  const isLoading = isRecoLoading || isShareLoading;
+
+  // share-payload의 attractions을 우선 사용, 없으면 result의 attractions 사용
   const mergedRecommendation = useMemo(() => {
     if (!recommendation) return null;
-    const resultAttractions = recommendation.attractions ?? [];
     const shareAttractions = sharePayload?.attractions ?? [];
+    const resultAttractions = recommendation.attractions ?? [];
     const attractions =
-      resultAttractions.length > 0 ? resultAttractions : shareAttractions;
+      shareAttractions.length > 0 ? shareAttractions : resultAttractions;
     return { ...recommendation, attractions };
   }, [recommendation, sharePayload]);
 
