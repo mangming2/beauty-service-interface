@@ -341,7 +341,11 @@ export default function BookingConfirmPage() {
               router.push("/my");
               return;
             }
-            if (resolvedOptionId && savedReservationDate && savedStartHour !== null) {
+            if (
+              resolvedOptionId &&
+              savedReservationDate &&
+              savedStartHour !== null
+            ) {
               try {
                 await createReservationMutation.mutateAsync({
                   productId: packageId,
