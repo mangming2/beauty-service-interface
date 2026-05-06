@@ -1,6 +1,5 @@
 import { useAuthStore } from "@/store/useAuthStore";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"; // ✏️ 마지막 슬래시 제거
+import { API_BASE_URL } from "@/constants";
 
 export interface ApiError {
   message: string;

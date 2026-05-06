@@ -50,8 +50,8 @@ export default function BookingConfirmPage() {
   const createReservationMutation = useCreateReservation();
 
   useEffect(() => {
-    const date = localStorage.getItem("selectedBookingDate");
-    const time = localStorage.getItem("selectedBookingTime");
+    const date = sessionStorage.getItem("selectedBookingDate");
+    const time = sessionStorage.getItem("selectedBookingTime");
     if (date) {
       try {
         const d = new Date(date);
@@ -66,7 +66,7 @@ export default function BookingConfirmPage() {
       }
     }
     if (time) setSavedTime(time);
-    const startHour = localStorage.getItem("selectedStartHour");
+    const startHour = sessionStorage.getItem("selectedStartHour");
     if (startHour) {
       const parsed = parseInt(startHour, 10);
       if (Number.isFinite(parsed) && parsed >= 0) setSavedStartHour(parsed);

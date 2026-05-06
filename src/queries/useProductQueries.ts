@@ -181,7 +181,7 @@ export function useCreateProduct() {
   return useMutation<CreateProductResponse, Error, CreateProductParams>({
     mutationFn: ({ request, images }) => createProduct(request, images),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
     },
   });
 }
@@ -198,7 +198,7 @@ export function useUpdateProduct() {
     mutationFn: ({ productId, request, images }) =>
       updateProduct(productId, request, images),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: productKeys.all });
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
       queryClient.invalidateQueries({
         queryKey: productKeys.detail(variables.productId),
       });

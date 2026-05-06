@@ -48,7 +48,6 @@ export interface UpdateProfileRequest {
   birth_date?: string;
   avatar_src?: string;
   updated_at: string;
-  [key: string]: unknown; // 추가 필드 허용
 }
 
 // ========== Form API Types ==========

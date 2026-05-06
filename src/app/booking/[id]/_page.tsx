@@ -33,8 +33,8 @@ export default function BookingPage() {
   const [selectedTime, setSelectedTime] = useState<string>("");
 
   useEffect(() => {
-    const savedDate = localStorage.getItem("selectedBookingDate");
-    const savedTime = localStorage.getItem("selectedBookingTime");
+    const savedDate = sessionStorage.getItem("selectedBookingDate");
+    const savedTime = sessionStorage.getItem("selectedBookingTime");
 
     if (savedDate) {
       setSelectedDate(format(new Date(savedDate), "yyyy.MM.dd"));

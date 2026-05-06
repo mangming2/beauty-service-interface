@@ -1,6 +1,5 @@
 import { apiGet, apiPost } from "@/lib/apiClient";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+import { API_BASE_URL } from "@/constants";
 
 // ========== 타입 정의 ==========
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useHydration } from "@/hooks/useHydration";
 import { useRouter } from "next/navigation";
 import MainLogo from "../../../public/main-logo.png";
 import { GoogleIcon } from "@/components/common/Icons";
@@ -20,7 +21,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
-  const [isHydrated, setIsHydrated] = useState(false);
+  const isHydrated = useHydration();
   const [inAppBrowser, setInAppBrowser] = useState(false);
   const [copied, setCopied] = useState(false);
   const [testSeed, setTestSeed] = useState("fe-qa-001");
@@ -36,7 +37,6 @@ export default function LoginPage() {
   const testLoginMutation = useTestLogin();
 
   useEffect(() => {
-    setIsHydrated(true);
     setInAppBrowser(isInAppBrowser());
   }, []);
 
@@ -59,7 +59,9 @@ export default function LoginPage() {
       setMessage("");
       await googleLoginMutation.mutateAsync();
     } catch (error: unknown) {
-      setMessage((error as Error)?.message || t("login.loginError"));
+      setMessage(
+        error instanceof Error ? error.message : t("login.loginError")
+      );
     }
   };
 

@@ -53,7 +53,9 @@ export function useTestSignup() {
     mutationFn: async (seed: string) => testSignup(seed),
     onSuccess: () => {},
     onError: error => {
-      console.error("❌ 테스트 회원가입 실패:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("❌ 테스트 회원가입 실패:", error);
+      }
     },
   });
 }
@@ -65,7 +67,9 @@ export function useTestSignupAdmin() {
     mutationFn: async (seed: string) => testSignupAdmin(seed),
     onSuccess: () => {},
     onError: error => {
-      console.error("❌ 테스트 관리자 회원가입 실패:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("❌ 테스트 관리자 회원가입 실패:", error);
+      }
     },
   });
 }
@@ -92,7 +96,9 @@ export function useTestLogin() {
       router.push("/my");
     },
     onError: error => {
-      console.error("❌ 테스트 로그인 실패:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("❌ 테스트 로그인 실패:", error);
+      }
     },
   });
 }

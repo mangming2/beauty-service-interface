@@ -125,13 +125,13 @@ export default function PackageOptionBookingPage() {
 
   const handleBookLink = () => {
     if (selectedDate) {
-      localStorage.setItem("selectedBookingDate", selectedDate.toISOString());
+      sessionStorage.setItem("selectedBookingDate", selectedDate.toISOString());
     }
     if (selectedTime) {
-      localStorage.setItem("selectedBookingTime", selectedTime);
+      sessionStorage.setItem("selectedBookingTime", selectedTime);
     }
     if (selectedHour !== null) {
-      localStorage.setItem("selectedStartHour", String(selectedHour));
+      sessionStorage.setItem("selectedStartHour", String(selectedHour));
     }
     window.open(dummyLink, "_blank");
   };
@@ -162,19 +162,21 @@ export default function PackageOptionBookingPage() {
         endAt: endAt.toISOString(),
       });
     } catch (error) {
-      console.error("일정 생성 실패:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("일정 생성 실패:", error);
+      }
       alert(t("option.scheduleCreateFailed"));
       return;
     }
 
     if (selectedDate) {
-      localStorage.setItem("selectedBookingDate", selectedDate.toISOString());
+      sessionStorage.setItem("selectedBookingDate", selectedDate.toISOString());
     }
     if (selectedTime) {
-      localStorage.setItem("selectedBookingTime", selectedTime);
+      sessionStorage.setItem("selectedBookingTime", selectedTime);
     }
     if (selectedHour !== null) {
-      localStorage.setItem("selectedStartHour", String(selectedHour));
+      sessionStorage.setItem("selectedStartHour", String(selectedHour));
     }
     router.push(`/booking/${packageId}/done?optionId=${resolvedOptionId}`);
   };

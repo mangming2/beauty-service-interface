@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PageLoading } from "@/components/common";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useHydration } from "@/hooks/useHydration";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -12,15 +13,10 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
-  const [isHydrated, setIsHydrated] = useState(false);
+  const isHydrated = useHydration();
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const router = useRouter();
   const { t } = useTranslation();
-
-  // hydration 완료 체크
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
 
   // 비로그인 시 리다이렉트
   useEffect(() => {
