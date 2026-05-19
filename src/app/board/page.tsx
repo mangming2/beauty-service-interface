@@ -205,7 +205,8 @@ function CommunityTab() {
       {/* FAB - write post button */}
       <button
         onClick={() => router.push("/board/community/write")}
-        className="fixed bottom-[80px] right-4 w-14 h-14 rounded-full bg-pink-font flex items-center justify-center shadow-lg z-10"
+        className="fixed bottom-[80px] w-14 h-14 rounded-full bg-pink-font flex items-center justify-center shadow-lg z-10"
+        style={{ right: "max(16px, calc(50vw - 190px))" }}
         aria-label={t("communityPage.writePost")}
       >
         <EditIcon color="white" width={22} height={22} />
