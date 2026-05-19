@@ -18,6 +18,8 @@ const isPackageReviewsPath = (path: string) =>
   /^\/package\/[^/]+\/reviews$/.test(path);
 const isBoardNoticeDetailPath = (path: string) =>
   /^\/board\/notice\/[^/]+$/.test(path);
+const isBoardCommunityDetailPath = (path: string) =>
+  /^\/board\/community\/[^/]+$/.test(path) && !path.endsWith("/write");
 
 export function ProtectedLayout({ children }: ProtectedLayoutProps) {
   const pathname = usePathname();
@@ -27,6 +29,7 @@ export function ProtectedLayout({ children }: ProtectedLayoutProps) {
     isPackageDetailPath(pathname) ||
     isPackageReviewsPath(pathname) ||
     isBoardNoticeDetailPath(pathname) ||
+    isBoardCommunityDetailPath(pathname) ||
     (isDev && pathname.startsWith("/dev/"));
 
   if (isPublicPage) {

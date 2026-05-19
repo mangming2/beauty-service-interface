@@ -145,7 +145,7 @@ export async function getPopularPosts(
   try {
     const url = `${POSTS}/popular?size=${size}`;
     const data = await apiGet<CommunityPostListItem[]>(url, {
-      requireAuth: false,
+      optionalAuth: true,
     });
     return data ?? [];
   } catch (error) {
@@ -163,7 +163,7 @@ export async function getCommunityPostDetail(
 ): Promise<CommunityPostDetail | null> {
   try {
     const data = await apiGet<CommunityPostDetail>(`${POSTS}/${postId}`, {
-      requireAuth: false,
+      optionalAuth: true,
     });
     return data ?? null;
   } catch (error: unknown) {
@@ -291,7 +291,7 @@ export async function getPostComments(
   try {
     const data = await apiGet<CommunityComment[]>(
       `${POSTS}/${postId}/comments`,
-      { requireAuth: false }
+      { optionalAuth: true }
     );
     return data ?? [];
   } catch (error) {
@@ -348,7 +348,7 @@ export async function deletePostComment(
 export async function getCommunityTags(): Promise<CommunityTag[]> {
   try {
     const data = await apiGet<CommunityTag[]>(`${BASE}/tags`, {
-      requireAuth: false,
+      optionalAuth: true,
     });
     return data ?? [];
   } catch (error) {
