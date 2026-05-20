@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthValidator, ConditionalLayout } from "@/components/common";
+import { AuthValidator, ConditionalLayout, WebVitals } from "@/components/common";
 import { QueryProvider } from "@/providers";
 
 const geistSans = Geist({
@@ -90,6 +90,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         </noscript>
         {/* End Google Tag Manager (noscript) */}
+        <WebVitals />
         <QueryProvider>
           <AuthValidator>
             <ConditionalLayout>{children}</ConditionalLayout>

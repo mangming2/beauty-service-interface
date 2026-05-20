@@ -11,6 +11,7 @@ export { LanguageSelector } from "./LanguageSelector";
 export { SeoulMap } from "./SeoulMap";
 export { default as KakaoMap } from "./KakaoMap";
 export { PageError } from "./PageError";
+export { WebVitals } from "./WebVitals";
 export {
   Loading,
   PageLoading,
