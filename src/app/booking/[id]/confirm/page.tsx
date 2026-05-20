@@ -74,7 +74,7 @@ export default function BookingConfirmPage() {
     }
 
     gtag.reservationView(packageId, optionIdFromQuery || undefined);
-  }, []);
+  }, [packageId, optionIdFromQuery]);
 
   if (!isValidId) {
     notFound();
