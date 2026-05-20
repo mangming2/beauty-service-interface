@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { SearchIcon } from "@/components/common/Icons";
 import { useInfiniteProducts } from "@/queries/useProductQueries";
 import { TrendCard } from "@/components/main/TrendCard";
@@ -8,6 +8,7 @@ import { Divider } from "@/components/ui/divider";
 import { PageLoading } from "@/components/common";
 import type { Product } from "@/api/product";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 const PAGE_SIZE = 50;
 
@@ -24,6 +25,7 @@ function filterProductsByQuery(products: Product[], query: string): Product[] {
 export default function SearchPage() {
   const [searchText, setSearchText] = useState("");
   const { t } = useTranslation();
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const {
     data,
     isLoading,
@@ -66,7 +68,16 @@ export default function SearchPage() {
             type="search"
             placeholder={t("search.searchPlaceholder")}
             value={searchText}
-            onChange={e => setSearchText(e.target.value)}
+            onChange={e => {
+              const value = e.target.value;
+              setSearchText(value);
+              if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+              if (value.trim()) {
+                searchTimerRef.current = setTimeout(() => {
+                  gtag.searchPerformed(value.trim());
+                }, 800);
+              }
+            }}
             className="flex-1 bg-transparent text-white placeholder:text-gray-400 text-md outline-none min-w-0"
             aria-label={t("common.search")}
           />

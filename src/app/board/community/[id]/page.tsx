@@ -20,6 +20,7 @@ import {
 } from "@/components/common/Icons";
 import { format } from "date-fns";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 // TODO: Backend doesn't support nested replies - comments are displayed flat
 
@@ -65,6 +66,7 @@ export default function CommunityDetailPage() {
 
   function handleLike() {
     if (!postId || toggleLike.isPending) return;
+    gtag.postLike(postId);
     toggleLike.mutate(postId, {
       onSuccess: res => {
         setLikeCount(res.isLiked ? displayLikeCount + 1 : displayLikeCount - 1);
@@ -88,7 +90,12 @@ export default function CommunityDetailPage() {
     if (!content || !postId || createComment.isPending) return;
     createComment.mutate(
       { postId, body: { content } },
-      { onSuccess: () => setCommentText("") }
+      {
+        onSuccess: () => {
+          gtag.commentCreate(postId);
+          setCommentText("");
+        },
+      }
     );
   }
 

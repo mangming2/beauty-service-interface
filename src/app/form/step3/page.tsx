@@ -10,6 +10,7 @@ import { ProgressBar } from "@/components/form/ProgressBar";
 import { Step3Schema, Step3Data, idolOptions } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 export default function FormPage3() {
   const router = useRouter();
@@ -41,9 +42,8 @@ export default function FormPage3() {
   };
 
   const onSubmit = (data: Step3Data) => {
-    // Zustand store에 데이터 저장
     updateStep3(data);
-    // 다음 스텝으로 이동
+    gtag.formStepComplete(3);
     router.push("/form/step4");
   };
 

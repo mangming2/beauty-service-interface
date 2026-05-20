@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +26,7 @@ import { TranslatedText } from "../../../components/main/TranslatedText";
 import { ReviewDetail } from "@/types/api";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatHashtagList, getSafeImageSrc } from "@/lib/utils";
+import { gtag } from "@/lib/gtag";
 
 export default function PackageDetail() {
   const params = useParams();
@@ -35,6 +36,12 @@ export default function PackageDetail() {
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
   const { data: productDetail, isLoading, error } = useProductDetail(packageId);
+
+  useEffect(() => {
+    if (productDetail) {
+      gtag.packageView(packageId, productDetail.name);
+    }
+  }, [packageId, productDetail]);
 
   const { data: rawOptions = [], isLoading: optionsLoading } =
     useProductOptions(packageId);
@@ -99,6 +106,8 @@ export default function PackageDetail() {
   }
 
   const handleOptionBook = (optionId: number) => {
+    const option = options.find(o => o.id === optionId);
+    gtag.optionSelect(packageId, optionId, option?.name ?? "");
     router.push(`/package/${productDetail.id}/${optionId}`);
   };
 
@@ -125,7 +134,10 @@ export default function PackageDetail() {
           <div className="flex items-center gap-4">
             <button
               type="button"
-              onClick={() => toggleWishMutation.mutate(packageId)}
+              onClick={() => {
+                gtag.wishToggle(packageId, isWished ? "remove" : "add");
+                toggleWishMutation.mutate(packageId);
+              }}
               disabled={toggleWishMutation.isPending}
               className="w-6 h-6 flex items-center justify-center"
             >

@@ -14,6 +14,7 @@ import { useFormStore } from "@/lib/store";
 import { useUser } from "@/queries/useAuthQueries";
 import { useSubmitSurveyForm } from "@/queries/useSurveyQueries";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 export default function FormPage5() {
   const router = useRouter();
@@ -77,7 +78,10 @@ export default function FormPage5() {
     // React Query mutation 실행
     submitFormMutation
       .mutateAsync(completeFormData)
-      .then(() => router.push("/form/loading"))
+      .then(() => {
+        gtag.formStepComplete(5);
+        router.push("/form/loading");
+      })
       .catch(() => {
         // 에러는 mutation의 isError로 표시됨
       });

@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { GapY } from "@/components/ui/gap";
 import { Divider } from "@/components/ui/divider";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 export default function CreateReviewPage() {
   const params = useParams();
@@ -55,6 +56,8 @@ export default function CreateReviewPage() {
         productId: Number(packageId),
         data: { rating, content: comment.trim() },
       });
+
+      gtag.reviewSubmit(Number(packageId), rating);
 
       // 성공 후 패키지 페이지로 이동
       router.push(`/package/${packageId}`);

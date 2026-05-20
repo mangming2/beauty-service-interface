@@ -18,6 +18,7 @@ import { ProgressBar } from "@/components/form/ProgressBar";
 import { Step1Schema, Step1Data, concepts } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 const conceptImages = {
   girlcrush: GirlCrush,
@@ -69,9 +70,8 @@ export default function FormPage1() {
   };
 
   const onSubmit = (data: Step1Data) => {
-    // Zustand store에 데이터 저장
     updateStep1(data);
-    // 다음 스텝으로 이동
+    gtag.formStepComplete(1);
     router.push("/form/step2");
   };
 

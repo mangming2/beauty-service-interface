@@ -14,6 +14,7 @@ import { useCreateSchedule } from "@/queries/useScheduleQueries";
 import { notFound } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getSafeImageSrc } from "@/lib/utils";
+import { gtag } from "@/lib/gtag";
 
 const PLACEHOLDER_IMAGE = "/dummy-logo.png";
 
@@ -422,6 +423,14 @@ export default function PackageOptionBookingPage() {
                   onClick={() => {
                     setSelectedTime(slot.time);
                     setSelectedHour(slot.hour);
+                    if (selectedDate) {
+                      gtag.dateSelect(
+                        packageId,
+                        optionId,
+                        format(selectedDate, "yyyy-MM-dd"),
+                        slot.time
+                      );
+                    }
                   }}
                 >
                   {slot.time}

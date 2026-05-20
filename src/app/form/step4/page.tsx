@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { Step4Schema, Step4Data } from "@/types/form";
 import { useFormStore } from "@/lib/store";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 export default function FormPage4() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function FormPage4() {
           to: data.dateRange.to,
         },
       });
-      // 다음 스텝으로 이동
+      gtag.formStepComplete(4);
       router.push("/form/step5");
     }
   };

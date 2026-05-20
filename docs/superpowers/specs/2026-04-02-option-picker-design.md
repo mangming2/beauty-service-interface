@@ -24,15 +24,21 @@
 ### 1. `product-form-fields.tsx`
 
 #### `ProductFormPickerOption` 타입 확장
+
 ```ts
 // 기존
 export type ProductFormPickerOption = { id: number; name: string };
 
 // 변경
-export type ProductFormPickerOption = { id: number; name: string; price?: number };
+export type ProductFormPickerOption = {
+  id: number;
+  name: string;
+  price?: number;
+};
 ```
 
 #### 체크박스 라벨 변경
+
 - 기존: `{opt.name} (ID: {opt.id})`
 - 변경: `{opt.name} (ID: {opt.id} · {price}원)` — price가 있을 때만 표시
 
@@ -41,6 +47,7 @@ export type ProductFormPickerOption = { id: number; name: string; price?: number
 ### 2. `admin/page.tsx`
 
 #### 제거
+
 - 상태: `optionIdsText`, `refProductIdStr`
 - 훅: `useProductOptions` (import 포함)
 - 계산: `refProductIdParsed`, `refProductOptions`, `optionIdModeLabels`
@@ -48,6 +55,7 @@ export type ProductFormPickerOption = { id: number; name: string; price?: number
 - UI: "이름 참고용 상품 ID" 입력 필드
 
 #### 추가
+
 - 훅: `useOptions()` — `GET /options` 전체 옵션 로드
 - 상태: `tagFilter: string` (기본값 `"전체"`)
 - 상태: `optionSearch: string` (기본값 `""`)
@@ -56,6 +64,7 @@ export type ProductFormPickerOption = { id: number; name: string; price?: number
 - 계산: `filteredOptions` — `allOptions`에서 태그 + 검색어로 클라이언트 필터링 후 `ProductFormPickerOption[]`으로 매핑
 
 #### product-create 탭 UI 구조
+
 ```
 [상품명 입력]
 [설명 입력]
@@ -69,6 +78,7 @@ export type ProductFormPickerOption = { id: number; name: string; price?: number
 ```
 
 #### `ProductFormFields` 호출 변경
+
 ```tsx
 // 기존 (텍스트 입력 모드)
 <ProductFormFields
@@ -87,6 +97,7 @@ export type ProductFormPickerOption = { id: number; name: string; price?: number
 ```
 
 #### 성공 시 폼 초기화 대상 추가
+
 - `setTagFilter("전체")`
 - `setOptionSearch("")`
 - `setProductOptionIds([])` (기존 유지)
@@ -124,11 +135,11 @@ const filteredOptions = allOptions
 
 ## 에러 / 엣지 케이스
 
-| 케이스 | 처리 |
-|--------|------|
-| 옵션 로딩 중 | 체크박스 영역에 "로딩 중..." 표시 |
-| 옵션 0개 (필터 결과 없음) | "조건에 맞는 옵션이 없습니다." 표시 |
-| 옵션 선택 없이 제출 | 기존 `alert("옵션을 1개 이상 선택하세요.")` 유지 |
+| 케이스                           | 처리                                                         |
+| -------------------------------- | ------------------------------------------------------------ |
+| 옵션 로딩 중                     | 체크박스 영역에 "로딩 중..." 표시                            |
+| 옵션 0개 (필터 결과 없음)        | "조건에 맞는 옵션이 없습니다." 표시                          |
+| 옵션 선택 없이 제출              | 기존 `alert("옵션을 1개 이상 선택하세요.")` 유지             |
 | 선택된 옵션이 필터로 숨겨진 경우 | 체크 상태 유지 (productOptionIds 기준, 시각적으로만 안 보임) |
 
 ---

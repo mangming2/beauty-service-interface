@@ -18,6 +18,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatHashtagList, getSafeImageSrc } from "@/lib/utils";
+import { gtag } from "@/lib/gtag";
 
 export default function BookingConfirmPage() {
   const params = useParams();
@@ -71,6 +72,8 @@ export default function BookingConfirmPage() {
       const parsed = parseInt(startHour, 10);
       if (Number.isFinite(parsed) && parsed >= 0) setSavedStartHour(parsed);
     }
+
+    gtag.reservationView(packageId, optionIdFromQuery || undefined);
   }, []);
 
   if (!isValidId) {
@@ -356,6 +359,11 @@ export default function BookingConfirmPage() {
                     totalPrice: currentOption.price,
                   },
                 });
+                gtag.reservationComplete(
+                  packageId,
+                  resolvedOptionId,
+                  currentOption.price
+                );
                 reservationCreated.current = true;
               } catch (error) {
                 console.error("예약 생성 실패:", error);

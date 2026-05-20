@@ -8,6 +8,7 @@ import { reissueToken } from "@/lib/apiClient";
 import { getMyPageUser } from "@/api/my-page";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 // 로딩 컴포넌트
 function LoadingUI() {
@@ -68,6 +69,8 @@ function CallbackContent() {
           email: me.email,
           name: me.nickname,
         });
+
+        gtag.loginSuccess("google");
 
         // 5. 마이페이지로 이동
         router.replace("/my");

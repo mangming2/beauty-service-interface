@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateCommunityPost } from "@/queries/useCommunityQueries";
 import { useTranslation } from "@/hooks/useTranslation";
+import { gtag } from "@/lib/gtag";
 
 const PRESET_TAGS = ["Recruiting", "K-pop News", "K-Beauty"];
 
@@ -34,6 +35,7 @@ export default function CommunityWritePage() {
           tags: selectedTags,
         },
       });
+      gtag.postCreate(selectedTags);
       router.replace(`/board/community/${result.id}`);
     } catch {
       setError(t("communityPage.submitError"));
