@@ -13,6 +13,8 @@ import {
   deleteCommunityPost,
   togglePostLike,
   togglePostBookmark,
+  togglePostScrap,
+  getMyScraps,
   getPostComments,
   createPostComment,
   deletePostComment,
@@ -23,7 +25,7 @@ import {
   type GetCommunityPostsParams,
   type CommunityPostRequestDto,
   type CreateCommentRequest,
-  type CommunityComment,
+  type CommunityCommentView,
   type CommunityTag,
 } from "@/api/community";
 import type { ApiError } from "@/lib/apiClient";
@@ -41,6 +43,7 @@ export const communityKeys = {
     [...communityKeys.detail(postId), "comments"] as const,
   tags: () => [...communityKeys.all, "tags"] as const,
   popular: (size?: number) => [...communityKeys.all, "popular", size] as const,
+  myScraps: () => [...communityKeys.all, "myScraps"] as const,
 } as const;
 
 function retryUnless401(failureCount: number, error: unknown): boolean {
@@ -131,10 +134,22 @@ export function useCommunityTags() {
 export function usePostComments(postId: number | undefined) {
   const isValid = typeof postId === "number" && Number.isFinite(postId);
 
-  return useQuery<CommunityComment[]>({
+  return useQuery<CommunityCommentView[]>({
     queryKey: communityKeys.comments(postId!),
     queryFn: () => getPostComments(postId!),
     enabled: isValid,
+    staleTime: 2 * 60 * 1000,
+    retry: retryUnless401,
+  });
+}
+
+/**
+ * 내 스크랩 목록 조회
+ */
+export function useMyScraps() {
+  return useQuery<CommunityPostListItem[]>({
+    queryKey: communityKeys.myScraps(),
+    queryFn: getMyScraps,
     staleTime: 2 * 60 * 1000,
     retry: retryUnless401,
   });
@@ -236,6 +251,20 @@ export function useTogglePostBookmark() {
         queryKey: communityKeys.detail(postId),
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.popular() });
+    },
+  });
+}
+
+/**
+ * 스크랩 토글
+ */
+export function useTogglePostScrap() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: number) => togglePostScrap(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.myScraps() });
     },
   });
 }

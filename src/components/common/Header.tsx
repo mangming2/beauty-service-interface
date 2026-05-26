@@ -3,12 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LanguageSelector } from "./LanguageSelector";
+import { NotificationBell } from "./NotificationBell";
 import { SearchIcon } from "./Icons";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const Header = () => {
   const pathname = usePathname();
   const { t } = useTranslation();
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
   const isMainPage = pathname === "/";
   const isFormPage = pathname.startsWith("/form");
   const isWishPage = pathname === "/wish";
@@ -20,6 +23,7 @@ export const Header = () => {
   const isMyEditPage = pathname === "/my/edit";
   const isPackageReviewsPage = /^\/package\/[^/]+\/reviews$/.test(pathname);
   const isMyReviewsPage = /^\/my\/reviews(\/[^/]+)?$/.test(pathname);
+  const isMyScrapsPage = pathname === "/my/community/scraps";
   return (
     <header>
       <div
@@ -45,6 +49,9 @@ export const Header = () => {
         {isMyReviewsPage && (
           <h1 className="text-white h-6 title-md">{t("header.myReviews")}</h1>
         )}
+        {isMyScrapsPage && (
+          <h1 className="text-white h-6 title-md">{t("communityPage.myScraps")}</h1>
+        )}
         {isSearchPage && (
           <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
         )}
@@ -54,6 +61,7 @@ export const Header = () => {
           !isMyPage &&
           !isPackageReviewsPage &&
           !isMyReviewsPage &&
+          !isMyScrapsPage &&
           !isSearchPage) ||
           isNoticeDetailPage) && (
           <Link href="/" className="inline-block">
@@ -75,6 +83,7 @@ export const Header = () => {
               <SearchIcon color="white" />
             </Link>
           )}
+          {isAuthenticated && <NotificationBell />}
           <LanguageSelector />
         </div>
       </div>

@@ -936,6 +936,24 @@ const SendIcon = ({ color = "white", ...rest }: IconProps) => {
   );
 };
 
+const BellIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="20"
+      height="22"
+      viewBox="0 0 20 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M10 22C11.1 22 12 21.1 12 20H8C8 21.1 8.9 22 10 22ZM18 16V10C18 6.93 16.37 4.36 13.5 3.68V3C13.5 2.17 12.83 1.5 12 1.5H8C7.17 1.5 6.5 2.17 6.5 3V3.68C3.64 4.36 2 6.92 2 10V16L0 18V19H20V18L18 16Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -971,6 +989,7 @@ export {
   CommunityIcon,
   ChatBubbleIcon,
   SendIcon,
+  BellIcon,
 };
 
 export const Icons = {

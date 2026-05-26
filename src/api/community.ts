@@ -61,19 +61,27 @@ export interface CreateOrUpdatePostResponse {
   id: number;
 }
 
-/** 댓글 */
-export interface CommunityComment {
+/** 댓글 (서버 응답 형식) */
+export interface CommunityCommentView {
   commentId: number;
   postId: number;
+  parentCommentId: number | null;
+  depth: number;
   authorId: number;
   authorDisplayName: string;
   content: string;
+  isReply: boolean;
+  isDeleted: boolean;
   createdAt: string;
 }
+
+/** @deprecated CommunityCommentView 사용 */
+export type CommunityComment = CommunityCommentView;
 
 /** 댓글 생성 요청 */
 export interface CreateCommentRequest {
   content: string;
+  parentCommentId?: number;
 }
 
 /** 댓글 생성 응답 */
@@ -92,6 +100,9 @@ export interface BookmarkToggleResponse {
   postId: number;
   isBookmarked: boolean;
 }
+
+/** 스크랩 토글 응답 */
+export type ScrapToggleResponse = BookmarkToggleResponse;
 
 /** 태그 아이템 */
 export interface CommunityTag {
@@ -279,6 +290,43 @@ export async function togglePostBookmark(
   }
 }
 
+/**
+ * 스크랩 토글
+ * POST /boards/community/posts/:postId/scraps
+ */
+export async function togglePostScrap(
+  postId: number
+): Promise<ScrapToggleResponse> {
+  try {
+    const data = await apiPost<ScrapToggleResponse>(
+      `${POSTS}/${postId}/scraps`,
+      undefined,
+      { requireAuth: true }
+    );
+    return data;
+  } catch (error) {
+    console.error("Toggle post scrap error:", error);
+    throw error;
+  }
+}
+
+/**
+ * 내 스크랩 목록 조회
+ * GET /mypage/community/scraps
+ */
+export async function getMyScraps(): Promise<CommunityPostListItem[]> {
+  try {
+    const data = await apiGet<CommunityPostListItem[]>(
+      "/mypage/community/scraps",
+      { requireAuth: true }
+    );
+    return data ?? [];
+  } catch (error) {
+    console.error("Get my scraps error:", error);
+    throw error;
+  }
+}
+
 // ========== 댓글 API ==========
 
 /**
@@ -287,9 +335,9 @@ export async function togglePostBookmark(
  */
 export async function getPostComments(
   postId: number
-): Promise<CommunityComment[]> {
+): Promise<CommunityCommentView[]> {
   try {
-    const data = await apiGet<CommunityComment[]>(
+    const data = await apiGet<CommunityCommentView[]>(
       `${POSTS}/${postId}/comments`,
       { optionalAuth: true }
     );
