@@ -59,9 +59,12 @@ export async function getNotifications(
  * GET /notifications/unread-count
  */
 export async function getUnreadNotificationCount(): Promise<NotificationUnreadCountResponse> {
-  return apiGet<NotificationUnreadCountResponse>("/notifications/unread-count", {
-    requireAuth: true,
-  });
+  return apiGet<NotificationUnreadCountResponse>(
+    "/notifications/unread-count",
+    {
+      requireAuth: true,
+    }
+  );
 }
 
 /**
@@ -92,7 +95,9 @@ export async function markAllNotificationsRead(): Promise<void> {
  * 개별 알림 삭제
  * DELETE /notifications/:notificationId
  */
-export async function deleteNotification(notificationId: number): Promise<void> {
+export async function deleteNotification(
+  notificationId: number
+): Promise<void> {
   await apiDelete<void>(`/notifications/${notificationId}`, {
     requireAuth: true,
   });

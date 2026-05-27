@@ -47,7 +47,7 @@ function PostCard({ post }: { post: CommunityPostListItem }) {
     <Link href={`/board/community/${post.postId}`} className="block">
       <li className="py-4 border-b border-gray-outline">
         {firstTag && (
-          <span className="inline-block px-2 py-0.5 rounded border border-gray-outline caption-md text-gray_1 mb-2">
+          <span className="inline-block px-2 py-0.5 rounded border border-gray-outline bg-gray-outline caption-md text-gray_1 mb-2">
             {firstTag}
           </span>
         )}

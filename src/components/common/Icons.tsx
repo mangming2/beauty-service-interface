@@ -954,6 +954,27 @@ const BellIcon = ({ color = "white", ...rest }: IconProps) => {
   );
 };
 
+const ReplyIcon = ({ color = "white", ...rest }: IconProps) => {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 22 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M0.75 0.75V20.75H20.75L12.5666 15.2947"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
 export {
   WishIcon,
   HomeIcon,
@@ -990,6 +1011,7 @@ export {
   ChatBubbleIcon,
   SendIcon,
   BellIcon,
+  ReplyIcon,
 };
 
 export const Icons = {

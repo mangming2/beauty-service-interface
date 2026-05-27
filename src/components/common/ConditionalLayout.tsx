@@ -22,6 +22,7 @@ const NORMAL_PAGES = [
   "/form/complete",
   "/package/[id]/reviews",
   "/my/reviews",
+  "/notifications",
 ];
 
 // Footer만 필요한 페이지 목록

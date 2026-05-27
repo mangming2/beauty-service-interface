@@ -17,8 +17,10 @@ import {
   BookmarkIcon,
   ChatBubbleIcon,
   SendIcon,
+  ReplyIcon,
 } from "@/components/common/Icons";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 import { useTranslation } from "@/hooks/useTranslation";
 import { gtag } from "@/lib/gtag";
 import type { CommunityCommentView } from "@/api/community";
@@ -27,7 +29,81 @@ function formatCount(count: number): string {
   return count >= 999 ? "999+" : count.toString();
 }
 
-function CommentItem({
+function timeAgo(dateStr: string): string {
+  return formatDistanceToNow(new Date(dateStr), {
+    addSuffix: true,
+    locale: ko,
+  });
+}
+
+function Avatar({ size = 64 }: { size?: number }) {
+  return (
+    <div
+      className="rounded-full flex-shrink-0 bg-gray-container flex items-center justify-center overflow-hidden"
+      style={{ width: size, height: size }}
+    >
+      <Image
+        src="/main-icon.png"
+        alt=""
+        width={size}
+        height={size}
+        className="object-contain"
+      />
+    </div>
+  );
+}
+
+function TopLevelComment({
+  comment,
+  replyCount,
+  onReply,
+  t,
+}: {
+  comment: CommunityCommentView;
+  replyCount: number;
+  onReply: (comment: CommunityCommentView) => void;
+  t: (key: string) => string;
+}) {
+  if (comment.isDeleted) {
+    return (
+      <li className="py-3">
+        <p className="caption-md text-gray_1 italic">
+          {t("communityPage.deletedComment")}
+        </p>
+      </li>
+    );
+  }
+
+  return (
+    <li>
+      <div className="flex gap-3">
+        <Avatar size={64} />
+        <div className="flex-1 min-w-0 pt-1">
+          <p className="text-sm text-white font-semibold leading-tight">
+            {comment.authorDisplayName}
+          </p>
+          <p className="text-sm text-white mt-1 break-keep leading-relaxed">
+            {comment.content}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 mt-2 ml-1">
+        <span className="caption-md text-gray_1">
+          {format(new Date(comment.createdAt), "yy.MM.dd  HH:mm")}
+        </span>
+        <button
+          onClick={() => onReply(comment)}
+          className="flex items-center gap-1.5 caption-md text-gray_1 hover:text-white transition-colors"
+        >
+          <ChatBubbleIcon width={11} height={11} color="#bcbcbc" />
+          <span className="text-[11px]">{replyCount}</span>
+        </button>
+      </div>
+    </li>
+  );
+}
+
+function ReplyComment({
   comment,
   onReply,
   t,
@@ -36,45 +112,43 @@ function CommentItem({
   onReply: (comment: CommunityCommentView) => void;
   t: (key: string) => string;
 }) {
-  const indent = Math.min(comment.depth, 4) * 20;
-
-  return (
-    <li
-      className="flex gap-3"
-      style={{ paddingLeft: `${indent}px` }}
-    >
-      <div className="rounded-full flex-shrink-0 w-8 h-8 bg-gray-container flex items-center justify-center overflow-hidden">
-        <Image src="/main-icon.png" alt="" width={32} height={32} className="object-contain" />
-      </div>
-      <div className="flex-1 min-w-0">
-        {comment.isDeleted ? (
-          <p className="caption-md text-gray_1 italic mt-0.5">
+  if (comment.isDeleted) {
+    return (
+      <li className="ml-6 flex items-start gap-5">
+        <ReplyIcon color="#4A4B52" />
+        <div className="flex-1 rounded-2xl bg-gray-container px-4 py-3">
+          <p className="caption-md text-gray_1 italic">
             {t("communityPage.deletedComment")}
           </p>
-        ) : (
-          <>
-            <div className="flex items-baseline gap-2">
-              <span className="caption-md text-white font-medium">
+        </div>
+      </li>
+    );
+  }
+
+  return (
+    <li className="ml-6 flex items-start gap-5">
+      <ReplyIcon color="#4A4B52" />
+      <div
+        className="flex-1 rounded-2xl bg-gray-container px-4 py-3 cursor-pointer active:opacity-80 transition-opacity"
+        onClick={() => onReply(comment)}
+      >
+        <div className="flex gap-3 items-start">
+          <Avatar size={44} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="caption-md text-white font-semibold">
                 {comment.authorDisplayName}
               </span>
+              <span className="caption-md text-gray_1">│</span>
               <span className="caption-md text-gray_1">
-                {format(new Date(comment.createdAt), "yy.MM.dd HH:mm")}
+                {timeAgo(comment.createdAt)}
               </span>
             </div>
-            <p className="caption-md text-white mt-0.5 break-keep">
+            <p className="text-sm text-white break-keep leading-relaxed">
               {comment.content}
             </p>
-            <div className="flex items-center gap-3 mt-1">
-              <button
-                onClick={() => onReply(comment)}
-                className="flex items-center gap-1 caption-md text-gray_1 hover:text-white transition-colors"
-              >
-                <ChatBubbleIcon width={10} height={10} color="#bcbcbc" />
-                <span className="text-[10px]">{t("communityPage.reply")}</span>
-              </button>
-            </div>
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </li>
   );
@@ -95,7 +169,9 @@ export default function CommunityDetailPage() {
   const [likeCount, setLikeCount] = useState<number | null>(null);
   const [bookmarkCount, setBookmarkCount] = useState<number | null>(null);
   const [commentText, setCommentText] = useState("");
-  const [replyTarget, setReplyTarget] = useState<CommunityCommentView | null>(null);
+  const [replyTarget, setReplyTarget] = useState<CommunityCommentView | null>(
+    null
+  );
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   if (postId === undefined || Number.isNaN(postId)) {
@@ -261,7 +337,7 @@ export default function CommunityDetailPage() {
 
       {/* Comments */}
       <section className="px-4 flex-1">
-        <h2 className="text-md text-white font-semibold mb-4">
+        <h2 className="text-md text-white font-semibold mb-5">
           {t("boardPage.comments")} {formatCount(post.commentCount)}
         </h2>
 
@@ -270,15 +346,28 @@ export default function CommunityDetailPage() {
             {t("communityPage.noComments")}
           </p>
         ) : (
-          <ul className="space-y-4">
-            {comments.map(comment => (
-              <CommentItem
-                key={comment.commentId}
-                comment={comment}
-                onReply={handleReply}
-                t={t}
-              />
-            ))}
+          <ul className="space-y-5">
+            {comments.map(comment => {
+              const replyCount = comments.filter(
+                c => c.parentCommentId === comment.commentId
+              ).length;
+              return comment.isReply ? (
+                <ReplyComment
+                  key={comment.commentId}
+                  comment={comment}
+                  onReply={handleReply}
+                  t={t}
+                />
+              ) : (
+                <TopLevelComment
+                  key={comment.commentId}
+                  comment={comment}
+                  replyCount={replyCount}
+                  onReply={handleReply}
+                  t={t}
+                />
+              );
+            })}
           </ul>
         )}
       </section>
@@ -286,7 +375,7 @@ export default function CommunityDetailPage() {
       {/* Comment input - fixed at bottom */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[412px] bg-background border-t border-gray-outline px-4 py-3 flex flex-col gap-2 z-20">
         {replyTarget && (
-          <div className="flex items-center justify-between px-2 py-1 rounded-lg bg-gray-container">
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-gray-container">
             <span className="caption-md text-gray_1 truncate">
               {replyTarget.authorDisplayName}
               {t("communityPage.replyPlaceholder")}
@@ -307,10 +396,10 @@ export default function CommunityDetailPage() {
             placeholder={
               replyTarget
                 ? `${replyTarget.authorDisplayName}${t("communityPage.replyPlaceholder")}`
-                : t("communityPage.commentPlaceholder")
+                : "Write a comment..."
             }
             rows={1}
-            className="flex-1 bg-gray-container rounded-2xl px-4 py-2 text-white caption-md resize-none outline-none placeholder:text-gray_1 min-h-[36px] max-h-[100px]"
+            className="flex-1 bg-gray-container rounded-2xl px-4 py-2 text-white caption-md resize-none outline-none placeholder:text-gray_1 min-h-[40px] max-h-[100px]"
             onInput={e => {
               const el = e.currentTarget;
               el.style.height = "auto";
@@ -326,7 +415,7 @@ export default function CommunityDetailPage() {
           <button
             onClick={handleSubmitComment}
             disabled={!commentText.trim() || createComment.isPending}
-            className="flex-shrink-0 w-9 h-9 rounded-full bg-pink-font flex items-center justify-center disabled:opacity-40"
+            className="flex-shrink-0 w-10 h-10 rounded-full bg-pink-font flex items-center justify-center disabled:opacity-40"
           >
             <SendIcon width={16} height={16} color="white" />
           </button>

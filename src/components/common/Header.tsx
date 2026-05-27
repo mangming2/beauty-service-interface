@@ -16,6 +16,7 @@ export const Header = () => {
   const isFormPage = pathname.startsWith("/form");
   const isWishPage = pathname === "/wish";
   const isMyPage = pathname === "/my";
+  const isNotificationsPage = pathname === "/notifications";
   const isBoardPage = pathname === "/board" || pathname.startsWith("/board/");
   const isNoticeDetailPage =
     pathname.startsWith("/board/notice/") && pathname !== "/board/notice";
@@ -50,7 +51,12 @@ export const Header = () => {
           <h1 className="text-white h-6 title-md">{t("header.myReviews")}</h1>
         )}
         {isMyScrapsPage && (
-          <h1 className="text-white h-6 title-md">{t("communityPage.myScraps")}</h1>
+          <h1 className="text-white h-6 title-md">
+            {t("communityPage.myScraps")}
+          </h1>
+        )}
+        {isNotificationsPage && (
+          <h1 className="text-white h-6 title-md">Activity</h1>
         )}
         {isSearchPage && (
           <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
@@ -62,7 +68,8 @@ export const Header = () => {
           !isPackageReviewsPage &&
           !isMyReviewsPage &&
           !isMyScrapsPage &&
-          !isSearchPage) ||
+          !isSearchPage &&
+          !isNotificationsPage) ||
           isNoticeDetailPage) && (
           <Link href="/" className="inline-block">
             <Image

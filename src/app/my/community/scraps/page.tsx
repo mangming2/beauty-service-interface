@@ -67,7 +67,9 @@ export default function MyScrapsPage() {
   return (
     <div className="min-h-screen bg-background text-white">
       <div className="px-4 pt-6 pb-3">
-        <h1 className="title-md font-semibold">{t("communityPage.myScraps")}</h1>
+        <h1 className="title-md font-semibold">
+          {t("communityPage.myScraps")}
+        </h1>
       </div>
 
       {isLoading ? (

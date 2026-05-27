@@ -64,10 +64,13 @@ export function useMarkNotificationRead() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (notificationId: number) => markNotificationRead(notificationId),
+    mutationFn: (notificationId: number) =>
+      markNotificationRead(notificationId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount() });
+      queryClient.invalidateQueries({
+        queryKey: notificationKeys.unreadCount(),
+      });
     },
   });
 }
@@ -96,7 +99,9 @@ export function useDeleteNotification() {
     mutationFn: (notificationId: number) => deleteNotification(notificationId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount() });
+      queryClient.invalidateQueries({
+        queryKey: notificationKeys.unreadCount(),
+      });
     },
   });
 }

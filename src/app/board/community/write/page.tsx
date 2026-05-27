@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCreateCommunityPost } from "@/queries/useCommunityQueries";
 import { useTranslation } from "@/hooks/useTranslation";
 import { gtag } from "@/lib/gtag";
+import { Loading } from "@/components/common/Loading";
 
 const PRESET_TAGS = ["Recruiting", "K-pop News", "K-Beauty"];
 
@@ -44,6 +45,11 @@ export default function CommunityWritePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-white">
+      {createPost.isPending && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
+          <Loading size="md" />
+        </div>
+      )}
       {/* Inline header bar for write page */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-gray-outline">
         <button
