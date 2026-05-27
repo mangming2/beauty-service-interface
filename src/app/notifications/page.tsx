@@ -11,10 +11,16 @@ import {
   useDeleteAllNotifications,
 } from "@/queries/useNotificationQueries";
 import { useTranslation } from "@/hooks/useTranslation";
-import type { NotificationResponse, NotificationType } from "@/api/notification";
+import type {
+  NotificationResponse,
+  NotificationType,
+} from "@/api/notification";
 
 function timeAgo(dateStr: string) {
-  return formatDistanceToNow(new Date(dateStr), { addSuffix: true, locale: ko });
+  return formatDistanceToNow(new Date(dateStr), {
+    addSuffix: true,
+    locale: ko,
+  });
 }
 
 function NotificationIcon({ type }: { type: NotificationType }) {
@@ -107,7 +113,9 @@ export default function NotificationsPage() {
               key={n.id}
               onClick={() => handleClick(n)}
               className={`flex items-start gap-4 px-5 py-4 cursor-pointer transition-colors hover:bg-white/5 ${
-                idx < notifications.length - 1 ? "border-b border-gray-outline" : ""
+                idx < notifications.length - 1
+                  ? "border-b border-gray-outline"
+                  : ""
               } ${!n.isRead ? "bg-pink-font/5" : ""}`}
             >
               <NotificationIcon type={n.type} />
