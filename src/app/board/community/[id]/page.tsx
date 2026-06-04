@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import {
@@ -17,7 +17,6 @@ import {
   BookmarkIcon,
   ChatBubbleIcon,
   SendIcon,
-  ReplyIcon,
 } from "@/components/common/Icons";
 import { format, formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -96,7 +95,9 @@ function TopLevelComment({
           className="flex items-center gap-1.5 caption-md text-gray_1 hover:text-white transition-colors"
         >
           <ChatBubbleIcon width={11} height={11} color="#bcbcbc" />
-          <span className="text-[11px]">{replyCount}</span>
+          <span className="text-[11px]">
+            {replyCount === 0 ? "답글쓰기" : replyCount}
+          </span>
         </button>
       </div>
     </li>
@@ -114,9 +115,8 @@ function ReplyComment({
 }) {
   if (comment.isDeleted) {
     return (
-      <li className="ml-6 flex items-start gap-5">
-        <ReplyIcon color="#4A4B52" />
-        <div className="flex-1 rounded-2xl bg-gray-container px-4 py-3">
+      <li className="ml-10">
+        <div className="rounded-2xl bg-gray-container px-4 py-3">
           <p className="caption-md text-gray_1 italic">
             {t("communityPage.deletedComment")}
           </p>
@@ -126,10 +126,9 @@ function ReplyComment({
   }
 
   return (
-    <li className="ml-6 flex items-start gap-5">
-      <ReplyIcon color="#4A4B52" />
+    <li className="ml-10">
       <div
-        className="flex-1 rounded-2xl bg-gray-container px-4 py-3 cursor-pointer active:opacity-80 transition-opacity"
+        className="rounded-2xl bg-gray-container px-4 py-3 cursor-pointer active:opacity-80 transition-opacity"
         onClick={() => onReply(comment)}
       >
         <div className="flex gap-3 items-start">
@@ -156,6 +155,7 @@ function ReplyComment({
 
 export default function CommunityDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const postId = id ? parseInt(id, 10) : undefined;
   const { t } = useTranslation();
@@ -169,9 +169,6 @@ export default function CommunityDetailPage() {
   const [likeCount, setLikeCount] = useState<number | null>(null);
   const [bookmarkCount, setBookmarkCount] = useState<number | null>(null);
   const [commentText, setCommentText] = useState("");
-  const [replyTarget, setReplyTarget] = useState<CommunityCommentView | null>(
-    null
-  );
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   if (postId === undefined || Number.isNaN(postId)) {
@@ -215,31 +212,18 @@ export default function CommunityDetailPage() {
   }
 
   function handleReply(comment: CommunityCommentView) {
-    setReplyTarget(comment);
-    inputRef.current?.focus();
-  }
-
-  function handleCancelReply() {
-    setReplyTarget(null);
-    setCommentText("");
+    router.push(`/board/community/${id}/comment/${comment.commentId}`);
   }
 
   function handleSubmitComment() {
     const content = commentText.trim();
     if (!content || !postId || createComment.isPending) return;
     createComment.mutate(
-      {
-        postId,
-        body: {
-          content,
-          ...(replyTarget ? { parentCommentId: replyTarget.commentId } : {}),
-        },
-      },
+      { postId, body: { content } },
       {
         onSuccess: () => {
           gtag.commentCreate(postId);
           setCommentText("");
-          setReplyTarget(null);
         },
       }
     );
@@ -307,7 +291,7 @@ export default function CommunityDetailPage() {
                   fill
                   className="object-contain"
                   sizes="(max-width: 412px) 100vw, 412px"
-                  unoptimized={url.startsWith("http")}
+                  unoptimized={getSafeImageSrc(url).startsWith("http")}
                 />
               </div>
             ))}
@@ -373,53 +357,33 @@ export default function CommunityDetailPage() {
       </section>
 
       {/* Comment input - fixed at bottom */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[412px] bg-background border-t border-gray-outline px-4 py-3 flex flex-col gap-2 z-20">
-        {replyTarget && (
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-gray-container">
-            <span className="caption-md text-gray_1 truncate">
-              {replyTarget.authorDisplayName}
-              {t("communityPage.replyPlaceholder")}
-            </span>
-            <button
-              onClick={handleCancelReply}
-              className="ml-2 caption-md text-gray_1 hover:text-white flex-shrink-0"
-            >
-              {t("communityPage.cancelReply")}
-            </button>
-          </div>
-        )}
-        <div className="flex items-end gap-3">
-          <textarea
-            ref={inputRef}
-            value={commentText}
-            onChange={e => setCommentText(e.target.value)}
-            placeholder={
-              replyTarget
-                ? `${replyTarget.authorDisplayName}${t("communityPage.replyPlaceholder")}`
-                : "Write a comment..."
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[412px] bg-background border-t border-gray-outline px-4 py-3 flex items-end gap-3 z-20">
+        <textarea
+          ref={inputRef}
+          value={commentText}
+          onChange={e => setCommentText(e.target.value)}
+          placeholder="Write a comment..."
+          rows={1}
+          className="flex-1 bg-gray-container rounded-2xl px-4 py-2 text-white caption-md resize-none outline-none placeholder:text-gray_1 min-h-[40px] max-h-[100px]"
+          onInput={e => {
+            const el = e.currentTarget;
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+          }}
+          onKeyDown={e => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmitComment();
             }
-            rows={1}
-            className="flex-1 bg-gray-container rounded-2xl px-4 py-2 text-white caption-md resize-none outline-none placeholder:text-gray_1 min-h-[40px] max-h-[100px]"
-            onInput={e => {
-              const el = e.currentTarget;
-              el.style.height = "auto";
-              el.style.height = `${el.scrollHeight}px`;
-            }}
-            onKeyDown={e => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmitComment();
-              }
-            }}
-          />
-          <button
-            onClick={handleSubmitComment}
-            disabled={!commentText.trim() || createComment.isPending}
-            className="flex-shrink-0 w-10 h-10 rounded-full bg-pink-font flex items-center justify-center disabled:opacity-40"
-          >
-            <SendIcon width={16} height={16} color="white" />
-          </button>
-        </div>
+          }}
+        />
+        <button
+          onClick={handleSubmitComment}
+          disabled={!commentText.trim() || createComment.isPending}
+          className="flex-shrink-0 w-10 h-10 rounded-full bg-pink-font flex items-center justify-center disabled:opacity-40"
+        >
+          <SendIcon width={16} height={16} color="white" />
+        </button>
       </div>
     </div>
   );

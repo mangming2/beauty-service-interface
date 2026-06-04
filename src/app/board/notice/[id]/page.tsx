@@ -81,7 +81,7 @@ export default function NoticeDetailPage() {
                 fill
                 className="object-contain"
                 sizes="(max-width: 412px) 100vw, 412px"
-                unoptimized={url.startsWith("http")}
+                unoptimized={getSafeImageSrc(url).startsWith("http")}
               />
             </div>
           ))}

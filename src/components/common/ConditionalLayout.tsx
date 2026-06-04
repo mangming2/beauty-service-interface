@@ -44,6 +44,7 @@ const HEADER_ONLY_PAGES = [
   "/booking/[id]/confirm",
   "/board/notice/[id]",
   "/board/community/[id]",
+  "/board/community/[id]/comment/[commentId]",
 ];
 
 // Header/Footer가 필요 없는 페이지
