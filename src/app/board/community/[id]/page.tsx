@@ -61,11 +61,13 @@ function TopLevelComment({
   comment,
   replyCount,
   onReply,
+  onDelete,
   t,
 }: {
   comment: CommunityCommentView;
   replyCount: number;
   onReply: (comment: CommunityCommentView) => void;
+  onDelete?: () => void;
   t: (key: string) => string;
 }) {
   if (comment.isDeleted) {
@@ -83,9 +85,12 @@ function TopLevelComment({
       <div className="flex gap-3">
         <Avatar size={64} />
         <div className="flex-1 min-w-0 pt-1">
-          <p className="text-sm text-white font-semibold leading-tight">
-            {comment.authorDisplayName}
-          </p>
+          <div className="flex items-start justify-between gap-1">
+            <p className="text-sm text-white font-semibold leading-tight">
+              {comment.authorDisplayName}
+            </p>
+            {onDelete && <KebabMenu onDelete={onDelete} />}
+          </div>
           <p className="text-sm text-white mt-1 break-keep leading-relaxed">
             {comment.content}
           </p>
@@ -320,6 +325,11 @@ export default function CommunityDetailPage() {
                   comment={comment}
                   deletedLabel={t("communityPage.deletedComment")}
                   onClick={() => handleReply(comment)}
+                  onDelete={
+                    isMyContent(comment.authorId)
+                      ? () => handleDeleteComment(comment.commentId)
+                      : undefined
+                  }
                 />
               ) : (
                 <TopLevelComment
@@ -327,6 +337,11 @@ export default function CommunityDetailPage() {
                   comment={comment}
                   replyCount={replyCount}
                   onReply={handleReply}
+                  onDelete={
+                    isMyContent(comment.authorId)
+                      ? () => handleDeleteComment(comment.commentId)
+                      : undefined
+                  }
                   t={t}
                 />
               );
