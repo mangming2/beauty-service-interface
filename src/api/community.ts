@@ -47,6 +47,7 @@ export interface GetCommunityPostsParams {
   cursor?: string;
   size?: number;
   tag?: string;
+  query?: string;
 }
 
 /** 게시글 생성/수정 요청 본문 (multipart의 request 필드) */
@@ -133,6 +134,9 @@ export async function getCommunityPosts(
     }
     if (params.tag !== undefined) {
       queryParams.append("tag", params.tag);
+    }
+    if (params.query !== undefined && params.query !== "") {
+      queryParams.append("query", params.query);
     }
     const queryString = queryParams.toString();
     const url = `${POSTS}${queryString ? `?${queryString}` : ""}`;
