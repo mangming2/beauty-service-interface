@@ -12,7 +12,7 @@ import {
   useDeleteCommunityPost,
   useDeletePostComment,
 } from "@/queries/useCommunityQueries";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStatus } from "@/queries/useAuthQueries";
 import { KebabMenu } from "@/components/community/KebabMenu";
 import { getSafeImageSrc } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
@@ -128,12 +128,12 @@ export default function CommunityDetailPage() {
   const toggleBookmark = useTogglePostBookmark();
   const createComment = useCreatePostComment();
 
-  const { user } = useAuthStore();
+  const { data: authStatus } = useAuthStatus();
   const deletePost = useDeleteCommunityPost();
   const deleteComment = useDeletePostComment();
 
   const isMyContent = (authorId: number) =>
-    !!user && parseInt(user.id, 10) === authorId;
+    authStatus?.userId === authorId;
 
   function handleDeletePost() {
     if (!postId || !confirm("게시글을 삭제할까요?")) return;

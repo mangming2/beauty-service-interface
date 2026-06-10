@@ -11,7 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { ChatBubbleIcon, SendIcon } from "@/components/common/Icons";
 import { format } from "date-fns";
 import { useDeletePostComment } from "@/queries/useCommunityQueries";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStatus } from "@/queries/useAuthQueries";
 import { KebabMenu } from "@/components/community/KebabMenu";
 import { gtag } from "@/lib/gtag";
 import type { CommunityCommentView } from "@/api/community";
@@ -79,11 +79,11 @@ export default function CommentReplyPage() {
 
   const { data: comments = [], isLoading } = usePostComments(postId);
   const createComment = useCreatePostComment();
-  const { user } = useAuthStore();
+  const { data: authStatus } = useAuthStatus();
   const deleteComment = useDeletePostComment();
 
   const isMyContent = (authorId: number) =>
-    !!user && parseInt(user.id, 10) === authorId;
+    authStatus?.userId === authorId;
 
   function handleDeleteComment(commentId: number) {
     if (!postId || !confirm("댓글을 삭제할까요?")) return;
