@@ -365,7 +365,7 @@ export default function CommunityDetailPage() {
             el.style.height = `${el.scrollHeight}px`;
           }}
           onKeyDown={e => {
-            if (e.key === "Enter" && !e.shiftKey) {
+            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
               e.preventDefault();
               handleSubmitComment();
             }
