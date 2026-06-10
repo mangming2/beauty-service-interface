@@ -20,7 +20,8 @@ export const Header = () => {
   const isCommentReplyPage = /^\/board\/community\/[^/]+\/comment\/[^/]+$/.test(
     pathname
   );
-  const isBoardPage = pathname === "/board" || pathname.startsWith("/board/");
+  const isBoardSearchPage = pathname === "/board/search";
+  const isBoardPage = pathname === "/board" || (pathname.startsWith("/board/") && !isBoardSearchPage);
   const isNoticeDetailPage =
     pathname.startsWith("/board/notice/") && pathname !== "/board/notice";
   const isSearchPage = pathname === "/search";
@@ -67,6 +68,9 @@ export const Header = () => {
         {isSearchPage && (
           <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
         )}
+        {isBoardSearchPage && (
+          <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
+        )}
         {((!isFormPage &&
           !isWishPage &&
           !isMyEditPage &&
@@ -75,6 +79,7 @@ export const Header = () => {
           !isMyReviewsPage &&
           !isMyScrapsPage &&
           !isSearchPage &&
+          !isBoardSearchPage &&
           !isNotificationsPage &&
           !isCommentReplyPage) ||
           isNoticeDetailPage) && (
@@ -88,9 +93,9 @@ export const Header = () => {
           </Link>
         )}
         <div className="flex items-center gap-3">
-          {(isMainPage || isBoardPage || isSearchPage) && (
+          {(isMainPage || isBoardPage || isBoardSearchPage || isSearchPage) && (
             <Link
-              href="/search"
+              href={isBoardPage || isBoardSearchPage ? "/board/search" : "/search"}
               aria-label={t("common.search")}
               className="cursor-pointer inline-flex"
             >
