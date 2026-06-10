@@ -23,6 +23,7 @@ import { ko } from "date-fns/locale";
 import { useTranslation } from "@/hooks/useTranslation";
 import { gtag } from "@/lib/gtag";
 import type { CommunityCommentView } from "@/api/community";
+import { ReplyCommentCard } from "@/components/community/ReplyCommentCard";
 
 function formatCount(count: number): string {
   return count >= 999 ? "999+" : count.toString();
@@ -104,54 +105,6 @@ function TopLevelComment({
   );
 }
 
-function ReplyComment({
-  comment,
-  onReply,
-  t,
-}: {
-  comment: CommunityCommentView;
-  onReply: (comment: CommunityCommentView) => void;
-  t: (key: string) => string;
-}) {
-  if (comment.isDeleted) {
-    return (
-      <li className="ml-10">
-        <div className="rounded-2xl bg-gray-container px-4 py-3">
-          <p className="caption-md text-gray_1 italic">
-            {t("communityPage.deletedComment")}
-          </p>
-        </div>
-      </li>
-    );
-  }
-
-  return (
-    <li className="ml-10">
-      <div
-        className="rounded-2xl bg-gray-container px-4 py-3 cursor-pointer active:opacity-80 transition-opacity"
-        onClick={() => onReply(comment)}
-      >
-        <div className="flex gap-3 items-start">
-          <Avatar size={44} />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="caption-md text-white font-semibold">
-                {comment.authorDisplayName}
-              </span>
-              <span className="caption-md text-gray_1">│</span>
-              <span className="caption-md text-gray_1">
-                {timeAgo(comment.createdAt)}
-              </span>
-            </div>
-            <p className="text-sm text-white break-keep leading-relaxed">
-              {comment.content}
-            </p>
-          </div>
-        </div>
-      </div>
-    </li>
-  );
-}
 
 export default function CommunityDetailPage() {
   const params = useParams();
@@ -336,11 +289,11 @@ export default function CommunityDetailPage() {
                 c => c.parentCommentId === comment.commentId
               ).length;
               return comment.isReply ? (
-                <ReplyComment
+                <ReplyCommentCard
                   key={comment.commentId}
                   comment={comment}
-                  onReply={handleReply}
-                  t={t}
+                  deletedLabel={t("communityPage.deletedComment")}
+                  onClick={() => handleReply(comment)}
                 />
               ) : (
                 <TopLevelComment

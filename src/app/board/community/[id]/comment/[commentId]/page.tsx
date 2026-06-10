@@ -9,17 +9,10 @@ import {
 } from "@/queries/useCommunityQueries";
 import { Spinner } from "@/components/ui/spinner";
 import { ChatBubbleIcon, SendIcon } from "@/components/common/Icons";
-import { format, formatDistanceToNow } from "date-fns";
-import { ko } from "date-fns/locale";
+import { format } from "date-fns";
 import { gtag } from "@/lib/gtag";
 import type { CommunityCommentView } from "@/api/community";
-
-function timeAgo(dateStr: string): string {
-  return formatDistanceToNow(new Date(dateStr), {
-    addSuffix: true,
-    locale: ko,
-  });
-}
+import { ReplyCommentCard } from "@/components/community/ReplyCommentCard";
 
 function Avatar({ size = 44 }: { size?: number }) {
   return (
@@ -64,41 +57,6 @@ function ParentCommentCard({ comment }: { comment: CommunityCommentView }) {
   );
 }
 
-function ReplyItem({ comment }: { comment: CommunityCommentView }) {
-  if (comment.isDeleted) {
-    return (
-      <li className="ml-10">
-        <div className="rounded-2xl bg-gray-container px-4 py-3">
-          <p className="caption-md text-gray_1 italic">삭제된 답글입니다.</p>
-        </div>
-      </li>
-    );
-  }
-
-  return (
-    <li className="ml-10">
-      <div className="rounded-2xl bg-gray-container px-4 py-3">
-        <div className="flex gap-3 items-start">
-          <Avatar size={44} />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="caption-md text-white font-semibold">
-                {comment.authorDisplayName}
-              </span>
-              <span className="caption-md text-gray_1">│</span>
-              <span className="caption-md text-gray_1">
-                {timeAgo(comment.createdAt)}
-              </span>
-            </div>
-            <p className="text-sm text-white break-keep leading-relaxed">
-              {comment.content}
-            </p>
-          </div>
-        </div>
-      </div>
-    </li>
-  );
-}
 
 export default function CommentReplyPage() {
   const params = useParams();
@@ -167,7 +125,7 @@ export default function CommentReplyPage() {
         ) : (
           <ul className="space-y-4">
             {replies.map(reply => (
-              <ReplyItem key={reply.commentId} comment={reply} />
+              <ReplyCommentCard key={reply.commentId} comment={reply} />
             ))}
           </ul>
         )}
