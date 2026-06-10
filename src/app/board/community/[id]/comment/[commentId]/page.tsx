@@ -10,6 +10,9 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { ChatBubbleIcon, SendIcon } from "@/components/common/Icons";
 import { format } from "date-fns";
+import { useDeletePostComment } from "@/queries/useCommunityQueries";
+import { useAuthStore } from "@/store/useAuthStore";
+import { KebabMenu } from "@/components/community/KebabMenu";
 import { gtag } from "@/lib/gtag";
 import type { CommunityCommentView } from "@/api/community";
 import { ReplyCommentCard } from "@/components/community/ReplyCommentCard";
@@ -31,15 +34,24 @@ function Avatar({ size = 44 }: { size?: number }) {
   );
 }
 
-function ParentCommentCard({ comment }: { comment: CommunityCommentView }) {
+function ParentCommentCard({
+  comment,
+  onDelete,
+}: {
+  comment: CommunityCommentView;
+  onDelete?: () => void;
+}) {
   return (
     <div className="px-4 py-4 border-b border-gray-outline">
       <div className="flex gap-3">
         <Avatar size={64} />
         <div className="flex-1 min-w-0 pt-1">
-          <p className="text-sm text-white font-semibold leading-tight">
-            {comment.authorDisplayName}
-          </p>
+          <div className="flex items-start justify-between gap-1">
+            <p className="text-sm text-white font-semibold leading-tight">
+              {comment.authorDisplayName}
+            </p>
+            {onDelete && <KebabMenu onDelete={onDelete} />}
+          </div>
           <p className="text-sm text-white mt-1 break-keep leading-relaxed">
             {comment.content}
           </p>
@@ -67,6 +79,16 @@ export default function CommentReplyPage() {
 
   const { data: comments = [], isLoading } = usePostComments(postId);
   const createComment = useCreatePostComment();
+  const { user } = useAuthStore();
+  const deleteComment = useDeletePostComment();
+
+  const isMyContent = (authorId: number) =>
+    !!user && parseInt(user.id, 10) === authorId;
+
+  function handleDeleteComment(commentId: number) {
+    if (!postId || !confirm("댓글을 삭제할까요?")) return;
+    deleteComment.mutate({ postId, commentId });
+  }
 
   const [commentText, setCommentText] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -117,7 +139,14 @@ export default function CommentReplyPage() {
 
   return (
     <div className="bg-background text-white flex flex-col min-h-screen pb-[80px]">
-      <ParentCommentCard comment={parentComment} />
+      <ParentCommentCard
+        comment={parentComment}
+        onDelete={
+          isMyContent(parentComment.authorId)
+            ? () => handleDeleteComment(parentComment.commentId)
+            : undefined
+        }
+      />
 
       <section className="px-4 pt-4 flex-1">
         {replies.length === 0 ? (
@@ -125,7 +154,15 @@ export default function CommentReplyPage() {
         ) : (
           <ul className="space-y-4">
             {replies.map(reply => (
-              <ReplyCommentCard key={reply.commentId} comment={reply} />
+              <ReplyCommentCard
+                key={reply.commentId}
+                comment={reply}
+                onDelete={
+                  isMyContent(reply.authorId)
+                    ? () => handleDeleteComment(reply.commentId)
+                    : undefined
+                }
+              />
             ))}
           </ul>
         )}
