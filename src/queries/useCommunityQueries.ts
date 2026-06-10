@@ -70,7 +70,8 @@ export function useCommunityPosts(params: GetCommunityPostsParams = {}) {
  * 커뮤니티 게시글 목록 무한 스크롤 (cursor)
  */
 export function useInfiniteCommunityPosts(
-  params: Omit<GetCommunityPostsParams, "cursor"> = {}
+  params: Omit<GetCommunityPostsParams, "cursor"> = {},
+  options?: { enabled?: boolean }
 ) {
   return useInfiniteQuery<CommunityListResponse>({
     queryKey: [...communityKeys.lists(), "infinite", params],
@@ -84,6 +85,7 @@ export function useInfiniteCommunityPosts(
       lastPage.hasNext ? lastPage.nextCursor : undefined,
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,
+    enabled: options?.enabled ?? true,
   });
 }
 
