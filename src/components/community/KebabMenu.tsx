@@ -17,8 +17,17 @@ export function KebabMenu({ onDelete }: KebabMenuProps) {
         setOpen(false);
       }
     }
+    function handleKeydown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
+    }
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKeydown);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKeydown);
+    };
   }, [open]);
 
   return (
@@ -38,8 +47,9 @@ export function KebabMenu({ onDelete }: KebabMenuProps) {
         </svg>
       </button>
       {open && (
-        <div className="absolute right-0 top-8 z-30 min-w-[80px] rounded-lg bg-gray-800 border border-gray-600 shadow-lg py-1">
+        <div role="menu" className="absolute right-0 top-8 z-30 min-w-[80px] rounded-lg bg-gray-800 border border-gray-600 shadow-lg py-1">
           <button
+            role="menuitem"
             onClick={e => {
               e.stopPropagation();
               setOpen(false);
