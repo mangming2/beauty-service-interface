@@ -9,7 +9,11 @@ import {
   useTogglePostLike,
   useTogglePostBookmark,
   useCreatePostComment,
+  useDeleteCommunityPost,
+  useDeletePostComment,
 } from "@/queries/useCommunityQueries";
+import { useAuthStore } from "@/store/useAuthStore";
+import { KebabMenu } from "@/components/community/KebabMenu";
 import { getSafeImageSrc } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -119,6 +123,25 @@ export default function CommunityDetailPage() {
   const toggleBookmark = useTogglePostBookmark();
   const createComment = useCreatePostComment();
 
+  const { user } = useAuthStore();
+  const deletePost = useDeleteCommunityPost();
+  const deleteComment = useDeletePostComment();
+
+  const isMyContent = (authorId: number) =>
+    !!user && parseInt(user.id, 10) === authorId;
+
+  function handleDeletePost() {
+    if (!postId || !confirm("게시글을 삭제할까요?")) return;
+    deletePost.mutate(postId, {
+      onSuccess: () => router.back(),
+    });
+  }
+
+  function handleDeleteComment(commentId: number) {
+    if (!postId || !confirm("댓글을 삭제할까요?")) return;
+    deleteComment.mutate({ postId, commentId });
+  }
+
   const [likeCount, setLikeCount] = useState<number | null>(null);
   const [bookmarkCount, setBookmarkCount] = useState<number | null>(null);
   const [commentText, setCommentText] = useState("");
@@ -218,6 +241,9 @@ export default function CommunityDetailPage() {
               {format(new Date(post.createdAt), "yy.MM.dd HH:mm")}
             </p>
           </div>
+          {isMyContent(post.authorId) && (
+            <KebabMenu onDelete={handleDeletePost} />
+          )}
         </div>
 
         {/* Title */}
