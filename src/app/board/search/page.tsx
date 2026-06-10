@@ -3,7 +3,12 @@
 import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { SearchIcon, HeartIcon, BookmarkIcon, ChatBubbleIcon } from "@/components/common/Icons";
+import {
+  SearchIcon,
+  HeartIcon,
+  BookmarkIcon,
+  ChatBubbleIcon,
+} from "@/components/common/Icons";
 import { useInfiniteCommunityPosts } from "@/queries/useCommunityQueries";
 import type { CommunityPostListItem } from "@/api/community";
 
@@ -16,7 +21,10 @@ function CommunityPostCard({ post }: { post: CommunityPostListItem }) {
   const dateStr = format(new Date(post.createdAt), "yy.MM.dd HH:mm");
 
   return (
-    <Link href={`/board/community/${post.postId}`} className="block py-4 border-b border-gray-outline">
+    <Link
+      href={`/board/community/${post.postId}`}
+      className="block py-4 border-b border-gray-outline"
+    >
       <div className="flex items-center gap-2 mb-2">
         <span className="inline-block px-2 py-0.5 rounded border border-gray-outline caption-md text-gray_1">
           커뮤니티
@@ -27,11 +35,17 @@ function CommunityPostCard({ post }: { post: CommunityPostListItem }) {
           </span>
         )}
       </div>
-      <p className="text-md text-white font-semibold line-clamp-1">{post.title}</p>
-      <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">{post.previewContent}</p>
+      <p className="text-md text-white font-semibold line-clamp-1">
+        {post.title}
+      </p>
+      <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">
+        {post.previewContent}
+      </p>
       <div className="flex items-center justify-between mt-2">
         <p className="caption-md text-gray_1">
-          {post.authorDisplayName}{"  "}|{"  "}{dateStr}
+          {post.authorDisplayName}
+          {"  "}|{"  "}
+          {dateStr}
         </p>
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 caption-md text-gray_1">
@@ -57,16 +71,11 @@ export default function BoardSearchPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = useInfiniteCommunityPosts(
-    { query: debouncedQuery, size: 20 },
-    { enabled: !!debouncedQuery }
-  );
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteCommunityPosts(
+      { query: debouncedQuery, size: 20 },
+      { enabled: !!debouncedQuery }
+    );
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const bottomRef = useCallback(

@@ -45,7 +45,10 @@ function CommentRows({ postId }: { postId: number }) {
   return (
     <>
       {comments.map(c => (
-        <tr key={c.commentId} className="border-t border-gray-700/50 bg-gray-900/40">
+        <tr
+          key={c.commentId}
+          className="border-t border-gray-700/50 bg-gray-900/40"
+        >
           <td className="pl-8 pr-2 py-2 text-xs text-gray-400">
             {c.isReply ? "↳ 답글" : "댓글"}
           </td>
@@ -99,7 +102,9 @@ export function AdminCommunityPanel() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-400">커뮤니티 게시글/댓글 관리 (관리자)</p>
+      <p className="text-sm text-gray-400">
+        커뮤니티 게시글/댓글 관리 (관리자)
+      </p>
 
       {isLoading ? (
         <p className="text-gray-400 text-sm">불러오는 중...</p>
@@ -111,8 +116,12 @@ export function AdminCommunityPanel() {
             <thead className="bg-gray-800 text-gray-300">
               <tr>
                 <th className="text-left p-2">제목</th>
-                <th className="text-left p-2 w-24 hidden sm:table-cell">작성자</th>
-                <th className="text-left p-2 w-20 hidden sm:table-cell">댓글</th>
+                <th className="text-left p-2 w-24 hidden sm:table-cell">
+                  작성자
+                </th>
+                <th className="text-left p-2 w-20 hidden sm:table-cell">
+                  댓글
+                </th>
                 <th className="text-right p-2 w-24">작업</th>
               </tr>
             </thead>

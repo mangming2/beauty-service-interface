@@ -14,7 +14,13 @@ function timeAgo(dateStr: string): string {
 function Avatar() {
   return (
     <div className="rounded-full flex-shrink-0 bg-gray-container flex items-center justify-center overflow-hidden w-6 h-6">
-      <Image src="/main-icon.png" alt="" width={24} height={24} className="object-contain" />
+      <Image
+        src="/main-icon.png"
+        alt=""
+        width={24}
+        height={24}
+        className="object-contain"
+      />
     </div>
   );
 }

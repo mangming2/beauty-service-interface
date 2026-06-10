@@ -69,7 +69,6 @@ function ParentCommentCard({
   );
 }
 
-
 export default function CommentReplyPage() {
   const params = useParams();
   const id = params.id as string;
@@ -82,8 +81,7 @@ export default function CommentReplyPage() {
   const { data: authStatus } = useAuthStatus();
   const deleteComment = useDeletePostComment();
 
-  const isMyContent = (authorId: number) =>
-    authStatus?.userId === authorId;
+  const isMyContent = (authorId: number) => authStatus?.userId === authorId;
 
   function handleDeleteComment(commentId: number) {
     if (!postId || !confirm("댓글을 삭제할까요?")) return;
@@ -182,7 +180,11 @@ export default function CommentReplyPage() {
             el.style.height = `${el.scrollHeight}px`;
           }}
           onKeyDown={e => {
-            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+            if (
+              e.key === "Enter" &&
+              !e.shiftKey &&
+              !e.nativeEvent.isComposing
+            ) {
               e.preventDefault();
               handleSubmit();
             }

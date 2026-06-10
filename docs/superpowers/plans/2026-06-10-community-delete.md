@@ -12,20 +12,21 @@
 
 ## File Map
 
-| 상태 | 파일 | 역할 |
-|------|------|------|
-| 신규 | `src/components/community/KebabMenu.tsx` | `...` 버튼 + 삭제 드롭다운 공통 컴포넌트 |
-| 수정 | `src/components/community/ReplyCommentCard.tsx` | `onDelete` prop 추가 |
-| 수정 | `src/app/board/community/[id]/page.tsx` | 게시글·최상위 댓글 삭제 연결 |
-| 수정 | `src/app/board/community/[id]/comment/[commentId]/page.tsx` | 부모 댓글·답글 삭제 연결 |
-| 신규 | `src/components/admin/AdminCommunityPanel.tsx` | 관리자 게시글/댓글 삭제 패널 |
-| 수정 | `src/app/admin/page.tsx` | 커뮤니티 탭 추가 |
+| 상태 | 파일                                                        | 역할                                     |
+| ---- | ----------------------------------------------------------- | ---------------------------------------- |
+| 신규 | `src/components/community/KebabMenu.tsx`                    | `...` 버튼 + 삭제 드롭다운 공통 컴포넌트 |
+| 수정 | `src/components/community/ReplyCommentCard.tsx`             | `onDelete` prop 추가                     |
+| 수정 | `src/app/board/community/[id]/page.tsx`                     | 게시글·최상위 댓글 삭제 연결             |
+| 수정 | `src/app/board/community/[id]/comment/[commentId]/page.tsx` | 부모 댓글·답글 삭제 연결                 |
+| 신규 | `src/components/admin/AdminCommunityPanel.tsx`              | 관리자 게시글/댓글 삭제 패널             |
+| 수정 | `src/app/admin/page.tsx`                                    | 커뮤니티 탭 추가                         |
 
 ---
 
 ### Task 1: KebabMenu 공통 컴포넌트
 
 **Files:**
+
 - Create: `src/components/community/KebabMenu.tsx`
 
 - [ ] **Step 1: 파일 생성**
@@ -94,6 +95,7 @@ export function KebabMenu({ onDelete }: KebabMenuProps) {
 ```bash
 cd /Users/jiho/Documents/GitHub/beauty-service-interface && npx tsc --noEmit 2>&1 | head -20
 ```
+
 에러 없으면 통과.
 
 - [ ] **Step 3: 커밋**
@@ -108,9 +110,11 @@ git commit -m "feat: add KebabMenu component for community delete actions"
 ### Task 2: ReplyCommentCard에 onDelete 연결
 
 **Files:**
+
 - Modify: `src/components/community/ReplyCommentCard.tsx`
 
 현재 파일 내용 (linter 적용 후):
+
 ```tsx
 // 현재 interface
 interface ReplyCommentCardProps {
@@ -141,7 +145,13 @@ function timeAgo(dateStr: string): string {
 function Avatar() {
   return (
     <div className="rounded-full flex-shrink-0 bg-gray-container flex items-center justify-center overflow-hidden w-6 h-6">
-      <Image src="/main-icon.png" alt="" width={24} height={24} className="object-contain" />
+      <Image
+        src="/main-icon.png"
+        alt=""
+        width={24}
+        height={24}
+        className="object-contain"
+      />
     </div>
   );
 }
@@ -218,6 +228,7 @@ git commit -m "feat: add onDelete prop to ReplyCommentCard"
 ### Task 3: 게시글 상세 페이지 — 게시글 삭제
 
 **Files:**
+
 - Modify: `src/app/board/community/[id]/page.tsx`
 
 `user.id`는 `string`, `post.authorId`는 `number`이므로 `parseInt(user.id, 10) === post.authorId`로 비교한다.
@@ -270,7 +281,9 @@ function handleDeleteComment(commentId: number) {
 `{/* Author */}` 섹션의 author 블록을 찾아 수정:
 
 ```tsx
-{/* Author */}
+{
+  /* Author */
+}
 <div className="flex items-start gap-3 mt-3">
   <div className="rounded-full flex-shrink-0 w-10 h-10 bg-gray-container flex items-center justify-center overflow-hidden">
     <Image
@@ -282,17 +295,13 @@ function handleDeleteComment(commentId: number) {
     />
   </div>
   <div className="min-w-0 flex-1">
-    <p className="text-md text-white font-medium">
-      {post.authorDisplayName}
-    </p>
+    <p className="text-md text-white font-medium">{post.authorDisplayName}</p>
     <p className="caption-md text-gray_1 mt-0.5">
       {format(new Date(post.createdAt), "yy.MM.dd HH:mm")}
     </p>
   </div>
-  {isMyContent(post.authorId) && (
-    <KebabMenu onDelete={handleDeletePost} />
-  )}
-</div>
+  {isMyContent(post.authorId) && <KebabMenu onDelete={handleDeletePost} />}
+</div>;
 ```
 
 - [ ] **Step 4: 타입 체크**
@@ -313,6 +322,7 @@ git commit -m "feat: add delete button to community post"
 ### Task 4: 게시글 상세 페이지 — 최상위 댓글 삭제
 
 **Files:**
+
 - Modify: `src/app/board/community/[id]/page.tsx`
 - Modify: `TopLevelComment` 함수 컴포넌트
 
@@ -430,6 +440,7 @@ git commit -m "feat: add delete button to community comments and replies"
 ### Task 5: 답글 상세 페이지 — 삭제 연결
 
 **Files:**
+
 - Modify: `src/app/board/community/[id]/comment/[commentId]/page.tsx`
 
 - [ ] **Step 1: import 추가**
@@ -513,22 +524,25 @@ function handleDeleteComment(commentId: number) {
 - [ ] **Step 5: 답글 목록 `ReplyCommentCard`에 `onDelete` 전달**
 
 ```tsx
-{replies.map(reply => (
-  <ReplyCommentCard
-    key={reply.commentId}
-    comment={reply}
-    onDelete={
-      isMyContent(reply.authorId)
-        ? () => handleDeleteComment(reply.commentId)
-        : undefined
-    }
-  />
-))}
+{
+  replies.map(reply => (
+    <ReplyCommentCard
+      key={reply.commentId}
+      comment={reply}
+      onDelete={
+        isMyContent(reply.authorId)
+          ? () => handleDeleteComment(reply.commentId)
+          : undefined
+      }
+    />
+  ));
+}
 ```
 
 - [ ] **Step 6: KebabMenu import 추가**
 
 파일 상단에:
+
 ```tsx
 import { KebabMenu } from "@/components/community/KebabMenu";
 ```
@@ -551,6 +565,7 @@ git commit -m "feat: add delete buttons to reply detail page"
 ### Task 6: AdminCommunityPanel 생성
 
 **Files:**
+
 - Create: `src/components/admin/AdminCommunityPanel.tsx`
 
 게시글 목록 무한스크롤 + 행 클릭 시 댓글/답글 확장 표시. 각 항목에 삭제 버튼.
@@ -605,7 +620,10 @@ function CommentRows({ postId }: { postId: number }) {
   return (
     <>
       {comments.map(c => (
-        <tr key={c.commentId} className="border-t border-gray-700/50 bg-gray-900/40">
+        <tr
+          key={c.commentId}
+          className="border-t border-gray-700/50 bg-gray-900/40"
+        >
           <td className="pl-8 pr-2 py-2 text-xs text-gray-400">
             {c.isReply ? "↳ 답글" : "댓글"}
           </td>
@@ -659,7 +677,9 @@ export function AdminCommunityPanel() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-400">커뮤니티 게시글/댓글 관리 (관리자)</p>
+      <p className="text-sm text-gray-400">
+        커뮤니티 게시글/댓글 관리 (관리자)
+      </p>
 
       {isLoading ? (
         <p className="text-gray-400 text-sm">불러오는 중...</p>
@@ -671,8 +691,12 @@ export function AdminCommunityPanel() {
             <thead className="bg-gray-800 text-gray-300">
               <tr>
                 <th className="text-left p-2">제목</th>
-                <th className="text-left p-2 w-24 hidden sm:table-cell">작성자</th>
-                <th className="text-left p-2 w-20 hidden sm:table-cell">댓글</th>
+                <th className="text-left p-2 w-24 hidden sm:table-cell">
+                  작성자
+                </th>
+                <th className="text-left p-2 w-20 hidden sm:table-cell">
+                  댓글
+                </th>
                 <th className="text-right p-2 w-24">작업</th>
               </tr>
             </thead>
@@ -775,11 +799,13 @@ git commit -m "feat: add AdminCommunityPanel for post and comment management"
 ### Task 7: 관리자 페이지에 커뮤니티 탭 추가
 
 **Files:**
+
 - Modify: `src/app/admin/page.tsx`
 
 - [ ] **Step 1: import 추가**
 
 파일 상단의 import 목록에 추가:
+
 ```tsx
 import { AdminCommunityPanel } from "@/components/admin/AdminCommunityPanel";
 ```

@@ -22,8 +22,7 @@ import {
   ChatBubbleIcon,
   SendIcon,
 } from "@/components/common/Icons";
-import { format, formatDistanceToNow } from "date-fns";
-import { ko } from "date-fns/locale";
+import { format } from "date-fns";
 import { useTranslation } from "@/hooks/useTranslation";
 import { gtag } from "@/lib/gtag";
 import type { CommunityCommentView } from "@/api/community";
@@ -31,13 +30,6 @@ import { ReplyCommentCard } from "@/components/community/ReplyCommentCard";
 
 function formatCount(count: number): string {
   return count >= 999 ? "999+" : count.toString();
-}
-
-function timeAgo(dateStr: string): string {
-  return formatDistanceToNow(new Date(dateStr), {
-    addSuffix: true,
-    locale: ko,
-  });
 }
 
 function Avatar({ size = 64 }: { size?: number }) {
@@ -114,7 +106,6 @@ function TopLevelComment({
   );
 }
 
-
 export default function CommunityDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -132,8 +123,7 @@ export default function CommunityDetailPage() {
   const deletePost = useDeleteCommunityPost();
   const deleteComment = useDeletePostComment();
 
-  const isMyContent = (authorId: number) =>
-    authStatus?.userId === authorId;
+  const isMyContent = (authorId: number) => authStatus?.userId === authorId;
 
   function handleDeletePost() {
     if (!postId || !confirm("게시글을 삭제할까요?")) return;
@@ -365,7 +355,11 @@ export default function CommunityDetailPage() {
             el.style.height = `${el.scrollHeight}px`;
           }}
           onKeyDown={e => {
-            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+            if (
+              e.key === "Enter" &&
+              !e.shiftKey &&
+              !e.nativeEvent.isComposing
+            ) {
               e.preventDefault();
               handleSubmitComment();
             }

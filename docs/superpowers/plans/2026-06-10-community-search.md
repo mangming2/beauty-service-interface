@@ -12,18 +12,19 @@
 
 ## File Map
 
-| 파일 | 변경 |
-|------|------|
-| `src/api/community.ts` | `GetCommunityPostsParams`에 `query?: string` 추가 |
-| `src/queries/useCommunityQueries.ts` | `useInfiniteCommunityPosts`에 `enabled` 옵션 추가 |
-| `src/app/board/search/page.tsx` | 신규 생성 |
-| `src/components/common/Header.tsx` | board 페이지 검색 링크 → `/board/search`, 타이틀 처리 추가 |
+| 파일                                 | 변경                                                       |
+| ------------------------------------ | ---------------------------------------------------------- |
+| `src/api/community.ts`               | `GetCommunityPostsParams`에 `query?: string` 추가          |
+| `src/queries/useCommunityQueries.ts` | `useInfiniteCommunityPosts`에 `enabled` 옵션 추가          |
+| `src/app/board/search/page.tsx`      | 신규 생성                                                  |
+| `src/components/common/Header.tsx`   | board 페이지 검색 링크 → `/board/search`, 타이틀 처리 추가 |
 
 ---
 
 ### Task 1: community API에 `query` 파라미터 추가
 
 **Files:**
+
 - Modify: `src/api/community.ts`
 
 - [ ] **Step 1: `GetCommunityPostsParams` 인터페이스에 `query` 필드 추가**
@@ -79,6 +80,7 @@ git commit -m "feat: add query param support to getCommunityPosts API"
 ### Task 2: `useInfiniteCommunityPosts`에 `enabled` 옵션 추가
 
 **Files:**
+
 - Modify: `src/queries/useCommunityQueries.ts`
 
 - [ ] **Step 1: 함수 시그니처에 `options` 파라미터 추가**
@@ -119,6 +121,7 @@ git commit -m "feat: add enabled option to useInfiniteCommunityPosts"
 ### Task 3: `/board/search` 페이지 생성
 
 **Files:**
+
 - Create: `src/app/board/search/page.tsx`
 
 - [ ] **Step 1: 파일 생성**
@@ -131,7 +134,12 @@ git commit -m "feat: add enabled option to useInfiniteCommunityPosts"
 import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { SearchIcon, HeartIcon, BookmarkIcon, ChatBubbleIcon } from "@/components/common/Icons";
+import {
+  SearchIcon,
+  HeartIcon,
+  BookmarkIcon,
+  ChatBubbleIcon,
+} from "@/components/common/Icons";
 import { useInfiniteCommunityPosts } from "@/queries/useCommunityQueries";
 import type { CommunityPostListItem } from "@/api/community";
 
@@ -144,7 +152,10 @@ function CommunityPostCard({ post }: { post: CommunityPostListItem }) {
   const dateStr = format(new Date(post.createdAt), "yy.MM.dd HH:mm");
 
   return (
-    <Link href={`/board/community/${post.postId}`} className="block py-4 border-b border-gray-outline">
+    <Link
+      href={`/board/community/${post.postId}`}
+      className="block py-4 border-b border-gray-outline"
+    >
       <div className="flex items-center gap-2 mb-2">
         <span className="inline-block px-2 py-0.5 rounded border border-gray-outline caption-md text-gray_1">
           커뮤니티
@@ -155,11 +166,17 @@ function CommunityPostCard({ post }: { post: CommunityPostListItem }) {
           </span>
         )}
       </div>
-      <p className="text-md text-white font-semibold line-clamp-1">{post.title}</p>
-      <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">{post.previewContent}</p>
+      <p className="text-md text-white font-semibold line-clamp-1">
+        {post.title}
+      </p>
+      <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">
+        {post.previewContent}
+      </p>
       <div className="flex items-center justify-between mt-2">
         <p className="caption-md text-gray_1">
-          {post.authorDisplayName}{"  "}|{"  "}{dateStr}
+          {post.authorDisplayName}
+          {"  "}|{"  "}
+          {dateStr}
         </p>
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 caption-md text-gray_1">
@@ -185,16 +202,11 @@ export default function BoardSearchPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = useInfiniteCommunityPosts(
-    { query: debouncedQuery, size: 20 },
-    { enabled: !!debouncedQuery }
-  );
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteCommunityPosts(
+      { query: debouncedQuery, size: 20 },
+      { enabled: !!debouncedQuery }
+    );
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const bottomRef = useCallback(
@@ -275,11 +287,13 @@ git commit -m "feat: add community search page at /board/search"
 ### Task 4: Header 업데이트
 
 **Files:**
+
 - Modify: `src/components/common/Header.tsx`
 
 - [ ] **Step 1: `isBoardSearchPage` 변수 추가 및 `isBoardPage` 범위 조정**
 
 기존:
+
 ```ts
 const isBoardPage = pathname === "/board" || pathname.startsWith("/board/");
 const isNoticeDetailPage =
@@ -288,9 +302,12 @@ const isSearchPage = pathname === "/search";
 ```
 
 아래로 교체:
+
 ```ts
 const isBoardSearchPage = pathname === "/board/search";
-const isBoardPage = pathname === "/board" || (pathname.startsWith("/board/") && !isBoardSearchPage);
+const isBoardPage =
+  pathname === "/board" ||
+  (pathname.startsWith("/board/") && !isBoardSearchPage);
 const isNoticeDetailPage =
   pathname.startsWith("/board/notice/") && pathname !== "/board/notice";
 const isSearchPage = pathname === "/search";
@@ -301,14 +318,17 @@ const isSearchPage = pathname === "/search";
 `{isSearchPage && (...)}` 블록 바로 아래에 추가:
 
 ```tsx
-{isBoardSearchPage && (
-  <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
-)}
+{
+  isBoardSearchPage && (
+    <h1 className="text-white h-6 title-md">{t("header.searchTitle")}</h1>
+  );
+}
 ```
 
 - [ ] **Step 3: 로고 노출 조건에 `isBoardSearchPage` 제외 추가**
 
 기존 로고 조건:
+
 ```tsx
 {((!isFormPage &&
   !isWishPage &&
@@ -324,6 +344,7 @@ const isSearchPage = pathname === "/search";
 ```
 
 `!isSearchPage` 뒤에 `!isBoardSearchPage &&` 추가:
+
 ```tsx
 {((!isFormPage &&
   !isWishPage &&
@@ -342,29 +363,35 @@ const isSearchPage = pathname === "/search";
 - [ ] **Step 4: 검색 버튼 링크 분기 처리**
 
 기존:
+
 ```tsx
-{(isMainPage || isBoardPage || isSearchPage) && (
-  <Link
-    href="/search"
-    aria-label={t("common.search")}
-    className="cursor-pointer inline-flex"
-  >
-    <SearchIcon color="white" />
-  </Link>
-)}
+{
+  (isMainPage || isBoardPage || isSearchPage) && (
+    <Link
+      href="/search"
+      aria-label={t("common.search")}
+      className="cursor-pointer inline-flex"
+    >
+      <SearchIcon color="white" />
+    </Link>
+  );
+}
 ```
 
 아래로 교체:
+
 ```tsx
-{(isMainPage || isBoardPage || isBoardSearchPage || isSearchPage) && (
-  <Link
-    href={isBoardPage || isBoardSearchPage ? "/board/search" : "/search"}
-    aria-label={t("common.search")}
-    className="cursor-pointer inline-flex"
-  >
-    <SearchIcon color="white" />
-  </Link>
-)}
+{
+  (isMainPage || isBoardPage || isBoardSearchPage || isSearchPage) && (
+    <Link
+      href={isBoardPage || isBoardSearchPage ? "/board/search" : "/search"}
+      aria-label={t("common.search")}
+      className="cursor-pointer inline-flex"
+    >
+      <SearchIcon color="white" />
+    </Link>
+  );
+}
 ```
 
 - [ ] **Step 5: Commit**

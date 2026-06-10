@@ -21,7 +21,9 @@ export const Header = () => {
     pathname
   );
   const isBoardSearchPage = pathname === "/board/search";
-  const isBoardPage = pathname === "/board" || (pathname.startsWith("/board/") && !isBoardSearchPage);
+  const isBoardPage =
+    pathname === "/board" ||
+    (pathname.startsWith("/board/") && !isBoardSearchPage);
   const isNoticeDetailPage =
     pathname.startsWith("/board/notice/") && pathname !== "/board/notice";
   const isSearchPage = pathname === "/search";
@@ -95,7 +97,9 @@ export const Header = () => {
         <div className="flex items-center gap-3">
           {(isMainPage || isBoardPage || isBoardSearchPage || isSearchPage) && (
             <Link
-              href={isBoardPage || isBoardSearchPage ? "/board/search" : "/search"}
+              href={
+                isBoardPage || isBoardSearchPage ? "/board/search" : "/search"
+              }
               aria-label={t("common.search")}
               className="cursor-pointer inline-flex"
             >

@@ -47,7 +47,10 @@ export function KebabMenu({ onDelete }: KebabMenuProps) {
         </svg>
       </button>
       {open && (
-        <div role="menu" className="absolute right-0 top-8 z-30 min-w-[80px] rounded-lg bg-gray-800 border border-gray-600 shadow-lg py-1">
+        <div
+          role="menu"
+          className="absolute right-0 top-8 z-30 min-w-[80px] rounded-lg bg-gray-800 border border-gray-600 shadow-lg py-1"
+        >
           <button
             role="menuitem"
             onClick={e => {

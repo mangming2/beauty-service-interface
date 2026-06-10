@@ -37,19 +37,23 @@ export interface GetCommunityPostsParams {
 ### 3. New Page — `src/app/board/search/page.tsx`
 
 **검색 바**
+
 - 기존 `/search` 페이지와 동일한 스타일 (`bg-[#2E3033] border border-[#3E4043]`)
 - debounce 300ms 후 쿼리 파라미터에 반영
 
 **검색 전 상태**
+
 - 빈 화면 (기본 노출 콘텐츠 없음)
 
 **검색 결과**
+
 - `useInfiniteCommunityPosts({ query, size: 20 })` 사용
 - 기존 `PostCard` 재사용, 카드 상단에 **"커뮤니티"** 배지 추가 (회색 border, caption-md)
 - 결과 없을 때: "검색 결과가 없습니다" 텍스트
 - 무한스크롤: IntersectionObserver로 하단 감지 시 `fetchNextPage`
 
 **공지글 TODO**
+
 ```ts
 // TODO: 공지글 검색 추가 예정 (GET /boards/announcements에 query 파라미터 지원 시)
 ```
