@@ -52,28 +52,26 @@ function Avatar({ size = 64 }: { size?: number }) {
 function TopLevelComment({
   comment,
   replyCount,
-  onReply,
   onDelete,
   t,
 }: {
   comment: CommunityCommentView;
   replyCount: number;
-  onReply: (comment: CommunityCommentView) => void;
   onDelete?: () => void;
   t: (key: string) => string;
 }) {
   if (comment.isDeleted) {
     return (
-      <li className="py-3">
+      <div className="py-3">
         <p className="caption-md text-gray_1 italic">
           {t("communityPage.deletedComment")}
         </p>
-      </li>
+      </div>
     );
   }
 
   return (
-    <li>
+    <div>
       <div className="flex gap-3">
         <Avatar size={64} />
         <div className="flex-1 min-w-0 pt-1">
@@ -92,17 +90,14 @@ function TopLevelComment({
         <span className="caption-md text-gray_1">
           {format(new Date(comment.createdAt), "yy.MM.dd  HH:mm")}
         </span>
-        <button
-          onClick={() => onReply(comment)}
-          className="flex items-center gap-1.5 caption-md text-gray_1 hover:text-white transition-colors"
-        >
-          <ChatBubbleIcon width={11} height={11} color="#bcbcbc" />
-          <span className="text-[11px]">
-            {replyCount === 0 ? "답글쓰기" : replyCount}
-          </span>
-        </button>
+        {replyCount > 0 && (
+          <div className="flex items-center gap-1.5 caption-md text-gray_1">
+            <ChatBubbleIcon width={11} height={11} color="#bcbcbc" />
+            <span className="text-[11px]">{replyCount}</span>
+          </div>
+        )}
       </div>
-    </li>
+    </div>
   );
 }
 
@@ -180,10 +175,6 @@ export default function CommunityDetailPage() {
         );
       },
     });
-  }
-
-  function handleReply(comment: CommunityCommentView) {
-    router.push(`/board/community/${id}/comment/${comment.commentId}`);
   }
 
   function handleSubmitComment() {
@@ -299,43 +290,64 @@ export default function CommunityDetailPage() {
           {t("boardPage.comments")} {formatCount(post.commentCount)}
         </h2>
 
-        {comments.length === 0 ? (
+        {comments.filter(c => !c.isReply).length === 0 ? (
           <p className="caption-md text-gray_1 py-4">
             {t("communityPage.noComments")}
           </p>
         ) : (
           <ul className="space-y-5">
-            {comments.map(comment => {
-              const replyCount = comments.filter(
-                c => c.parentCommentId === comment.commentId
-              ).length;
-              return comment.isReply ? (
-                <ReplyCommentCard
-                  key={comment.commentId}
-                  comment={comment}
-                  deletedLabel={t("communityPage.deletedComment")}
-                  onClick={() => handleReply(comment)}
-                  onDelete={
-                    isMyContent(comment.authorId)
-                      ? () => handleDeleteComment(comment.commentId)
-                      : undefined
-                  }
-                />
-              ) : (
-                <TopLevelComment
-                  key={comment.commentId}
-                  comment={comment}
-                  replyCount={replyCount}
-                  onReply={handleReply}
-                  onDelete={
-                    isMyContent(comment.authorId)
-                      ? () => handleDeleteComment(comment.commentId)
-                      : undefined
-                  }
-                  t={t}
-                />
-              );
-            })}
+            {comments
+              .filter(c => !c.isReply)
+              .map(comment => {
+                const replies = comments.filter(
+                  c => c.parentCommentId === comment.commentId
+                );
+                return (
+                  <li key={comment.commentId}>
+                    <TopLevelComment
+                      comment={comment}
+                      replyCount={replies.length}
+                      onDelete={
+                        isMyContent(comment.authorId)
+                          ? () => handleDeleteComment(comment.commentId)
+                          : undefined
+                      }
+                      t={t}
+                    />
+                    {replies.length > 0 && (
+                      <ul className="mt-3 space-y-2">
+                        {replies.map(reply => (
+                          <ReplyCommentCard
+                            key={reply.commentId}
+                            comment={reply}
+                            deletedLabel={t("communityPage.deletedComment")}
+                            onDelete={
+                              isMyContent(reply.authorId)
+                                ? () => handleDeleteComment(reply.commentId)
+                                : undefined
+                            }
+                          />
+                        ))}
+                      </ul>
+                    )}
+                    <div
+                      className="ml-10 mt-3 flex items-center gap-2 cursor-pointer active:opacity-70 transition-opacity"
+                      onClick={() =>
+                        router.push(
+                          `/board/community/${id}/comment/${comment.commentId}`
+                        )
+                      }
+                    >
+                      <Avatar size={24} />
+                      <div className="flex w-full items-center  py-2 px-3 rounded-lg border border-gray-outline">
+                        <span className="caption-md text-gray_1">
+                          답글을 입력해주세요
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
           </ul>
         )}
       </section>

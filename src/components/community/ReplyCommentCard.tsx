@@ -28,14 +28,12 @@ function Avatar() {
 interface ReplyCommentCardProps {
   comment: CommunityCommentView;
   deletedLabel?: string;
-  onClick?: () => void;
   onDelete?: () => void;
 }
 
 export function ReplyCommentCard({
   comment,
   deletedLabel = "삭제된 답글입니다.",
-  onClick,
   onDelete,
 }: ReplyCommentCardProps) {
   if (comment.isDeleted) {
@@ -50,10 +48,7 @@ export function ReplyCommentCard({
 
   return (
     <li className="ml-10">
-      <div
-        className={`rounded-2xl bg-gray-container px-4 py-3 ${onClick ? "cursor-pointer active:opacity-80 transition-opacity" : ""}`}
-        onClick={onClick}
-      >
+      <div className="rounded-2xl bg-gray-container px-4 py-3">
         <div className="flex gap-3 items-start">
           <Avatar />
           <div className="flex-1 min-w-0">

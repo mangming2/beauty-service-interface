@@ -13,14 +13,16 @@ export function ConceptCard({ src, alt, label, href }: ConceptCardProps) {
   const content = (
     <div className="text-center">
       <div className="w-[100px] h-[100px] p-[12px] bg-gray rounded-[20px] flex items-center justify-center overflow-hidden">
-        <Image
-          src={src}
-          alt={alt}
-          width={60}
-          height={60}
-          draggable={false}
-          style={{ width: "auto", height: "auto", maxWidth: 60, maxHeight: 60 }}
-        />
+        <div className="relative w-[60px] h-[60px]">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes="60px"
+            className="object-contain"
+            draggable={false}
+          />
+        </div>
       </div>
       <span className="text-xs">{label}</span>
     </div>
