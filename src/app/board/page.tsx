@@ -2,7 +2,6 @@
 
 import { Suspense, useState, useRef, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import {
@@ -14,6 +13,7 @@ import {
 } from "@/components/common/Icons";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
+import { CommunityCarouselBanner } from "@/components/community/CommunityCarouselBanner";
 import {
   usePopularPosts,
   useInfiniteCommunityPosts,
@@ -260,17 +260,7 @@ function BoardContent() {
 
       <GapY size={24} />
 
-      {tab === TAB_NOTICE && (
-        <div className="relative w-full aspect-[3/1] overflow-hidden rounded">
-          <Image
-            src="/notice.png"
-            alt={t("boardPage.noticeAlt")}
-            fill
-            className="object-cover"
-            sizes="100vw"
-          />
-        </div>
-      )}
+      {tab === TAB_NOTICE && <CommunityCarouselBanner />}
 
       {tab === TAB_NOTICE && (
         <ul className="divide-y divide-gray-outline">

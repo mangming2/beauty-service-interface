@@ -11,6 +11,7 @@ import Highteen from "@/assets/3d-images/highteen.png";
 import Etc from "@/assets/3d-images/etc.png";
 import All from "@/assets/3d-images/doki-all.png";
 import { GapY } from "@/components/ui/gap";
+import { LandingCarouselSection } from "@/components/main/LandingCarouselSection";
 import { PopularCarouselSection } from "@/components/main/PopularCarouselSection";
 import { ConceptScrollContainer } from "@/components/main/ConceptScrollContainer";
 import { LatestTrendsSection } from "@/components/main/LatestTrendsSection";
@@ -49,6 +50,8 @@ export default function Home() {
     <div className="min-h-screen text-white">
       <GapY size={24} />
       {/* Main Content */}
+      {/* 랜딩 캐러셀 (관리자 설정) */}
+      <LandingCarouselSection />
       {/* Most Popular Section */}
       <PopularCarouselSection />
       <div className="px-5">

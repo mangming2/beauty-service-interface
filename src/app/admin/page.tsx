@@ -22,6 +22,7 @@ import { AdminReservationsPanel } from "@/components/admin/AdminReservationsPane
 import { AdminRecommendationsPanel } from "@/components/admin/AdminRecommendationsPanel";
 import { AdminTourSurveysPanel } from "@/components/admin/AdminTourSurveysPanel";
 import { AdminCommunityPanel } from "@/components/admin/AdminCommunityPanel";
+import { AdminCarouselPanel } from "@/components/admin/AdminCarouselPanel";
 import { useResetAndSeedDb } from "@/queries/useAdminQueries";
 
 /** 관리자 탭: 기본 TabsTrigger는 dark muted 색이라 회색 배경에서 대비가 거의 없음 */
@@ -226,6 +227,9 @@ export default function AdminPage() {
             <TabsTrigger value="community" className={adminTabTriggerClass}>
               커뮤니티
             </TabsTrigger>
+            <TabsTrigger value="carousels" className={adminTabTriggerClass}>
+              캐러셀
+            </TabsTrigger>
             {process.env.NODE_ENV === "development" && (
               <TabsTrigger value="dev-tools" className={adminTabTriggerClass}>
                 🛠 Dev Tools
@@ -357,6 +361,10 @@ export default function AdminPage() {
 
           <TabsContent value="community" className="mt-6">
             <AdminCommunityPanel />
+          </TabsContent>
+
+          <TabsContent value="carousels" className="mt-6">
+            <AdminCarouselPanel />
           </TabsContent>
 
           {process.env.NODE_ENV === "development" && (
