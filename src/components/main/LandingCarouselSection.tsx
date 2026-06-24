@@ -75,7 +75,6 @@ function LandingCarousel({ items }: { items: LandingCarouselItem[] }) {
           })}
         </CarouselContent>
       </Carousel>
-
     </div>
   );
 }

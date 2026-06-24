@@ -24,7 +24,11 @@ import {
 import { useProducts } from "@/queries/useProductQueries";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { getSafeImageSrc } from "@/lib/utils";
-import type { AdminCarouselItem, LandingCarouselRequest, CarouselLinkType } from "@/api/carousel";
+import type {
+  AdminCarouselItem,
+  LandingCarouselRequest,
+  CarouselLinkType,
+} from "@/api/carousel";
 
 function LinkPicker({
   linkType,
@@ -211,7 +215,9 @@ function LandingCarouselPanel() {
                 <p className="text-xs text-gray-400 mt-0.5">
                   {item.linkType} → ID {item.linkId}
                 </p>
-                <p className={`text-xs mt-0.5 font-medium ${item.isActive ? "text-green-400" : "text-gray-500"}`}>
+                <p
+                  className={`text-xs mt-0.5 font-medium ${item.isActive ? "text-green-400" : "text-gray-500"}`}
+                >
                   {item.isActive ? "● 활성" : "○ 비활성"}
                 </p>
               </div>
@@ -260,7 +266,9 @@ function LandingCarouselPanel() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">링크 타입 *</label>
+              <label className="block text-xs text-gray-400 mb-1">
+                링크 타입 *
+              </label>
               <select
                 value={linkType}
                 onChange={e => {
@@ -284,7 +292,9 @@ function LandingCarouselPanel() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1">이미지 URL *</label>
+              <label className="block text-xs text-gray-400 mb-1">
+                이미지 URL *
+              </label>
               <input
                 required
                 value={imageUrl}
@@ -294,7 +304,9 @@ function LandingCarouselPanel() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1">해시태그</label>
+              <label className="block text-xs text-gray-400 mb-1">
+                해시태그
+              </label>
               <input
                 value={hashtag}
                 onChange={e => setHashtag(e.target.value)}
@@ -304,7 +316,9 @@ function LandingCarouselPanel() {
             </div>
             <div className="flex gap-4 items-center">
               <div className="flex-1">
-                <label className="block text-xs text-gray-400 mb-1">정렬 순서 (낮을수록 우선)</label>
+                <label className="block text-xs text-gray-400 mb-1">
+                  정렬 순서 (낮을수록 우선)
+                </label>
                 <input
                   type="number"
                   min={0}
@@ -321,13 +335,20 @@ function LandingCarouselPanel() {
                   onChange={e => setIsActive(e.target.checked)}
                   className="w-4 h-4 accent-pink-500"
                 />
-                <label htmlFor="landing-isActive" className="text-sm text-gray-300">
+                <label
+                  htmlFor="landing-isActive"
+                  className="text-sm text-gray-300"
+                >
                   활성화
                 </label>
               </div>
             </div>
             <DialogFooter className="gap-2 sm:gap-0">
-              <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setDialogOpen(false)}
+              >
                 취소
               </Button>
               <Button type="submit" disabled={isPending}>
@@ -351,7 +372,9 @@ function LandingCarouselPanel() {
           </DialogHeader>
           <form onSubmit={handleHashtagSubmit} className="space-y-3">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">해시태그</label>
+              <label className="block text-xs text-gray-400 mb-1">
+                해시태그
+              </label>
               <input
                 value={hashtagInput}
                 onChange={e => setHashtagInput(e.target.value)}
@@ -360,7 +383,11 @@ function LandingCarouselPanel() {
               />
             </div>
             <DialogFooter className="gap-2 sm:gap-0">
-              <Button type="button" variant="secondary" onClick={() => setHashtagDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setHashtagDialogOpen(false)}
+              >
                 취소
               </Button>
               <Button type="submit" disabled={hashtagMutation.isPending}>
@@ -368,7 +395,9 @@ function LandingCarouselPanel() {
               </Button>
             </DialogFooter>
             {hashtagMutation.isError && (
-              <p className="text-red-400 text-xs">{carouselErrMsg(hashtagMutation.error)}</p>
+              <p className="text-red-400 text-xs">
+                {carouselErrMsg(hashtagMutation.error)}
+              </p>
             )}
           </form>
         </DialogContent>
@@ -387,7 +416,9 @@ function CommunityCarouselPanel() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingItem, setEditingItem] = useState<AdminCarouselItem | null>(null);
+  const [editingItem, setEditingItem] = useState<AdminCarouselItem | null>(
+    null
+  );
   const [image, setImage] = useState<File | null>(null);
   const [sortOrder, setSortOrder] = useState("0");
   const [isActive, setIsActive] = useState(true);
@@ -465,10 +496,14 @@ function CommunityCarouselPanel() {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-xs font-medium ${item.isActive ? "text-green-400" : "text-gray-500"}`}>
+                <p
+                  className={`text-xs font-medium ${item.isActive ? "text-green-400" : "text-gray-500"}`}
+                >
                   {item.isActive ? "● 활성" : "○ 비활성"}
                 </p>
-                <p className="text-xs text-gray-500">순서 {item.sortOrder ?? 0}</p>
+                <p className="text-xs text-gray-500">
+                  순서 {item.sortOrder ?? 0}
+                </p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <Button
@@ -535,7 +570,9 @@ function CommunityCarouselPanel() {
             </div>
             <div className="flex gap-4 items-center">
               <div className="flex-1">
-                <label className="block text-xs text-gray-400 mb-1">정렬 순서 (낮을수록 우선)</label>
+                <label className="block text-xs text-gray-400 mb-1">
+                  정렬 순서 (낮을수록 우선)
+                </label>
                 <input
                   type="number"
                   min={0}
@@ -552,13 +589,20 @@ function CommunityCarouselPanel() {
                   onChange={e => setIsActive(e.target.checked)}
                   className="w-4 h-4 accent-pink-500"
                 />
-                <label htmlFor="community-isActive" className="text-sm text-gray-300">
+                <label
+                  htmlFor="community-isActive"
+                  className="text-sm text-gray-300"
+                >
                   활성화
                 </label>
               </div>
             </div>
             <DialogFooter className="gap-2 sm:gap-0">
-              <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setDialogOpen(false)}
+              >
                 취소
               </Button>
               <Button type="submit" disabled={isPending}>

@@ -11,7 +11,11 @@ import { useWishes, useToggleWish } from "@/queries/useWishQueries";
 import { useMyPageUser } from "@/queries/useMyPageQueries";
 import { useMyBookmarkedCommunityPosts } from "@/queries/useMyPageQueries";
 import { useEffect } from "react";
-import { HeartIcon, BookmarkIcon, ChatBubbleIcon } from "@/components/common/Icons";
+import {
+  HeartIcon,
+  BookmarkIcon,
+  ChatBubbleIcon,
+} from "@/components/common/Icons";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useProducts } from "@/queries/useProductQueries";
 import { useLatestInKoreaRecommendations } from "@/queries/useRecommendationQueries";
@@ -78,9 +82,14 @@ export default function Wish() {
 
   const { data: myPageUser, isLoading: userLoading } = useMyPageUser();
   const { data: wishes = [], isLoading: wishesLoading } = useWishes();
-  const { data: allProducts = [], isLoading: productsLoading } = useProducts({ size: 100 });
-  const { data: suggestions = [] } = useLatestInKoreaRecommendations({ size: 6 });
-  const { data: bookmarks = [], isLoading: bookmarksLoading } = useMyBookmarkedCommunityPosts();
+  const { data: allProducts = [], isLoading: productsLoading } = useProducts({
+    size: 100,
+  });
+  const { data: suggestions = [] } = useLatestInKoreaRecommendations({
+    size: 6,
+  });
+  const { data: bookmarks = [], isLoading: bookmarksLoading } =
+    useMyBookmarkedCommunityPosts();
   const toggleWishMutation = useToggleWish();
 
   useEffect(() => {
@@ -145,16 +154,36 @@ export default function Wish() {
                         images={
                           product?.imageUrls?.length
                             ? product.imageUrls
-                            : ["/dummy-logo.png", "/dummy-logo.png", "/dummy-logo.png"]
+                            : [
+                                "/dummy-logo.png",
+                                "/dummy-logo.png",
+                                "/dummy-logo.png",
+                              ]
                         }
                         salonInfo={{
-                          tags: product?.representOption?.tags ?? product?.tagNames ?? [],
+                          tags:
+                            product?.representOption?.tags ??
+                            product?.tagNames ??
+                            [],
                           name: item.name,
-                          originalPrice: product?.representOption?.originalPrice ?? item.minPrice ?? 0,
-                          finalPrice: product?.representOption?.finalPrice ?? item.minPrice ?? 0,
-                          discountRate: product?.representOption?.discountRate ?? 0,
-                          rating: product?.rating ?? product?.representOption?.rating ?? 0,
-                          reviewCount: product?.reviewCount ?? product?.representOption?.reviewCount ?? 0,
+                          originalPrice:
+                            product?.representOption?.originalPrice ??
+                            item.minPrice ??
+                            0,
+                          finalPrice:
+                            product?.representOption?.finalPrice ??
+                            item.minPrice ??
+                            0,
+                          discountRate:
+                            product?.representOption?.discountRate ?? 0,
+                          rating:
+                            product?.rating ??
+                            product?.representOption?.rating ??
+                            0,
+                          reviewCount:
+                            product?.reviewCount ??
+                            product?.representOption?.reviewCount ??
+                            0,
                           location: product?.representOption?.location ?? "",
                         }}
                         onClick={() => handlePackageClick(item.id)}

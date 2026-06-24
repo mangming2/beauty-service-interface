@@ -200,10 +200,9 @@ export default function SearchPage() {
 
   // 공지글: 전체 로드 후 클라이언트 필터
   const { data: announcementData } = useAnnouncements({ size: 100 });
-  const allAnnouncements = announcementData?.posts ?? [];
   const filteredAnnouncements = useMemo(
-    () => filterAnnouncements(allAnnouncements, searchText),
-    [allAnnouncements, searchText]
+    () => filterAnnouncements(announcementData?.posts ?? [], searchText),
+    [announcementData?.posts, searchText]
   );
 
   // 커뮤니티: 서버 검색 (debounce)

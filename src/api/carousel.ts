@@ -1,4 +1,10 @@
-import { apiGet, apiPost, apiPut, apiDelete, apiRequest } from "@/lib/apiClient";
+import {
+  apiGet,
+  apiPost,
+  apiPut,
+  apiDelete,
+  apiRequest,
+} from "@/lib/apiClient";
 
 // ========== 타입 정의 ==========
 
@@ -71,7 +77,9 @@ export async function getLandingCarousels(): Promise<LandingCarouselItem[]> {
  * 커뮤니티 페이지 활성 캐러셀 목록
  * GET /carousels/community
  */
-export async function getCommunityCarousels(): Promise<CommunityCarouselItem[]> {
+export async function getCommunityCarousels(): Promise<
+  CommunityCarouselItem[]
+> {
   return apiGet<CommunityCarouselItem[]>("/carousels/community", {
     optionalAuth: true,
   });
@@ -124,11 +132,9 @@ export async function updateLandingCarousel(
   id: number,
   request: LandingCarouselRequest
 ): Promise<AdminCarouselItem> {
-  return apiPut<AdminCarouselItem>(
-    `/admin/carousels/landing/${id}`,
-    request,
-    { requireAuth: true }
-  );
+  return apiPut<AdminCarouselItem>(`/admin/carousels/landing/${id}`, request, {
+    requireAuth: true,
+  });
 }
 
 /**

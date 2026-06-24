@@ -55,7 +55,6 @@ export function CommunityCarouselBanner() {
           ))}
         </CarouselContent>
       </Carousel>
-
     </div>
   );
 }
