@@ -1,26 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
 } from "@/components/ui/carousel";
 import { useCommunityCarousels } from "@/queries/useCarouselQueries";
 import { getSafeImageSrc } from "@/lib/utils";
 
 export function CommunityCarouselBanner() {
   const { data: items = [], isLoading } = useCommunityCarousels();
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    if (!api) return;
-    setCurrent(api.selectedScrollSnap());
-    api.on("select", () => setCurrent(api.selectedScrollSnap()));
-  }, [api]);
 
   if (isLoading || items.length === 0) return null;
 
@@ -44,7 +34,6 @@ export function CommunityCarouselBanner() {
   return (
     <div className="w-full">
       <Carousel
-        setApi={setApi}
         opts={{ align: "start", loop: true, slidesToScroll: 1 }}
         className="w-full"
       >
@@ -67,17 +56,6 @@ export function CommunityCarouselBanner() {
         </CarouselContent>
       </Carousel>
 
-      {/* 페이지 인디케이터 */}
-      <div className="flex justify-center gap-1.5 mt-2">
-        {items.map((_, index) => (
-          <div
-            key={index}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              index === current ? "w-4 bg-pink-500" : "w-1.5 bg-gray-600"
-            }`}
-          />
-        ))}
-      </div>
     </div>
   );
 }

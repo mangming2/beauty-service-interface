@@ -21,8 +21,64 @@ import {
   useUpdateCommunityCarousel,
   useDeleteCarousel,
 } from "@/queries/useCarouselQueries";
+import { useProducts } from "@/queries/useProductQueries";
+import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { getSafeImageSrc } from "@/lib/utils";
 import type { AdminCarouselItem, LandingCarouselRequest, CarouselLinkType } from "@/api/carousel";
+
+function LinkPicker({
+  linkType,
+  value,
+  onChange,
+}: {
+  linkType: CarouselLinkType;
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const { data: productData, isLoading: productLoading } = useProducts({
+    size: 200,
+  });
+  const { data: announcementData, isLoading: announcementLoading } =
+    useAnnouncements({ size: 200 });
+
+  if (linkType === "PRODUCT") {
+    const products = productData ?? [];
+    return (
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        required
+        className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-600 text-white text-sm"
+      >
+        <option value="">-- 상품 선택 --</option>
+        {productLoading && <option disabled>불러오는 중...</option>}
+        {products.map(p => (
+          <option key={p.id} value={String(p.id)}>
+            {p.name} (ID: {p.id})
+          </option>
+        ))}
+      </select>
+    );
+  }
+
+  const announcements = announcementData?.posts ?? [];
+  return (
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      required
+      className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-600 text-white text-sm"
+    >
+      <option value="">-- 공지 선택 --</option>
+      {announcementLoading && <option disabled>불러오는 중...</option>}
+      {announcements.map(a => (
+        <option key={a.postId} value={String(a.postId)}>
+          {a.title} (ID: {a.postId})
+        </option>
+      ))}
+    </select>
+  );
+}
 
 function carouselErrMsg(error: unknown): string {
   const e = error as ApiError | undefined;
@@ -207,7 +263,10 @@ function LandingCarouselPanel() {
               <label className="block text-xs text-gray-400 mb-1">링크 타입 *</label>
               <select
                 value={linkType}
-                onChange={e => setLinkType(e.target.value as CarouselLinkType)}
+                onChange={e => {
+                  setLinkType(e.target.value as CarouselLinkType);
+                  setLinkId("");
+                }}
                 className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-600 text-white text-sm"
               >
                 <option value="PRODUCT">상품 (PRODUCT)</option>
@@ -216,15 +275,12 @@ function LandingCarouselPanel() {
             </div>
             <div>
               <label className="block text-xs text-gray-400 mb-1">
-                링크 ID * ({linkType === "PRODUCT" ? "상품 ID" : "공지 ID"})
+                {linkType === "PRODUCT" ? "상품 선택 *" : "공지 선택 *"}
               </label>
-              <input
-                required
-                type="number"
-                min={1}
+              <LinkPicker
+                linkType={linkType}
                 value={linkId}
-                onChange={e => setLinkId(e.target.value)}
-                className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-600 text-white text-sm"
+                onChange={id => setLinkId(id)}
               />
             </div>
             <div>

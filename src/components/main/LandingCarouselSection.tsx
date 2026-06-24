@@ -76,21 +76,6 @@ function LandingCarousel({ items }: { items: LandingCarouselItem[] }) {
         </CarouselContent>
       </Carousel>
 
-      {/* 페이지 인디케이터 */}
-      {items.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-3">
-          {items.map((_, index) => (
-            <div
-              key={index}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                index === current
-                  ? "w-4 bg-pink-500"
-                  : "w-1.5 bg-gray-600"
-              }`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

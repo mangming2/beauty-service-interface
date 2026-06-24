@@ -92,7 +92,9 @@ export function useCreateLandingCarousel() {
       createLandingCarousel(request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: carouselKeys.landing() });
-      queryClient.invalidateQueries({ queryKey: carouselKeys.adminList("LANDING") });
+      queryClient.invalidateQueries({
+        queryKey: carouselKeys.adminList("LANDING"),
+      });
     },
   });
 }
@@ -101,11 +103,18 @@ export function useCreateLandingCarousel() {
 export function useUpdateLandingCarousel() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, request }: { id: number; request: LandingCarouselRequest }) =>
-      updateLandingCarousel(id, request),
+    mutationFn: ({
+      id,
+      request,
+    }: {
+      id: number;
+      request: LandingCarouselRequest;
+    }) => updateLandingCarousel(id, request),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: carouselKeys.landing() });
-      queryClient.invalidateQueries({ queryKey: carouselKeys.adminList("LANDING") });
+      queryClient.invalidateQueries({
+        queryKey: carouselKeys.adminList("LANDING"),
+      });
       queryClient.invalidateQueries({ queryKey: carouselKeys.adminDetail(id) });
     },
   });
@@ -128,11 +137,18 @@ export function useUpdateCarouselHashtag() {
 export function useCreateCommunityCarousel() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ image, dto }: { image: File; dto: CommunityCarouselRequestDto }) =>
-      createCommunityCarousel(image, dto),
+    mutationFn: ({
+      image,
+      dto,
+    }: {
+      image: File;
+      dto: CommunityCarouselRequestDto;
+    }) => createCommunityCarousel(image, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: carouselKeys.community() });
-      queryClient.invalidateQueries({ queryKey: carouselKeys.adminList("COMMUNITY") });
+      queryClient.invalidateQueries({
+        queryKey: carouselKeys.adminList("COMMUNITY"),
+      });
     },
   });
 }
@@ -141,11 +157,20 @@ export function useCreateCommunityCarousel() {
 export function useUpdateCommunityCarousel() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, dto, image }: { id: number; dto: CommunityCarouselRequestDto; image?: File }) =>
-      updateCommunityCarousel(id, dto, image),
+    mutationFn: ({
+      id,
+      dto,
+      image,
+    }: {
+      id: number;
+      dto: CommunityCarouselRequestDto;
+      image?: File;
+    }) => updateCommunityCarousel(id, dto, image),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: carouselKeys.community() });
-      queryClient.invalidateQueries({ queryKey: carouselKeys.adminList("COMMUNITY") });
+      queryClient.invalidateQueries({
+        queryKey: carouselKeys.adminList("COMMUNITY"),
+      });
       queryClient.invalidateQueries({ queryKey: carouselKeys.adminDetail(id) });
     },
   });
