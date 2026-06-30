@@ -4,6 +4,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import { myPageKeys } from "@/queries/useMyPageQueries";
 import {
   getCommunityPosts,
   getPopularPosts,
@@ -253,6 +254,7 @@ export function useTogglePostBookmark() {
         queryKey: communityKeys.detail(postId),
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.popular() });
+      queryClient.invalidateQueries({ queryKey: myPageKeys.communityBookmarks() });
     },
   });
 }

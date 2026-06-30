@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
 import { PageLoading } from "@/components/common";
-import { GapY } from "../../components/ui/gap";
 import { useWishes, useToggleWish } from "@/queries/useWishQueries";
 import { useMyPageUser } from "@/queries/useMyPageQueries";
 import { useMyBookmarkedCommunityPosts } from "@/queries/useMyPageQueries";
@@ -18,9 +17,7 @@ import {
 } from "@/components/common/Icons";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useProducts } from "@/queries/useProductQueries";
-import { useLatestInKoreaRecommendations } from "@/queries/useRecommendationQueries";
 import RecommendationGallery from "@/components/main/RecommendationGallery";
-import PackageSection from "@/components/main/PackageSection";
 import type { Product } from "@/api/product";
 import type { CommunityPostListItem } from "@/api/community";
 
@@ -84,9 +81,6 @@ export default function Wish() {
   const { data: wishes = [], isLoading: wishesLoading } = useWishes();
   const { data: allProducts = [], isLoading: productsLoading } = useProducts({
     size: 100,
-  });
-  const { data: suggestions = [] } = useLatestInKoreaRecommendations({
-    size: 6,
   });
   const { data: bookmarks = [], isLoading: bookmarksLoading } =
     useMyBookmarkedCommunityPosts();
@@ -204,17 +198,6 @@ export default function Wish() {
                 })}
               </div>
 
-              {suggestions.length > 0 && (
-                <>
-                  <GapY size={20} />
-                  <PackageSection
-                    title={t("wish.howAboutThisPackage")}
-                    packages={suggestions}
-                    onPackageClick={handlePackageClick}
-                  />
-                  <GapY size={24} />
-                </>
-              )}
             </>
           )}
         </>
