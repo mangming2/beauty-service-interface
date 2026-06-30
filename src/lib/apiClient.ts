@@ -48,14 +48,14 @@ export interface RequestOptions extends RequestInit {
  */
 export async function reissueToken(): Promise<string | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/reissue`, {
+    // Next.js API route(/api/auth/reissue)를 경유 — 프론트 도메인 쿠키를 서버에서 읽어
+    // 백엔드로 전달하므로 Safari ITP cross-site 쿠키 차단을 우회한다.
+    const response = await fetch("/api/auth/reissue", {
       method: "POST",
-      credentials: "include", // refreshToken 쿠키 전송
     });
 
     if (!response.ok) {
       const text = await response.text();
-      // 404 USER_NOT_FOUND: refresh 토큰에 해당하는 사용자가 없음(삭제/만료 등) → 로그아웃 처리
       if (response.status === 404) {
         try {
           const data = JSON.parse(text || "{}");
@@ -81,7 +81,6 @@ export async function reissueToken(): Promise<string | null> {
     }
 
     const data = await response.json();
-    // 백엔드 스펙: accessToken 또는 access_token
     const token = data.accessToken ?? data.access_token ?? null;
     return token;
   } catch (e) {

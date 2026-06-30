@@ -30,14 +30,15 @@ export function loginWithProvider(provider: OAuthProvider): void {
 
 /** AccessToken 재발급 */
 export async function reissueToken(): Promise<ReissueTokenResponse> {
-  return apiPost<ReissueTokenResponse>("/auth/reissue", undefined, {
-    credentials: "include",
-  });
+  const res = await fetch("/api/auth/reissue", { method: "POST" });
+  if (!res.ok) throw new Error("reissue failed");
+  return res.json();
 }
 
 /** 로그아웃 (API 호출만) */
 export async function logout(): Promise<void> {
-  await apiPost("/auth/logout", undefined, { credentials: "include" });
+  // Next.js API route 경유: 프론트 도메인 쿠키 읽기 + 백엔드 로그아웃 + 쿠키 삭제
+  await fetch("/api/auth/logout", { method: "POST" });
 }
 
 /**
