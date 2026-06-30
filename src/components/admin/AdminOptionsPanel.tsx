@@ -176,7 +176,10 @@ export function AdminOptionsPanel() {
           if (!open) handleClose();
         }}
       >
-        <DialogContent aria-describedby={undefined} className="max-h-[90vh] overflow-y-auto sm:max-w-lg text-white border-gray-600 bg-[#1a1c20]">
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-h-[90vh] overflow-y-auto sm:max-w-lg text-white border-gray-600 bg-[#1a1c20]"
+        >
           <DialogHeader>
             <DialogTitle>옵션 수정 #{editId}</DialogTitle>
           </DialogHeader>

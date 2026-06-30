@@ -216,7 +216,10 @@ export function AdminAnnouncementsPanel() {
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent aria-describedby={undefined} className="max-h-[90vh] overflow-y-auto sm:max-w-lg text-white border-gray-600 bg-[#1a1c20]">
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-h-[90vh] overflow-y-auto sm:max-w-lg text-white border-gray-600 bg-[#1a1c20]"
+        >
           <DialogHeader>
             <DialogTitle>
               {editingPostId === null ? "공지 작성" : "공지 수정"}
