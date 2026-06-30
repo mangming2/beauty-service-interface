@@ -27,6 +27,7 @@ export function DeleteConfirmDialog({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
+        aria-describedby={undefined}
         showCloseButton={false}
         className="gap-0 px-5 pt-9 pb-6 bg-background border-none rounded-2 max-w-[380px] sm:max-w-[380px]"
       >

@@ -78,6 +78,7 @@ export default function ScheduleModal({
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && handleClose()}>
       <DialogContent
+        aria-describedby={undefined}
         className="py-5 px-3 bg-background border-none text-white w-[380px] min-h-[503px] max-w-md overflow-x-hidden"
         showCloseButton={false}
       >

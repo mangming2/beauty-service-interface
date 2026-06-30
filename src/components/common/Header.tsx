@@ -84,6 +84,8 @@ export const Header = () => {
               alt={t("common.mainLogo")}
               width={66}
               height={18}
+              priority
+              style={{ height: "auto" }}
             />
           </Link>
         )}

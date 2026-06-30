@@ -254,7 +254,7 @@ function LandingCarouselPanel() {
 
       {/* 생성/수정 다이얼로그 */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md text-white border-gray-600 bg-[#1a1c20]">
+        <DialogContent aria-describedby={undefined} className="sm:max-w-md text-white border-gray-600 bg-[#1a1c20]">
           <DialogHeader>
             <DialogTitle>
               {editingId === null ? "랜딩 캐러셀 추가" : "랜딩 캐러셀 수정"}
@@ -350,7 +350,7 @@ function LandingCarouselPanel() {
 
       {/* 해시태그 빠른 수정 다이얼로그 */}
       <Dialog open={hashtagDialogOpen} onOpenChange={setHashtagDialogOpen}>
-        <DialogContent className="sm:max-w-sm text-white border-gray-600 bg-[#1a1c20]">
+        <DialogContent aria-describedby={undefined} className="sm:max-w-sm text-white border-gray-600 bg-[#1a1c20]">
           <DialogHeader>
             <DialogTitle>해시태그 수정</DialogTitle>
           </DialogHeader>
@@ -516,7 +516,7 @@ function CommunityCarouselPanel() {
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md text-white border-gray-600 bg-[#1a1c20]">
+        <DialogContent aria-describedby={undefined} className="sm:max-w-md text-white border-gray-600 bg-[#1a1c20]">
           <DialogHeader>
             <DialogTitle>
               {editingId === null ? "커뮤니티 배너 추가" : "커뮤니티 배너 수정"}

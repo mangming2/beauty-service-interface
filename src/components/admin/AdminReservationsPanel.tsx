@@ -200,7 +200,7 @@ export function AdminReservationsPanel() {
           if (!open) setEditOpen(false);
         }}
       >
-        <DialogContent className="sm:max-w-md text-white border-gray-600 bg-[#1a1c20]">
+        <DialogContent aria-describedby={undefined} className="sm:max-w-md text-white border-gray-600 bg-[#1a1c20]">
           <DialogHeader>
             <DialogTitle>예약 수정 #{searchReservationId}</DialogTitle>
           </DialogHeader>
