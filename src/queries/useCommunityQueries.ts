@@ -254,7 +254,9 @@ export function useTogglePostBookmark() {
         queryKey: communityKeys.detail(postId),
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.popular() });
-      queryClient.invalidateQueries({ queryKey: myPageKeys.communityBookmarks() });
+      queryClient.invalidateQueries({
+        queryKey: myPageKeys.communityBookmarks(),
+      });
     },
   });
 }

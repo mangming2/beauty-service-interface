@@ -14,13 +14,7 @@ import { getSafeImageSrc } from "@/lib/utils";
 const DOT_COLORS = ["#FFFFFF", "#D2D3D3", "#A5A6A8", "#797A7C", "#4C4D51"];
 const MAX_DOTS = 5;
 
-function CarouselDots({
-  total,
-  current,
-}: {
-  total: number;
-  current: number;
-}) {
+function CarouselDots({ total, current }: { total: number; current: number }) {
   const count = Math.min(total, MAX_DOTS);
 
   // 아이템이 5개 초과면 슬라이딩 윈도우로 active가 중앙에 오도록 조정
