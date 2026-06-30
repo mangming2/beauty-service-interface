@@ -16,8 +16,8 @@ export interface LandingCarouselItem {
   id: number;
   linkType: CarouselLinkType;
   linkId: number;
-  imageUrl: string;
-  hashtag: string;
+  imageUrl: string | null;
+  hashtag: string | null;
 }
 
 /** 커뮤니티 캐러셀 아이템 (public) */
@@ -31,7 +31,7 @@ export interface AdminCarouselItem {
   id: number;
   type: CarouselType;
   title?: string;
-  imageUrl: string;
+  imageUrl: string | null;
   hashtag?: string;
   linkType?: CarouselLinkType;
   linkId?: number;
@@ -43,7 +43,6 @@ export interface AdminCarouselItem {
 export interface LandingCarouselRequest {
   linkType: CarouselLinkType;
   linkId: number;
-  imageUrl: string;
   hashtag: string;
   sortOrder: number;
   isActive: boolean;

@@ -55,7 +55,7 @@ function LandingCarousel({ items }: { items: LandingCarouselItem[] }) {
                     <div className="relative h-[456px] w-full">
                       <Image
                         src={getSafeImageSrc(item.imageUrl)}
-                        alt={item.hashtag}
+                        alt={item.hashtag ?? ""}
                         className="object-cover"
                         fill
                         sizes="372px"

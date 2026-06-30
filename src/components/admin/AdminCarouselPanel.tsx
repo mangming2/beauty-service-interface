@@ -105,7 +105,6 @@ function LandingCarouselPanel() {
 
   const [linkType, setLinkType] = useState<CarouselLinkType>("PRODUCT");
   const [linkId, setLinkId] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [hashtag, setHashtag] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [isActive, setIsActive] = useState(true);
@@ -118,7 +117,6 @@ function LandingCarouselPanel() {
     setEditingId(null);
     setLinkType("PRODUCT");
     setLinkId("");
-    setImageUrl("");
     setHashtag("");
     setSortOrder("0");
     setIsActive(true);
@@ -129,7 +127,6 @@ function LandingCarouselPanel() {
     setEditingId(item.id);
     setLinkType(item.linkType ?? "PRODUCT");
     setLinkId(String(item.linkId ?? ""));
-    setImageUrl(item.imageUrl);
     setHashtag(item.hashtag ?? "");
     setSortOrder(String(item.sortOrder ?? 0));
     setIsActive(item.isActive);
@@ -147,7 +144,6 @@ function LandingCarouselPanel() {
     const request: LandingCarouselRequest = {
       linkType,
       linkId: Number(linkId),
-      imageUrl,
       hashtag,
       sortOrder: Number(sortOrder),
       isActive,
@@ -289,18 +285,6 @@ function LandingCarouselPanel() {
                 linkType={linkType}
                 value={linkId}
                 onChange={id => setLinkId(id)}
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">
-                이미지 URL *
-              </label>
-              <input
-                required
-                value={imageUrl}
-                onChange={e => setImageUrl(e.target.value)}
-                placeholder="https://..."
-                className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-600 text-white text-sm"
               />
             </div>
             <div>
