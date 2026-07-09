@@ -1,11 +1,14 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
-  const refreshToken = cookieStore.get("refreshToken")?.value;
+  // 최초 로그인 직후에는 백엔드가 refreshToken을 쿠키가 아닌 rt 쿼리파라미터로 넘겨준다
+  // (OAuth 리다이렉트 시 크로스사이트 Set-Cookie가 Safari ITP에 막히는 문제 회피).
+  const rtFromQuery = request.nextUrl.searchParams.get("rt");
+  const refreshToken = rtFromQuery ?? cookieStore.get("refreshToken")?.value;
 
   if (!refreshToken) {
     return NextResponse.json({ message: "No refresh token" }, { status: 401 });

@@ -44,13 +44,19 @@ export interface RequestOptions extends RequestInit {
 
 /**
  * 토큰 재발급
- * refreshToken 쿠키(credentials: 'include')로 POST /auth/reissue 호출 후 새 accessToken 반환
+ * 프론트 자체 도메인의 BFF 라우트(/api/auth/reissue)를 호출한다.
+ * refreshToken은 프론트 도메인의 httpOnly 쿠키로만 다루고, 백엔드로는 서버 간
+ * Cookie 헤더로 전달한다 (Safari ITP의 크로스사이트 쿠키 차단 회피).
+ * rt: OAuth 콜백 직후 최초 1회, 백엔드가 쿼리파라미터로 넘겨준 refreshToken.
  */
-export async function reissueToken(): Promise<string | null> {
+export async function reissueToken(rt?: string): Promise<string | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/reissue`, {
+    const url = rt
+      ? `/api/auth/reissue?rt=${encodeURIComponent(rt)}`
+      : "/api/auth/reissue";
+    const response = await fetch(url, {
       method: "POST",
-      credentials: "include", // refreshToken 쿠키 전송
+      credentials: "include", // 프론트 도메인 자체 쿠키 전송 (동일 출처)
     });
 
     if (!response.ok) {

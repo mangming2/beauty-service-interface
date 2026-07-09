@@ -51,8 +51,11 @@ function CallbackContent() {
           return;
         }
 
-        // 2. 토큰 재발급 (refreshToken은 쿠키에 있음)
-        const accessToken = await reissueToken();
+        // 2. 토큰 재발급
+        // refreshToken은 백엔드가 이 콜백 URL에 rt 쿼리파라미터로 넘겨준다
+        // (OAuth 리다이렉트 중 크로스사이트 쿠키 세팅이 Safari ITP에 막히는 문제 회피).
+        const rt = searchParams.get("rt") ?? undefined;
+        const accessToken = await reissueToken(rt);
 
         if (!accessToken) {
           setError(t("auth.sessionNotPersisted"));
