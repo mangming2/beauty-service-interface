@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { notFound } from "next/navigation";
 import { GapY } from "@/components/ui/gap";
 import {
   useHealthCheck,
@@ -17,6 +18,10 @@ interface LogEntry {
 }
 
 export default function TestPage() {
+  if (process.env.NODE_ENV !== "development") {
+    notFound();
+  }
+
   const [seed, setSeed] = useState("qa01");
   const [email, setEmail] = useState("test-qa01@google.com");
   const [logs, setLogs] = useState<LogEntry[]>([]);

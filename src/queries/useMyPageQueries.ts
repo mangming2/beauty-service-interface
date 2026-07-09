@@ -4,7 +4,6 @@ import {
   getMyReviews,
   getMyBookings,
   getBookingDetail,
-  getUpcomingBookings,
   getMyBookmarkedCommunityPosts,
   type MyPageUser,
   type Booking,
@@ -97,22 +96,6 @@ export function useBookingDetail(reservationId: number | undefined) {
     queryKey: myPageKeys.bookingDetail(reservationId!),
     queryFn: () => getBookingDetail(reservationId!),
     enabled: isAuthenticated && reservationId !== undefined,
-    staleTime: 5 * 60 * 1000,
-    retry: retryUnless401,
-  });
-}
-
-/**
- * 다가오는 예약 조회
- * 비로그인 시 API 호출 안 함
- */
-export function useUpcomingBookings() {
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
-
-  return useQuery<Booking[]>({
-    queryKey: myPageKeys.upcomingBookings(),
-    queryFn: getUpcomingBookings,
-    enabled: isAuthenticated,
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,
   });

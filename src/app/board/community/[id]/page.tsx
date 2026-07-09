@@ -21,6 +21,7 @@ import {
   BookmarkIcon,
   ChatBubbleIcon,
   SendIcon,
+  ReplyIcon,
 } from "@/components/common/Icons";
 import { format } from "date-fns";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -339,10 +340,11 @@ export default function CommunityDetailPage() {
                       }
                     >
                       <Avatar size={24} />
-                      <div className="flex w-full items-center  py-2 px-3 rounded-lg border border-gray-outline">
+                      <div className="flex w-full items-center justify-between py-2 px-3 rounded-lg border border-gray-outline">
                         <span className="caption-md text-gray_1">
                           답글을 입력해주세요
                         </span>
+                        <ReplyIcon width={14} height={14} color="#bcbcbc" />
                       </div>
                     </div>
                   </li>

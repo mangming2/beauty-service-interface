@@ -3,25 +3,18 @@ import {
   createAdminTourSurveyForm,
   createTourSurveySubmission,
   deleteAdminTourSurveyForm,
-  deleteTourSurveySubmission,
   generateTourSurveyRecommendation,
-  getAdminTourSurveyForm,
   getAdminTourSurveyForms,
   getTourSurveyForm,
   getTourSurveyForms,
   getTourSurveyRecommendation,
   getTourSurveySharePayload,
-  getTourSurveySubmission,
-  getTourSurveySubmissions,
   updateAdminTourSurveyForm,
-  updateTourSurveySubmission,
   type CreateTourSurveySubmissionRequest,
   type GenerateTourSurveyRecommendationParams,
   type TourSurveyForm,
   type TourSurveyRecommendation,
   type TourSurveySharePayload,
-  type TourSurveySubmission,
-  type UpdateTourSurveySubmissionRequest,
   type UpsertTourSurveyFormRequest,
 } from "@/api/tourSurvey";
 import type { ApiError } from "@/lib/apiClient";
@@ -76,25 +69,6 @@ export function useTourSurveyForm(formId: number | undefined) {
   });
 }
 
-export function useTourSurveySubmissions() {
-  return useQuery<TourSurveySubmission[]>({
-    queryKey: tourSurveyKeys.submissions(),
-    queryFn: getTourSurveySubmissions,
-    staleTime: 60 * 1000,
-    retry: retryUnlessAuthOrTourApi,
-  });
-}
-
-export function useTourSurveySubmission(submissionId: number | undefined) {
-  return useQuery<TourSurveySubmission>({
-    queryKey: tourSurveyKeys.submission(submissionId ?? -1),
-    queryFn: () => getTourSurveySubmission(submissionId!),
-    enabled: isValidId(submissionId),
-    staleTime: 60 * 1000,
-    retry: retryUnlessAuthOrTourApi,
-  });
-}
-
 export function useTourSurveyRecommendation(
   submissionId: number | undefined,
   enabled = true
@@ -137,48 +111,6 @@ export function useCreateTourSurveySubmission() {
   });
 }
 
-export function useUpdateTourSurveySubmission() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      submissionId,
-      request,
-    }: {
-      submissionId: number;
-      request: UpdateTourSurveySubmissionRequest;
-    }) => updateTourSurveySubmission(submissionId, request),
-    onSuccess: data => {
-      queryClient.invalidateQueries({ queryKey: tourSurveyKeys.submissions() });
-      queryClient.setQueryData(
-        tourSurveyKeys.submission(data.submissionId),
-        data
-      );
-      queryClient.removeQueries({
-        queryKey: tourSurveyKeys.recommendation(data.submissionId),
-      });
-      queryClient.removeQueries({
-        queryKey: tourSurveyKeys.sharePayload(data.submissionId),
-      });
-    },
-  });
-}
-
-export function useDeleteTourSurveySubmission() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (submissionId: number) =>
-      deleteTourSurveySubmission(submissionId),
-    onSuccess: (_, submissionId) => {
-      queryClient.invalidateQueries({ queryKey: tourSurveyKeys.submissions() });
-      queryClient.removeQueries({
-        queryKey: tourSurveyKeys.submission(submissionId),
-      });
-    },
-  });
-}
-
 export function useGenerateTourSurveyRecommendation() {
   const queryClient = useQueryClient();
 
@@ -211,16 +143,6 @@ export function useAdminTourSurveyForms() {
   return useQuery<TourSurveyForm[]>({
     queryKey: tourSurveyKeys.adminForms(),
     queryFn: getAdminTourSurveyForms,
-    staleTime: 60 * 1000,
-    retry: retryUnlessAuthOrTourApi,
-  });
-}
-
-export function useAdminTourSurveyForm(formId: number | undefined) {
-  return useQuery<TourSurveyForm>({
-    queryKey: tourSurveyKeys.adminForm(formId ?? -1),
-    queryFn: () => getAdminTourSurveyForm(formId!),
-    enabled: isValidId(formId),
     staleTime: 60 * 1000,
     retry: retryUnlessAuthOrTourApi,
   });

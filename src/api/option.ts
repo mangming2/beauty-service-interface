@@ -59,7 +59,6 @@ export interface Option {
   slotEndHour?: number;
   /** 목록 조회 시 대표 옵션 여부 */
   representOption?: boolean;
-  address: string;
 }
 
 /** 옵션에 연결된 상품 요약 (GET /options 응답 중 linkedProducts) */

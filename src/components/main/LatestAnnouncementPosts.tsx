@@ -9,10 +9,6 @@ import { GapY } from "@/components/ui/gap";
 import { useAnnouncements } from "@/queries/useAnnouncementQueries";
 import { truncateAnnouncementPreview } from "@/lib/utils";
 
-// function formatLikeCount(count: number): string {
-//   return count >= 1000 ? "999+" : String(count);
-// }
-
 export function LatestAnnouncementPosts() {
   const { data, isLoading, isError } = useAnnouncements({ size: 3 });
 
@@ -102,16 +98,6 @@ export function LatestAnnouncementPosts() {
                     <span className="px-2 py-0.5 bg-gray-outline text-gray-font caption-sm truncate max-w-[120px]">
                       조회수 {post.viewCount}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    {/* <span className="flex items-center gap-1 text-disabled text-sm">
-                      <HeartIcon color="#ff60b3" className="w-4 h-4" />
-                      {formatLikeCount(post.viewCount)}
-                    </span> */}
-                    {/* <span className="flex items-center gap-1 text-disabled text-sm">
-                      <BookmarkIcon color="#ABA9A9" className="w-4 h-4" />
-                      {post.viewCount}
-                    </span> */}
                   </div>
                 </div>
               </Link>

@@ -1,9 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function TestErrorPage() {
+  if (process.env.NODE_ENV !== "development") {
+    notFound();
+  }
+
   const [shouldError, setShouldError] = useState(false);
 
   if (shouldError) {

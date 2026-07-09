@@ -1,10 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  getSurvey,
-  createSurvey,
-  type Survey,
-  type CreateSurveyRequest,
-} from "@/api/survey";
+import { getSurvey, createSurvey, type Survey } from "@/api/survey";
 import { getMyPageUser } from "@/api/my-page";
 import { useMyPageUser } from "./useMyPageQueries";
 import { formDataToSurveyRequest } from "@/lib/surveyUtils";
@@ -52,20 +47,6 @@ export function useSurveyForCurrentUser(enabled = true) {
 }
 
 // ========== Mutations ==========
-
-/**
- * 설문 저장 (POST /surveys — body만, 201 생성 성공)
- */
-export function useCreateSurvey() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (request: CreateSurveyRequest) => createSurvey(request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: surveyKeys.all });
-    },
-  });
-}
 
 /**
  * 폼 데이터로 설문 저장 (폼 제출용)

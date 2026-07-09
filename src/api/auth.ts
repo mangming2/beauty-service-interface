@@ -13,12 +13,6 @@ export interface AuthStatusResponse {
   userId: number | null;
 }
 
-export interface ReissueTokenResponse {
-  grantType: string;
-  accessToken: string;
-  accessTokenExpiresIn: number;
-}
-
 // ========== 인증 API ==========
 
 /** 소셜 로그인 (리다이렉트) */
@@ -26,13 +20,6 @@ export function loginWithProvider(provider: OAuthProvider): void {
   if (typeof window !== "undefined") {
     window.location.href = `${API_BASE_URL}/auth/login/${provider}`;
   }
-}
-
-/** AccessToken 재발급 */
-export async function reissueToken(): Promise<ReissueTokenResponse> {
-  return apiPost<ReissueTokenResponse>("/auth/reissue", undefined, {
-    credentials: "include",
-  });
 }
 
 /** 로그아웃 (API 호출만) */

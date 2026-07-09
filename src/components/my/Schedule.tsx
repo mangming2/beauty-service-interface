@@ -20,8 +20,8 @@ import {
   useCreateSchedule,
   useDeleteSchedule,
 } from "@/queries/useScheduleQueries";
-import type { Booking } from "@/api/my-page";
 import type { Schedule as ApiSchedule } from "@/api/schedule";
+import { formatVisitDate, mapApiStatusToUi } from "@/lib/bookingUtils";
 
 interface BookingDisplay {
   id: string;
@@ -46,31 +46,6 @@ interface ScheduleItem {
 }
 
 const PLACEHOLDER_IMAGE = "/dummy-logo.png";
-
-function formatVisitDate(dateStr: string): string {
-  try {
-    return format(new Date(dateStr), "yyyy.MM.dd");
-  } catch {
-    return dateStr;
-  }
-}
-
-function mapApiStatusToUi(
-  status: Booking["status"]
-): "confirmed" | "completed" | "cancelled" {
-  switch (status) {
-    case "PREBOOK":
-    case "PENDING":
-    case "BOOKED":
-      return "confirmed";
-    case "COMPLETED":
-      return "completed";
-    case "CANCELED":
-      return "cancelled";
-    default:
-      return "confirmed";
-  }
-}
 
 function scheduleToItem(s: ApiSchedule, index: number): ScheduleItem {
   const start = new Date(s.startAt);

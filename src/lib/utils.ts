@@ -40,13 +40,18 @@ export function formatHashtagList(
   return tags.map(formatHashtag).filter(Boolean).join(separator);
 }
 
+/** 텍스트를 maxLength까지 자르고 초과하면 말줄임표(...)를 붙인다 */
+export function truncateText(text: string, maxLength: number): string {
+  const trimmed = text.trim();
+  if (trimmed.length <= maxLength) return trimmed;
+  return `${trimmed.slice(0, maxLength).replace(/\s+$/, "")}...`;
+}
+
 /** 공지 목록 등에서 본문 미리보기 한 줄 */
 export function truncateAnnouncementPreview(
   content: string | undefined,
   maxLength = 80
 ): string | null {
   if (!content?.trim()) return null;
-  const single = content.trim().replace(/\s+/g, " ");
-  if (single.length <= maxLength) return single;
-  return `${single.slice(0, maxLength)}…`;
+  return truncateText(content.replace(/\s+/g, " "), maxLength);
 }

@@ -1,10 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  getProductReviews,
-  createReview,
-  updateReview,
-  deleteReview,
-} from "@/api/review";
+import { getProductReviews, createReview, deleteReview } from "@/api/review";
 import type { ReviewDetail, ReviewFormData } from "@/types/api";
 
 // ========== Query Keys ==========
@@ -52,29 +47,6 @@ export function useCreateReview() {
     onSuccess: newReview => {
       queryClient.invalidateQueries({
         queryKey: reviewKeys.list(newReview.productId),
-      });
-    },
-  });
-}
-
-interface UpdateReviewParams {
-  productId: number;
-  reviewId: number;
-  data: ReviewFormData;
-}
-
-/**
- * 리뷰 수정
- */
-export function useUpdateReview() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ productId, reviewId, data }: UpdateReviewParams) =>
-      updateReview(productId, reviewId, data),
-    onSuccess: updatedReview => {
-      queryClient.invalidateQueries({
-        queryKey: reviewKeys.list(updatedReview.productId),
       });
     },
   });

@@ -8,7 +8,6 @@ import {
   getProducts,
   getProductDetail,
   getProductOptions,
-  getProductsByTag,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -119,51 +118,6 @@ export function useProductOptions(productId: number | undefined) {
     queryKey: productKeys.options(productId!),
     queryFn: () => getProductOptions(productId!),
     enabled: isValidId,
-    staleTime: 5 * 60 * 1000,
-    retry: retryUnless401,
-  });
-}
-
-// ========== 태그별 상품 조회 ==========
-
-/**
- * 태그별 상품 목록 조회 (단일 페이지)
- */
-export function useProductsByTag(
-  tag: string,
-  params: Omit<GetProductsParams, "tag"> = {}
-) {
-  return useQuery<Product[]>({
-    queryKey: productKeys.byTag(tag),
-    queryFn: () => getProductsByTag(tag, params),
-    enabled: !!tag,
-    staleTime: 5 * 60 * 1000,
-    retry: retryUnless401,
-  });
-}
-
-/**
- * 태그별 상품 무한 스크롤
- */
-export function useInfiniteProductsByTag(
-  tag: string,
-  params: Omit<GetProductsParams, "tag" | "lastId"> = {}
-) {
-  return useInfiniteQuery<Product[]>({
-    queryKey: [...productKeys.byTag(tag), "infinite", params],
-    queryFn: ({ pageParam }) =>
-      getProductsByTag(tag, {
-        ...params,
-        lastId: pageParam as number | undefined,
-      }),
-    initialPageParam: undefined as number | undefined,
-    getNextPageParam: lastPage => {
-      if (!lastPage || lastPage.length === 0) return undefined;
-      const size = params.size ?? 20;
-      if (lastPage.length < size) return undefined;
-      return lastPage[lastPage.length - 1].id;
-    },
-    enabled: !!tag,
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,
   });

@@ -3,7 +3,6 @@ import {
   getLandingCarousels,
   getCommunityCarousels,
   getAdminCarousels,
-  getAdminCarouselDetail,
   createLandingCarousel,
   updateLandingCarousel,
   updateCarouselHashtag,
@@ -66,17 +65,6 @@ export function useAdminCarousels(type?: CarouselType) {
   return useQuery<AdminCarouselItem[]>({
     queryKey: carouselKeys.adminList(type),
     queryFn: () => getAdminCarousels(type),
-    staleTime: 2 * 60 * 1000,
-    retry: retryUnless401,
-  });
-}
-
-/** 어드민 캐러셀 단건 */
-export function useAdminCarouselDetail(id: number | null) {
-  return useQuery<AdminCarouselItem>({
-    queryKey: carouselKeys.adminDetail(id!),
-    queryFn: () => getAdminCarouselDetail(id!),
-    enabled: id !== null,
     staleTime: 2 * 60 * 1000,
     retry: retryUnless401,
   });

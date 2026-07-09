@@ -36,11 +36,6 @@ export default function MyPage() {
     avatar: user?.profileImage || "/dummy-logo.png",
   };
 
-  // 사용자 정보 로딩 중일 때
-  // if (isLoading) {
-  //   return <PageLoading message="사용자 정보를 불러오는 중..." />;
-  // }
-
   return (
     <div className="min-h-screen text-white bg-background">
       {/* Header with Profile */}

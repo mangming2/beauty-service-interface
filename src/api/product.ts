@@ -9,8 +9,6 @@ export interface RepresentOption {
   tags: string[];
   /** 리스트/캐러셀에서 쓰는 지역구 라벨 (예: 강남구) */
   location: string;
-  /** 상세/예약 화면에서 쓰는 조합 주소 (예: 강남구 + 상세주소) */
-  address?: string;
   discountRate: number;
   originalPrice: number;
   finalPrice: number;
@@ -38,25 +36,6 @@ export interface Product {
   reviewCount?: number;
   /** 취소 제외 누적 예약 수 */
   bookingCount?: number;
-}
-
-/** 상품 상세 - 옵션 정보 (목록/요약; 상세는 Option 타입 참고) */
-export interface ProductOption {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  /** 할인 적용가 (할인 시) */
-  finalPrice?: number;
-  /** 옵션이 속한 지역구 라벨 */
-  location: string;
-  /** 상세/예약에서 쓰는 실제 주소 문자열 */
-  address?: string;
-  discountRate?: number;
-  bookingGuide?: string;
-  regularClosingDay?: string | null;
-  imageUrls?: string[];
-  representOption?: boolean;
 }
 
 /** 상품별 옵션 목록 조회 API 응답 (GET /products/:productId/options) */

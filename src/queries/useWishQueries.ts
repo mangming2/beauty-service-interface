@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getWishes,
   toggleWish,
@@ -36,31 +31,6 @@ export function useWishes(params: GetWishesParams = {}) {
   return useQuery<WishItem[]>({
     queryKey: wishKeys.list(params),
     queryFn: () => getWishes(params),
-    staleTime: 5 * 60 * 1000,
-    retry: retryUnless401,
-  });
-}
-
-/**
- * 위시 상품 목록 무한 스크롤 (no-offset, lastWishId 커서)
- */
-export function useInfiniteWishes(
-  params: Omit<GetWishesParams, "lastWishId"> = {}
-) {
-  return useInfiniteQuery<WishItem[]>({
-    queryKey: [...wishKeys.lists(), "infinite", params],
-    queryFn: ({ pageParam }) =>
-      getWishes({
-        ...params,
-        lastWishId: pageParam as number | undefined,
-      }),
-    initialPageParam: undefined as number | undefined,
-    getNextPageParam: lastPage => {
-      if (!lastPage || lastPage.length === 0) return undefined;
-      const size = params.size ?? 20;
-      if (lastPage.length < size) return undefined;
-      return lastPage[lastPage.length - 1].id;
-    },
     staleTime: 5 * 60 * 1000,
     retry: retryUnless401,
   });

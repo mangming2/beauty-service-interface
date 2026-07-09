@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { format } from "date-fns";
 import { UpcomingBookings } from "./UpcomingBookings";
 import { CompletedBookings } from "./CompletedBookings";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
@@ -11,33 +10,9 @@ import { useMyReviews } from "@/queries/useMyPageQueries";
 import type { Booking } from "@/api/my-page";
 import type { BookingHistory, CompletedBooking } from "./types";
 import { useTranslation } from "@/hooks/useTranslation";
+import { formatVisitDate, mapApiStatusToUi } from "@/lib/bookingUtils";
 
 const PLACEHOLDER_IMAGE = "/dummy-logo.png";
-
-function formatVisitDate(dateStr: string): string {
-  try {
-    return format(new Date(dateStr), "yyyy.MM.dd");
-  } catch {
-    return dateStr;
-  }
-}
-
-function mapApiStatusToUi(
-  status: Booking["status"]
-): "confirmed" | "completed" | "cancelled" {
-  switch (status) {
-    case "PREBOOK":
-    case "PENDING":
-    case "BOOKED":
-      return "confirmed";
-    case "COMPLETED":
-      return "completed";
-    case "CANCELED":
-      return "cancelled";
-    default:
-      return "confirmed";
-  }
-}
 
 function bookingToHistory(b: Booking): BookingHistory {
   return {

@@ -2,19 +2,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { getSafeImageSrc } from "@/lib/utils";
+import { getSafeImageSrc, truncateText } from "@/lib/utils";
 
 const DESCRIPTION_MAX_CHARS = 80;
 
-function truncateDescriptionText(text: string, maxLen: number): string {
-  const trimmed = text.trim();
-  if (trimmed.length <= maxLen) return trimmed;
-  return `${trimmed.slice(0, maxLen).replace(/\s+$/, "")}...`;
-}
-
 function formatDescription(description: ReactNode): ReactNode {
   if (typeof description !== "string") return description;
-  return truncateDescriptionText(description, DESCRIPTION_MAX_CHARS);
+  return truncateText(description, DESCRIPTION_MAX_CHARS);
 }
 
 interface TrendCardProps {

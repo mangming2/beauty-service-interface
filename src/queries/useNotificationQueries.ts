@@ -4,7 +4,6 @@ import {
   getUnreadNotificationCount,
   markNotificationRead,
   markAllNotificationsRead,
-  deleteNotification,
   deleteAllNotifications,
   type NotificationSliceResponse,
   type NotificationUnreadCountResponse,
@@ -85,23 +84,6 @@ export function useMarkAllNotificationsRead() {
     mutationFn: markAllNotificationsRead,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.all });
-    },
-  });
-}
-
-/**
- * 개별 알림 삭제
- */
-export function useDeleteNotification() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (notificationId: number) => deleteNotification(notificationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-      queryClient.invalidateQueries({
-        queryKey: notificationKeys.unreadCount(),
-      });
     },
   });
 }

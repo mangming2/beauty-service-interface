@@ -98,7 +98,7 @@ export default function BookingConfirmPage() {
     name: firstOption?.name ?? productDetail.name,
     description: firstOption?.description ?? "",
     price: firstOption?.price ?? 0,
-    address: firstOption?.address ?? "",
+    detailAddress: firstOption?.address ?? "",
     discountRate: firstOption?.discountRate ?? 0,
     bookingGuide: "",
     regularClosingDay: null,
@@ -148,7 +148,7 @@ export default function BookingConfirmPage() {
             <div className="flex items-center gap-1 mt-1">
               <LocationIcon width={14} height={14} color="#ABA9A9" />
               <p className="text-[#A9A9AA] text-xs truncate">
-                {currentOption.address}
+                {currentOption.detailAddress}
               </p>
             </div>
             <p className="text-pink-font text-md mt-1">
@@ -204,7 +204,7 @@ export default function BookingConfirmPage() {
               <div className="flex items-center gap-1 mt-1">
                 <LocationIcon width={14} height={14} color="#A9A9AA" />
                 <p className="text-gray-400 text-sm truncate">
-                  {currentOption.address || productDetail.address}
+                  {currentOption.detailAddress || productDetail.address}
                 </p>
               </div>
             </div>

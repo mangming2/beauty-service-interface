@@ -10,16 +10,13 @@ import {
   getPopularPosts,
   getCommunityPostDetail,
   createCommunityPost,
-  updateCommunityPost,
   deleteCommunityPost,
   togglePostLike,
   togglePostBookmark,
-  togglePostScrap,
   getMyScraps,
   getPostComments,
   createPostComment,
   deletePostComment,
-  getCommunityTags,
   type CommunityPostDetail,
   type CommunityPostListItem,
   type CommunityListResponse,
@@ -27,7 +24,6 @@ import {
   type CommunityPostRequestDto,
   type CreateCommentRequest,
   type CommunityCommentView,
-  type CommunityTag,
 } from "@/api/community";
 import type { ApiError } from "@/lib/apiClient";
 
@@ -54,18 +50,6 @@ function retryUnless401(failureCount: number, error: unknown): boolean {
 }
 
 // ========== 게시글 Queries ==========
-
-/**
- * 커뮤니티 게시글 목록 조회 (단일 페이지)
- */
-export function useCommunityPosts(params: GetCommunityPostsParams = {}) {
-  return useQuery<CommunityListResponse>({
-    queryKey: communityKeys.list(params),
-    queryFn: () => getCommunityPosts(params),
-    staleTime: 5 * 60 * 1000,
-    retry: retryUnless401,
-  });
-}
 
 /**
  * 커뮤니티 게시글 목록 무한 스크롤 (cursor)
@@ -113,18 +97,6 @@ export function useCommunityPostDetail(postId: number | undefined) {
     queryFn: () => getCommunityPostDetail(postId!),
     enabled: isValid,
     staleTime: 2 * 60 * 1000,
-    retry: retryUnless401,
-  });
-}
-
-/**
- * 사용 가능한 태그 목록 조회
- */
-export function useCommunityTags() {
-  return useQuery<CommunityTag[]>({
-    queryKey: communityKeys.tags(),
-    queryFn: getCommunityTags,
-    staleTime: 10 * 60 * 1000,
     retry: retryUnless401,
   });
 }
@@ -182,32 +154,6 @@ export function useCreateCommunityPost() {
 }
 
 /**
- * 커뮤니티 게시글 수정
- */
-export function useUpdateCommunityPost() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      postId,
-      request,
-      images,
-    }: {
-      postId: number;
-      request: CommunityPostRequestDto;
-      images?: File[];
-    }) => updateCommunityPost(postId, request, images),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.lists() });
-      queryClient.invalidateQueries({
-        queryKey: communityKeys.detail(variables.postId),
-      });
-      queryClient.invalidateQueries({ queryKey: communityKeys.popular() });
-    },
-  });
-}
-
-/**
  * 커뮤니티 게시글 삭제
  */
 export function useDeleteCommunityPost() {
@@ -257,20 +203,6 @@ export function useTogglePostBookmark() {
       queryClient.invalidateQueries({
         queryKey: myPageKeys.communityBookmarks(),
       });
-    },
-  });
-}
-
-/**
- * 스크랩 토글
- */
-export function useTogglePostScrap() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (postId: number) => togglePostScrap(postId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.myScraps() });
     },
   });
 }

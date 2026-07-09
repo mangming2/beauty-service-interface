@@ -1,12 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import {
-  loginWithProvider,
-  reissueToken,
-  logout,
-  getAuthStatus,
-  type OAuthProvider,
-} from "@/api/auth";
+import { loginWithProvider, logout, getAuthStatus } from "@/api/auth";
 import { useAuthStore } from "@/store/useAuthStore";
 import type { ApiError } from "@/lib/apiClient";
 
@@ -56,18 +50,6 @@ export function useAuthStatus(options?: { enabled?: boolean }) {
 // ========== 로그인 ==========
 
 /**
- * 소셜 로그인
- */
-export function useSocialLogin() {
-  return useMutation({
-    mutationFn: (provider: OAuthProvider) => {
-      loginWithProvider(provider);
-      return Promise.resolve();
-    },
-  });
-}
-
-/**
  * Google 로그인 (편의 함수)
  */
 export function useGoogleLogin() {
@@ -79,22 +61,6 @@ export function useGoogleLogin() {
     onSuccess: () => {},
     onError: error => {
       console.error("[Google 로그인] 에러:", error);
-    },
-  });
-}
-
-// ========== 토큰 재발급 ==========
-
-/**
- * AccessToken 재발급
- */
-export function useReissueToken() {
-  const { setAccessToken } = useAuthStore();
-
-  return useMutation({
-    mutationFn: reissueToken,
-    onSuccess: data => {
-      setAccessToken(data.accessToken);
     },
   });
 }
@@ -118,6 +84,3 @@ export function useLogout() {
     },
   });
 }
-
-// 별칭 (하위 호환)
-export const useSignOut = useLogout;
