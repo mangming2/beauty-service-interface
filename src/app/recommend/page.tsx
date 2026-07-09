@@ -227,6 +227,7 @@ function Content() {
                   title={t(PACKAGE_SECTIONS_CONFIG.middle.titleKey)}
                   packages={middlePackages}
                   onPackageClick={handlePackageClick}
+                  onMoreClick={() => router.push("/recommend?tags=All")}
                 />
                 <GapY size={20} />
               </>

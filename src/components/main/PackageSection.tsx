@@ -1,5 +1,6 @@
 import PackageCard from "@/components/main/PackageCard";
 import type { Product } from "@/api/product";
+import { ArrowRightIcon } from "@/components/common/Icons";
 import { TranslatedText } from "@/components/main/TranslatedText";
 import { getSafeImageSrc } from "@/lib/utils";
 
@@ -24,10 +25,19 @@ export default function PackageSection({
       <div className="flex justify-between h-[44px]">
         <h3 className="flex items-center title-md font-medium">{title}</h3>
         <div className="flex flex-col h-full gap-[5px] justify-end pr-5">
-          <button onClick={onMoreClick} className="flex items-center gap-[5px]">
+          <button
+            onClick={onMoreClick}
+            className="flex items-center gap-[5px] cursor-pointer"
+          >
             <span className="text-gray_1 text-sm">
               <TranslatedText translationKey="more" />
             </span>
+            <ArrowRightIcon
+              color="#BCBCBC"
+              width={3}
+              height={7}
+              className="size-auto"
+            />
           </button>
         </div>
       </div>
