@@ -26,20 +26,11 @@ export const generateMetadata = (): Metadata => {
       type: "website",
       locale: "ko_KR",
       siteName: "DOKI",
-      images: [
-        {
-          url: "/thumbnail.png",
-          width: 588,
-          height: 162,
-          alt: "DOKI 뷰티 서비스",
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: "DOKI - 뷰티 스타일 발견하기",
       description: "나만의 뷰티 스타일을 발견하고 예약하세요.",
-      images: ["/thumbnail.png"],
     },
   };
 };

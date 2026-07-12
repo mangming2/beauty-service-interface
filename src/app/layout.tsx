@@ -36,28 +36,12 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "DOKI",
-    url: "https://your-domain.com",
-    images: [
-      {
-        url: "/thumbnail.png",
-        width: 588,
-        height: 162,
-        alt: "DOKI 로고",
-        type: "image/png",
-      },
-    ],
+    url: "https://www.dayofkidol.shop",
   },
   twitter: {
     card: "summary_large_image",
     title: "DOKI - 뷰티 서비스 인터페이스",
     description: "모던한 뷰티 서비스를 위한 인터페이스",
-    images: ["/thumbnail.png"],
-  },
-  other: {
-    "og:image:width": "588",
-    "og:image:height": "162",
-    "og:image:type": "image/png",
-    "og:image:alt": "DOKI 로고",
   },
 };
 
