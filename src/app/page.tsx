@@ -28,9 +28,9 @@ export const generateMetadata = (): Metadata => {
       siteName: "DOKI",
       images: [
         {
-          url: "/main-logo.png",
-          width: 1200,
-          height: 630,
+          url: "/thumbnail.png",
+          width: 588,
+          height: 162,
           alt: "DOKI 뷰티 서비스",
         },
       ],
@@ -39,7 +39,7 @@ export const generateMetadata = (): Metadata => {
       card: "summary_large_image",
       title: "DOKI - 뷰티 스타일 발견하기",
       description: "나만의 뷰티 스타일을 발견하고 예약하세요.",
-      images: ["/main-logo.png"],
+      images: ["/thumbnail.png"],
     },
   };
 };

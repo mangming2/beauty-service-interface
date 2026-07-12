@@ -12,4 +12,4 @@ Allow: /*.jpeg
 Allow: /*.gif
 Allow: /*.webp
 
-Sitemap: https://your-domain.com/sitemap.xml
+Sitemap: https://www.dayofkidol.shop/sitemap.xml

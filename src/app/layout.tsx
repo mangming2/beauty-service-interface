@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    process.env.NEXT_PUBLIC_APP_URL || "https://www.dayofkidol.shop"
   ),
   title: "DOKI",
   description: "A modern beauty service interface built with Next.js",
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     url: "https://your-domain.com",
     images: [
       {
-        url: "/main-logo.png",
-        width: 1200,
-        height: 630,
+        url: "/thumbnail.png",
+        width: 588,
+        height: 162,
         alt: "DOKI 로고",
         type: "image/png",
       },
@@ -51,11 +51,11 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "DOKI - 뷰티 서비스 인터페이스",
     description: "모던한 뷰티 서비스를 위한 인터페이스",
-    images: ["/main-logo.png"],
+    images: ["/thumbnail.png"],
   },
   other: {
-    "og:image:width": "1200",
-    "og:image:height": "630",
+    "og:image:width": "588",
+    "og:image:height": "162",
     "og:image:type": "image/png",
     "og:image:alt": "DOKI 로고",
   },
