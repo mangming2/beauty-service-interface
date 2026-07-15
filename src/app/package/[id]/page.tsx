@@ -216,12 +216,7 @@ export default function PackageDetail() {
                 </div>
               ) : (
                 options.map(option => {
-                  const finalPrice =
-                    option.discountRate > 0
-                      ? Math.round(
-                          (option.price * (100 - option.discountRate)) / 100
-                        )
-                      : option.price;
+                  const finalPrice = option.price;
                   return (
                     <div key={option.id}>
                       <Card
