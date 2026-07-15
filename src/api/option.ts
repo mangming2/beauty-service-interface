@@ -59,6 +59,8 @@ export interface Option {
   slotEndHour?: number;
   /** 목록 조회 시 대표 옵션 여부 */
   representOption?: boolean;
+  /** 실제 예약 URL (없으면 예약 버튼 비활성화) */
+  bookingUrl?: string | null;
 }
 
 /** 옵션에 연결된 상품 요약 (GET /options 응답 중 linkedProducts) */
