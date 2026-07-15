@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon, Check } from "lucide-react";
-import { dummyLink } from "@/constants";
 import Image from "next/image";
 import { Divider } from "@/components/ui/divider";
 import { useOptionDetail, useAvailableSlots } from "@/queries/useOptionQueries";
@@ -46,6 +45,7 @@ export default function PackageOptionBookingPage() {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [externalBookingAgreed, setExternalBookingAgreed] = useState(false);
+  const [showBookingUrlTooltip, setShowBookingUrlTooltip] = useState(false);
 
   // 날짜 변경 시 시간 선택 초기화
   useEffect(() => {
@@ -125,6 +125,7 @@ export default function PackageOptionBookingPage() {
     : undefined;
 
   const handleBookLink = () => {
+    if (!currentOption.bookingUrl) return;
     if (selectedDate) {
       sessionStorage.setItem("selectedBookingDate", selectedDate.toISOString());
     }
@@ -134,7 +135,7 @@ export default function PackageOptionBookingPage() {
     if (selectedHour !== null) {
       sessionStorage.setItem("selectedStartHour", String(selectedHour));
     }
-    window.open(dummyLink, "_blank");
+    window.open(currentOption.bookingUrl, "_blank");
   };
 
   const handleComplete = async () => {
@@ -461,13 +462,33 @@ export default function PackageOptionBookingPage() {
           >
             {t("option.complete")}
           </Button>
-          <Button
-            className="flex-1 h-[52px] text-lg"
-            onClick={handleBookLink}
-            disabled={!externalBookingAgreed || !selectedDate || !selectedTime}
-          >
-            {t("option.bookLink")}
-          </Button>
+          <div className="relative flex-1">
+            {showBookingUrlTooltip && !currentOption.bookingUrl && (
+              <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white shadow">
+                아직 예약링크가 없습니다
+              </div>
+            )}
+            <span
+              onMouseEnter={() => setShowBookingUrlTooltip(true)}
+              onMouseLeave={() => setShowBookingUrlTooltip(false)}
+              onFocus={() => setShowBookingUrlTooltip(true)}
+              onBlur={() => setShowBookingUrlTooltip(false)}
+              className="block"
+            >
+              <Button
+                className="w-full h-[52px] text-lg"
+                onClick={handleBookLink}
+                disabled={
+                  !externalBookingAgreed ||
+                  !selectedDate ||
+                  !selectedTime ||
+                  !currentOption.bookingUrl
+                }
+              >
+                {t("option.bookLink")}
+              </Button>
+            </span>
+          </div>
         </div>
       </div>
     </div>
