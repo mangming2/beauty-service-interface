@@ -106,6 +106,7 @@ function LandingCarouselPanel() {
   const [linkType, setLinkType] = useState<CarouselLinkType>("PRODUCT");
   const [linkId, setLinkId] = useState("");
   const [hashtag, setHashtag] = useState("");
+  const [title, setTitle] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [isActive, setIsActive] = useState(true);
 
@@ -118,6 +119,7 @@ function LandingCarouselPanel() {
     setLinkType("PRODUCT");
     setLinkId("");
     setHashtag("");
+    setTitle("");
     setSortOrder("0");
     setIsActive(true);
     setDialogOpen(true);
@@ -128,6 +130,7 @@ function LandingCarouselPanel() {
     setLinkType(item.linkType ?? "PRODUCT");
     setLinkId(String(item.linkId ?? ""));
     setHashtag(item.hashtag ?? "");
+    setTitle(item.title ?? "");
     setSortOrder(String(item.sortOrder ?? 0));
     setIsActive(item.isActive);
     setDialogOpen(true);
@@ -145,6 +148,7 @@ function LandingCarouselPanel() {
       linkType,
       linkId: Number(linkId),
       hashtag,
+      title: title || undefined,
       sortOrder: Number(sortOrder),
       isActive,
     };
@@ -206,6 +210,9 @@ function LandingCarouselPanel() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-white font-medium">
+                  {item.title ?? "(타이틀 없음)"}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
                   {item.hashtag ?? "-"}
                 </p>
                 <p className="text-xs text-gray-400 mt-0.5">
@@ -288,6 +295,17 @@ function LandingCarouselPanel() {
                 linkType={linkType}
                 value={linkId}
                 onChange={id => setLinkId(id)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">
+                타이틀 (캐러셀 전용, 선택)
+              </label>
+              <input
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                placeholder="캐러셀에서만 노출되는 문구"
+                className="w-full px-3 py-2 rounded bg-gray-800 border border-gray-600 text-white text-sm"
               />
             </div>
             <div>

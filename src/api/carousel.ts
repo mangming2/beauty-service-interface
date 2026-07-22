@@ -18,6 +18,8 @@ export interface LandingCarouselItem {
   linkId: number;
   imageUrl: string | null;
   hashtag: string | null;
+  /** 캐러셀에서만 노출되는 타이틀 (선택) */
+  title: string | null;
 }
 
 /** 커뮤니티 캐러셀 아이템 (public) */
@@ -44,6 +46,7 @@ export interface LandingCarouselRequest {
   linkType: CarouselLinkType;
   linkId: number;
   hashtag: string;
+  title?: string;
   sortOrder: number;
   isActive: boolean;
 }
