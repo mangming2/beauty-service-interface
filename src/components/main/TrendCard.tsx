@@ -48,7 +48,7 @@ export function TrendCard({
               />
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-left">
-              <h3 className="title-md font-semibold uppercase tracking-wide text-white">
+              <h3 className="title-sm font-semibold uppercase tracking-wide text-white">
                 {title}
               </h3>
               <p className="text-sm font-medium text-gray-400">{location}</p>

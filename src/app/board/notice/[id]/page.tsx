@@ -64,7 +64,7 @@ export default function NoticeDetailPage() {
         {post.title}
       </h1>
 
-      <div className="mt-4 text-md text-white leading-relaxed whitespace-pre-wrap">
+      <div className="mt-4 text-[14px] font-normal text-white leading-relaxed whitespace-pre-wrap">
         {post.content}
       </div>
 

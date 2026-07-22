@@ -63,7 +63,7 @@ export function LatestAnnouncementPosts() {
               <Link
                 key={post.postId}
                 href={`/board/notice/${post.postId}`}
-                className="block bg-gray-container p-3"
+                className="block rounded-[4px] bg-gray-container p-3"
               >
                 {/* 상단: 작성자 + 날짜 */}
                 <div className="flex items-center justify-between mb-2">

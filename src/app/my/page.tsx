@@ -39,7 +39,7 @@ export default function MyPage() {
   return (
     <div className="min-h-screen text-white bg-background">
       {/* Header with Profile */}
-      <div className="px-4 pt-6 pb-3">
+      <div className="px-5 pt-6 pb-3">
         <div className="flex gap-4">
           <div className="relative w-20 h-20 rounded-full overflow-hidden">
             <Image
@@ -69,7 +69,7 @@ export default function MyPage() {
         </div>
       </div>
 
-      <div className="flex px-3 gap-2 flex-wrap">
+      <div className="flex px-5 gap-2 flex-wrap">
         <Button
           variant="graySmall"
           onClick={() => router.push("/my/reviews")}
@@ -102,7 +102,7 @@ export default function MyPage() {
       <GapY size={20} />
 
       {/* Tabs Navigation */}
-      <div className="px-4">
+      <div className="px-5">
         <Tabs defaultValue="booking-history" className="w-full">
           <TabsList className="bg-transparent p-0 gap-3 border-b border-gray-700 rounded-none">
             <TabsTrigger

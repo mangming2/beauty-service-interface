@@ -51,7 +51,7 @@ function PostCard({ post }: { post: CommunityPostListItem }) {
             {firstTag}
           </span>
         )}
-        <p className="text-md text-white font-semibold line-clamp-1">
+        <p className="text-lg text-white font-semibold line-clamp-1">
           {post.title}
         </p>
         <p className="caption-md text-gray_1 mt-0.5 line-clamp-2">
@@ -229,36 +229,28 @@ function BoardContent() {
 
   return (
     <div className="px-5">
-      <div className="pt-6 border-b border-gray-outline">
-        <nav className="flex gap-6">
-          <Link
-            href="/board"
-            className={`relative title-sm flex-initial pb-3 pt-0 px-0 rounded-none transition-colors duration-200 after:absolute after:left-0 after:right-0 after:h-px after:bottom-0 after:bg-gray-outline ${
-              tab === TAB_NOTICE
-                ? "text-pink-font after:bg-pink-font"
-                : "text-gray-400 hover:text-white after:bg-gray-outline"
-            }`}
-          >
-            <span className="relative z-[1]">
-              <TranslatedText translationKey="notice" />
-            </span>
-          </Link>
-          <Link
-            href="/board?tab=community"
-            className={`relative title-sm flex-initial pb-3 pt-0 px-0 rounded-none transition-colors duration-200 after:absolute after:left-0 after:right-0 after:h-px after:bottom-0 after:bg-gray-outline ${
-              tab === TAB_COMMUNITY
-                ? "text-pink-font after:bg-pink-font"
-                : "text-gray-400 hover:text-white after:bg-gray-outline"
-            }`}
-          >
-            <span className="relative z-[1]">
-              <TranslatedText translationKey="community" />
-            </span>
-          </Link>
-        </nav>
+      <div className="flex items-center gap-[17px] py-6">
+        <Link
+          href="/board"
+          className={`text-2xl leading-[130%] transition-colors ${
+            tab === TAB_NOTICE
+              ? "text-pink-font font-bold"
+              : "text-gray_1 font-medium"
+          }`}
+        >
+          <TranslatedText translationKey="notice" />
+        </Link>
+        <Link
+          href="/board?tab=community"
+          className={`text-2xl leading-[130%] transition-colors ${
+            tab === TAB_COMMUNITY
+              ? "text-pink-font font-bold"
+              : "text-gray_1 font-medium"
+          }`}
+        >
+          <TranslatedText translationKey="community" />
+        </Link>
       </div>
-
-      <GapY size={24} />
 
       {tab === TAB_NOTICE && <CommunityCarouselBanner />}
 

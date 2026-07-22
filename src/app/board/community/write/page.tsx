@@ -7,7 +7,7 @@ import { useCreateCommunityPost } from "@/queries/useCommunityQueries";
 import { useTranslation } from "@/hooks/useTranslation";
 import { gtag } from "@/lib/gtag";
 import { Loading } from "@/components/common/Loading";
-import { XIcon } from "@/components/common/Icons";
+import { CloseIcon } from "@/components/common/Icons";
 
 const PRESET_TAGS = ["Recruiting", "K-pop News", "K-Beauty"];
 
@@ -80,7 +80,7 @@ export default function CommunityWritePage() {
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4">
         <button onClick={() => router.back()} className="text-white">
-          <XIcon width={18} height={18} color="white" />
+          <CloseIcon width={16} height={16} color="white" />
         </button>
         <button
           onClick={handleSubmit}

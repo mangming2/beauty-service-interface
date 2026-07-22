@@ -107,19 +107,23 @@ export default function Wish() {
   return (
     <div className="flex flex-col flex-1 text-white">
       {/* 탭 */}
-      <div className="flex items-center gap-[17px] px-5 py-3">
+      <div className="flex items-center gap-[17px] px-5 py-6">
         <button
           onClick={() => setTab("wish")}
-          className={`text-2xl font-bold leading-[130%] transition-colors ${
-            tab === "wish" ? "text-pink-font" : "text-gray_1"
+          className={`text-2xl leading-[130%] transition-colors ${
+            tab === "wish"
+              ? "text-pink-font font-bold"
+              : "text-gray_1 font-medium"
           }`}
         >
           Wish
         </button>
         <button
           onClick={() => setTab("bookmark")}
-          className={`text-2xl font-bold leading-[130%] transition-colors ${
-            tab === "bookmark" ? "text-pink-font" : "text-gray_1"
+          className={`text-2xl leading-[130%] transition-colors ${
+            tab === "bookmark"
+              ? "text-pink-font font-bold"
+              : "text-gray_1 font-medium"
           }`}
         >
           Bookmark
