@@ -142,6 +142,10 @@ export function OptionFormFields({
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
+          {/* TODO: "없음" 선택지 및 구 정보 제거 기능 - 백엔드 이슈로 보류.
+              OptionCommandService.updateOption()이 district = command.district ?: option.district
+              로 null-coalescing 처리돼 있어, 이미 구가 설정된 옵션은 PUT으로 null을 보내도
+              지워지지 않고 기존 값이 유지됨. 백엔드에서 명시적 삭제를 지원해야 UI 대응 가능. */}
           <label className="block text-sm text-gray-400 mb-1">서울 구 *</label>
           <select
             required
@@ -163,10 +167,12 @@ export function OptionFormFields({
         </div>
         <div>
           <label className="block text-sm text-gray-400 mb-1">
-            상세 주소 *
+            상세 주소{" "}
+            <span className="text-gray-500 font-normal">
+              (비워두면 개별 협의로 노출)
+            </span>
           </label>
           <input
-            required
             value={optionReq.detailAddress}
             onChange={e =>
               setOptionReq(prev => ({
@@ -343,6 +349,25 @@ export function OptionFormFields({
       </div>
       <div>
         <label className="block text-sm text-gray-400 mb-1">
+          예약 링크{" "}
+          <span className="text-gray-500 font-normal">
+            (비어있으면 예약 버튼 비활성화)
+          </span>
+        </label>
+        <input
+          value={optionReq.reservationUrl ?? ""}
+          onChange={e =>
+            setOptionReq(prev => ({
+              ...prev,
+              reservationUrl: e.target.value || undefined,
+            }))
+          }
+          className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          placeholder="https://booking.naver.com/..."
+        />
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">
           태그 (쉼표 구분)
         </label>
         <input
@@ -404,5 +429,6 @@ export function optionToCreateRequest(
     bookingGuide: o.bookingGuide ?? "",
     regularClosingDay: o.regularClosingDay,
     optionTagNames: [],
+    reservationUrl: o.reservationUrl,
   };
 }

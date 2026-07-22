@@ -60,7 +60,7 @@ export interface Option {
   /** 목록 조회 시 대표 옵션 여부 */
   representOption?: boolean;
   /** 실제 예약 URL (없으면 예약 버튼 비활성화) */
-  bookingUrl?: string | null;
+  reservationUrl?: string | null;
 }
 
 /** 옵션에 연결된 상품 요약 (GET /options 응답 중 linkedProducts) */
@@ -102,6 +102,7 @@ export interface CreateOptionRequest {
   bookingGuide?: string;
   regularClosingDay?: string | null;
   optionTagNames?: string[];
+  reservationUrl?: string | null;
 }
 
 // ========== 옵션 API ==========

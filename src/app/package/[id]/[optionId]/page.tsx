@@ -125,7 +125,7 @@ export default function PackageOptionBookingPage() {
     : undefined;
 
   const handleBookLink = () => {
-    if (!currentOption.bookingUrl) return;
+    if (!currentOption.reservationUrl) return;
     if (selectedDate) {
       sessionStorage.setItem("selectedBookingDate", selectedDate.toISOString());
     }
@@ -135,7 +135,7 @@ export default function PackageOptionBookingPage() {
     if (selectedHour !== null) {
       sessionStorage.setItem("selectedStartHour", String(selectedHour));
     }
-    window.open(currentOption.bookingUrl, "_blank");
+    window.open(currentOption.reservationUrl, "_blank");
   };
 
   const handleComplete = async () => {
@@ -463,7 +463,7 @@ export default function PackageOptionBookingPage() {
             {t("option.complete")}
           </Button>
           <div className="relative flex-1">
-            {showBookingUrlTooltip && !currentOption.bookingUrl && (
+            {showBookingUrlTooltip && !currentOption.reservationUrl && (
               <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white shadow">
                 아직 예약링크가 없습니다
               </div>
@@ -482,7 +482,7 @@ export default function PackageOptionBookingPage() {
                   !externalBookingAgreed ||
                   !selectedDate ||
                   !selectedTime ||
-                  !currentOption.bookingUrl
+                  !currentOption.reservationUrl
                 }
               >
                 {t("option.bookLink")}
