@@ -274,7 +274,7 @@ function BoardContent() {
                     className="flex items-center justify-between py-4"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-md text-white truncate">
+                      <p className="text-lg text-white truncate">
                         {post.title}
                       </p>
                       {preview ? (
