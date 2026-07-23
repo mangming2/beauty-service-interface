@@ -320,7 +320,7 @@ export const translations = {
       beforeContinue: "계속하기 전에.",
       externalBookingTitle: "외부 예약 안내",
       externalBookingNotice:
-        "이 예약은 여기서 완료되지 않으며 네이버 예약에서 최종 확인해야 합니다.",
+        "이 예약은 여기서 완료되지 않으며 하단 예약 링크에서 최종 확인해야함을 이해했습니다.",
       chooseDate: "날짜를 선택하세요.",
       chooseTimeSlot: "시간대를 선택하세요.",
       noTimeSlots: "이용 가능한 시간대가 설정되지 않았습니다.",
@@ -651,7 +651,7 @@ export const translations = {
       beforeContinue: "Before you continue.",
       externalBookingTitle: "External Booking Notice",
       externalBookingNotice:
-        "I understand that my reservation is not completed here and must be finalized on Naver Booking.",
+        "I understand that my reservation is not completed here and must be finalized via the booking link below.",
       chooseDate: "Choose your date.",
       chooseTimeSlot: "Choose your time slot.",
       noTimeSlots: "Available time slots are not configured.",
@@ -987,7 +987,7 @@ export const translations = {
       beforeContinue: "続ける前に。",
       externalBookingTitle: "外部予約通知",
       externalBookingNotice:
-        "この予約はここで完了せず、Naver予約で最終確認する必要があります。",
+        "この予約はここで完了せず、下部の予約リンクで最終確認する必要があることを理解しました。",
       chooseDate: "日付を選択してください。",
       chooseTimeSlot: "タイムスロットを選択してください。",
       noTimeSlots: "利用可能なタイムスロットが設定されていません。",
@@ -1315,7 +1315,7 @@ export const translations = {
       beforeContinue: "继续之前。",
       externalBookingTitle: "外部预订通知",
       externalBookingNotice:
-        "我了解我的预订不在此完成，必须在Naver预订上最终确认。",
+        "我了解我的预订不在此完成，必须通过下方的预订链接进行最终确认。",
       chooseDate: "选择日期。",
       chooseTimeSlot: "选择时间段。",
       noTimeSlots: "可用时间段未配置。",
