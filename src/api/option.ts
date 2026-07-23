@@ -93,7 +93,8 @@ export interface CreateOptionRequest {
   categoryTagName: string;
   price: number;
   detailAddress: string;
-  district: SeoulDistrict;
+  /** null이면 방문 장소 없는 온라인/원격 옵션 (신규 생성 시에만 확실히 반영됨 — 수정 시 백엔드 제약은 option-form-fields.tsx 주석 참고) */
+  district: SeoulDistrict | null;
   slotStartDate: string;
   slotEndDate: string;
   slotStartHour: number;

@@ -142,22 +142,24 @@ export function OptionFormFields({
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          {/* TODO: "없음" 선택지 및 구 정보 제거 기능 - 백엔드 이슈로 보류.
-              OptionCommandService.updateOption()이 district = command.district ?: option.district
-              로 null-coalescing 처리돼 있어, 이미 구가 설정된 옵션은 PUT으로 null을 보내도
-              지워지지 않고 기존 값이 유지됨. 백엔드에서 명시적 삭제를 지원해야 UI 대응 가능. */}
-          <label className="block text-sm text-gray-400 mb-1">서울 구 *</label>
+          {/* 참고: 기존에 구가 설정된 옵션은 "없음"을 골라 저장해도 백엔드가
+              null을 "필드 미전송"과 구분하지 못해(OptionCommandService.updateOption()의
+              district = command.district ?: option.district) 기존 값이 유지될 수 있음.
+              백엔드에서 명시적 삭제를 지원해야 수정 시에도 완전히 동작함. */}
+          <label className="block text-sm text-gray-400 mb-1">서울 구</label>
           <select
-            required
-            value={optionReq.district}
+            value={optionReq.district ?? ""}
             onChange={e =>
               setOptionReq(prev => ({
                 ...prev,
-                district: e.target.value as SeoulDistrict,
+                district: e.target.value
+                  ? (e.target.value as SeoulDistrict)
+                  : null,
               }))
             }
             className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-600"
           >
+            <option value="">없음 (방문 장소 없는 온라인/원격 옵션)</option>
             {SEOUL_DISTRICTS.map(district => (
               <option key={district.value} value={district.value}>
                 {district.label}
@@ -426,10 +428,10 @@ export function optionToCreateRequest(
     description: o.description,
     categoryTagName: o.categoryTagName?.trim() || "hair",
     price: originalPrice,
-    // 온라인/원격 옵션 등 방문 장소가 없는 옵션은 백엔드가 null을 내려줌.
-    // 폼은 아직 "장소 없음"을 표현하지 못하므로 편집 시 기본값으로 대체한다.
+    // 온라인/원격 옵션처럼 방문 장소가 없으면 백엔드가 null을 내려줌.
+    // 상세 주소는 아직 "장소 없음"을 표현하지 못하므로 편집 시 빈 문자열로 대체한다.
     detailAddress: o.detailAddress ?? "",
-    district: o.district ?? "GANGNAM",
+    district: o.district,
     slotStartDate,
     slotEndDate,
     slotStartHour: clampSlotHour(o.slotStartHour ?? OPTION_SLOT_HOUR_MIN),
