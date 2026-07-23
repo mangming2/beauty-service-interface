@@ -44,8 +44,10 @@ export interface Option {
   description: string;
   discountRate: number;
   price: number;
-  detailAddress: string;
-  district: SeoulDistrict;
+  /** 온라인/원격 옵션처럼 방문 장소가 없으면 null (백엔드 Option.detailAddress 참고) */
+  detailAddress: string | null;
+  /** 온라인/원격 옵션처럼 방문 장소가 없으면 null (백엔드 Option.district 참고) */
+  district: SeoulDistrict | null;
   bookingGuide: string;
   regularClosingDay: string | null;
   imageUrls: string[];

@@ -414,13 +414,22 @@ export function optionToCreateRequest(
   const slotStartDate = rawStart && rawStart >= today ? rawStart : today;
   const slotEndDate = rawEnd && rawEnd > slotStartDate ? rawEnd : nextYear;
 
+  // 백엔드는 상세 조회 시 이미 할인 적용된 price를 내려줌 (b6c74eb 참고).
+  // 원가 입력칸에 그대로 채우면 저장할 때마다 할인이 중첩 적용되므로 역산해서 복원한다.
+  const originalPrice =
+    o.discountRate > 0
+      ? Math.round(o.price / (1 - o.discountRate / 100))
+      : o.price;
+
   return {
     name: o.name,
     description: o.description,
     categoryTagName: o.categoryTagName?.trim() || "hair",
-    price: o.price,
-    detailAddress: o.detailAddress,
-    district: o.district,
+    price: originalPrice,
+    // 온라인/원격 옵션 등 방문 장소가 없는 옵션은 백엔드가 null을 내려줌.
+    // 폼은 아직 "장소 없음"을 표현하지 못하므로 편집 시 기본값으로 대체한다.
+    detailAddress: o.detailAddress ?? "",
+    district: o.district ?? "GANGNAM",
     slotStartDate,
     slotEndDate,
     slotStartHour: clampSlotHour(o.slotStartHour ?? OPTION_SLOT_HOUR_MIN),

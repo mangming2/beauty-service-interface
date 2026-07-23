@@ -265,7 +265,7 @@ export default function PackageOptionBookingPage() {
                 t("option.fullAddress"),
                 isAddressOpen,
                 () => setIsAddressOpen(prev => !prev),
-                currentOption.detailAddress
+                currentOption.detailAddress ?? ""
               )}
               {renderAccordion(
                 t("option.bookingGuide"),
