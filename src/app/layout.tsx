@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
 import {
   AuthValidator,
   ConditionalLayout,
+  GtmPageView,
   WebVitals,
 } from "@/components/common";
 import { QueryProvider } from "@/providers";
@@ -61,7 +63,10 @@ export default function RootLayout({
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MPZ24D7D');`,
+})(window,document,'script','dataLayer','GTM-MPZ24D7D');
+window.dataLayer = window.dataLayer || [];
+function gtag(){window.dataLayer.push(arguments);}
+window.gtag = gtag;`,
           }}
         />
       </head>
@@ -80,6 +85,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </noscript>
         {/* End Google Tag Manager (noscript) */}
         <WebVitals />
+        <Suspense fallback={null}>
+          <GtmPageView />
+        </Suspense>
         <QueryProvider>
           <AuthValidator>
             <ConditionalLayout>{children}</ConditionalLayout>
