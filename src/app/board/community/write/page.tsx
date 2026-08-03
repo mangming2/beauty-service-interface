@@ -32,6 +32,7 @@ export default function CommunityWritePage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [error, setError] = useState("");
+  const [showCategoryError, setShowCategoryError] = useState(false);
 
   function toggleTag(tag: string) {
     setSelectedTags(prev =>
@@ -51,7 +52,11 @@ export default function CommunityWritePage() {
   }
 
   async function handleSubmit() {
-    if (!title.trim() || !content.trim() || selectedTags.length === 0) return;
+    if (!title.trim() || !content.trim()) return;
+    if (selectedTags.length === 0) {
+      setShowCategoryError(true);
+      return;
+    }
     setError("");
     try {
       const result = await createPost.mutateAsync({
@@ -84,12 +89,7 @@ export default function CommunityWritePage() {
         </button>
         <button
           onClick={handleSubmit}
-          disabled={
-            !title.trim() ||
-            !content.trim() ||
-            selectedTags.length === 0 ||
-            createPost.isPending
-          }
+          disabled={!title.trim() || !content.trim() || createPost.isPending}
           className="text-white text-md font-medium disabled:opacity-40"
         >
           Complete
@@ -116,7 +116,7 @@ export default function CommunityWritePage() {
             </button>
           ))}
         </div>
-        {selectedTags.length === 0 && (
+        {showCategoryError && selectedTags.length === 0 && (
           <p className="mt-2 caption-md text-red-400">
             카테고리를 1개 이상 선택해주세요
           </p>
