@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import LottieAnimation from "@/components/common/LottieAnimation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { reissueToken } from "@/lib/apiClient";
+import { consumePostLoginRedirect } from "@/lib/postLoginRedirect";
 import { getMyPageUser } from "@/api/my-page";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -75,8 +76,8 @@ function CallbackContent() {
 
         gtag.loginSuccess("google");
 
-        // 5. 마이페이지로 이동
-        router.replace("/my");
+        // 5. 저장된 경로 또는 마이페이지로 이동
+        router.replace(consumePostLoginRedirect());
       } catch (err) {
         console.error("Auth callback error:", err);
         setError(t("auth.authError"));

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useHydration } from "@/hooks/useHydration";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import MainLogo from "../../../public/main-logo.png";
 import { GoogleIcon } from "@/components/common/Icons";
 import { AuthLoading } from "@/components/common";
@@ -16,10 +16,11 @@ import {
 } from "@/queries/useTestQueries";
 import { useTranslation } from "@/hooks/useTranslation";
 import { isInAppBrowser, openInExternalBrowser } from "@/lib/inAppBrowser";
+import { stashPostLoginRedirect } from "@/lib/postLoginRedirect";
 
 const isDev = process.env.NODE_ENV === "development";
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [message, setMessage] = useState("");
   const isHydrated = useHydration();
   const [inAppBrowser, setInAppBrowser] = useState(false);
@@ -29,6 +30,8 @@ export default function LoginPage() {
   const [testEmail, setTestEmail] = useState("");
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const { t } = useTranslation();
   const { user, isAuthenticated } = useUser();
   const googleLoginMutation = useGoogleLogin();
@@ -42,9 +45,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isHydrated && isAuthenticated && user) {
-      router.push("/my");
+      router.push(returnTo || "/my");
     }
-  }, [isHydrated, isAuthenticated, user, router]);
+  }, [isHydrated, isAuthenticated, user, router, returnTo]);
 
   if (!isHydrated) {
     return <AuthLoading />;
@@ -54,6 +57,9 @@ export default function LoginPage() {
     if (inAppBrowser) {
       openInExternalBrowser(window.location.href);
       return;
+    }
+    if (returnTo) {
+      stashPostLoginRedirect(returnTo);
     }
     try {
       setMessage("");
@@ -274,5 +280,13 @@ export default function LoginPage() {
         <div className="mt-4 text-red-400 text-sm text-center">{message}</div>
       )}
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<AuthLoading />}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
