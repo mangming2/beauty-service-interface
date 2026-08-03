@@ -22,6 +22,7 @@ export default async function Image() {
       >
         <img
           src="https://www.dayofkidol.shop/thumbnail.png"
+          alt={alt}
           style={{ width: 600 }}
         />
       </div>
