@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import { useTranslation } from "@/hooks/useTranslation";
 import { gtag } from "@/lib/gtag";
 import type { CommunityCommentView } from "@/api/community";
+import type { ApiError } from "@/lib/apiClient";
 import { ReplyCommentCard } from "@/components/community/ReplyCommentCard";
 
 function formatCount(count: number): string {
@@ -110,7 +111,12 @@ export default function CommunityDetailPage() {
   const postId = id ? parseInt(id, 10) : undefined;
   const { t } = useTranslation();
 
-  const { data: post, isLoading, isError } = useCommunityPostDetail(postId);
+  const {
+    data: post,
+    isLoading,
+    isError,
+    error,
+  } = useCommunityPostDetail(postId);
   const { data: comments = [] } = usePostComments(postId);
   const toggleLike = useTogglePostLike();
   const toggleBookmark = useTogglePostBookmark();
@@ -149,6 +155,13 @@ export default function CommunityDetailPage() {
         <Spinner className="w-8 h-8 text-white" />
       </div>
     );
+  }
+
+  if (error && (error as ApiError).status === 401) {
+    router.replace(
+      `/login?returnTo=${encodeURIComponent(window.location.pathname)}`
+    );
+    return null;
   }
 
   if (isError || !post) {
