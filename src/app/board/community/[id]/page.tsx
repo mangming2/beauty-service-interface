@@ -15,6 +15,7 @@ import {
 import { useAuthStatus } from "@/queries/useAuthQueries";
 import { KebabMenu } from "@/components/community/KebabMenu";
 import { getSafeImageSrc } from "@/lib/utils";
+import { linkifyText } from "@/lib/linkify";
 import { Spinner } from "@/components/ui/spinner";
 import {
   HeartIcon,
@@ -240,7 +241,7 @@ export default function CommunityDetailPage() {
 
         {/* Content */}
         <div className="mt-4 text-md text-white leading-relaxed whitespace-pre-wrap">
-          {post.content}
+          {linkifyText(post.content)}
         </div>
 
         {/* Images */}
