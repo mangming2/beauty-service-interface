@@ -1,62 +1,23 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+/**
+ * refreshToken 쿠키는 백엔드(apidoki.store)가 발급하는데, 프론트 도메인
+ * (dayofkidol.shop / localhost)과 등록 도메인이 달라 브라우저가 이 쿠키를
+ * 프론트 서버로 전송하지 않는다. 즉 이 미들웨어에서는 로그인 여부와 무관하게
+ * refreshToken이 항상 없는 것으로 보여, 쿠키 기반 리다이렉트를 켜두면
+ * 로그인 상태의 사용자까지 /login으로 튕겨나간다.
+ * 프론트/백엔드가 쿠키를 공유할 수 있는 구조(BFF 프록시 등)가 마련되기
+ * 전까지는 서버 사이드 게이팅을 비활성화하고, 인증 게이팅은 클라이언트
+ * AuthGuard/ProtectedLayout에 맡긴다.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
-
-  // 인증이 필요하지 않은 페이지들 (공개 페이지)
-  const publicExactPages = [
-    "/",
-    "/login",
-    "/auth/callback",
-    "/recommend",
-    "/board",
-  ];
-  const isPackageDetailPath = /^\/package\/[^/]+$/.test(pathname);
-  const isPackageReviewsPath = /^\/package\/[^/]+\/reviews$/.test(pathname);
-  const isBoardNoticeDetailPath = /^\/board\/notice\/[^/]+$/.test(pathname);
-  const isPublicPage =
-    publicExactPages.includes(pathname) ||
-    isPackageDetailPath ||
-    isPackageReviewsPath ||
-    isBoardNoticeDetailPath;
-
-  // 쿠키에서 refreshToken 확인 (httpOnly 쿠키)
-  const refreshToken = req.cookies.get("refreshToken")?.value;
-
-  // 공개 페이지가 아닌 경우
-  if (!isPublicPage) {
-    // refreshToken이 없으면 로그인 페이지로 리다이렉트
-    if (!refreshToken) {
-      const redirectUrl = req.nextUrl.clone();
-      redirectUrl.pathname = "/login";
-      return NextResponse.redirect(redirectUrl);
-    }
-  }
-
-  // 로그인 페이지 접근 시 - 이미 토큰이 있으면 returnTo(있으면) 또는 마이페이지로
-  if (pathname === "/login" && refreshToken) {
-    const returnTo = req.nextUrl.searchParams.get("returnTo");
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = returnTo || "/my";
-    redirectUrl.search = "";
-    return NextResponse.redirect(redirectUrl);
-  }
-
   return NextResponse.next();
 }
 
-// 미들웨어가 실행될 경로 설정
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (png, jpg, svg, lottie 등 정적 리소스 확장자)
-     */
     "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpe?g|gif|svg|ico|webp|lottie|json|txt|woff2?|mp4|webm)$).*)",
   ],
 };
