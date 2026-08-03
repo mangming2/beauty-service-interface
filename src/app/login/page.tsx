@@ -120,7 +120,7 @@ function LoginPageContent() {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center pt-[360px]">
+    <div className="flex flex-col flex-1 items-center justify-center">
       <div className="text-center">
         <Image
           src={MainLogo}
@@ -130,7 +130,7 @@ function LoginPageContent() {
         />
       </div>
 
-      <div className="mt-[200px] text-center p-[12px]">
+      <div className="mt-10 text-center p-[12px]">
         {inAppBrowser && (
           <div className="mb-6 mx-auto max-w-[300px] rounded-xl bg-[#2E3033] border border-yellow-500/40 p-4 text-left">
             <p className="text-yellow-400 text-sm font-semibold mb-1">
