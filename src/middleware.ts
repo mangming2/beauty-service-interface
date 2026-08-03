@@ -34,10 +34,12 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  // 로그인 페이지 접근 시 - 이미 토큰이 있으면 마이페이지로
+  // 로그인 페이지 접근 시 - 이미 토큰이 있으면 returnTo(있으면) 또는 마이페이지로
   if (pathname === "/login" && refreshToken) {
+    const returnTo = req.nextUrl.searchParams.get("returnTo");
     const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = "/my";
+    redirectUrl.pathname = returnTo || "/my";
+    redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }
 

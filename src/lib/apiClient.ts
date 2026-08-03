@@ -212,7 +212,7 @@ export async function apiRequest<T>(
         typeof window !== "undefined" &&
         (requireAuthStrict || shouldRedirectToLogin())
       ) {
-        window.location.href = "/login";
+        window.location.href = `/login?returnTo=${encodeURIComponent(window.location.pathname)}`;
       }
       throw {
         message: "세션이 만료되었습니다.",
@@ -239,7 +239,7 @@ export async function apiRequest<T>(
           typeof window !== "undefined" &&
           (requireAuthStrict || shouldRedirectToLogin())
         ) {
-          window.location.href = "/login";
+          window.location.href = `/login?returnTo=${encodeURIComponent(window.location.pathname)}`;
         }
 
         throw {
