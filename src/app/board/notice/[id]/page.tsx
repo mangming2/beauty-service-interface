@@ -4,6 +4,7 @@ import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import { useAnnouncementDetail } from "@/queries/useAnnouncementQueries";
 import { getSafeImageSrc } from "@/lib/utils";
+import { linkifyText } from "@/lib/linkify";
 import { Spinner } from "@/components/ui/spinner";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -65,7 +66,7 @@ export default function NoticeDetailPage() {
       </h1>
 
       <div className="mt-4 text-[14px] font-normal text-white leading-relaxed whitespace-pre-wrap">
-        {post.content}
+        {linkifyText(post.content)}
       </div>
 
       {post.imageUrls?.length > 0 && (
