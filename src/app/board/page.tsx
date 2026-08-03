@@ -27,6 +27,7 @@ const TAB_NOTICE = "notice";
 const TAB_COMMUNITY = "community";
 
 const COMMUNITY_CATEGORIES = [
+  { id: "all", label: "communityPage.all", isHot: false },
   { id: "hot", label: "communityPage.hot", isHot: true },
   { id: "Recruiting", label: "communityPage.recruiting", isHot: false },
   { id: "K-pop News", label: "communityPage.kpopNews", isHot: false },
@@ -112,7 +113,7 @@ function HotCommunityTab() {
   );
 }
 
-function TaggedCommunityTab({ tag }: { tag: string }) {
+function TaggedCommunityTab({ tag }: { tag?: string }) {
   const { t } = useTranslation();
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteCommunityPosts({ tag, size: 20 });
@@ -168,7 +169,7 @@ function TaggedCommunityTab({ tag }: { tag: string }) {
 function CommunityTab() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState<CategoryId>("hot");
+  const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
   const activeCat = COMMUNITY_CATEGORIES.find(c => c.id === activeCategory)!;
 
   return (
@@ -198,7 +199,9 @@ function CommunityTab() {
         {activeCat.isHot ? (
           <HotCommunityTab />
         ) : (
-          <TaggedCommunityTab tag={activeCategory} />
+          <TaggedCommunityTab
+            tag={activeCategory === "all" ? undefined : activeCategory}
+          />
         )}
       </ul>
 

@@ -272,6 +272,7 @@ export const translations = {
       comments: "댓글",
     },
     communityPage: {
+      all: "전체",
       hot: "Hot",
       recruiting: "Recruiting",
       kpopNews: "K-pop News",
@@ -603,6 +604,7 @@ export const translations = {
       comments: "Comments",
     },
     communityPage: {
+      all: "All",
       hot: "Hot",
       recruiting: "Recruiting",
       kpopNews: "K-pop News",
@@ -939,6 +941,7 @@ export const translations = {
       comments: "コメント",
     },
     communityPage: {
+      all: "すべて",
       hot: "Hot",
       recruiting: "Recruiting",
       kpopNews: "K-pop News",
@@ -1267,6 +1270,7 @@ export const translations = {
       comments: "评论",
     },
     communityPage: {
+      all: "全部",
       hot: "热门",
       recruiting: "招募",
       kpopNews: "K-pop新闻",
