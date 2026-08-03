@@ -172,10 +172,56 @@ function CommunityTab() {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
   const activeCat = COMMUNITY_CATEGORIES.find(c => c.id === activeCategory)!;
 
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [isDraggingTabs, setIsDraggingTabs] = useState(false);
+  const [tabsDragStartX, setTabsDragStartX] = useState(0);
+  const [tabsScrollLeftStart, setTabsScrollLeftStart] = useState(0);
+
+  function handleTabsMouseDown(e: React.MouseEvent<HTMLDivElement>) {
+    if (!tabsRef.current) return;
+    setIsDraggingTabs(true);
+    setTabsDragStartX(e.pageX - tabsRef.current.offsetLeft);
+    setTabsScrollLeftStart(tabsRef.current.scrollLeft);
+  }
+
+  function handleTabsMouseLeaveOrUp() {
+    setIsDraggingTabs(false);
+  }
+
+  function handleTabsMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (!isDraggingTabs || !tabsRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - tabsRef.current.offsetLeft;
+    const walk = (x - tabsDragStartX) * 2;
+    tabsRef.current.scrollLeft = tabsScrollLeftStart - walk;
+  }
+
+  function handleTabsWheel(e: React.WheelEvent<HTMLDivElement>) {
+    if (!tabsRef.current) return;
+    if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      tabsRef.current.scrollLeft += e.deltaX || e.deltaY;
+    }
+  }
+
   return (
     <div className="relative">
       {/* Category tabs */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
+      <div
+        ref={tabsRef}
+        className={`flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5 ${
+          isDraggingTabs ? "select-none" : ""
+        }`}
+        onMouseDown={handleTabsMouseDown}
+        onMouseLeave={handleTabsMouseLeaveOrUp}
+        onMouseUp={handleTabsMouseLeaveOrUp}
+        onMouseMove={handleTabsMouseMove}
+        onWheel={handleTabsWheel}
+        style={{
+          cursor: isDraggingTabs ? "grabbing" : "grab",
+          WebkitOverflowScrolling: "touch",
+          touchAction: "pan-x",
+        }}
+      >
         {COMMUNITY_CATEGORIES.map(cat => (
           <button
             key={cat.id}
