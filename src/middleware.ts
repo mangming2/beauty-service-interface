@@ -55,8 +55,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public files (png, jpg, etc.)
+     * - public files (png, jpg, svg, lottie 등 정적 리소스 확장자)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpe?g|gif|svg|ico|webp|lottie|json|txt|woff2?|mp4|webm)$).*)",
   ],
 };
