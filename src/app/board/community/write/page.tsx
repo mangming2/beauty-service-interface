@@ -8,8 +8,21 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { gtag } from "@/lib/gtag";
 import { Loading } from "@/components/common/Loading";
 import { CloseIcon } from "@/components/common/Icons";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const PRESET_TAGS = ["Recruiting", "K-pop News", "K-Beauty"];
+// 백엔드 업로드 용량 제한(전체 요청 10MB)과 맞춘 클라이언트 사전 검증 기준.
+// 실패 시 CORS 때문에 브라우저가 413 응답 본문을 읽지 못해 원인을 알 수 없으므로
+// 제출 전에 미리 걸러서 명확한 안내를 보여준다.
+const MAX_TOTAL_IMAGE_BYTES = 10 * 1024 * 1024;
 
 function ImageIcon() {
   return (
@@ -34,6 +47,7 @@ export default function CommunityWritePage() {
   const [error, setError] = useState("");
   const [showCategoryError, setShowCategoryError] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showImageSizeError, setShowImageSizeError] = useState(false);
 
   function toggleTag(tag: string) {
     setSelectedTags(prev =>
@@ -56,6 +70,11 @@ export default function CommunityWritePage() {
     if (!title.trim() || !content.trim()) return;
     if (selectedTags.length === 0) {
       setShowCategoryError(true);
+      return;
+    }
+    const totalImageBytes = images.reduce((sum, file) => sum + file.size, 0);
+    if (totalImageBytes > MAX_TOTAL_IMAGE_BYTES) {
+      setShowImageSizeError(true);
       return;
     }
     setError("");
@@ -197,6 +216,31 @@ export default function CommunityWritePage() {
           <span className="text-sm">image</span>
         </button>
       </div>
+
+      <Dialog open={showImageSizeError} onOpenChange={setShowImageSizeError}>
+        <DialogContent
+          aria-describedby={undefined}
+          showCloseButton={false}
+          className="gap-0 px-5 pt-9 pb-6 bg-background border-none rounded-2 max-w-[380px] sm:max-w-[380px]"
+        >
+          <DialogHeader className="gap-0">
+            <DialogTitle className="text-white title-md text-[20px]">
+              이미지 용량 초과
+            </DialogTitle>
+            <DialogDescription className="mt-3 text-gray-font text-lg">
+              {t("communityPage.imageSizeError")}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-9 w-full">
+            <Button
+              className="h-13 text-lg bg-pink-500 hover:bg-pink-600 text-white w-full"
+              onClick={() => setShowImageSizeError(false)}
+            >
+              확인
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

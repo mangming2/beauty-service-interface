@@ -287,6 +287,8 @@ export const translations = {
       selectTags: "태그 선택",
       submitSuccess: "게시글이 등록되었습니다.",
       submitError: "게시글 등록에 실패했습니다.",
+      imageSizeError:
+        "이미지 전체 용량은 10MB를 넘을 수 없습니다. 사진 개수를 줄이거나 용량을 낮춰서 다시 시도해주세요.",
       deletedComment: "삭제된 댓글입니다.",
       reply: "답글",
       cancelReply: "취소",
@@ -619,6 +621,8 @@ export const translations = {
       selectTags: "Select tags",
       submitSuccess: "Post created successfully.",
       submitError: "Failed to create post.",
+      imageSizeError:
+        "Total image size cannot exceed 10MB. Please remove some images or use smaller files and try again.",
       deletedComment: "This comment has been deleted.",
       reply: "Reply",
       cancelReply: "Cancel",
@@ -956,6 +960,8 @@ export const translations = {
       selectTags: "タグ選択",
       submitSuccess: "投稿が完了しました。",
       submitError: "投稿に失敗しました。",
+      imageSizeError:
+        "画像の合計サイズは10MBを超えることはできません。枚数を減らすか、サイズを小さくして再度お試しください。",
       deletedComment: "削除されたコメントです。",
       reply: "返信",
       cancelReply: "キャンセル",
@@ -1285,6 +1291,7 @@ export const translations = {
       selectTags: "选择标签",
       submitSuccess: "发布成功。",
       submitError: "发布失败。",
+      imageSizeError: "图片总大小不能超过10MB。请减少图片数量或压缩后重试。",
       deletedComment: "该评论已删除。",
       reply: "回复",
       cancelReply: "取消",
