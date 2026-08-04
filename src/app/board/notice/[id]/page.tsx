@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useAnnouncementDetail } from "@/queries/useAnnouncementQueries";
 import { getSafeImageSrc } from "@/lib/utils";
 import { linkifyText } from "@/lib/linkify";
-import { Spinner } from "@/components/ui/spinner";
+import { Loading } from "@/components/common/Loading";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -24,7 +24,7 @@ export default function NoticeDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center bg-background">
-        <Spinner className="w-8 h-8 text-white" />
+        <Loading size="sm" />
       </div>
     );
   }

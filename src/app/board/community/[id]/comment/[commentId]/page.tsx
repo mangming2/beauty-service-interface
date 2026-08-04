@@ -7,7 +7,7 @@ import {
   usePostComments,
   useCreatePostComment,
 } from "@/queries/useCommunityQueries";
-import { Spinner } from "@/components/ui/spinner";
+import { Loading } from "@/components/common/Loading";
 import { ChatBubbleIcon, SendIcon } from "@/components/common/Icons";
 import { format } from "date-fns";
 import { useDeletePostComment } from "@/queries/useCommunityQueries";
@@ -105,7 +105,7 @@ export default function CommentReplyPage() {
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center bg-background">
-        <Spinner className="w-8 h-8 text-white" />
+        <Loading size="sm" />
       </div>
     );
   }

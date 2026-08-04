@@ -33,6 +33,7 @@ export default function CommunityWritePage() {
   const [images, setImages] = useState<File[]>([]);
   const [error, setError] = useState("");
   const [showCategoryError, setShowCategoryError] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   function toggleTag(tag: string) {
     setSelectedTags(prev =>
@@ -68,6 +69,9 @@ export default function CommunityWritePage() {
         images: images.length ? images : undefined,
       });
       gtag.postCreate(selectedTags);
+      // mutateAsync가 끝나면 isPending이 바로 꺼지는데, 페이지 이동은 그 뒤에
+      // 비동기로 이어지므로 그 사이 폼이 잠깐 다시 보이는 걸 막기 위해 별도로 유지한다.
+      setIsRedirecting(true);
       router.replace(`/board/community/${result.id}`);
     } catch {
       setError(t("communityPage.submitError"));
@@ -76,7 +80,7 @@ export default function CommunityWritePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-white">
-      {createPost.isPending && (
+      {(createPost.isPending || isRedirecting) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
           <Loading size="md" />
         </div>
@@ -89,7 +93,12 @@ export default function CommunityWritePage() {
         </button>
         <button
           onClick={handleSubmit}
-          disabled={!title.trim() || !content.trim() || createPost.isPending}
+          disabled={
+            !title.trim() ||
+            !content.trim() ||
+            createPost.isPending ||
+            isRedirecting
+          }
           className="text-white text-md font-medium disabled:opacity-40"
         >
           Complete
