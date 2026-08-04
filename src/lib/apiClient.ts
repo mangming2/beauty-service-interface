@@ -188,7 +188,10 @@ export async function apiRequest<T>(
     return fetch(url, {
       ...fetchOptions,
       headers: requestHeaders,
-      credentials: requireAuthStrict || isOptionalAuth ? "include" : "omit",
+      // API_BASE_URL은 프론트와 다른 도메인(cross-site)이라 credentials: "include"를 쓰면
+      // 브라우저가 서드파티 쿠키 전송으로 간주해 크롬 추적 방지 경고를 띄운다.
+      // 인증은 Authorization 헤더의 Bearer 토큰으로만 하므로 쿠키 전송이 필요 없다.
+      credentials: "omit",
       redirect: "manual", // 302 OAuth 리다이렉트 시 CORS 에러 방지
     });
   };

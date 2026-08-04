@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef, useCallback } from "react";
 import { useHydration } from "@/hooks/useHydration";
 import { useRouter, useSearchParams } from "next/navigation";
 import MainLogo from "../../../public/main-logo.png";
@@ -24,6 +24,7 @@ function LoginPageContent() {
   const [message, setMessage] = useState("");
   const isHydrated = useHydration();
   const [inAppBrowser, setInAppBrowser] = useState(false);
+  const [inAppChecked, setInAppChecked] = useState(false);
   const [copied, setCopied] = useState(false);
   const [testSeed, setTestSeed] = useState("fe-qa-001");
   const [testAdminSeed, setTestAdminSeed] = useState("fe-admin-001");
@@ -39,25 +40,9 @@ function LoginPageContent() {
   const testSignupAdminMutation = useTestSignupAdmin();
   const testLoginMutation = useTestLogin();
 
-  useEffect(() => {
-    setInAppBrowser(isInAppBrowser());
-  }, []);
+  const autoGoogleTriggeredRef = useRef(false);
 
-  useEffect(() => {
-    if (isHydrated && isAuthenticated && user) {
-      router.push(returnTo || "/my");
-    }
-  }, [isHydrated, isAuthenticated, user, router, returnTo]);
-
-  if (!isHydrated) {
-    return <AuthLoading />;
-  }
-
-  const handleGoogleLogin = async () => {
-    if (inAppBrowser) {
-      openInExternalBrowser(window.location.href);
-      return;
-    }
+  const triggerGoogleLogin = useCallback(async () => {
     if (returnTo) {
       stashPostLoginRedirect(returnTo);
     }
@@ -69,6 +54,41 @@ function LoginPageContent() {
         error instanceof Error ? error.message : t("login.loginError")
       );
     }
+  }, [returnTo, googleLoginMutation, t]);
+
+  useEffect(() => {
+    setInAppBrowser(isInAppBrowser());
+    setInAppChecked(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated && isAuthenticated && user) {
+      router.push(returnTo || "/my");
+    }
+  }, [isHydrated, isAuthenticated, user, router, returnTo]);
+
+  // 인앱 브라우저 탈출 시 붙인 autoGoogle=1 파라미터로 진입한 경우,
+  // 외부 브라우저에서 다시 버튼을 누를 필요 없이 구글 로그인을 이어서 시작한다.
+  useEffect(() => {
+    if (!inAppChecked || inAppBrowser) return;
+    if (autoGoogleTriggeredRef.current) return;
+    if (searchParams.get("autoGoogle") !== "1") return;
+    autoGoogleTriggeredRef.current = true;
+    triggerGoogleLogin();
+  }, [inAppChecked, inAppBrowser, searchParams, triggerGoogleLogin]);
+
+  if (!isHydrated) {
+    return <AuthLoading />;
+  }
+
+  const handleGoogleLogin = async () => {
+    if (inAppBrowser) {
+      const externalUrl = new URL(window.location.href);
+      externalUrl.searchParams.set("autoGoogle", "1");
+      openInExternalBrowser(externalUrl.toString());
+      return;
+    }
+    await triggerGoogleLogin();
   };
 
   const handleCopyUrl = async () => {
