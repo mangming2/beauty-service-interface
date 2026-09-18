@@ -11,6 +11,10 @@ interface TestSignupResponse {
   email: string;
 }
 
+/** 테스트 인증 라우터 전체(signup/signup/admin/login)가 요구하는 서버와 동일한 시크릿 */
+const TEST_AUTH_KEY =
+  process.env.NEXT_PUBLIC_TEST_AUTH_KEY || "doki-test-login";
+
 // ========== 테스트 회원가입 ==========
 
 /**
@@ -25,7 +29,12 @@ export async function testSignup(
     return await apiPost<TestSignupResponse>(
       "/auth/test/signup",
       { seed },
-      { requireAuth: false }
+      {
+        requireAuth: false,
+        headers: {
+          "X-Test-Auth-Key": TEST_AUTH_KEY,
+        },
+      }
     );
   } catch (error) {
     console.error("Test signup error:", error);
@@ -45,7 +54,12 @@ export async function testSignupAdmin(
     return await apiPost<TestSignupResponse>(
       "/auth/test/signup/admin",
       { seed },
-      { requireAuth: false }
+      {
+        requireAuth: false,
+        headers: {
+          "X-Test-Auth-Key": TEST_AUTH_KEY,
+        },
+      }
     );
   } catch (error) {
     console.error("Test signup admin error:", error);
@@ -54,10 +68,6 @@ export async function testSignupAdmin(
 }
 
 // ========== 테스트 로그인 ==========
-
-/** 테스트 로그인 시 서버와 동일한 시크릿 (app.auth.test-login.secret) */
-const TEST_AUTH_KEY =
-  process.env.NEXT_PUBLIC_TEST_AUTH_KEY || "doki-test-login";
 
 /**
  * 테스트 로그인
